@@ -1,17 +1,16 @@
 ## Prerequisites
 
 - Java JDK (1.8.x)
-- Maven (https://maven.apache.org/install.html)
+- Gradle
 - git
 
-## Getting started (without Eclipse)
+## Getting started (with Eclipse or Intelij)
 
 1. Clone the repository
-2. `mvn package` in the root folder
-3. Run
-```bash
-mvn compile exec:java "-Dexec.mainClass=bham.bioshock.HelloWorld"
-```
+2. Import as a gradle project (Eclipse) or import the build.gradle file (Intelij)
+3. To start the program run DesktopLauncher.java in the desktop package
+4. This will throw an error as it won't be able to find the assets
+5. Change the working directory to core/assets by editing the run configuration 
 
 ## Contributing
 
