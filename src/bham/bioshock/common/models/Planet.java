@@ -9,16 +9,16 @@ import bham.bioshock.common.models.Player;
  */
 public class Planet {
     /** ID of the planet */
-    public UUID id;
+    private UUID id;
 
     /** Name of the planet */
-    public String name;
+    private String name;
 
     /** Location of the planet */
-    public Coordinates coordinates;
+    private Coordinates coordinates;
 
     /** If captured, specifies the player that has captured the planet */
-    public Player player_captured = null;
+    private Player playerCaptured = null;
 
     public Planet(String name, Coordinates coordinates) {
         this.id = UUID.randomUUID();
@@ -26,8 +26,31 @@ public class Planet {
         this.coordinates = coordinates;
     }
 
-    /** Changes the player that has captured that planet */
-    public void setCaptured(Player player) {
-        player_captured = player;
+    public UUID getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public Coordinates getCoordinates() {
+        return coordinates;
+    }
+
+    public void setCoordinates(Coordinates coordinates) {
+        this.coordinates = coordinates;
+    }
+
+    public Player getPlayerCaptured() {
+        return playerCaptured;
+    }
+
+    public void setPlayerCaptured(Player playerCaptured) {
+        this.playerCaptured = playerCaptured;
     }
 }
