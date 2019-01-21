@@ -8,7 +8,7 @@ import java.util.UUID;
 public class GridPoint {
     /** Types of the grid point */
     public enum Type {
-        PLAYER, PLANET, FUEL, EMPTY
+        PLAYER, PLANET, ASTROID, FUEL, EMPTY
     }
 
     /** The type of the grid point */
