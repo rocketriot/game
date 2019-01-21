@@ -20,11 +20,13 @@ public class ClientSender extends Thread {
 	private ObjectOutputStream toServer;
 	private ClientReceiver receiver;
 	private ClientService service;
+	private int number;
 
 	ClientSender(ObjectOutputStream _toServer, ClientReceiver _receiver, ClientService _service) {
 		toServer = _toServer;
 		receiver = _receiver;
 		service = _service;
+		number = 0;
 	}
 
 	/**
@@ -32,11 +34,10 @@ public class ClientSender extends Thread {
 	 */
 	public void run() {
 		try {
-			Random randomNum = new Random();
 			
 			while (true) {
 				// Get informations about comment provided
-				String commandName = String.valueOf(randomNum.nextInt());
+				String commandName = String.valueOf(number++);
 				// Command command = new Command();
 				
 				// Change the state before sending to the command to the server

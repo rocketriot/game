@@ -1,7 +1,6 @@
 package bham.bioshock;
 
 import bham.bioshock.communication.client.ClientService;
-import bham.bioshock.communication.server.*;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -9,15 +8,12 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
-import bham.bioshock.communication.server.ServerService;
-
 public class Client {
-  
-  private static final String HOSTNAME = "localhost";
-  private static final int PORT = 4444;
-
-	public static void main(String[] args) {
-
+	
+	private static final String HOSTNAME = "192.168.137.118";
+	private static final int PORT = 4444;
+	
+	public static void connect() {
 		// Initialize information:
 		String hostname = HOSTNAME;
 
@@ -35,11 +31,15 @@ public class Client {
 			System.exit(1);
 		} catch (IOException e) {
 			System.err.println("The server doesn't seem to be running " + e.getMessage());
-      System.exit(1);
+			System.exit(1);
 		}
 
 		// We are connected to the server, create a service to get and send messages
 		ClientService service = new ClientService(server, fromServer, toServer);
-		service.start();
+		service.start();		
+	}
+
+	public static void main(String[] args) {
+		connect();
 	}
 }
