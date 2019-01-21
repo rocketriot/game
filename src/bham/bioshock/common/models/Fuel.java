@@ -7,16 +7,36 @@ import java.util.UUID;
  */
 public class Fuel {
     /** ID of the fuel */
-    public UUID id;
+    private UUID id;
 
     /** Location of the fuel */
-    public Coordinates coordinates;
+    private Coordinates coordinates;
 
     /** The amount of fuel that the fuel box holds */
-    public float value = 20.0f;
+    private float value = 20.0f;
 
     public Fuel(Coordinates coordinates) {
         this.id = UUID.randomUUID();
         this.coordinates = coordinates;
+    }
+
+    public UUID getId() {
+        return id;
+    }
+
+    public Coordinates getCoordinates() {
+        return coordinates;
+    }
+
+    public void setCoordinates(Coordinates coordinates) {
+        this.coordinates = coordinates;
+    }
+
+    public float getValue() {
+        return value;
+    }
+
+    public void setValue(float value) {
+        this.value = value;
     }
 }

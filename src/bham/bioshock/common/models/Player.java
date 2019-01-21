@@ -31,4 +31,40 @@ public class Player {
         this.coordinates = coordinates;
         this.isCpu = isCpu;
     }
+
+    public UUID getId() {
+        return id;
+    }
+
+    public Coordinates getCoordinates() {
+        return coordinates;
+    }
+
+    public void setCoordinates(Coordinates coordinates) {
+        this.coordinates = coordinates;
+    }
+
+    public float getFuel() {
+        return fuel;
+    }
+
+    public void setFuel(float fuel) {
+        this.fuel = fuel;
+    }
+
+    public int getPlanetsCaptured() {
+        return planetsCaptured;
+    }
+
+    public void setPlanetsCaptured(int planetsCaptured) {
+        this.planetsCaptured = planetsCaptured;
+    }
+
+    public boolean isCpu() {
+        return isCpu;
+    }
+
+    public void setCpu(boolean cpu) {
+        isCpu = cpu;
+    }
 }
