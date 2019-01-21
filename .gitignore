@@ -10,6 +10,8 @@ local.properties
 .loadpath
 .recommenders
 .vscode
+.idea
+*.iml
 
 # External tool builders
 .externalToolBuilders/
