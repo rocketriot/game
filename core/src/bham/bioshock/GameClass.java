@@ -13,7 +13,7 @@ public class GameClass extends ApplicationAdapter {
 	@Override
 	public void create () {
 		batch = new SpriteBatch();
-		img = new Texture("ship.png");
+		img = new Texture(Gdx.files.internal("core/assets/Ship.png"));
 	}
 
 	@Override
