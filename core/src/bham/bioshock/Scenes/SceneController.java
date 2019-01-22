@@ -7,6 +7,7 @@ public class SceneController extends Game {
     private LoadingScreen loading_screen;
     private HowToScreen howto_screen;
     @Override
+
     public void create() {
         loading_screen = new LoadingScreen(this);
         menu_screen = new MainMenuScreen(this);
@@ -26,7 +27,7 @@ public class SceneController extends Game {
                 this.setScreen(howto_screen);
                 break;
             default:
-                this.setScreen(loading_screen);
+                this.setScreen(menu_screen);
                 break;
         }
     }

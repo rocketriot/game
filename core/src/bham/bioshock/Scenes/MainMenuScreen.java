@@ -34,7 +34,7 @@ public class MainMenuScreen implements Screen {
 
         //set the stage, which will react to user inputs
         stage = new Stage(new ScreenViewport());
-        Gdx.input.setInputProcessor(stage);
+
         //calls act with Graphics.getDeltaTime()
 
 
@@ -82,6 +82,8 @@ public class MainMenuScreen implements Screen {
                 scene_controller.changeScreen(2);
             }
         });
+
+        Gdx.input.setInputProcessor(stage);
     }
 
     @Override
@@ -98,6 +100,7 @@ public class MainMenuScreen implements Screen {
 
     @Override
     public void resize(int width, int height) {
+
         stage.getViewport().update(width,height,true);
     }
 

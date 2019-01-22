@@ -25,7 +25,7 @@ public class HowToScreen implements Screen {
 
         //create text
         BitmapFont font;
-        font = new BitmapFont(Gdx.files.internal("core/assets/skins/neon/skin/font-export.fnt"));
+        font = new BitmapFont(Gdx.files.internal("core/assets/skins/default.fnt"));
         SpriteBatch batch = new SpriteBatch();
         batch.begin();
         font.draw(batch, "How to Play the Game...", 100, 100);
@@ -44,6 +44,7 @@ public class HowToScreen implements Screen {
 
     @Override
     public void resize(int width, int height) {
+
         stage.getViewport().update(width,height,true);
     }
 
