@@ -19,7 +19,7 @@ public class PathfindingValues {
 
     // initialise the values
     public PathfindingValues(int pathCost, int totalCost, int xPos, int yPos, boolean passable) {
-        if (passable){
+        if (passable) {
             this.pathCost = pathCost;
             this.totalCost = totalCost;
             parent.setX(xPos);
@@ -58,7 +58,7 @@ public class PathfindingValues {
     }
 
     //method to get whether the point is passable
-    public boolean getPassable() {
+    public boolean isPassable() {
         return passable;
     }
 
