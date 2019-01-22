@@ -64,7 +64,7 @@ public class AStarPathfinding {
         setAStarGrid();
     }
 
-    //method to setup the basics of the pathfindingValues grid
+    //method to setup the basics of the aStar grid
     public void setAStarGrid() {
 
         // go through the passed gameGrid and assign values accordingly to the aStarGrid
