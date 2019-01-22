@@ -1,4 +1,5 @@
 package bham.bioshock.common.pathfinding;
+import bham.bioshock.common.models.Coordinates;
 
 // values that will be used during pathfinding - heuristics etc
 public class PathfindingValues {
@@ -10,20 +11,22 @@ public class PathfindingValues {
     private int totalCost;
 
     // the parent point to this point - the point that came before
-    private int[][] parent;
+    private Coordinates parent;
 
     // initialise the values
-    public PathfindingValues(int pathCost, int totalCost, int[][] parent) {
+    public PathfindingValues(int pathCost, int totalCost, int xPos, int yPos) {
         this.pathCost = pathCost;
         this.totalCost = totalCost;
-        this.parent = parent;
+        parent.setX(xPos);
+        parent.setY(yPos);
     }
 
     // method to update the values
-    public void updateValues(int pathCost, int totalCost, int[][] parent){
+    public void updateValues(int pathCost, int totalCost, int xPos, int yPos){
         this.pathCost = pathCost;
         this.totalCost = totalCost;
-        this.parent = parent;
+        parent.setX(xPos);
+        parent.setY(yPos);
     }
 
     // method to get the pathCost
@@ -37,7 +40,7 @@ public class PathfindingValues {
     }
 
     //method to get the parent
-    public int [][] getParent(){
+    public Coordinates getParent(){
         return parent;
     }
 
