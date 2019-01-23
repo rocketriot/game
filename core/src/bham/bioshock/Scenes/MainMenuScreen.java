@@ -4,6 +4,8 @@ import bham.bioshock.*;
 import com.badlogic.gdx.*;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.*;
+import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
@@ -20,6 +22,7 @@ public class MainMenuScreen implements Screen {
     private SceneController scene_controller;
     //private OrthographicCamera camera;
     private Stage stage;
+    private SpriteBatch batch;
 
     public MainMenuScreen(final SceneController scene_controller){
         this.scene_controller = scene_controller;
@@ -34,6 +37,7 @@ public class MainMenuScreen implements Screen {
 
         //set the stage, which will react to user inputs
         stage = new Stage(new ScreenViewport());
+        batch = new SpriteBatch();
 
         //calls act with Graphics.getDeltaTime()
 
@@ -42,6 +46,11 @@ public class MainMenuScreen implements Screen {
     }
     @Override
     public void show() {
+        Texture background = new Texture(Gdx.files.internal("core/assets/menu.png"));
+        batch.begin();
+        batch.draw(background,0, Gdx.graphics.getHeight());
+        batch.end();
+
         //Table to hold menu button, will change this to a better style
         Table table = new Table();
         table.setFillParent(true);
@@ -89,6 +98,7 @@ public class MainMenuScreen implements Screen {
     @Override
     public void render(float delta) {
         //clear the screen
+
         Gdx.gl.glClearColor(0,0,0,0);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         stage.act();
