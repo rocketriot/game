@@ -9,8 +9,6 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
-import com.sun.javafx.tk.ScreenConfigurationAccessor;
-import sun.jvm.hotspot.utilities.BitMap;
 
 public class HowToScreen implements Screen {
     private SceneController scene_controller;
