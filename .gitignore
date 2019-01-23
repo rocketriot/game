@@ -38,7 +38,8 @@ com_crashlytics_export_strings.xml
 .metadata/
 /android/bin/
 /core/bin/
-/desktop/bin/
+/app/bin/
+/app/out/
 /html/bin/
 /ios/bin/
 /ios-moe/bin/
@@ -56,7 +57,7 @@ com_crashlytics_export_strings.xml
 /nbproject/private/
 /android/nbproject/private/
 /core/nbproject/private/
-/desktop/nbproject/private/
+/app/nbproject/private/
 /html/nbproject/private/
 /ios/nbproject/private/
 /ios-moe/nbproject/private/
@@ -64,7 +65,7 @@ com_crashlytics_export_strings.xml
 /build/
 /android/build/
 /core/build/
-/desktop/build/
+/app/build/
 /html/build/
 /ios/build/
 /ios-moe/build/
@@ -72,7 +73,7 @@ com_crashlytics_export_strings.xml
 /nbbuild/
 /android/nbbuild/
 /core/nbbuild/
-/desktop/nbbuild/
+/app/nbbuild/
 /html/nbbuild/
 /ios/nbbuild/
 /ios-moe/nbbuild/
@@ -80,7 +81,7 @@ com_crashlytics_export_strings.xml
 /dist/
 /android/dist/
 /core/dist/
-/desktop/dist/
+/app/dist/
 /html/dist/
 /ios/dist/
 /ios-moe/dist/
@@ -88,7 +89,7 @@ com_crashlytics_export_strings.xml
 /nbdist/
 /android/nbdist/
 /core/nbdist/
-/desktop/nbdist/
+/app/nbdist/
 /html/nbdist/
 /ios/nbdist/
 /ios-moe/nbdist/
@@ -104,7 +105,7 @@ gradle-app.setting
 /build/
 /android/build/
 /core/build/
-/desktop/build/
+/app/build/
 /html/build/
 /ios/build/
 /ios-moe/build/
@@ -123,3 +124,6 @@ Thumbs.db
 !/ios-moe/xcode/*.xcodeproj/xcshareddata
 !/ios-moe/xcode/*.xcodeproj/project.pbxproj
 /ios-moe/xcode/native/
+
+## VSCode
+.vscode
