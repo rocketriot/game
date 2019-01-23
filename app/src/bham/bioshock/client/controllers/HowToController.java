@@ -12,4 +12,8 @@ public class HowToController implements Controller {
         this.client = client;
         this.model = model;
     }
+
+    public void changeScreen(View screen) {
+        client.changeScreen(screen);
+    }
 }

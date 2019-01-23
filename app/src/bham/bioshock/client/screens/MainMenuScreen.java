@@ -1,6 +1,7 @@
 package bham.bioshock.client.screens;
 
 import bham.bioshock.*;
+import bham.bioshock.client.Client;
 import bham.bioshock.client.controllers.MainMenuController;
 
 import com.badlogic.gdx.*;
@@ -45,10 +46,6 @@ public class MainMenuScreen implements Screen {
 
     @Override
     public void show() {
-        Texture background = new Texture(Gdx.files.internal("app/assets/menu.png"));
-        batch.begin();
-        batch.draw(background, 0, Gdx.graphics.getHeight());
-        batch.end();
 
         // Table to hold menu button, will change this to a better style
         Table table = new Table();
@@ -61,12 +58,15 @@ public class MainMenuScreen implements Screen {
 
         TextButton host = new TextButton("Host Game", skin);
         TextButton howto = new TextButton("How to Play", skin);
+        TextButton preferences = new TextButton("Preferences", skin);
         TextButton exit = new TextButton("Exit", skin);
 
         // add the buttons to the table
         table.add(host).fillX().uniform();
         table.row().pad(10, 0, 10, 0);
         table.add(howto).fillX().uniform();
+        table.row();
+        table.add(preferences).fillX().uniform();
         table.row();
         table.add(exit).fillX().uniform();
 
@@ -88,7 +88,14 @@ public class MainMenuScreen implements Screen {
         howto.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                // Go to how to
+                controller.changeScreen(Client.View.HOW_TO);
+            }
+        });
+
+        preferences.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                controller.changeScreen(Client.View.PREFERENCES);
             }
         });
 
@@ -98,18 +105,25 @@ public class MainMenuScreen implements Screen {
     @Override
     public void render(float delta) {
         // clear the screen
-
         Gdx.gl.glClearColor(0, 0, 0, 0);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
+        //Create background
+        Texture background = new Texture(Gdx.files.internal("app/assets/menu.png"));
+
+        batch.begin();
+        batch.draw(background,0,0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        batch.end();
+
+        Gdx.input.setInputProcessor(stage);
+
         stage.act();
         stage.draw();
-        // camera.update();
 
     }
 
     @Override
     public void resize(int width, int height) {
-
         stage.getViewport().update(width, height, true);
     }
 

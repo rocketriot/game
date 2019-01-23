@@ -14,7 +14,7 @@ import bham.bioshock.client.screens.*;
 public class Client extends Game {
 	/** An enum to represent all the views */
 	public enum View {
-		MAIN_MENU, HOW_TO, LOADING, GAME_BOARD
+		MAIN_MENU, HOW_TO, LOADING, GAME_BOARD, PREFERENCES
 	}
 
 	/** Stores all the controllers */
@@ -42,6 +42,16 @@ public class Client extends Game {
 		MainMenuController mainMenuController = new MainMenuController(this, model);
 		controllers.put(View.MAIN_MENU, mainMenuController);
 		screens.put(View.MAIN_MENU, new MainMenuScreen(mainMenuController));
+
+		// How To
+		HowToController howToController = new HowToController(this, model);
+		controllers.put(View.HOW_TO, howToController);
+		screens.put(View.HOW_TO, new HowToScreen(howToController));
+
+		// Preferences
+		PreferencesController preferencesController = new PreferencesController(this, model);
+		controllers.put(View.PREFERENCES, preferencesController);
+		screens.put(View.PREFERENCES, new PreferencesScreen(preferencesController));
 
 		// Game Board
 		GameBoardController gameBoardController = new GameBoardController(this, model);
