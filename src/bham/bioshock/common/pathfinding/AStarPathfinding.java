@@ -93,7 +93,7 @@ public class AStarPathfinding {
     }
 
     // method to find the point on the grid that has the minimum value in a hashmap
-    private Coordinates findMinPoint(HashMap<Coordinates, PathfindingValues> map) {
+    private Coordinates findMinPoint(HashMap<Coordinates, PathfindingValues> map, Coordinates currentPosition) {
 
         int minimumCost = Integer.MAX_VALUE;
         Coordinates nextPoint = new Coordinates(currentPosition.getX(), currentPosition.getY());
