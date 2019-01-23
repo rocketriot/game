@@ -1,4 +1,4 @@
-package bham.bioshock.Scenes;
+package bham.bioshock.client.ui;
 
 import bham.bioshock.*;
 import com.badlogic.gdx.*;

@@ -1,6 +1,7 @@
-package bham.bioshock.desktop;
+package bham.bioshock.client.ui;
 
-import bham.bioshock.Scenes.SceneController;
+
+import bham.bioshock.
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 
