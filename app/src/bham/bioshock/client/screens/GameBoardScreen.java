@@ -1,23 +1,25 @@
-package bham.bioshock.client.ui;
+package bham.bioshock.client.screens;
 
-import com.badlogic.gdx.ApplicationAdapter;
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 
-public class GameScreen implements Screen {
+import bham.bioshock.client.controllers.GameBoardController;
+
+public class GameBoardScreen implements Screen {
+
+    private GameBoardController controller;
     private SpriteBatch batch;
     private Texture background;
     private OrthographicCamera camera;
     private ExtendViewport viewport;
-    private SceneController scene_controller;
 
-    public GameScreen(final SceneController scene_controller) {
-        this.scene_controller = scene_controller;
+    public GameBoardScreen(final GameBoardController controller) {
+        this.controller = controller;
         batch = new SpriteBatch();
 
         camera = new OrthographicCamera();
