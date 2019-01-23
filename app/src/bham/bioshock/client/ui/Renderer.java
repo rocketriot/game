@@ -1,4 +1,4 @@
-package bham.bioshock.client.renderer;
+package bham.bioshock.client.ui;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
