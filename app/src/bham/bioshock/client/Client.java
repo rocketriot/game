@@ -1,26 +1,62 @@
 package bham.bioshock.client;
 
-import bham.bioshock.client.ui.SceneController;
-import bham.bioshock.common.models.GameBoard;
-import bham.bioshock.client.ui.*;
-import bham.bioshock.client.gamelogic.GameLogic;
+import java.util.HashMap;
+
+import com.badlogic.gdx.Game;
+import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 
-public class Client {
-	private GameBoard gameBoard;
-	private GameLogic gameLogic;
-	private SceneController ui;
+import bham.bioshock.common.models.*;
+import bham.bioshock.client.controllers.*;
+import bham.bioshock.client.screens.*;
 
-	private void run() {
-		gameBoard = new GameBoard();
-		gameLogic = new GameLogic();
+public class Client extends Game {
+	/** An enum to represent all the views */
+	public enum View {
+		MAIN_MENU, HOW_TO, LOADING, GAME_BOARD
+	}
 
-		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
-		new LwjglApplication(new SceneController(), config);
+	/** Stores all the controllers */
+	private HashMap<View, Controller> controllers = new HashMap<View, Controller>();
+
+	/** Stores all the screens */
+	private HashMap<View, Screen> screens = new HashMap<View, Screen>();
+
+	/** Stores all data */
+	private Model model;
+
+	@Override
+	public void create() {
+		model = new Model();
+
+		loadViews();
+
+		// Set the first screen to the main menu
+		changeScreen(View.MAIN_MENU);
+	}
+
+	/** Loads up the views */
+	private void loadViews() {
+		// Main Menu
+		MainMenuController mainMenuController = new MainMenuController(this, model);
+		controllers.put(View.MAIN_MENU, mainMenuController);
+		screens.put(View.MAIN_MENU, new MainMenuScreen(mainMenuController));
+
+		// Game Board
+		GameBoardController gameBoardController = new GameBoardController(this, model);
+		controllers.put(View.GAME_BOARD, gameBoardController);
+		screens.put(View.GAME_BOARD, new GameBoardScreen(gameBoardController));
+	}
+
+	/** Change the client's screen */
+	public void changeScreen(View view) {
+		Screen screen = screens.get(view);
+		this.setScreen(screen);
 	}
 
 	public static void main(String[] args) {
-		(new Client()).run();
+		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
+		new LwjglApplication(new Client(), config);
 	}
 }
