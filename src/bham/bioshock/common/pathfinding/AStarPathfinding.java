@@ -15,9 +15,6 @@ public class AStarPathfinding {
     // goal position of the path
     private Coordinates goalPosition;
 
-    // current position of the path
-    private Coordinates currentPosition;
-
     // the game grid at the time of the pathfinding search
     private GridPoint[][] gameGrid;
 
@@ -33,7 +30,6 @@ public class AStarPathfinding {
     // instantiation method
     public AStarPathfinding(GridPoint[][] grid, Coordinates startPosition, int maxX, int maxY) {
         this.startPosition = startPosition;
-        currentPosition = startPosition;
         gameGrid = grid;
         this.maxX = maxX;
         this.maxY = maxY;
@@ -50,7 +46,11 @@ public class AStarPathfinding {
         // closed list - list of all expanded nodes
         HashMap<Coordinates, PathfindingValues> closedList = new HashMap<>();
 
-        insertIntoHashmap(closedList, startPosition);
+        insertIntoHashmap(openList, startPosition);
+
+        while (!openList.isEmpty()){
+
+        }
 
         return null;
     }
@@ -59,7 +59,6 @@ public class AStarPathfinding {
     // method to set the start position
     public void setStartPosition(Coordinates startPosition) {
         this.startPosition = startPosition;
-        currentPosition = startPosition;
     }
 
     // method to set the goal position
