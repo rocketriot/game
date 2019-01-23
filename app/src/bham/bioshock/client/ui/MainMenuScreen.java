@@ -22,25 +22,15 @@ public class MainMenuScreen implements Screen {
     private SceneController scene_controller;
     //private OrthographicCamera camera;
     private Stage stage;
-    private SpriteBatch batch;
+    private Batch batch;
 
     public MainMenuScreen(final SceneController scene_controller){
         this.scene_controller = scene_controller;
 
-
-        //determine screen size
-        Dimension screensize = Toolkit.getDefaultToolkit().getScreenSize();
-        int screenwidth = screensize.width;
-        int screenheight = screensize.height;
-
-        //camera = new OrthographicCamera(screenwidth, screenheight);
-
         //set the stage, which will react to user inputs
         stage = new Stage(new ScreenViewport());
-        batch = new SpriteBatch();
-
-        //calls act with Graphics.getDeltaTime()
-
+        Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        Gdx.input.setInputProcessor(stage);
 
 
     }
@@ -99,10 +89,8 @@ public class MainMenuScreen implements Screen {
     @Override
     public void render(float delta) {
         //clear the screen
-
-        Gdx.gl.glClearColor(0,0,0,0);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        stage.act();
+        stage.act(delta);
         stage.draw();
         //camera.update();
 
