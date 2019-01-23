@@ -2,18 +2,18 @@ package bham.bioshock.client;
 
 import bham.bioshock.common.models.GameBoard;
 import bham.bioshock.client.ui.UI;
-import bham.bioshock.client.renderer.Renderer;
+import bham.bioshock.client.gamelogic.GameLogic;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 
 public class Client {
 	private GameBoard gameBoard;
-	private Renderer renderer;
+	private GameLogic gameLogic;
 	private UI ui;
 
 	private void run() {
 		gameBoard = new GameBoard();
-		renderer = new Renderer();
+		gameLogic = new gameLogic();
 
 		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
 		new LwjglApplication(new UI(), config);
