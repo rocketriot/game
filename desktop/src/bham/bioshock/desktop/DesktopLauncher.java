@@ -2,7 +2,7 @@ package bham.bioshock.desktop;
 
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
-import bham.bioshock.GameClass;
+import bham.bioshock.Renderer;
 
 public class DesktopLauncher {
 	public static void main (String[] arg) {
@@ -10,6 +10,6 @@ public class DesktopLauncher {
 		config.width = 1920;
 		config.height = 1080;
 		config.fullscreen = false;
-		new LwjglApplication(new GameClass(), config);
+		new LwjglApplication(new Renderer(), config);
 	}
 }

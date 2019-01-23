@@ -9,7 +9,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 
-public class GameClass extends ApplicationAdapter {
+public class Renderer extends ApplicationAdapter {
 	private SpriteBatch batch;
 	private Texture background;
 	private OrthographicCamera camera;
@@ -23,8 +23,8 @@ public class GameClass extends ApplicationAdapter {
 		viewport = new ExtendViewport(1920, 1080, camera);
 		viewport.apply();
 
-		camera.position.set(camera.viewportWidth / 2, camera.viewportHeight / 2 , 0);
-		camera.update();
+		//camera.position.set(camera.viewportWidth / 2, camera.viewportHeight / 2 , 0);
+		//camera.update();
 
 		background = new Texture("game-background.png");
 	}
