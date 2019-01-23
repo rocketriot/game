@@ -27,7 +27,7 @@ public class HowToScreen implements Screen {
 
         //create text
         BitmapFont font;
-        font = new BitmapFont(Gdx.files.internal("core/assets/skins/default.fnt"));
+        font = new BitmapFont(Gdx.files.internal("app/assets/skins/default.fnt"));
 
         stage.getBatch().begin();
         font.setColor(Color.WHITE);

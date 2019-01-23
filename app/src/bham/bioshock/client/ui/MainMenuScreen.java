@@ -46,7 +46,7 @@ public class MainMenuScreen implements Screen {
     }
     @Override
     public void show() {
-        Texture background = new Texture(Gdx.files.internal("core/assets/menu.png"));
+        Texture background = new Texture(Gdx.files.internal("app/assets/menu.png"));
         batch.begin();
         batch.draw(background,0, Gdx.graphics.getHeight());
         batch.end();
@@ -58,7 +58,8 @@ public class MainMenuScreen implements Screen {
 
         //adding button
         //skins to be styled later
-        Skin skin = new Skin(Gdx.files.internal("core/assets/skins/neon/skin/neon-ui.json"));
+        Skin skin = new Skin(Gdx.files.internal("app/assets/skins/neon/skin/neon-ui.json"));
+
         TextButton host = new TextButton("Host Game", skin);
         TextButton howto = new TextButton("How to Play", skin);
         TextButton exit = new TextButton("Exit", skin);
