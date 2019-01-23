@@ -13,7 +13,7 @@ public class Client {
 
 	private void run() {
 		gameBoard = new GameBoard();
-		gameLogic = new gameLogic();
+		gameLogic = new GameLogic();
 
 		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
 		new LwjglApplication(new UI(), config);
