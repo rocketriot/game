@@ -3,7 +3,7 @@ package bham.bioshock.common.pathfinding;
 import bham.bioshock.common.consts.GridPoint;
 import bham.bioshock.common.models.*;
 
-import java.util.HashMap;
+import java.util.ArrayList;
 
 // method to find a path between two points
 public class AStarPathfinding {
@@ -29,11 +29,10 @@ public class AStarPathfinding {
     // instantiation method
     public AStarPathfinding(GridPoint[][] grid, Coordinates startPosition, int maxX, int maxY) {
         this.startPosition = startPosition;
-        gameGrid = grid;
         this.maxX = maxX;
         this.maxY = maxY;
 
-        setAStarGrid();
+        setGameGrid(grid);
     }
 
     // method to call to actually find the path
@@ -41,14 +40,15 @@ public class AStarPathfinding {
         this.goalPosition = goalPosition;
 
         // open list - list of all generated nodes
-        HashMap<Coordinates, PathfindingValues> openList = new HashMap<>();
+        ArrayList<Coordinates> openList = new ArrayList<>();
         // closed list - list of all expanded nodes
-        HashMap<Coordinates, PathfindingValues> closedList = new HashMap<>();
+        ArrayList<Coordinates> closedList = new ArrayList<>();
 
-        insertIntoHashmap(openList, startPosition);
+        insertIntoList(openList, startPosition);
 
-        while (!openList.isEmpty()){
-
+        while (!openList.isEmpty()) {
+            Coordinates currentPosition = findMinPoint(openList); // get coordinates of point with smallest cost
+            openList.remove(currentPosition);
         }
 
         return null;
@@ -68,47 +68,62 @@ public class AStarPathfinding {
     //method to set the game grid
     public void setGameGrid(GridPoint[][] grid) {
         gameGrid = grid;
-        setAStarGrid();
+        aStarGrid = setAStarGrid();
     }
 
     //method to setup the basics of the pathfindingValues grid
-    private void setAStarGrid() {
+    private PathfindingValues[][] setAStarGrid() {
 
-        // go through the passed gameGrid and assign values accordingly to the aStarGrid
+        PathfindingValues[][] tempGrid = new PathfindingValues[maxX][maxY]; // temporary grid to return
+
+        // go through the passed gameGrid and assign values accordingly to the temporary grid
         for (int x = 0; x < maxX; x++) {
             for (int y = 0; y < maxY; y++) {
                 if (gameGrid[x][y].getType().equals("FUEL") || gameGrid[x][y].getType().equals("EMPTY")) {
-                    aStarGrid[x][y] = new PathfindingValues(0, 0, x, y, true);
+                    tempGrid[x][y] = new PathfindingValues(0, 0, x, y, true);
                 } else {
-                    aStarGrid[x][y] = new PathfindingValues(0, 0, x, y, false);
+                    tempGrid[x][y] = new PathfindingValues(0, 0, x, y, false);
                 }
             }
         }
+        return tempGrid;
     }
 
-    // insert something into the open/closed hashmap
-    private void insertIntoHashmap(HashMap<Coordinates, PathfindingValues> list, Coordinates coords) {
-        list.put(startPosition, aStarGrid[coords.getX()][coords.getY()]);
+    // insert something into the open/closed lists
+    private void insertIntoList(ArrayList<Coordinates> list, Coordinates coords) {
+        list.add(coords);
     }
 
-    // method to find the point on the grid that has the minimum value in a hashmap
-    private Coordinates findMinPoint(HashMap<Coordinates, PathfindingValues> map, Coordinates currentPosition) {
+    // method to find the point on the grid that has the minimum value in a list
+    private Coordinates findMinPoint(ArrayList<Coordinates> list) {
 
         int minimumCost = Integer.MAX_VALUE;
-        Coordinates nextPoint = new Coordinates(currentPosition.getX(), currentPosition.getY());
+        Coordinates nextPoint = new Coordinates(Integer.MAX_VALUE, Integer.MAX_VALUE);
 
-        // iterate through the hashmap to get an entrySet
-        for (HashMap.Entry<Coordinates, PathfindingValues> entry : map.entrySet()) {
-            Coordinates key = entry.getKey();
-            PathfindingValues value = entry.getValue();
+        // iterate through the list to get an entrySet
+        for (Coordinates currentCoords : list) {
+            PathfindingValues value = aStarGrid[currentCoords.getX()][currentCoords.getY()];
 
-            // check if the current point has a lower cost than the current lowest cost point
-            if (value.getTotalCost() < minimumCost) {
-                minimumCost = value.getTotalCost();
-                nextPoint = key;
+            // check if the point can be traversed to
+            if (value.isPassable() || currentCoords == startPosition) {
+                // check if the current point has a lower cost than the current lowest cost point
+                if (value.getTotalCost() < minimumCost) {
+                    minimumCost = value.getTotalCost();
+                    nextPoint = currentCoords;
+                }
             }
         }
-
         return nextPoint;
     }
+
+    // method to find the heuristic values for a node using Manhattan Distance
+    private int findHeuristic(Coordinates position) {
+        return (Math.abs(goalPosition.getX() - position.getX()) + Math.abs(goalPosition.getY() - position.getY()));
+    }
+
+    // method to generate the successors of the current point
+    private ArrayList<Coordinates> generateSuccessors(Coordinates currentPoint){
+        return null;
+    }
+
 }
