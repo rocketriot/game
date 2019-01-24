@@ -130,21 +130,25 @@ public class AStarPathfinding {
         Coordinates upPoint = new Coordinates(currentPoint.getX(), currentPoint.getY()+1);
         if (isValid(upPoint)){
             successors.add(upPoint);
+            aStarGrid[upPoint.getX()][upPoint.getY()].setParent(currentPoint.getX(), currentPoint.getY());
         }
 
         Coordinates downPoint = new Coordinates(currentPoint.getX(), currentPoint.getY()-1);
         if (isValid(downPoint)){
             successors.add(downPoint);
+            aStarGrid[downPoint.getX()][downPoint.getY()].setParent(currentPoint.getX(), currentPoint.getY());
         }
 
         Coordinates leftPoint = new Coordinates(currentPoint.getX()-1, currentPoint.getY());
         if (isValid(leftPoint)){
             successors.add(leftPoint);
+            aStarGrid[leftPoint.getX()][leftPoint.getY()].setParent(currentPoint.getX(), currentPoint.getY());
         }
 
         Coordinates rightPoint = new Coordinates(currentPoint.getX()+1, currentPoint.getY());
         if (isValid(rightPoint)){
             successors.add(rightPoint);
+            aStarGrid[rightPoint.getX()][rightPoint.getY()].setParent(currentPoint.getX(), currentPoint.getY());
         }
 
         return successors;
