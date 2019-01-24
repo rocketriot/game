@@ -49,6 +49,7 @@ public class AStarPathfinding {
         while (!openList.isEmpty()) {
             Coordinates currentPosition = findMinPoint(openList); // get coordinates of point with smallest cost
             openList.remove(currentPosition);
+            ArrayList<Coordinates> successors = generateSuccessors(currentPosition);
         }
 
         return null;
@@ -123,7 +124,41 @@ public class AStarPathfinding {
 
     // method to generate the successors of the current point
     private ArrayList<Coordinates> generateSuccessors(Coordinates currentPoint){
-        return null;
+
+        ArrayList<Coordinates> successors = new ArrayList<>();
+
+        Coordinates upPoint = new Coordinates(currentPoint.getX(), currentPoint.getY()+1);
+        if (isValid(upPoint)){
+            successors.add(upPoint);
+        }
+
+        Coordinates downPoint = new Coordinates(currentPoint.getX(), currentPoint.getY()-1);
+        if (isValid(downPoint)){
+            successors.add(downPoint);
+        }
+
+        Coordinates leftPoint = new Coordinates(currentPoint.getX()-1, currentPoint.getY());
+        if (isValid(leftPoint)){
+            successors.add(leftPoint);
+        }
+
+        Coordinates rightPoint = new Coordinates(currentPoint.getX()+1, currentPoint.getY());
+        if (isValid(rightPoint)){
+            successors.add(rightPoint);
+        }
+
+        return successors;
+    }
+
+    // method to check whether a coordinate is valid
+    private Boolean isValid(Coordinates point){
+        int x = point.getX();
+        int y = point.getY();
+        if (x < maxX && x >= 0 && y < maxX && y >= 0 && aStarGrid[x][y].isPassable()){
+            return true;
+        } else {
+            return false;
+        }
     }
 
 }
