@@ -50,8 +50,8 @@ public class ServerService extends Thread {
 		queue.add(action);
 	}
 
-	public void send(Command message) {
-		sender.send(new Action(message));
+	public void send(Action action) {
+		sender.send(action);
 	}
 	
 	/**
