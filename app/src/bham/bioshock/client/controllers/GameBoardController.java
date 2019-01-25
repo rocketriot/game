@@ -11,4 +11,8 @@ public class GameBoardController implements Controller {
         this.client = client;
         this.model = model;
     }
+
+    public void changeScreen(Client.View screen) {
+        client.changeScreen(screen);
+    }
 }
