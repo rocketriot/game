@@ -21,4 +21,17 @@ public class HostScreen extends ScreenMaster {
     public void render(float delta) {
         drawBackground(delta);
     }
+
+    private void drawButtons(){
+        //button for start new game
+
+
+    }
+
+    private void configureNewGame() {
+        //get the name of the host
+        //ask how many players
+        HostScreenController contr = (HostScreenController) controller;
+        //contr.configureGame();
+    }
 }

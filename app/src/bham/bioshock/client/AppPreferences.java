@@ -15,6 +15,10 @@ public class AppPreferences {
         return Gdx.app.getPreferences(PREFS_NAME);
     }
 
+    //read and write to XML file using a libary
+    //java XML document class
+
+
     //getters and setter
     public float getMusicVolume() {
         return getPreferences().getFloat(PREF_MUSIC_VOLUME);

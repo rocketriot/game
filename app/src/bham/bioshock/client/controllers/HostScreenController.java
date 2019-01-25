@@ -16,4 +16,8 @@ public class HostScreenController implements Controller {
     public void changeScreen(Client.View screen) {
         client.changeScreen(screen);
     }
+
+    public void configureGame(String host_name, int no_players) {
+        //start a new game connection
+    }
 }
