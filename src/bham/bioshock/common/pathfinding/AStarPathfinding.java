@@ -47,7 +47,7 @@ public class AStarPathfinding {
         ArrayList<Coordinates> openList = new ArrayList<>();
         // closed list - list of all expanded nodes
         ArrayList<Coordinates> closedList = new ArrayList<>();
-
+        // add the start position to the open list
         insertIntoList(openList, startPosition);
 
         // while there are points to check
@@ -95,6 +95,8 @@ public class AStarPathfinding {
                     }
                 }
             }
+            // add the current node to the closed list
+            closedList.add(currentPosition);
         }
         return null;
     }
