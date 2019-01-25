@@ -5,7 +5,7 @@ package bham.bioshock.common.models;
  */
 public class Model {
     private GameBoard gameBoard;
-    private boolean inGame;
+    private boolean inGame = false;
 
     public GameBoard getGameBoard() {
         return gameBoard;
