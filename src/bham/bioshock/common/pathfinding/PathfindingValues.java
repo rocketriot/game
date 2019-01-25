@@ -5,8 +5,6 @@ import bham.bioshock.common.models.Coordinates;
 // values that will be used during pathfinding - heuristics etc
 public class PathfindingValues {
 
-    private final int TRANSITION_COST = 1;
-
     // the actual value to take the path up to this point
     private int pathCost;
 
@@ -62,11 +60,6 @@ public class PathfindingValues {
     // method to get whether the point is passable
     public boolean isPassable() {
         return passable;
-    }
-
-    // method to get the transition cost
-    public int getTransitionCost(){
-        return TRANSITION_COST;
     }
 
     // method to set the pathCost

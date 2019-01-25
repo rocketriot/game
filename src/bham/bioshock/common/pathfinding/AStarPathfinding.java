@@ -8,6 +8,9 @@ import java.util.ArrayList;
 // method to find a path between two points
 public class AStarPathfinding {
 
+    // the cost to go from one point to another
+    private final int TRANSITION_COST = 1;
+
     // start position of the path
     private Coordinates startPosition;
 
@@ -28,7 +31,7 @@ public class AStarPathfinding {
 
     // instantiation method
     public AStarPathfinding(GridPoint[][] grid, Coordinates startPosition, int maxX, int maxY) {
-        this.startPosition = startPosition;
+        setStartPosition(startPosition);
         this.maxX = maxX;
         this.maxY = maxY;
 
@@ -37,7 +40,7 @@ public class AStarPathfinding {
 
     // method to call to actually find the path
     public Coordinates[][] pathfind(Coordinates goalPosition) {
-        this.goalPosition = goalPosition;
+        setGoalPosition(goalPosition);
 
         // open list - list of all generated nodes
         ArrayList<Coordinates> openList = new ArrayList<>();
@@ -51,6 +54,54 @@ public class AStarPathfinding {
             Coordinates currentPosition = findMinPoint(openList); // get coordinates of point with smallest cost
             openList.remove(currentPosition);
             ArrayList<Coordinates> successors = generateSuccessors(currentPosition);
+
+            // iterate through the successors
+            for (Coordinates currentSuccessor : successors) {
+                int x = currentSuccessor.getX();
+                int y = currentSuccessor.getY();
+                // check if the goal has been found
+                if (currentSuccessor == goalPosition) {
+                    return null;
+                } else { // otherwise, calculate pathfinding values
+                    // calculate current path cost
+                    int successorPathCost = aStarGrid[x][y].getPathCost() + TRANSITION_COST;
+                    // calculate the heuristic cost
+                    int successorHeuristicCost = findHeuristic(currentSuccessor);
+                    // update the total cost value
+                    int totalCost = successorPathCost + successorHeuristicCost;
+
+                    // check if the successor is already in the open list
+                    if (openList.contains(currentSuccessor)){
+                       int openCost = aStarGrid[x][y].getTotalCost();
+                       // check if the total cost calculated is less than the one stored for the point
+                        if (openCost > totalCost){ // if so, update the values
+                            aStarGrid[x][y].setPathCost(successorPathCost);
+                            aStarGrid[x][y].setHeuristicCost(successorHeuristicCost);
+                            aStarGrid[x][y].updateTotalCost();
+                        }
+                    // else check if the node is already in the closed list
+                    } else if (closedList.contains(currentSuccessor)){
+                        int closedCost = aStarGrid[x][y].getTotalCost();
+                        // check if the total cost calculated is less than the one stored for the point
+                        if (closedCost > totalCost){ // if so, update the values and move point to open list
+                            aStarGrid[x][y].setPathCost(successorPathCost);
+                            aStarGrid[x][y].setHeuristicCost(successorHeuristicCost);
+                            aStarGrid[x][y].updateTotalCost();
+
+                            closedList.remove(currentSuccessor);
+                            openList.add(currentSuccessor);
+                        }
+                    // otherwise, update the values and add the node to the open list
+                    } else {
+                        aStarGrid[x][y].setPathCost(successorPathCost);
+                        aStarGrid[x][y].setHeuristicCost(successorHeuristicCost);
+                        aStarGrid[x][y].updateTotalCost();
+
+                        openList.add(currentSuccessor);
+                    }
+                }
+            }
+
         }
 
         return null;
@@ -124,34 +175,34 @@ public class AStarPathfinding {
     }
 
     // method to generate the successors of the current point
-    private ArrayList<Coordinates> generateSuccessors(Coordinates currentPoint){
+    private ArrayList<Coordinates> generateSuccessors(Coordinates currentPoint) {
 
         ArrayList<Coordinates> successors = new ArrayList<>();
 
         // check point directly above current point
-        Coordinates upPoint = new Coordinates(currentPoint.getX(), currentPoint.getY()+1);
-        if (isValid(upPoint)){
+        Coordinates upPoint = new Coordinates(currentPoint.getX(), currentPoint.getY() + 1);
+        if (isValid(upPoint)) {
             successors.add(upPoint);
             aStarGrid[upPoint.getX()][upPoint.getY()].setParent(currentPoint.getX(), currentPoint.getY());
         }
 
         // check point directly below currently point
-        Coordinates downPoint = new Coordinates(currentPoint.getX(), currentPoint.getY()-1);
-        if (isValid(downPoint)){
+        Coordinates downPoint = new Coordinates(currentPoint.getX(), currentPoint.getY() - 1);
+        if (isValid(downPoint)) {
             successors.add(downPoint);
             aStarGrid[downPoint.getX()][downPoint.getY()].setParent(currentPoint.getX(), currentPoint.getY());
         }
 
         // check point to the left of the current point
-        Coordinates leftPoint = new Coordinates(currentPoint.getX()-1, currentPoint.getY());
-        if (isValid(leftPoint)){
+        Coordinates leftPoint = new Coordinates(currentPoint.getX() - 1, currentPoint.getY());
+        if (isValid(leftPoint)) {
             successors.add(leftPoint);
             aStarGrid[leftPoint.getX()][leftPoint.getY()].setParent(currentPoint.getX(), currentPoint.getY());
         }
 
         // check point to the right of the current point
-        Coordinates rightPoint = new Coordinates(currentPoint.getX()+1, currentPoint.getY());
-        if (isValid(rightPoint)){
+        Coordinates rightPoint = new Coordinates(currentPoint.getX() + 1, currentPoint.getY());
+        if (isValid(rightPoint)) {
             successors.add(rightPoint);
             aStarGrid[rightPoint.getX()][rightPoint.getY()].setParent(currentPoint.getX(), currentPoint.getY());
         }
@@ -160,14 +211,19 @@ public class AStarPathfinding {
     }
 
     // method to check whether a coordinate is valid
-    private Boolean isValid(Coordinates point){
+    private Boolean isValid(Coordinates point) {
         int x = point.getX();
         int y = point.getY();
-        if (x < maxX && x >= 0 && y < maxX && y >= 0 && aStarGrid[x][y].isPassable()){
+        if (x < maxX && x >= 0 && y < maxX && y >= 0 && aStarGrid[x][y].isPassable()) {
             return true;
         } else {
             return false;
         }
+    }
+
+    // method to update the values of a point in the aStarGrid
+    private void updateValues(Coordinates point, int pathCost, int heuristicCost){
+        aStarGrid[point.getX()][point.getY()].setPathCost(successorPathCost);
     }
 
 }
