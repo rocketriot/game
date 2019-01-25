@@ -224,7 +224,7 @@ public class AStarPathfinding {
         ArrayList<Coordinates> path = new ArrayList<>();
         Coordinates currentPoint = goalPosition;
 
-        // iterate through the path, finding the next node by getting the parent of the currnet node
+        // iterate through the path, finding the next node by getting the parent of the current node
         while (currentPoint != startPosition){
             path.add(currentPoint);
             currentPoint = aStarGrid[currentPoint.getX()][currentPoint.getY()].getParent();
