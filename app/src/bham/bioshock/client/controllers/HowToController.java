@@ -13,7 +13,7 @@ public class HowToController implements Controller {
         this.model = model;
     }
 
-    public void changeScreen(View screen) {
+    public void changeScreen(Client.View screen) {
         client.changeScreen(screen);
     }
 }

@@ -1,5 +1,6 @@
 package bham.bioshock.client.screens;
 
+import bham.bioshock.client.Client;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
@@ -12,49 +13,28 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
 import bham.bioshock.client.controllers.HowToController;
 
-public class HowToScreen implements Screen {
-    private HowToController controller;
-    private Stage stage;
+public class HowToScreen extends ScreenMaster {
+
 
     public HowToScreen(HowToController controller) {
         this.controller = controller;
 
         stage = new Stage(new ScreenViewport());
+        batch = new SpriteBatch();
 
     }
 
     @Override
     public void show() {
 
-        // create text
-        BitmapFont font;
-        font = new BitmapFont(Gdx.files.internal("app/assets/skins/default.fnt"));
 
-        stage.getBatch().begin();
-        font.setColor(Color.WHITE);
-        font.draw(stage.getBatch(), "How to Play the Game...", 10, 10);
-        stage.getBatch().end();
-
-        stage.act();
-        stage.draw();
-        Gdx.input.setInputProcessor(stage);
     }
 
     @Override
     public void render(float delta) {
-        // clear the screen
-        Gdx.gl.glClearColor(0, 0, 0, 0);
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
-        stage.act();
-        stage.draw();
+        drawBackground(delta);
     }
 
-    @Override
-    public void resize(int width, int height) {
-
-        stage.getViewport().update(width, height, true);
-    }
 
     @Override
     public void pause() {
@@ -71,8 +51,5 @@ public class HowToScreen implements Screen {
 
     }
 
-    @Override
-    public void dispose() {
-        stage.dispose();
-    }
+
 }
