@@ -8,7 +8,6 @@ import bham.bioshock.communication.Action;
 /**
  * Gets actions from client and transfer it to ServerService
  * 
- * @author Jan Dabrowski
  */
 public class ServerReceiver extends Thread {
 	private ObjectInputStream client;
@@ -40,7 +39,7 @@ public class ServerReceiver extends Thread {
 					continue;
 				}
 				// execute business logic
-				service.execute(userAction);
+				service.store(userAction);
 			}
 		} catch (IOException e) {
 			System.err.println("Something went wrong with the client " + e.getMessage());

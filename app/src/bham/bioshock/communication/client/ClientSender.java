@@ -1,14 +1,11 @@
 package bham.bioshock.communication.client;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.ObjectOutputStream;
-import java.util.ArrayList;
-import java.util.Random;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 import bham.bioshock.communication.Action;
-import bham.bioshock.communication.CommandMessage;
 
 /**
  * 
@@ -18,52 +15,28 @@ import bham.bioshock.communication.CommandMessage;
 public class ClientSender extends Thread {
 
 	private ObjectOutputStream toServer;
-	private ClientReceiver receiver;
-	private ClientService service;
-	private int number;
+	private BlockingQueue<Action> queue = new LinkedBlockingQueue<>();
 
-	ClientSender(ObjectOutputStream _toServer, ClientReceiver _receiver, ClientService _service) {
+	ClientSender(ObjectOutputStream _toServer) {
 		toServer = _toServer;
-		receiver = _receiver;
-		service = _service;
-		number = 0;
 	}
 
+	public void send(Action action) {
+		queue.add(action);
+	}
+	
 	/**
 	 * Start ClientSender thread.
 	 */
 	public void run() {
 		try {
-			
 			while (true) {
-				// Get informations about comment provided
-				String commandName = String.valueOf(number++);
-				// Command command = new Command();
-				
-				// Change the state before sending to the command to the server
-//				service.executeBeforeSend(command);
-
-				// Prepare list of arguments
-//				ArrayList<String> arguments = new ArrayList<String>();
-//				for (int i = 0; i < 1; i++) {
-//				
-//					String text = userInput.readLine();
-//					arguments.add(text);
-//				}
-
-				// create new action with arguments
-				Action action = new Action(commandName);
-				System.out.println("Sending " + commandName);
+				Action action = queue.take();
 				// send an action to the server
-				toServer.writeObject(action);
-				
-				Thread.sleep(1000);
+				toServer.writeObject(action);				
 			}
-		} catch (IOException e) {
+		} catch (IOException | InterruptedException e) {
 			System.err.println("Communication broke in ClientSender" + e.getMessage());
-			System.exit(0);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
 		}
 
 		System.out.println("Client sender thread ending");

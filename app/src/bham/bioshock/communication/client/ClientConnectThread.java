@@ -9,85 +9,81 @@ import java.net.NetworkInterface;
 import java.util.Enumeration;
 
 import bham.bioshock.communication.Command;
+import bham.bioshock.communication.Config;
 
 public class ClientConnectThread implements Runnable {
 
+	private String name;
+	
+	public ClientConnectThread(String name) {
+		this.name = name;
+	}
+	
+	private void sendPacket(DatagramSocket c, byte[] data, InetAddress address) {
+		try {
+			DatagramPacket sendPacket = new DatagramPacket(
+				data, 
+				data.length,
+				address,
+				Config.PORT
+			);	
+			c.send(sendPacket);				
+		} catch (IOException e) {
+			System.err.println(e.getMessage());
+		}
+	}
 	
 	@Override
 	public void run() {
 		DatagramSocket c;
-		// Find the server using UDP broadcast
 		try {
 			// Open a random port to send the package
 			c = new DatagramSocket();
 			c.setBroadcast(true);
-
-			byte[] sendData = Command.COMM_DISCOVER.getBytes();
-
-			try {
-				DatagramPacket sendPacket = new DatagramPacket(
-						sendData, 
-						sendData.length,
-						InetAddress.getByName("255.255.255.255"), 
-						8888
-					);
-				c.send(sendPacket);
-				System.out.println(getClass().getName() + ">>> Request packet sent to: 255.255.255.255 (DEFAULT)");
-			} catch (Exception e) {
-			}
-
+			String broadcastMessage = Command.COMM_DISCOVER.toString() + ";" + this.name;
+			byte[] data = broadcastMessage.getBytes(); 
+			sendPacket(c, data, InetAddress.getByName("255.255.255.255"));
+		
 			// Broadcast the message over all the network interfaces
 			Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
 			while (interfaces.hasMoreElements()) {
 				NetworkInterface networkInterface = interfaces.nextElement();
 
-				if (networkInterface.isLoopback() || !networkInterface.isUp()) {
-					continue; // Don't want to broadcast to the loopback interface
-				}
+				if (networkInterface.isLoopback() || !networkInterface.isUp())
+					continue;
 
 				for (InterfaceAddress interfaceAddress : networkInterface.getInterfaceAddresses()) {
 					InetAddress broadcast = interfaceAddress.getBroadcast();
-					if (broadcast == null) {
+					
+					if (broadcast == null)
 						continue;
-					}
 
-					// Send the broadcast package!
-					try {
-						DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, broadcast, 8888);
-						c.send(sendPacket);
-					} catch (Exception e) {
-					}
+					// Send the broadcast package
+					sendPacket(c, data, broadcast);
 
-					System.out.println(getClass().getName() + ">>> Request packet sent to: "
-							+ broadcast.getHostAddress() + "; Interface: " + networkInterface.getDisplayName());
+					System.out.println(
+						"Request packet sent to: " + broadcast.getHostAddress() + ";"
+						+ "Interface: " + networkInterface.getDisplayName()
+					);
 				}
 			}
 
-			System.out.println(
-					getClass().getName() + ">>> Done looping over all network interfaces. Now waiting for a reply!");
+			System.out.println("Waiting for a connection...");
 
 			// Wait for a response
-			byte[] recvBuf = new byte[15000];
-			DatagramPacket receivePacket = new DatagramPacket(recvBuf, recvBuf.length);
+			byte[] buffer = new byte[15000];
+			DatagramPacket receivePacket = new DatagramPacket(buffer, buffer.length);
 			c.receive(receivePacket);
-
-			// We have a response
-			System.out.println(getClass().getName() + ">>> Broadcast response from server: "
-					+ receivePacket.getAddress().getHostAddress());
 
 			// Check if the message is correct
 			String message = new String(receivePacket.getData()).trim();
-			if (message.equals("DISCOVER_FUIFSERVER_RESPONSE")) {
-				System.out.println(receivePacket.getAddress());
-				// DO SOMETHING WITH THE SERVER'S IP (for example, store it in your controller)
-				// Controller_Base.setServerIp(receivePacket.getAddress());
+			if (message.equals(Command.COMM_DISCOVER_RESPONSE.toString())) {
+				Client.setHostAddress(receivePacket.getAddress());
 			}
 
-			// Close the port!
 			c.close();
 		} catch (IOException ex) {
 			System.err.println(ex.getMessage());
-			// Logger.getLogger(LoginWindow.class.getName()).log(Level.SEVERE, null, ex);
 		}
 	}
 }

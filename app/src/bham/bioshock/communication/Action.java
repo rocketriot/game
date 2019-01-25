@@ -1,6 +1,8 @@
 package bham.bioshock.communication;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 
 /**
@@ -8,91 +10,37 @@ import java.util.ArrayList;
  * ServerSender must contain a command, but can also a message and/or a list of
  * arguments
  * 
- * @author Jan Dabrowski
- *
  */
-public class Action implements Serializable {
+public class Action implements Serializable, Comparable<Action> {
 
 	private static final long serialVersionUID = 4181711659883987367L;
 
 	/**
 	 * Type of action
 	 */
-	private String command;
+	private Command command;
 
 	/**
 	 * Arguments for action
 	 */
 	private ArrayList<String> arguments;
-
-	/**
-	 * Message to be send through socket
-	 */
-	private Message message;
+	
+	private long created;
 
 	/**
 	 * Creates new action with arguments and a message to be send through the socket
 	 * 
-	 * @param _command
-	 *            to be sent through socket
+	 * @param _command to be sent through socket
 	 * @param _arguments
 	 */
-	public Action(ActionCommand _command, ArrayList<String> _arguments, Message _message) {
-		command = _command.getText();
+	public Action(Command _command, ArrayList<String> _arguments) {
+		command = _command;
 		arguments = _arguments;
-		message = _message;
+		created = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC);
 	}
 	
-	public Action(String _command) {
-		command = _command;
-		arguments = null;
-		message = null;
-	}
-
-	/**
-	 * Creates new action with arguments to be send through the socket
-	 * 
-	 * @param _command
-	 * @param _arguments
-	 */
-	public Action(ActionCommand _command, ArrayList<String> _arguments) {
-		this(_command, _arguments, null);
-	}
-
-	/**
-	 * Creates new action with message to be send through socket
-	 * 
-	 * @param _command
-	 *            name of the command
-	 * @param _message
-	 *            to be send
-	 */
-	public Action(ActionCommand _command, Message _message) {
-		this(_command, null, _message);
-	}
-
-	/**
-	 * Creates new action with one argument to be send through the socket
-	 * 
-	 * @param _command
-	 * @param _argument
-	 *            that will be added to list and sent
-	 */
-	public Action(ActionCommand _command, String _argument) {
-		command = _command.getText();
-		ArrayList<String> args = new ArrayList<String>();
-		args.add(_argument);
-		arguments = args;
-	}
-
-	/**
-	 * Creates new action with a command only to be send through socket
-	 * 
-	 * @param _command
-	 *            command to be sent
-	 */
-	public Action(ActionCommand _command) {
-		this(_command, null, null);
+	public Action(Command _command) {
+		this(_command, null);
 	}
 
 	/**
@@ -100,17 +48,8 @@ public class Action implements Serializable {
 	 * 
 	 * @return name of the command
 	 */
-	public String getCommand() {
+	public Command getCommand() {
 		return command;
-	}
-
-	/**
-	 * Gets the message
-	 * 
-	 * @return the message
-	 */
-	public Message getMessage() {
-		return message;
 	}
 
 	/**
@@ -123,5 +62,11 @@ public class Action implements Serializable {
 			return new ArrayList<String>();
 		}
 		return arguments;
+	}
+
+	@Override
+	public int compareTo(Action o) {
+		long diff = this.created - o.created;
+		return diff > 0 ? -1 : 1;
 	}
 }

@@ -4,14 +4,12 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
-import java.util.ArrayList;
+import java.util.concurrent.PriorityBlockingQueue;
 
 import bham.bioshock.communication.Action;
 
 /**
- * Interprets commands received from server and changes the state of the client
- * 
- * @author Jan Dabrowski
+ * Interprets commands received from server
  */
 public class ClientService extends Thread {
 
@@ -20,6 +18,7 @@ public class ClientService extends Thread {
 	private Socket server;
 	private ObjectInputStream fromServer;
 	private ObjectOutputStream toServer;
+	private PriorityBlockingQueue<Action> queue = new PriorityBlockingQueue<>();
 
 	/**
 	 * Creates the service and helper objects to send and receive messages
@@ -40,7 +39,7 @@ public class ClientService extends Thread {
 
 		// Create two client object to send and receive messages
 		receiver = new ClientReceiver(this, fromServer);
-		sender = new ClientSender(toServer, receiver, this);
+		sender = new ClientSender(toServer);
 	}
 
 	/**
@@ -51,21 +50,37 @@ public class ClientService extends Thread {
 		sender.start();
 		receiver.start();
 
+		try {
+			while(true) {
+				// Execute action from a blocking queue
+				execute(queue.take());
+			}
+		} catch(InterruptedException e) {
+			System.err.println("Client service was interrupted");
+		}
+		
 		// wait for the threads to terminate and close the streams
 		close();
 	}
 
-
+	public void store(Action action) {
+		queue.add(action);
+	}
+	
 	/**
 	 * Execute the action and change state if necessary
 	 * 
 	 * @param action
 	 *            to be executed
 	 */
-	public void execute(Action action) {
-		System.out.println("Received: " + action.getCommand());
+	public void send(Action action) {
+		sender.send(action);
 	}
 
+	private void execute(Action action) {
+		System.out.println(action.getCommand().toString());
+	}
+	
 	/**
 	 * Wait for the threads to terminate and than close the sockets and streams
 	 */

@@ -3,11 +3,8 @@ package bham.bioshock.communication.client;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.net.SocketException;
-import java.time.format.DateTimeFormatter;
-import java.time.format.FormatStyle;
 
 import bham.bioshock.communication.Action;
-import bham.bioshock.communication.Message;
 
 /**
  * Gets actions from the server and transfers it to ClientService Can be used by
@@ -27,7 +24,6 @@ public class ClientReceiver extends Thread {
 	 * Run the client receiver thread.
 	 */
 	public void run() {
-		print("Welcome!");
 		try {
 			// read messages from the server
 			while (true) {
@@ -43,7 +39,7 @@ public class ClientReceiver extends Thread {
 				}
 
 				// This will execute the business logic in the service.
-				service.execute(action);
+				service.store(action);
 			}
 		} catch (SocketException e) {
 			System.out.println("Client receiver ending");
@@ -71,41 +67,5 @@ public class ClientReceiver extends Thread {
 	 */
 	public void printMessage(String message) {
 		print(message);
-	}
-
-	/**
-	 * Print one of the previous messages
-	 * 
-	 * @param message
-	 *            old message
-	 * @param num
-	 *            how many messages to current
-	 */
-	public void printMessage(Message message, int num) {
-
-		String note = "---------------------------\n";
-
-		if (message == null) {
-			note += "> No messages";
-		} else {
-
-			note += (num == 0 ? "> Current message:\n" : "> Message:\n");
-			note += "From: " + message.getSender() + "\n";
-			note += "Received: " + DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).format(message.getTime())
-					+ "\n";
-			note += "Content: " + message.getText();
-		}
-		note += "\n----------------------------";
-		print(note);
-	}
-
-	/**
-	 * Prints current message or 'no messages' info
-	 * 
-	 * @param message
-	 *            current message
-	 */
-	public void printMessage(Message message) {
-		printMessage(message, 0);
 	}
 }
