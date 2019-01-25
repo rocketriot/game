@@ -46,6 +46,7 @@ public class AStarPathfinding {
 
         insertIntoList(openList, startPosition);
 
+        // while there are points to check
         while (!openList.isEmpty()) {
             Coordinates currentPosition = findMinPoint(openList); // get coordinates of point with smallest cost
             openList.remove(currentPosition);
@@ -127,24 +128,28 @@ public class AStarPathfinding {
 
         ArrayList<Coordinates> successors = new ArrayList<>();
 
+        // check point directly above current point
         Coordinates upPoint = new Coordinates(currentPoint.getX(), currentPoint.getY()+1);
         if (isValid(upPoint)){
             successors.add(upPoint);
             aStarGrid[upPoint.getX()][upPoint.getY()].setParent(currentPoint.getX(), currentPoint.getY());
         }
 
+        // check point directly below currently point
         Coordinates downPoint = new Coordinates(currentPoint.getX(), currentPoint.getY()-1);
         if (isValid(downPoint)){
             successors.add(downPoint);
             aStarGrid[downPoint.getX()][downPoint.getY()].setParent(currentPoint.getX(), currentPoint.getY());
         }
 
+        // check point to the left of the current point
         Coordinates leftPoint = new Coordinates(currentPoint.getX()-1, currentPoint.getY());
         if (isValid(leftPoint)){
             successors.add(leftPoint);
             aStarGrid[leftPoint.getX()][leftPoint.getY()].setParent(currentPoint.getX(), currentPoint.getY());
         }
 
+        // check point to the right of the current point
         Coordinates rightPoint = new Coordinates(currentPoint.getX()+1, currentPoint.getY());
         if (isValid(rightPoint)){
             successors.add(rightPoint);
