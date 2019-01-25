@@ -82,6 +82,8 @@ public class MainMenuScreen implements Screen {
         host.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
+                // Change to the game screen
+                scene_controller.changeScreen(3);
                 //start the code that creates a new server
             }
         });
