@@ -26,7 +26,7 @@ public class GameBoardScreen implements Screen {
         viewport = new ExtendViewport(1920, 1080, camera);
         viewport.apply();
 
-        background = new Texture(Gdx.files.internal("app/assets/game-background.png"));
+        background = new Texture(Gdx.files.internal("app/assets/backgrounds/game.png"));
     }
 
     @Override
