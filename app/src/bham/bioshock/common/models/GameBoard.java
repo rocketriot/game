@@ -88,7 +88,7 @@ public class GameBoard {
         // Check if able to fit an asteroid in the grid
         if (randomFloat <= 0.04 && x < 34 && y < 33) {
             // Check if the asteroid will overwrite an planet
-            if (grid[x + 3][y] == null && grid[x][y + 2] == null && grid[x + 3][y + 2] == null) {
+            if (grid[x + 3][y] == null && grid[x][y + 2] == null && grid[x + 2][y + 3] == null) {
                 // Add the asteroid to the 4x3 space it takes up on the grid
                 for (int i = x; i < x + 3; i++)
                     for (int j = y; j < y + 4; j++)
