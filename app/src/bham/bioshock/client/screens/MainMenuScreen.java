@@ -45,7 +45,7 @@ public class MainMenuScreen implements Screen {
 
     @Override
     public void show() {
-        Texture background = new Texture(Gdx.files.internal("app/assets/menu.png"));
+        Texture background = new Texture(Gdx.files.internal("app/assets/backgrounds/menu.png"));
         batch.begin();
         batch.draw(background, 0, Gdx.graphics.getHeight());
         batch.end();
