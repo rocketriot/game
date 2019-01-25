@@ -1,6 +1,6 @@
 package bham.bioshock.communication;
 
-public class Command implements ActionCommand {
+public class CommandMessage implements ActionCommand {
 	
 	/**
 	 * @return short string unique for a command

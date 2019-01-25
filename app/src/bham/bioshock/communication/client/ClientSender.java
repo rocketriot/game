@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.Random;
 
 import bham.bioshock.communication.Action;
-import bham.bioshock.communication.Command;
+import bham.bioshock.communication.CommandMessage;
 
 /**
  * 

@@ -1,20 +1,24 @@
 package bham.bioshock;
 
+import bham.bioshock.communication.client.ClientConnectThread;
 import bham.bioshock.communication.client.ClientService;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
-public class Client {
-	
-	private static final String HOSTNAME = "192.168.137.118";
+public class CommunicationClient {
+
+	private static final String HOSTNAME = "localhost";
 	private static final int PORT = 4444;
-	
+
 	public static void connect() {
-		// Initialize information:
+		// Initialise information:
 		String hostname = HOSTNAME;
 
 		// Open sockets:
@@ -36,10 +40,18 @@ public class Client {
 
 		// We are connected to the server, create a service to get and send messages
 		ClientService service = new ClientService(server, fromServer, toServer);
-		service.start();		
+		service.start();
 	}
 
 	public static void main(String[] args) {
-		connect();
+		ClientConnectThread cct = new ClientConnectThread();
+		Thread discoveryThread = new Thread(cct);
+	    discoveryThread.start();
+	    try {
+	    	discoveryThread.join();	    	
+	    } catch (InterruptedException e) {
+	    	System.err.println("Discovery interrupted");
+	    }
+	    System.out.println("Discovery finished");
 	}
 }
