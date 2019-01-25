@@ -21,18 +21,18 @@ public class PathfindingValues {
     private boolean passable;
 
     // initialise the values
-    public PathfindingValues(int pathCost, int heuristicCost, int xPos, int yPos, boolean passable) {
+    public PathfindingValues(int pathCost, int heuristicCost, Coordinates parent, boolean passable) {
         if (passable) {
             setPathCost(pathCost);
             setHeuristicCost(heuristicCost);
             updateTotalCost();
-            setParent(xPos, yPos);
+            setParent(parent);
             this.passable = true;
         } else {
             setPathCost(Integer.MAX_VALUE);
             setHeuristicCost(Integer.MAX_VALUE);
             setTotalCost(Integer.MAX_VALUE);
-            setParent(xPos, yPos);
+            setParent(parent);
             this.passable = false;
         }
     }
@@ -83,9 +83,9 @@ public class PathfindingValues {
     }
 
     // method to set the parent
-    public void setParent(int xPos, int yPos) {
-        parent.setX(xPos);
-        parent.setY(yPos);
+    public void setParent(Coordinates parent) {
+        this.parent.setX(parent.getX());
+        this.parent.setY(parent.getY());
     }
 
 }
