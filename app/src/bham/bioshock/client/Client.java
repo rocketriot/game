@@ -1,25 +1,77 @@
 package bham.bioshock.client;
 
-import bham.bioshock.common.models.GameBoard;
-import bham.bioshock.client.ui.UI;
-import bham.bioshock.client.renderer.Renderer;
+import java.util.HashMap;
+
+import com.badlogic.gdx.Game;
+import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 
-public class Client {
-	private GameBoard gameBoard;
-	private Renderer renderer;
-	private UI ui;
+import bham.bioshock.common.models.*;
+import bham.bioshock.client.controllers.*;
+import bham.bioshock.client.screens.*;
 
-	private void run() {
-		gameBoard = new GameBoard();
-		renderer = new Renderer();
+public class Client extends Game {
+	/** An enum to represent all the views */
+	public enum View {
+		MAIN_MENU, HOW_TO, LOADING, GAME_BOARD, PREFERENCES, HOST_SCREEN
+	}
 
-		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
-		new LwjglApplication(new UI(), config);
+	/** Stores all the controllers */
+	private HashMap<View, Controller> controllers = new HashMap<View, Controller>();
+
+	/** Stores all the screens */
+	private HashMap<View, Screen> screens = new HashMap<View, Screen>();
+
+	/** Stores all data */
+	private Model model;
+
+	@Override
+	public void create() {
+		model = new Model();
+
+		loadViews();
+
+		// Set the first screen to the main menu
+		changeScreen(View.MAIN_MENU);
+	}
+
+	/** Loads up the views */
+	private void loadViews() {
+		// Main Menu
+		MainMenuController mainMenuController = new MainMenuController(this, model);
+		controllers.put(View.MAIN_MENU, mainMenuController);
+		screens.put(View.MAIN_MENU, new MainMenuScreen(mainMenuController));
+
+		// How To
+		HowToController howToController = new HowToController(this, model);
+		controllers.put(View.HOW_TO, howToController);
+		screens.put(View.HOW_TO, new HowToScreen(howToController));
+
+		// Preferences
+		PreferencesController preferencesController = new PreferencesController(this, model);
+		controllers.put(View.PREFERENCES, preferencesController);
+		screens.put(View.PREFERENCES, new PreferencesScreen(preferencesController));
+
+		// Host Screen
+		HostScreenController hostscreenController = new HostScreenController(this, model);
+		controllers.put(View.HOST_SCREEN, hostscreenController);
+		screens.put(View.HOST_SCREEN, new HostScreen(hostscreenController));
+
+		// Game Board
+		GameBoardController gameBoardController = new GameBoardController(this, model);
+		controllers.put(View.GAME_BOARD, gameBoardController);
+		screens.put(View.GAME_BOARD, new GameBoardScreen(gameBoardController));
+	}
+
+	/** Change the client's screen */
+	public void changeScreen(View view) {
+		Screen screen = screens.get(view);
+		this.setScreen(screen);
 	}
 
 	public static void main(String[] args) {
-		(new Client()).run();
+		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
+		new LwjglApplication(new Client(), config);
 	}
 }
