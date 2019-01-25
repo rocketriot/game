@@ -26,25 +26,25 @@ public class GameBoard {
 
     /** Generates a grid with randomly positioned entities */
     public GridPoint[][] generateGrid() throws Exception {
+        // Make sure there are 4 players
         if (players.length != 4) {
             throw new Exception("NotEnoughPlayers");
         }
 
+        // Add the players to the board
         grid[1][1] = new GridPoint(GridPoint.Type.PLAYER, players[0]);
         grid[1][34] = new GridPoint(GridPoint.Type.PLAYER, players[1]);
         grid[34][34] = new GridPoint(GridPoint.Type.PLAYER, players[2]);
         grid[34][1] = new GridPoint(GridPoint.Type.PLAYER, players[3]);
 
+        // Go through each point and generate it's type
         for (int i = 0; i < grid.length; i++) {
             for (int j = 0; j < grid[i].length; j++) {
                 // Check if point was already generated
                 if (grid[i][j] == null) {
                     generateGridPoint(i, j);
                 }
-
-                System.out.println(grid[i][j].getType());
             }
-            System.out.println("-----");
         }
 
         // players - exact pos on each corner
