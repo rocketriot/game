@@ -46,7 +46,7 @@ public class HostScreen extends ScreenMaster {
             public void changed(ChangeEvent event, Actor actor) {
                 //bring up a popup to ask for the names
                 HostPopup popup = new HostPopup();
-                popup.hostPopup();
+                //popup.hostPopup();
             }
         });
     }
@@ -65,11 +65,11 @@ public class HostScreen extends ScreenMaster {
     }
 
     private class HostPopup {
-        private TextField text = new TextField("Enter Name", skin);
+     /*   private TextField text = new TextField("Enter Name", skin);
         private InputListener host_name = text.getDefaultInputListener();
 
         public void hostPopup() {
             Gdx.input.getTextInput(host_name, "Enter Name", "","");
-        }
+        }*/
     }
 }
