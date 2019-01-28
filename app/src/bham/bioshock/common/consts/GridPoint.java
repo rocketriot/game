@@ -6,7 +6,7 @@ package bham.bioshock.common.consts;
 public class GridPoint {
     /** Types of the grid point */
     public enum Type {
-        PLAYER, PLANET, ASTROID, FUEL, EMPTY
+        PLAYER, PLANET, ASTEROID, FUEL, EMPTY
     }
 
     /** The type of the grid point */
