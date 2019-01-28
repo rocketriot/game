@@ -78,7 +78,7 @@ public class ClientConnectThread implements Runnable {
 			// Check if the message is correct
 			String message = new String(receivePacket.getData()).trim();
 			if (message.equals(Command.COMM_DISCOVER_RESPONSE.toString())) {
-				Client.setHostAddress(receivePacket.getAddress());
+				CommunicationClient.setHostAddress(receivePacket.getAddress());
 			}
 
 			c.close();

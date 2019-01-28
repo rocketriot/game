@@ -8,7 +8,7 @@ import java.net.Socket;
 
 import bham.bioshock.communication.Config;
 
-public class Server {
+public class CommunicationServer {
 
 	private static ServerService createNewConnection(Socket socket) throws IOException {
 		// Create streams for input and output

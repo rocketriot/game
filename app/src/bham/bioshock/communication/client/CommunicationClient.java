@@ -14,7 +14,7 @@ import bham.bioshock.communication.Action;
 import bham.bioshock.communication.Command;
 import bham.bioshock.communication.Config;
 
-public class Client {
+public class CommunicationClient {
 	
 	public static InetAddress hostAddress;
 	public static int port = Config.PORT; 
