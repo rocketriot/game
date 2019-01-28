@@ -8,22 +8,21 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
-import com.badlogic.gdx.scenes.scene2d.ui.Slider;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
-import com.badlogic.gdx.scenes.scene2d.ui.TextField;
+import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
 public class HostScreen extends ScreenMaster {
 
     private TextButton host_button;
+    private Table table;
 
     public HostScreen(HostScreenController controller) {
 
         this.controller = controller;
         stage = new Stage(new ScreenViewport());
         batch = new SpriteBatch();
+        stack = new Stack();
 
 
     }
@@ -31,15 +30,40 @@ public class HostScreen extends ScreenMaster {
     @Override
     public void render(float delta) {
         drawBackground(delta);
-        drawButtons();
+        assemble();
+    }
+
+    private void assemble() {
+        table = drawTable();
+
+        stage.clear();
+        stage.addActor(stack);
+        stack.setSize(stage.getWidth(), stage.getHeight());
+        stack.add(table);
     }
 
 
-    private void drawButtons(){
+    private Table drawTable(){
+        Table table = new Table();
+        stage.addActor(table);
+
+        Label l1 = new Label("Host Name", skin);
+        Label l2 = new Label("Number of PLayers", skin);
+        TextField tField1 = new TextField("", skin);
+        TextField tField2 = new TextField("", skin);
+        tField2.setTextFieldFilter(new TextField.TextFieldFilter() {
+            private char[] accepted = {'1','2','3','4'};
+            @Override
+            public boolean acceptChar(TextField textField, char c) {
+                for (char a : accepted)
+                    if (a == c) return true;
+                return false;
+            }
+        });
+
         //button for start new game
         host_button = new TextButton("Start New Game", skin);
-        stage.addActor(host_button);
-        host_button.setPosition(stage.getWidth()/2,stage.getHeight()/2);
+        //host_button.setPosition(stage.getWidth()/2,stage.getHeight()/2);
 
         host_button.addListener(new ChangeListener() {
             @Override
@@ -49,11 +73,17 @@ public class HostScreen extends ScreenMaster {
                 //popup.hostPopup();
             }
         });
+        table.add(l1);
+        table.add(tField1);
+        table.row();
+        table.add(l2);
+        table.add(tField2);
+        table.row();
+        table.add(host_button);
+
+        return table;
     }
 
-    /*private Pair<String, Integer> drawPopup() {
-
-    }*/
 
     private void configureNewGame() {
         //get the name of the host

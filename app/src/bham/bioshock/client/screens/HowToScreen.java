@@ -21,7 +21,6 @@ import org.w3c.dom.Document;
 public class HowToScreen extends ScreenMaster {
 
     private Table textTable;
-    private Stack stack;
     private XMLReader reader;
 
     public HowToScreen(HowToController controller) {
