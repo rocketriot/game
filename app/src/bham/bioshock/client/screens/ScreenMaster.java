@@ -36,7 +36,7 @@ public abstract class ScreenMaster implements Screen {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         //Create background
-        Texture background = new Texture(Gdx.files.internal("app/assets/menu.png"));
+        Texture background = new Texture(Gdx.files.internal("app/assets/backgrounds/menu.png"));
 
         batch.begin();
         batch.draw(background,0,0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
