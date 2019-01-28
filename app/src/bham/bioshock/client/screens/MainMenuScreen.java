@@ -1,6 +1,7 @@
 package bham.bioshock.client.screens;
 
 import bham.bioshock.*;
+import bham.bioshock.client.Client;
 import bham.bioshock.client.controllers.MainMenuController;
 
 import com.badlogic.gdx.*;
@@ -18,12 +19,14 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
 import java.awt.*;
 
-public class MainMenuScreen implements Screen {
+public class MainMenuScreen extends ScreenMaster {
 
-    private MainMenuController controller;
-    // private OrthographicCamera camera;
-    private Stage stage;
-    private SpriteBatch batch;
+    //buttons
+    private TextButton host;
+    private TextButton howto;
+    private TextButton preferences;
+    private TextButton exit;
+
 
     public MainMenuScreen(final MainMenuController controller) {
         this.controller = controller;
@@ -45,73 +48,17 @@ public class MainMenuScreen implements Screen {
 
     @Override
     public void show() {
-        Texture background = new Texture(Gdx.files.internal("app/assets/menu.png"));
-        batch.begin();
-        batch.draw(background, 0, Gdx.graphics.getHeight());
-        batch.end();
 
-        // Table to hold menu button, will change this to a better style
-        Table table = new Table();
-        table.setFillParent(true);
-        stage.addActor(table);
 
-        // adding button
-        // skins to be styled later
-        Skin skin = new Skin(Gdx.files.internal("app/assets/skins/neon/skin/neon-ui.json"));
-
-        TextButton host = new TextButton("Host Game", skin);
-        TextButton howto = new TextButton("How to Play", skin);
-        TextButton exit = new TextButton("Exit", skin);
-
-        // add the buttons to the table
-        table.add(host).fillX().uniform();
-        table.row().pad(10, 0, 10, 0);
-        table.add(howto).fillX().uniform();
-        table.row();
-        table.add(exit).fillX().uniform();
-
-        // add change listeners for the buttons
-        exit.addListener(new ChangeListener() {
-            @Override
-            public void changed(ChangeEvent event, Actor actor) {
-                Gdx.app.exit();
-            }
-        });
-
-        host.addListener(new ChangeListener() {
-            @Override
-            public void changed(ChangeEvent event, Actor actor) {
-                // host game
-            }
-        });
-
-        howto.addListener(new ChangeListener() {
-            @Override
-            public void changed(ChangeEvent event, Actor actor) {
-                // Go to how to
-            }
-        });
-
-        Gdx.input.setInputProcessor(stage);
     }
 
     @Override
     public void render(float delta) {
-        // clear the screen
-
-        Gdx.gl.glClearColor(0, 0, 0, 0);
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        stage.act();
-        stage.draw();
-        // camera.update();
-
+        drawBackground(delta);
+        drawButtons();
+        addListeners();
     }
 
-    @Override
-    public void resize(int width, int height) {
-
-        stage.getViewport().update(width, height, true);
-    }
 
     @Override
     public void pause() {
@@ -128,8 +75,62 @@ public class MainMenuScreen implements Screen {
 
     }
 
-    @Override
-    public void dispose() {
-        stage.dispose();
+
+
+    private void drawButtons() {
+        // Table to hold menu button, will change this to a better style
+        Table table = new Table();
+        table.setFillParent(true);
+        stage.addActor(table);
+
+        // adding button
+        // skins to be styled later
+
+         host = new TextButton("Host Game", skin);
+         howto = new TextButton("How to Play", skin);
+         preferences = new TextButton("Preferences", skin);
+         exit = new TextButton("Exit", skin);
+
+        // add the buttons to the table
+        table.add(host).fillX().uniform();
+        table.row();
+        table.add(howto).fillX().uniform();
+        table.row();
+        table.add(preferences).fillX().uniform();
+        table.row();
+        table.add(exit).fillX().uniform();
+    }
+
+    private void addListeners(){
+        // add change listeners for the buttons
+        exit.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                Gdx.app.exit();
+            }
+        });
+
+        host.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                controller.changeScreen(Client.View.HOST_SCREEN);
+            }
+        });
+
+        howto.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                controller.changeScreen(Client.View.HOW_TO);
+            }
+        });
+
+        preferences.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                controller.changeScreen(Client.View.PREFERENCES);
+            }
+        });
+
+        Gdx.input.setInputProcessor(stage);
     }
 }
