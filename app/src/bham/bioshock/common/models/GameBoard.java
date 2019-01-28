@@ -32,10 +32,10 @@ public class GameBoard {
         }
 
         // Add the players to the board
-        grid[1][1] = new GridPoint(GridPoint.Type.PLAYER, players[0]);
-        grid[1][34] = new GridPoint(GridPoint.Type.PLAYER, players[1]);
-        grid[34][34] = new GridPoint(GridPoint.Type.PLAYER, players[2]);
-        grid[34][1] = new GridPoint(GridPoint.Type.PLAYER, players[3]);
+        grid[0][0] = new GridPoint(GridPoint.Type.PLAYER, players[0]);
+        grid[0][35] = new GridPoint(GridPoint.Type.PLAYER, players[1]);
+        grid[35][35] = new GridPoint(GridPoint.Type.PLAYER, players[2]);
+        grid[35][0] = new GridPoint(GridPoint.Type.PLAYER, players[3]);
 
         // Go through each point and generate it's type
         for (int i = 0; i < grid.length; i++) {
@@ -86,7 +86,7 @@ public class GameBoard {
 
         // Generate an asteroid
         // Check if able to fit an asteroid in the grid
-        if (randomFloat <= 0.04 && x < 34 && y < 33) {
+        if (randomFloat <= 0.04 && x < 33 && y < 32) {
             // Check if the asteroid will overwrite an planet
             if (grid[x + 3][y] == null && grid[x][y + 2] == null && grid[x + 2][y + 3] == null) {
                 // Add the asteroid to the 4x3 space it takes up on the grid
