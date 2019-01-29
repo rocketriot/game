@@ -55,9 +55,6 @@ public class AStarPathfinding {
         // while there are points to check
         while (!openList.isEmpty()) {
             Coordinates currentPosition = findMinPoint(openList); // get coordinates of point with smallest cost
-
-            System.out.println("Expanding point: x = " + currentPosition.getX() + " y = " + currentPosition.getY());
-
             openList.remove(currentPosition);
             closedList.add(currentPosition);
             ArrayList<Coordinates> successors = generateSuccessors(currentPosition, closedList);
@@ -70,9 +67,6 @@ public class AStarPathfinding {
                 if (goalPosition.isEqual(currentSuccessor)) {
                     // if so: update the parent, get the path and return it
                     aStarGrid[goalPosition.getX()][goalPosition.getY()].setParent(currentPosition);
-
-                    System.out.println("Goal position found");
-
                     return getPath();
                 } else { // otherwise, calculate pathfinding values
                     // calculate current path cost
@@ -236,9 +230,6 @@ public class AStarPathfinding {
         aStarGrid[point.getX()][point.getY()].setHeuristicCost(heuristicCost);
         aStarGrid[point.getX()][point.getY()].updateTotalCost();
         aStarGrid[point.getX()][point.getY()].setParent(parent);
-
-        System.out.println("Point (" + point.getX() + ", " + point.getY() + ") has parent (" + parent.getX() + ", " + parent.getY() + ")");
-
     }
 
     // method to get the found path from the end node to the start node
@@ -249,9 +240,6 @@ public class AStarPathfinding {
         // iterate through the path, finding the next node by getting the parent of the current node
         while (currentPoint != startPosition) {
             path.add(currentPoint);
-
-            System.out.println("Point added to path: x = " + currentPoint.getX() + " y = " + currentPoint.getY());
-
             currentPoint = aStarGrid[currentPoint.getX()][currentPoint.getY()].getParent();
         }
 
