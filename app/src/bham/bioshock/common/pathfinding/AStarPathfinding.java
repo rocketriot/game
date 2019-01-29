@@ -53,6 +53,9 @@ public class AStarPathfinding {
         // while there are points to check
         while (!openList.isEmpty()) {
             Coordinates currentPosition = findMinPoint(openList); // get coordinates of point with smallest cost
+
+            System.out.println("Expanding point: x = " + currentPosition.getX() + " y = " + currentPosition.getY());
+
             openList.remove(currentPosition);
             ArrayList<Coordinates> successors = generateSuccessors(currentPosition);
 
@@ -125,11 +128,11 @@ public class AStarPathfinding {
         // go through the passed gameGrid and assign values accordingly to the temporary grid
         for (int x = 0; x < maxX; x++) {
             for (int y = 0; y < maxY; y++) {
-                Coordinates point = new Coordinates(x, y);
-                if (gameGrid[x][y].getType().equals("FUEL") || gameGrid[x][y].getType().equals("EMPTY")) {
-                    tempGrid[x][y] = new PathfindingValues(0, 0, point, true);
+
+                if (gameGrid[x][y].getType() == GridPoint.Type.EMPTY || gameGrid[x][y].getType() == GridPoint.Type.FUEL) {
+                    tempGrid[x][y] = new PathfindingValues(0, 0, null, true);
                 } else {
-                    tempGrid[x][y] = new PathfindingValues(0, 0, point, false);
+                    tempGrid[x][y] = new PathfindingValues(0, 0, null, false);
                 }
             }
         }
