@@ -28,4 +28,12 @@ public class Coordinates {
         this.y = y;
     }
 
+    public Boolean isEqual(Coordinates toCheck){
+        if (x == toCheck.getX() && y == toCheck.getY()){
+            return true;
+        } else {
+            return false;
+        }
+    }
+
 }

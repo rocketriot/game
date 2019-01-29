@@ -64,9 +64,12 @@ public class AStarPathfinding {
                 int x = currentSuccessor.getX();
                 int y = currentSuccessor.getY();
                 // check if the goal has been found
-                if (currentSuccessor == goalPosition) {
+                if (goalPosition.isEqual(currentSuccessor)) {
                     // if so, get the path and return it
-                    return null;
+
+                    System.out.println("Goal position found");
+
+                    return getPath();
                 } else { // otherwise, calculate pathfinding values
                     // calculate current path cost
                     int successorPathCost = aStarGrid[x][y].getPathCost() + TRANSITION_COST;
@@ -230,6 +233,9 @@ public class AStarPathfinding {
         // iterate through the path, finding the next node by getting the parent of the current node
         while (currentPoint != startPosition){
             path.add(currentPoint);
+
+            System.out.println("Point added to path: x = " + currentPoint.getX() + " y = " + currentPoint.getY());
+
             currentPoint = aStarGrid[currentPoint.getX()][currentPoint.getY()].getParent();
         }
 

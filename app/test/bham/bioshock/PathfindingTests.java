@@ -3,9 +3,7 @@ package bham.bioshock;
 import bham.bioshock.common.consts.*;
 import bham.bioshock.common.models.*;
 import bham.bioshock.common.pathfinding.*;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
 
 import java.util.ArrayList;
 
