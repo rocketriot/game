@@ -221,9 +221,9 @@ public class AStarPathfinding {
     }
 
     // method to check whether a coordinate is in one of the lists
-    private Boolean checkList(Coordinates coordinate, ArrayList<Coordinates> list){
-        for (Coordinates listCoord : list){
-            if (listCoord.isEqual(coordinate)){
+    private Boolean checkList(Coordinates coordinate, ArrayList<Coordinates> list) {
+        for (Coordinates listCoord : list) {
+            if (listCoord.isEqual(coordinate)) {
                 return true;
             }
         }
@@ -238,6 +238,7 @@ public class AStarPathfinding {
         aStarGrid[point.getX()][point.getY()].setParent(parent);
 
         System.out.println("Point (" + point.getX() + ", " + point.getY() + ") has parent (" + parent.getX() + ", " + parent.getY() + ")");
+
     }
 
     // method to get the found path from the end node to the start node
@@ -246,11 +247,10 @@ public class AStarPathfinding {
         Coordinates currentPoint = goalPosition;
 
         // iterate through the path, finding the next node by getting the parent of the current node
-        while (currentPoint != startPosition){
+        while (currentPoint != startPosition) {
             path.add(currentPoint);
 
             System.out.println("Point added to path: x = " + currentPoint.getX() + " y = " + currentPoint.getY());
-            System.out.println(aStarGrid[currentPoint.getX()][currentPoint.getY()].getParent());
 
             currentPoint = aStarGrid[currentPoint.getX()][currentPoint.getY()].getParent();
         }
