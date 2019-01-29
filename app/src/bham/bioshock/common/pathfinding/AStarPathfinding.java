@@ -24,6 +24,12 @@ public class AStarPathfinding {
     // the grid that will contain the pathfinding values for each point
     private PathfindingValues[][] aStarGrid;
 
+    // open list - list of all generated nodes
+    private ArrayList<Coordinates> openList = new ArrayList<>();
+
+    // closed list - list of all expanded nodes
+    private ArrayList<Coordinates> closedList = new ArrayList<>();
+
     // the maximum x value of the map
     private int maxX;
 
@@ -43,10 +49,6 @@ public class AStarPathfinding {
     public ArrayList<Coordinates> pathfind(Coordinates goalPosition) {
         setGoalPosition(goalPosition);
 
-        // open list - list of all generated nodes
-        ArrayList<Coordinates> openList = new ArrayList<>();
-        // closed list - list of all expanded nodes
-        ArrayList<Coordinates> closedList = new ArrayList<>();
         // add the start position to the open list
         insertIntoList(openList, startPosition);
 
@@ -57,6 +59,7 @@ public class AStarPathfinding {
             System.out.println("Expanding point: x = " + currentPosition.getX() + " y = " + currentPosition.getY());
 
             openList.remove(currentPosition);
+            closedList.add(currentPosition);
             ArrayList<Coordinates> successors = generateSuccessors(currentPosition);
 
             // iterate through the successors
@@ -102,7 +105,6 @@ public class AStarPathfinding {
                 }
             }
             // add the current node to the closed list
-            closedList.add(currentPosition);
         }
         return null;
     }
@@ -223,6 +225,8 @@ public class AStarPathfinding {
         aStarGrid[point.getX()][point.getY()].setHeuristicCost(heuristicCost);
         aStarGrid[point.getX()][point.getY()].updateTotalCost();
         aStarGrid[point.getX()][point.getY()].setParent(parent);
+
+        System.out.println("Point (" + point.getX() + ", " + point.getY() + ") has parent (" + parent.getX() + ", " + parent.getY() + ")");
     }
 
     // method to get the found path from the end node to the start node
@@ -235,6 +239,7 @@ public class AStarPathfinding {
             path.add(currentPoint);
 
             System.out.println("Point added to path: x = " + currentPoint.getX() + " y = " + currentPoint.getY());
+            System.out.println(aStarGrid[currentPoint.getX()][currentPoint.getY()].getParent());
 
             currentPoint = aStarGrid[currentPoint.getX()][currentPoint.getY()].getParent();
         }
