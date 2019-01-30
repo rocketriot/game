@@ -19,10 +19,10 @@ public class PathfindingTests {
     private AStarPathfinding pathfinder;
 
     @BeforeAll
-    public void setupTests(){
+    public void setupTests() {
         //set up the empty grid
-        for (int x = 0; x < 36; x++){
-            for (int y = 0; y < 36; y++){
+        for (int x = 0; x < 36; x++) {
+            for (int y = 0; y < 36; y++) {
                 GridPoint point = new GridPoint(GridPoint.Type.EMPTY, 0);
                 emptyGrid[x][y] = point;
             }
@@ -32,76 +32,234 @@ public class PathfindingTests {
 
     @Test
     public void leftTest() {
-
         Coordinates goalPosition = new Coordinates(0, 18);
 
         // set up the actual path that should be found
         ArrayList<Coordinates> truePath = new ArrayList<>();
-        for (int i = 18; i >= 0; i--){
+        for (int i = 18; i >= 0; i--) {
             Coordinates currentCoord = new Coordinates(i, 18);
             truePath.add(currentCoord);
         }
 
         ArrayList<Coordinates> foundPath = pathfinder.pathfind(goalPosition);
-
-        for (int i = 0; i < truePath.size(); i++){
-            Coordinates truePoint = truePath.get(i);
-            Coordinates foundPoint = foundPath.get(i);
-            System.out.println("True Path Coord: (" + truePoint.getX() + ", " + truePoint.getY() + ")");
-            System.out.println("Found Path Coord: (" + foundPoint.getX() + ", " + foundPoint.getY() + ")");
-        }
-
-        assertTrue(truePath.equals(foundPath));
+        assertTrue(checkPaths(truePath, foundPath));
     }
 
-//    @Test
-//    public void rightTest() {
-//
-//    }
-//
-//    @Test
-//    public void upTest() {
-//
-//    }
-//
-//    @Test
-//    public void downTest() {
-//
-//    }
-//
-//    @Test
-//    public void downLeftTest() {
-//
-//    }
-//
-//    @Test
-//    public void downRightTest() {
-//
-//    }
-//
-//    @Test
-//    public void upLeftTest() {
-//
-//    }
-//
-//    @Test
-//    public void upRightTest() {
-//
-//    }
-//
-//    @Test
-//    public void diagObstacleTest(){
-//
-//    }
-//
-//    @Test
-//    public void linearObstacleTest(){
-//
-//    }
-//
-//    @Test
-//    public void noPathTest(){
-//
-//    }
+    @Test
+    public void rightTest() {
+        Coordinates goalPosition = new Coordinates(35, 18);
+
+        // set up the actual path that should be found
+        ArrayList<Coordinates> truePath = new ArrayList<>();
+        for (int i = 18; i < 36; i++) {
+            Coordinates currentCoord = new Coordinates(i, 18);
+            truePath.add(currentCoord);
+        }
+
+        ArrayList<Coordinates> foundPath = pathfinder.pathfind(goalPosition);
+        assertTrue(checkPaths(truePath, foundPath));
+    }
+
+    @Test
+    public void upTest() {
+        Coordinates goalPosition = new Coordinates(18, 35);
+
+        // set up the actual path that should be found
+        ArrayList<Coordinates> truePath = new ArrayList<>();
+        for (int i = 18; i < 36; i++) {
+            Coordinates currentCoord = new Coordinates(18, i);
+            truePath.add(currentCoord);
+        }
+
+        ArrayList<Coordinates> foundPath = pathfinder.pathfind(goalPosition);
+        assertTrue(checkPaths(truePath, foundPath));
+    }
+
+    @Test
+    public void downTest() {
+        Coordinates goalPosition = new Coordinates(18, 0);
+
+        // set up the actual path that should be found
+        ArrayList<Coordinates> truePath = new ArrayList<>();
+        for (int i = 18; i >= 0; i--) {
+            Coordinates currentCoord = new Coordinates(18, i);
+            truePath.add(currentCoord);
+        }
+
+        ArrayList<Coordinates> foundPath = pathfinder.pathfind(goalPosition);
+        assertTrue(checkPaths(truePath, foundPath));
+    }
+
+    @Test
+    public void downLeftTest() {
+        Coordinates goalPosition = new Coordinates(0, 0);
+
+        // set up the actual path that should be found
+        ArrayList<Coordinates> truePath = new ArrayList<>();
+        for (int i = 18; i >= 0; i--) {
+            Coordinates currentCoord = new Coordinates(18, i);
+            truePath.add(currentCoord);
+        }
+        for (int i = 17; i >= 0; i--) {
+            Coordinates currentCoord = new Coordinates(i, 0);
+            truePath.add(currentCoord);
+        }
+
+        ArrayList<Coordinates> foundPath = pathfinder.pathfind(goalPosition);
+        assertTrue(checkPaths(truePath, foundPath));
+    }
+
+    @Test
+    public void downRightTest() {
+        Coordinates goalPosition = new Coordinates(35, 0);
+
+        // set up the actual path that should be found
+        ArrayList<Coordinates> truePath = new ArrayList<>();
+        for (int i = 18; i >= 0; i--) {
+            Coordinates currentCoord = new Coordinates(18, i);
+            truePath.add(currentCoord);
+        }
+        for (int i = 19; i < 36; i++) {
+            Coordinates currentCoord = new Coordinates(i, 0);
+            truePath.add(currentCoord);
+        }
+
+        ArrayList<Coordinates> foundPath = pathfinder.pathfind(goalPosition);
+        assertTrue(checkPaths(truePath, foundPath));
+    }
+
+    @Test
+    public void upLeftTest() {
+        Coordinates goalPosition = new Coordinates(0, 35);
+
+        // set up the actual path that should be found
+        ArrayList<Coordinates> truePath = new ArrayList<>();
+        for (int i = 18; i < 36; i++) {
+            Coordinates currentCoord = new Coordinates(18, i);
+            truePath.add(currentCoord);
+        }
+        for (int i = 17; i >= 0; i--) {
+            Coordinates currentCoord = new Coordinates(i, 35);
+            truePath.add(currentCoord);
+        }
+
+        ArrayList<Coordinates> foundPath = pathfinder.pathfind(goalPosition);
+        assertTrue(checkPaths(truePath, foundPath));
+    }
+
+    @Test
+    public void upRightTest() {
+        Coordinates goalPosition = new Coordinates(35, 35);
+
+        // set up the actual path that should be found
+        ArrayList<Coordinates> truePath = new ArrayList<>();
+        for (int i = 18; i < 36; i++) {
+            Coordinates currentCoord = new Coordinates(18, i);
+            truePath.add(currentCoord);
+        }
+        for (int i = 19; i < 36; i++) {
+            Coordinates currentCoord = new Coordinates(i, 35);
+            truePath.add(currentCoord);
+        }
+
+        ArrayList<Coordinates> foundPath = pathfinder.pathfind(goalPosition);
+        assertTrue(checkPaths(truePath, foundPath));
+    }
+
+    @Test
+    public void diagObstacleTest() {
+        Coordinates goalPosition = new Coordinates(0, 0);
+
+        // set up the obstacle
+        emptyGrid[18][8].setType(GridPoint.Type.PLANET);
+        pathfinder.setGameGrid(emptyGrid);
+
+        // set up the actual path that should be found
+        ArrayList<Coordinates> truePath = new ArrayList<>();
+        for (int i = 18; i >= 9; i--) {
+            Coordinates currentCoord = new Coordinates(18, i);
+            truePath.add(currentCoord);
+        }
+        for (int i = 9; i >= 0; i--) {
+            Coordinates currentCoord = new Coordinates(17, i);
+            truePath.add(currentCoord);
+        }
+        for (int i = 16; i >= 0; i--) {
+            Coordinates currentCoord = new Coordinates(i, 0);
+            truePath.add(currentCoord);
+        }
+
+        ArrayList<Coordinates> foundPath = pathfinder.pathfind(goalPosition);
+        assertTrue(checkPaths(truePath, foundPath));
+
+        // remove the obstacle
+        emptyGrid[18][8].setType(GridPoint.Type.EMPTY);
+        pathfinder.setGameGrid(emptyGrid);
+    }
+
+    @Test
+    public void linearObstacleTest() {
+        Coordinates goalPosition = new Coordinates(0, 18);
+
+        // set up the obstacle
+        emptyGrid[9][18].setType(GridPoint.Type.PLANET);
+        pathfinder.setGameGrid(emptyGrid);
+
+        // set up the actual path that should be found
+        ArrayList<Coordinates> truePath = new ArrayList<>();
+        for (int i = 18; i >= 10; i--) {
+            Coordinates currentCoord = new Coordinates(i, 18);
+            truePath.add(currentCoord);
+        }
+        for (int i = 10; i >= 8; i--){
+            Coordinates currentCoord = new Coordinates(i, 19);
+            truePath.add(currentCoord);
+        }
+        for (int i = 8; i >= 0; i--){
+            Coordinates currentCoord = new Coordinates(i, 18);
+            truePath.add(currentCoord);
+        }
+
+        ArrayList<Coordinates> foundPath = pathfinder.pathfind(goalPosition);
+        assertTrue(checkPaths(truePath, foundPath));
+
+        // remove the obstacle
+        emptyGrid[9][18].setType(GridPoint.Type.EMPTY);
+        pathfinder.setGameGrid(emptyGrid);
+    }
+
+    @Test
+    public void noPathTest(){
+        Coordinates goalPosition = new Coordinates(0, 18);
+
+        // set up the wall to stop any path
+        for (int i = 0; i < 36; i++){
+            emptyGrid[9][i].setType(GridPoint.Type.PLANET);
+        }
+        pathfinder.setGameGrid(emptyGrid);
+
+        ArrayList<Coordinates> foundPath = pathfinder.pathfind(goalPosition);
+        assertTrue(foundPath == null);
+
+        // remove the wall
+        for (int i = 0; i < 36; i++){
+            emptyGrid[9][i].setType(GridPoint.Type.EMPTY);
+        }
+        pathfinder.setGameGrid(emptyGrid);
+    }
+
+    // method to compare two arraylists of coordinates because the default methods don't work
+    private static boolean checkPaths(ArrayList<Coordinates> truth, ArrayList<Coordinates> found) {
+        if (!found.isEmpty() && truth.size() == found.size()) {
+            for (int i = 0; i < truth.size(); i++) {
+                if (!truth.get(i).isEqual(found.get(i))) {
+                    return false;
+                }
+            }
+            return true;
+        } else {
+            return false;
+        }
+    }
 
 }
