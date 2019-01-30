@@ -1,6 +1,8 @@
 package bham.bioshock.common.models;
 
 import bham.bioshock.common.consts.GridPoint;
+
+import java.util.ArrayList;
 import java.util.Random;
 
 /**
@@ -12,30 +14,18 @@ public class GameBoard {
      */
     private GridPoint[][] grid = new GridPoint[36][36];
 
-    /** A list of players */
-    private Player[] players;
-
-    /**
-     * The ID of the player that the client is controlling, only used client-side
-     */
-    private int playerId;
-
-    public GameBoard(Player[] players) {
-        this.players = players;
-    }
-
     /** Generates a grid with randomly positioned entities */
-    public GridPoint[][] generateGrid() throws Exception {
+    public GridPoint[][] generateGrid(ArrayList<Player> players) throws Exception {
         // Make sure there are 4 players
         if (players.length != 4) {
             throw new Exception("NotEnoughPlayers");
         }
 
         // Add the players to the board
-        grid[1][1] = new GridPoint(GridPoint.Type.PLAYER, players[0]);
-        grid[1][34] = new GridPoint(GridPoint.Type.PLAYER, players[1]);
-        grid[34][34] = new GridPoint(GridPoint.Type.PLAYER, players[2]);
-        grid[34][1] = new GridPoint(GridPoint.Type.PLAYER, players[3]);
+        grid[1][1] = new GridPoint(GridPoint.Type.PLAYER, players.get(0));
+        grid[1][34] = new GridPoint(GridPoint.Type.PLAYER, players.get(1));
+        grid[34][34] = new GridPoint(GridPoint.Type.PLAYER, players.get(2));
+        grid[34][1] = new GridPoint(GridPoint.Type.PLAYER, players.get(3));
 
         // Go through each point and generate it's type
         for (int i = 0; i < grid.length; i++) {
@@ -103,21 +93,5 @@ public class GameBoard {
 
     public void setGrid(GridPoint[][] grid) {
         this.grid = grid;
-    }
-
-    public Player[] getPlayers() {
-        return players;
-    }
-
-    public void setPlayers(Player[] players) {
-        this.players = players;
-    }
-
-    public int getPlayerId() {
-        return playerId;
-    }
-
-    public void setPlayerId(int playerId) {
-        this.playerId = playerId;
     }
 }
