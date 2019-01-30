@@ -6,9 +6,8 @@ import bham.bioshock.common.consts.GridPoint;
 import bham.bioshock.common.models.GameBoard;
 import bham.bioshock.common.models.Player;
 
-public class GameBoardController implements Controller {
-    private Client client;
-    private Model model;
+public class GameBoardController extends Controller {
+
     private GameBoard gameBoard;
 
     public GameBoardController(Client client, Model model) {
@@ -32,7 +31,5 @@ public class GameBoardController implements Controller {
         return gameBoard.getPlayers();
     }
 
-    public void changeScreen(Client.View screen) {
-        client.changeScreen(screen);
-    }
+
 }

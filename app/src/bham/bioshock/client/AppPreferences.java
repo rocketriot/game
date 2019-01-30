@@ -8,8 +8,12 @@ public class AppPreferences {
     private static final String PREF_MUSIC_VOLUME = "volume";
     private static final String PREF_MUSIC_ENABLED = "music.enabled";
     private static final String PREF_SOUND_ENABLED = "sound.enabled";
-    private static final String PREF_SOUND_VOL = "sound";
-    private static final String PREFS_NAME = "bioshock_prefs";
+    private static final String PREF_SOUND_VOLUME = "sound";
+    private static final String PREFS_NAME = "rocket_riot";
+
+    public AppPreferences() {
+
+    }
 
     protected Preferences getPreferences() {
         return Gdx.app.getPreferences(PREFS_NAME);
@@ -20,13 +24,38 @@ public class AppPreferences {
 
 
     //getters and setter
+    public boolean getSoundEnabled() {
+        return getPreferences().getBoolean(PREF_SOUND_ENABLED, true);
+    }
+
+    public boolean getMusicEnabled() {
+        return getPreferences().getBoolean(PREF_MUSIC_ENABLED, true);
+    }
+
     public float getMusicVolume() {
         return getPreferences().getFloat(PREF_MUSIC_VOLUME);
     }
 
-    public void setMusicVolume(float volume) {
+    public float getSoundVolume() {
+        return getPreferences().getFloat(PREF_SOUND_VOLUME);
+    }
+
+
+    public void setPrefSoundEnabled(boolean enabled) {
+        getPreferences().putBoolean(PREF_SOUND_ENABLED, enabled);
+        getPreferences().flush();
+    }
+
+    public void setPrefMusicEnabled(boolean enabled) {
+        getPreferences().putBoolean(PREF_MUSIC_ENABLED, enabled);
+        getPreferences().flush();
+    }
+    public void setPrefMusicVolume(float volume) {
         getPreferences().putFloat(PREF_MUSIC_VOLUME, volume);
         getPreferences().flush();
-
+    }
+    public void setPrefSoundVolume(float volume) {
+        getPreferences().putFloat(PREF_SOUND_VOLUME, volume);
+        getPreferences().flush();
     }
 }

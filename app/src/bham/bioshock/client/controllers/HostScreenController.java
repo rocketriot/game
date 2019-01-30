@@ -4,9 +4,7 @@ import bham.bioshock.client.Client;
 import bham.bioshock.client.XMLReader;
 import bham.bioshock.common.models.Model;
 
-public class HostScreenController implements Controller {
-    private Client client;
-    private Model model;
+public class HostScreenController extends Controller {
     private XMLReader game_reader;
     private XMLReader pref_reader;
 
@@ -22,10 +20,6 @@ public class HostScreenController implements Controller {
     }
     public int getPreferredPlayers() {
         return pref_reader.getInt("players");
-    }
-    @Override
-    public void changeScreen(Client.View screen) {
-        client.changeScreen(screen);
     }
 
     public void configureGame(String host_name, int no_players) {

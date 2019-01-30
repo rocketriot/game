@@ -10,13 +10,12 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.Stack;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
 import bham.bioshock.client.controllers.HowToController;
 import org.w3c.dom.Document;
+import org.w3c.dom.Text;
 
 public class HowToScreen extends ScreenMaster {
 
@@ -30,48 +29,62 @@ public class HowToScreen extends ScreenMaster {
         batch = new SpriteBatch();
 
         readXML();
-
-        stack = new Stack();
-        textTable = drawText();
-
-
-
     }
 
     private void readXML() {
         reader = new XMLReader("app/assets/XML/game_desc.xml");
-        //reader.printNodes("game_desc");
     }
-   private Table drawText() {
-        textTable = new Table();
-        Label l1 = new Label("How to PLay", skin);
-        //this text can be read from an XML File
-        String game_desc = reader.getTag("game_desc");
-        Label l2 = new Label(game_desc, skin);
-        textTable.add(l1);
-        textTable.row();
-        textTable.add(l2);
 
-        return textTable;
-   }
 
     private void assemble() {
-        stage.clear();
-        stage.addActor(stack);
-        stack.setSize(stage.getWidth(), stage.getHeight());
-        stack.add(textTable);
+        //create container
+        Container<Table> tableContainer = new Container<>();
+        float container_width = screen_width*0.1f;
+        float container_height = screen_height*0.9f;
+        tableContainer.setSize(container_width, container_height);
+        tableContainer.setPosition((screen_width - container_width)/2.0f, (screen_height-container_height)/2.0f);
+
+        //create table
+        textTable = new Table(skin);
+        textTable.setWidth(container_width);
+
+        //contents
+        Label l1 = new Label("How to PLay", skin);
+        //game desciption text is read from the XML file
+        String game_desc = reader.getTag("game_desc");
+        Label desc = new Label(game_desc, skin);
+        desc.setWrap(true);
+        Label l2 = new Label("Controls", skin);
+        String controls = reader.getTag("game_controls");
+        Label contr = new Label(controls, skin);
+        contr.setWrap(true);
+
+        textTable.row().colspan(2);
+        textTable.add(l1);
+        textTable.row().colspan(2);
+        textTable.add(game_desc);
+        textTable.add(desc);
+        textTable.row().colspan(2);
+        textTable.add(l2);
+        textTable.add(contr);
+
+        tableContainer.setActor(textTable);
+
+        stage.addActor(tableContainer);
+
     }
 
     @Override
     public void show() {
+        super.show();
+        assemble();
         Gdx.input.setInputProcessor(stage);
 
     }
 
     @Override
     public void render(float delta) {
-        drawBackground(delta);
-        assemble();
+        super.render(delta);
     }
 
 

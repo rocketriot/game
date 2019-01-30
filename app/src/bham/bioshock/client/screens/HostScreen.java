@@ -27,28 +27,26 @@ public class HostScreen extends ScreenMaster {
         stage = new Stage(new ScreenViewport());
 
         batch = new SpriteBatch();
-        stack = new Stack();
+
+    }
+
+    @Override
+    public void show() {
+        super.show();
+        assemble();
+
+        Gdx.input.setInputProcessor(stage);
     }
 
     @Override
     public void render(float delta) {
-        drawBackground(delta);
-        assemble();
-
-        stage.act();
-        stage.draw();
-
-
+        super.render(delta);
     }
 
     private void assemble() {
         table = drawTable();
 
         stage.addActor(table);
-        //stack.setSize(stage.getWidth(), stage.getHeight());
-        //stack.add(table);
-
-        Gdx.input.setInputProcessor(stage);
     }
 
 
