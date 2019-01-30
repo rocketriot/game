@@ -26,6 +26,7 @@ public class MainMenuScreen extends ScreenMaster {
     private TextButton howto;
     private TextButton preferences;
     private TextButton exit;
+    private TextButton join;
 
 
     public MainMenuScreen(final MainMenuController controller) {
@@ -87,6 +88,7 @@ public class MainMenuScreen extends ScreenMaster {
         // skins to be styled later
 
          host = new TextButton("Host Game", skin);
+         join = new TextButton("Join Game", skin);
          howto = new TextButton("How to Play", skin);
          preferences = new TextButton("Preferences", skin);
          exit = new TextButton("Exit", skin);
@@ -94,6 +96,7 @@ public class MainMenuScreen extends ScreenMaster {
         // add the buttons to the table
         table.add(host).fillX().uniform();
         table.row();
+        table.add(join).fillX().uniform();
         table.add(howto).fillX().uniform();
         table.row();
         table.add(preferences).fillX().uniform();
@@ -128,6 +131,13 @@ public class MainMenuScreen extends ScreenMaster {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 controller.changeScreen(Client.View.PREFERENCES);
+            }
+        });
+
+        join.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                //This is where the networking stuff will go
             }
         });
 
