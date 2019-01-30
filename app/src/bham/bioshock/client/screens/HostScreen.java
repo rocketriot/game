@@ -92,9 +92,10 @@ public class HostScreen extends ScreenMaster {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 host_name = hostNameField.getText();
-                System.out.println("host name =" + host_name);
-                int players = selectPlayers.getSelectedIndex();
-                System.out.println("number of players" + players);
+                System.out.println("host name = " + host_name);
+                int players = selectPlayers.getSelectedIndex() + 1;
+                System.out.println("number of players " + players);
+                configureNewGame(host_name, players);
 
             }
         });
@@ -111,21 +112,9 @@ public class HostScreen extends ScreenMaster {
     }
 
 
-    private void configureNewGame() {
-        //get the name of the host
-        String host_name = "hoster";
-        int number_of_player = 2;
-        //ask how many players
+    private void configureNewGame(String host, int players) {
         HostScreenController contr = (HostScreenController) controller;
-        contr.configureGame(host_name, number_of_player);
+        contr.configureGame(host, players);
     }
 
-    private class HostPopup {
-     /*   private TextField text = new TextField("Enter Name", skin);
-        private InputListener host_name = text.getDefaultInputListener();
-
-        public void hostPopup() {
-            Gdx.input.getTextInput(host_name, "Enter Name", "","");
-        }*/
-    }
 }
