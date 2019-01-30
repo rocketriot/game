@@ -114,8 +114,8 @@ public class MainMenuScreen extends ScreenMaster {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 //TODO switch back to change to host screen
-                //controller.changeScreen(Client.View.HOST_SCREEN);
-                controller.changeScreen(Client.View.GAME_BOARD);
+                controller.changeScreen(Client.View.HOST_SCREEN);
+                //controller.changeScreen(Client.View.GAME_BOARD);
             }
         });
 

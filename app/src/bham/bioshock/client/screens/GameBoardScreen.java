@@ -12,13 +12,11 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Image;
 
 import bham.bioshock.client.controllers.GameBoardController;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 
 import java.util.ArrayList;
-import java.util.Random;
 
 public class GameBoardScreen extends ScreenMaster {
     private float coordRatio;
@@ -189,7 +187,6 @@ public class GameBoardScreen extends ScreenMaster {
     public void resize(int width, int height) {
         stage.getBatch().setProjectionMatrix(camera.combined);
         coordRatio = height / 36f;
-        System.out.println(height);
         resizeSprites();
         viewport.update(width, height);
     }
