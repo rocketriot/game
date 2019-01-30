@@ -1,5 +1,6 @@
 package bham.bioshock.client;
 
+import com.sun.tools.javac.util.Convert;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -46,6 +47,7 @@ public class XMLReader {
     public String getTag(String tag) {
         if(document == null) {
             System.out.println("Document is Null");
+            return null;
         }
         else {
             NodeList nList = document.getElementsByTagName(tag);
@@ -61,5 +63,24 @@ public class XMLReader {
             }
         }
         return "";
+    }
+    public int getInt(String tag) {
+        if(document == null) {
+            System.out.println("Document is Null");
+            return -1;
+        }
+        else {
+            NodeList nList = document.getElementsByTagName(tag);
+            if(nList == null) {
+                System.out.println("No such Tag");
+                return -1;
+            }
+            else {
+                Node node = nList.item(0);
+                String content = node.getTextContent().trim();
+                return Integer.parseInt(content);
+            }
+
+        }
     }
 }

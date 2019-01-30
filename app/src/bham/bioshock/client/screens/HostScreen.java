@@ -10,6 +10,8 @@ import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
 public class HostScreen extends ScreenMaster {
@@ -17,49 +19,72 @@ public class HostScreen extends ScreenMaster {
     private TextButton host_button;
     private Table table;
 
+    private String host_name;
+
     public HostScreen(HostScreenController controller) {
 
         this.controller = controller;
         stage = new Stage(new ScreenViewport());
+
         batch = new SpriteBatch();
         stack = new Stack();
-
-
     }
 
     @Override
     public void render(float delta) {
         drawBackground(delta);
         assemble();
+
+        stage.act();
+        stage.draw();
+
+
     }
 
     private void assemble() {
         table = drawTable();
 
-        stage.clear();
-        stage.addActor(stack);
-        stack.setSize(stage.getWidth(), stage.getHeight());
-        stack.add(table);
+        stage.addActor(table);
+        //stack.setSize(stage.getWidth(), stage.getHeight());
+        //stack.add(table);
+
+        Gdx.input.setInputProcessor(stage);
     }
 
 
     private Table drawTable(){
         Table table = new Table();
-        stage.addActor(table);
+        table.setFillParent(true);
 
         Label l1 = new Label("Host Name", skin);
         Label l2 = new Label("Number of PLayers", skin);
-        TextField tField1 = new TextField("", skin);
-        TextField tField2 = new TextField("", skin);
-        tField2.setTextFieldFilter(new TextField.TextFieldFilter() {
-            private char[] accepted = {'1','2','3','4'};
+        TextField hostNameField = new TextField("", skin);
+        //hostNameField.setMessageText("Enter Host Name");
+        SelectBox selectPlayers = new SelectBox(skin);
+
+        //get max players from reader
+        HostScreenController contr = (HostScreenController) controller;
+        int max_players = contr.getMaxPlayers();
+        Array<Integer> selection = new Array<>();
+        for(int i = 1; i <= max_players; i++) {
+            selection.add(i);
+        }
+        selectPlayers.setItems(selection);
+        //get Preferred number of players
+        int preferred_players = ((HostScreenController) controller).getPreferredPlayers();
+        selectPlayers.setSelected(preferred_players);
+
+        hostNameField.addListener(new ChangeListener() {
             @Override
-            public boolean acceptChar(TextField textField, char c) {
-                for (char a : accepted)
-                    if (a == c) return true;
-                return false;
+            public void changed(ChangeEvent event, Actor actor) {
+                host_name = hostNameField.getText();
             }
         });
+
+
+
+
+
 
         //button for start new game
         host_button = new TextButton("Start New Game", skin);
@@ -68,16 +93,19 @@ public class HostScreen extends ScreenMaster {
         host_button.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                //bring up a popup to ask for the names
-                HostPopup popup = new HostPopup();
-                //popup.hostPopup();
+                host_name = hostNameField.getText();
+                System.out.println("host name =" + host_name);
+                int players = selectPlayers.getSelectedIndex();
+                System.out.println("number of players" + players);
+
             }
         });
+
         table.add(l1);
-        table.add(tField1);
+        table.add(hostNameField);
         table.row();
         table.add(l2);
-        table.add(tField2);
+        table.add(selectPlayers);
         table.row();
         table.add(host_button);
 
