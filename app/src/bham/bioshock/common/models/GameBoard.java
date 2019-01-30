@@ -1,6 +1,8 @@
 package bham.bioshock.common.models;
 
 import bham.bioshock.common.consts.GridPoint;
+
+import java.util.ArrayList;
 import java.util.Random;
 
 /**
@@ -19,6 +21,10 @@ public class GameBoard {
      * The ID of the player that the client is controlling, only used client-side
      */
     private int playerId;
+
+    /** A list of all the planets on the board */
+    private ArrayList<Planet>  planets = new ArrayList<Planet>();
+
 
     public GameBoard(Player[] players) {
         this.players = players;
@@ -119,5 +125,14 @@ public class GameBoard {
 
     public void setPlayerId(int playerId) {
         this.playerId = playerId;
+    }
+
+    public void addPlanet(Planet p){ planets.add(p); }
+
+    public boolean checkIfPlanet(Coordinates coordinates){
+        for(int i=0; i< planets.size();i++)
+            if(planets.get(i).getCoordinates().getX() == coordinates.getX() && planets.get(i).getCoordinates().getY() == coordinates.getY())
+                return true;
+        return false;
     }
 }
