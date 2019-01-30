@@ -116,9 +116,7 @@ public class MainMenuScreen extends ScreenMaster {
         host.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                //TODO switch back to change to host screen
                 controller.changeScreen(Client.View.HOST_SCREEN);
-                //controller.changeScreen(Client.View.GAME_BOARD);
             }
         });
 
@@ -139,7 +137,7 @@ public class MainMenuScreen extends ScreenMaster {
         join.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                //This is where the networking stuff will go
+                controller.changeScreen(Client.View.GAME_BOARD);
             }
         });
 
