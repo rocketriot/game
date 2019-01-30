@@ -17,7 +17,7 @@ public class GameBoard {
     /** Generates a grid with randomly positioned entities */
     public GridPoint[][] generateGrid(ArrayList<Player> players) throws Exception {
         // Make sure there are 4 players
-        if (players.length != 4) {
+        if (players.size() != 4) {
             throw new Exception("NotEnoughPlayers");
         }
 
