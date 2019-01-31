@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+
+<howto>
+	<game_desc>
+		a description of how to play the game....
+	</game_desc>
+
+	<max_players>
+		4
+	</max_players>
+</howto>

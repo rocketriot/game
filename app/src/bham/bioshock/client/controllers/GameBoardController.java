@@ -10,6 +10,8 @@ import java.util.Random;
 
 import static bham.bioshock.common.consts.GridPoint.Type.*;
 
+import java.util.ArrayList;
+
 public class GameBoardController implements Controller {
     private Client client;
     private Model model;
