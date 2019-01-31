@@ -8,6 +8,7 @@ import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 
 import bham.bioshock.common.models.*;
+import bham.bioshock.communication.client.ClientService;
 import bham.bioshock.client.controllers.*;
 import bham.bioshock.client.screens.*;
 
@@ -26,10 +27,11 @@ public class Client extends Game {
 	/** Stores all data */
 	private Model model;
 
+	private ClientService server;
+
 	@Override
 	public void create() {
 		model = new Model();
-
 		loadViews();
 
 		// Set the first screen to the main menu
@@ -72,6 +74,10 @@ public class Client extends Game {
 
 	public Model getModel() {
 		return model;
+	}
+
+	public ClientService getServer() {
+		return server;
 	}
 
 	public static void main(String[] args) {

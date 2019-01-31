@@ -5,16 +5,19 @@ import bham.bioshock.common.models.Model;
 import bham.bioshock.common.consts.GridPoint;
 import bham.bioshock.common.models.GameBoard;
 import bham.bioshock.common.models.Player;
+import bham.bioshock.communication.client.ClientService;
 
 import java.util.ArrayList;
 
 public class GameBoardController implements Controller {
     private Client client;
+    private ClientService server;
     private Model model;
     private GameBoard gameBoard;
 
     public GameBoardController(Client client) {
         this.client = client;
+        this.server = client.getServer();
         this.model = client.getModel();
 
         gameBoard = model.getGameBoard();
