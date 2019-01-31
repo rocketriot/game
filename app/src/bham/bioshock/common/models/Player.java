@@ -21,14 +21,12 @@ public class Player {
     /** Specifies if the player is controlled by AI */
     public boolean isCpu = false;
 
-    public Player(Coordinates coordinates) {
+    public Player() {
         this.id = UUID.randomUUID();
-        this.coordinates = coordinates;
     }
 
-    public Player(Coordinates coordinates, boolean isCpu) {
+    public Player(boolean isCpu) {
         this.id = UUID.randomUUID();
-        this.coordinates = coordinates;
         this.isCpu = isCpu;
     }
 
