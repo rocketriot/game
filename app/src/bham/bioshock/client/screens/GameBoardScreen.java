@@ -1,13 +1,15 @@
 package bham.bioshock.client.screens;
 
-import bham.bioshock.client.Client;
 import bham.bioshock.client.controllers.GameBoardController;
+import bham.bioshock.client.scenes.Hud;
 import bham.bioshock.common.consts.GridPoint;
 import bham.bioshock.common.models.Asteroid;
 import bham.bioshock.common.models.Planet;
 import bham.bioshock.common.models.Player;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Graphics;
+import com.badlogic.gdx.Input;
+import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.GL30;
@@ -16,20 +18,16 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.HorizontalGroup;
-import com.badlogic.gdx.scenes.scene2d.ui.SelectBox;
-import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 
 import java.util.ArrayList;
 
-public class GameBoardScreen extends ScreenMaster {
-    private float coordRatio;
+public class GameBoardScreen extends ScreenMaster implements InputProcessor {
+    private float aspectRatio;
     private GameBoardController controller;
     private SpriteBatch batch;
-    private Texture background;
+    private Sprite background;
     private OrthographicCamera camera;
     private FitViewport viewport;
     private ShapeRenderer sh;
@@ -37,18 +35,29 @@ public class GameBoardScreen extends ScreenMaster {
     private ArrayList<Sprite> asteroidSprites;
     private Sprite sprite;
     private ArrayList<Sprite> playerSprites;
-    private HorizontalGroup topBar;
+    private int PPS;
+    private final int GAME_WORLD_WIDTH = 1920;
+    private final int GAME_WORLD_HEIGHT = 1080;
+    private int gridHeight, gridWidth, gridSize;
+    private Hud hud;
 
     public GameBoardScreen(final GameBoardController controller) {
         this.controller = controller;
         batch = new SpriteBatch();
+        hud = new Hud(batch, skin, GAME_WORLD_WIDTH, GAME_WORLD_HEIGHT, controller);
 
-        int screenwidth = 1920;
-        int screenheight = 1080;
-        coordRatio = screenheight / 36f;
+        gridWidth = GAME_WORLD_WIDTH - (GAME_WORLD_WIDTH % 36);
+        System.out.println(gridWidth);
+        gridHeight = gridWidth;
 
+        // Pixels Per Square (on the grid)
+        PPS = 50;
+
+        gridSize = controller.getGrid().length;
+
+        aspectRatio = (float) Gdx.graphics.getHeight() / (float) Gdx.graphics.getWidth();
         camera = new OrthographicCamera();
-        viewport = new FitViewport(screenwidth, screenheight, camera);
+        viewport = new FitViewport(GAME_WORLD_WIDTH, GAME_WORLD_HEIGHT, camera);
         viewport.apply();
 
         genAsteroidSprites();
@@ -60,43 +69,8 @@ public class GameBoardScreen extends ScreenMaster {
     }
 
     private void setupUI() {
-        background = new Texture(Gdx.files.internal("app/assets/backgrounds/game.png"));
         stage = new Stage(viewport, batch);
-
-        topBar = new HorizontalGroup();
-        topBar.setFillParent(true);
-        stage.addActor(topBar);
-        topBar.setDebug(true);
-
-        // Adds widgets to the topBar
-        SelectBox optionsMenu = new SelectBox(skin);
-        String[] menuOptions = {"Options Menu", "Settings", "Quit to main menu", "Quit to Desktop"};
-        optionsMenu.setItems(menuOptions);
-        optionsMenu.setSelected(menuOptions[0]);
-        topBar.addActor(optionsMenu);
-        topBar.setPosition(0, Gdx.graphics.getHeight());
-
-        optionsMenu.addListener(new ChangeListener() {
-            @Override
-            public void changed(ChangeEvent event, Actor actor) {
-                int selected = optionsMenu.getSelectedIndex();
-                switch (selected) {
-                    case 1:
-                        controller.changeScreen(Client.View.PREFERENCES);
-                        optionsMenu.setSelected(menuOptions[0]);
-                        break;
-                    case 2:
-                        controller.changeScreen(Client.View.MAIN_MENU);
-                        optionsMenu.setSelected(menuOptions[0]);
-                        break;
-                    case 3:
-                        Gdx.app.exit();
-                        optionsMenu.setSelected(menuOptions[0]);
-                        break;
-                }
-
-            }
-        });
+        background = new Sprite(new Texture(Gdx.files.internal("app/assets/backgrounds/game.png")));
     }
 
 
@@ -110,8 +84,8 @@ public class GameBoardScreen extends ScreenMaster {
                     sprite = playerSprites.get(p.getTextureID());
                     float xCoord = p.getCoordinates().getX();
                     float yCoord = p.getCoordinates().getY();
-                    sprite.setX(xCoord * coordRatio);
-                    sprite.setY(yCoord * coordRatio);
+                    sprite.setX(xCoord * PPS);
+                    sprite.setY(yCoord * PPS);
                     sprite.draw(stage.getBatch());
                 } else if (pType == GridPoint.Type.PLANET) {
                     Planet p = (Planet) grid[x][y].getValue();
@@ -120,8 +94,8 @@ public class GameBoardScreen extends ScreenMaster {
                         sprite = planetSprites.get(p.getTextureID());
                         float xCoord = p.getCoordinates().getX();
                         float yCoord = p.getCoordinates().getY();
-                        sprite.setX(xCoord * coordRatio);
-                        sprite.setY(yCoord * coordRatio);
+                        sprite.setX(xCoord * PPS);
+                        sprite.setY(yCoord * PPS);
                         sprite.draw(stage.getBatch());
                     }
                 } else if (pType == GridPoint.Type.ASTEROID) {
@@ -131,8 +105,8 @@ public class GameBoardScreen extends ScreenMaster {
                         sprite = asteroidSprites.get(a.getTextureID());
                         float xCoord = a.getCoordinates().getX();
                         float yCoord = a.getCoordinates().getY();
-                        sprite.setX(xCoord * coordRatio);
-                        sprite.setY(yCoord * coordRatio);
+                        sprite.setX(xCoord * PPS);
+                        sprite.setY(yCoord * PPS);
                         sprite.draw(stage.getBatch());
                     }
                 }
@@ -189,17 +163,17 @@ public class GameBoardScreen extends ScreenMaster {
         Gdx.gl.glEnable(GL30.GL_BLEND);
         Gdx.gl.glBlendFunc(GL30.GL_SRC_ALPHA, GL30.GL_ONE_MINUS_SRC_ALPHA);
         sh.setColor(211, 211, 211, 0.4f);
-        for (int i = 0; i < 37; i++) {
+        for (int i = 0; i < gridSize + 1; i++) {
             if (i == 0) {
-                sh.line(1, 0, 1, Gdx.graphics.getHeight());
+                sh.line(0, 0, 0, (gridSize) * PPS);
             }
-            sh.line(i * coordRatio, 0, i * coordRatio, Gdx.graphics.getHeight());
+            sh.line(i * PPS, 0, i * PPS, (gridSize) * PPS);
         }
-        for (int i = 0; i < 37; i++) {
+        for (int i = 0; i < gridSize + 1; i++) {
             if (i == 0) {
-                sh.line(0, 1, Gdx.graphics.getHeight(), 1);
+                sh.line(0, 0, (gridSize) * PPS, 0);
             }
-            sh.line(0, i * coordRatio, Gdx.graphics.getHeight(), i * coordRatio);
+            sh.line(0, i * PPS, (gridSize) * PPS, i * PPS);
         }
         sh.end();
         Gdx.gl.glDisable(GL30.GL_BLEND);
@@ -209,7 +183,7 @@ public class GameBoardScreen extends ScreenMaster {
     public void show() {
         //Graphics.DisplayMode display = Gdx.graphics.getDisplayMode();
         //Gdx.graphics.setFullscreenMode(display);
-        Gdx.input.setInputProcessor(stage);
+        Gdx.input.setInputProcessor(this);
     }
 
 
@@ -231,42 +205,57 @@ public class GameBoardScreen extends ScreenMaster {
 
     @Override
     public void resize(int width, int height) {
-        stage.getBatch().setProjectionMatrix(camera.combined);
-        stage.getViewport().update(width, height, true);
-        coordRatio = height / 36f;
+        viewport.update(width, height, true);
         resizeSprites();
     }
 
     private void resizeSprites() {
         for (Sprite s : planetSprites) {
-            s.setSize(coordRatio * 3, coordRatio * 3);
+            s.setSize(PPS * 3, PPS * 3);
         }
         for (Sprite s : asteroidSprites) {
-            s.setSize(coordRatio * 4, coordRatio * 3);
+            s.setSize(PPS * 4, PPS * 3);
         }
         for (Sprite s : playerSprites) {
-            s.setSize(coordRatio * 1, coordRatio * 1);
+            s.setSize(PPS * 1, PPS * 1);
         }
     }
 
     @Override
     public void render(float delta) {
+        batch.setProjectionMatrix(camera.combined);
+
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        handleInput();
+        camera.update();
+
         stage.getBatch().begin();
-        stage.getBatch().draw(background, 0, 0);
+        drawBackground();
         drawBoardObjects();
         stage.getBatch().end();
         drawGridLines();
         stage.act(Gdx.graphics.getDeltaTime());
+
         // Draw the ui
-        stage.draw();
+        this.batch.setProjectionMatrix(hud.stage.getCamera().combined);
+        hud.stage.draw();
+    }
+
+    private void drawBackground() {
+        for(int i = -1; i <= 1; i++) {
+            for(int j = -1; j <= 1; j++) {
+                background.setPosition(i * GAME_WORLD_WIDTH, j* GAME_WORLD_HEIGHT);
+                background.draw(batch);
+            }
+        }
     }
 
     @Override
     public void dispose() {
         stage.dispose();
         batch.dispose();
-        background.dispose();
+        hud.dispose();
+        background.getTexture().dispose();
         sh.dispose();
         for (Sprite s : planetSprites) {
             s.getTexture().dispose();
@@ -281,4 +270,74 @@ public class GameBoardScreen extends ScreenMaster {
         }
     }
 
+    public void handleInput() {
+        if (Gdx.input.isKeyPressed(Input.Keys.A)) {
+            camera.translate(-5f, 0f);
+        }
+        if (Gdx.input.isKeyPressed(Input.Keys.D)) {
+            camera.translate(5f, 0f);
+        }
+        if (Gdx.input.isKeyPressed(Input.Keys.W)) {
+            camera.translate(0f, 5f);
+        }
+        if (Gdx.input.isKeyPressed(Input.Keys.S)) {
+            camera.translate(0f, -5f);
+        }
+    }
+
+    @Override
+    public boolean keyDown(int keycode) {
+        return false;
+    }
+
+    @Override
+    public boolean keyUp(int keycode) {
+        return false;
+    }
+
+    @Override
+    public boolean keyTyped(char character) {
+        return false;
+    }
+
+    @Override
+    public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+        return false;
+    }
+
+    @Override
+    public boolean touchUp(int screenX, int screenY, int pointer, int button) {
+        return false;
+    }
+
+    @Override
+    public boolean touchDragged(int screenX, int screenY, int pointer) {
+        return false;
+    }
+
+    @Override
+    public boolean mouseMoved(int screenX, int screenY) {
+        return false;
+    }
+
+    @Override
+    public boolean scrolled(int amount) {
+        if ((PPS -= amount * 1) <= ((GAME_WORLD_HEIGHT / gridSize) - 4)) {
+            PPS = (GAME_WORLD_HEIGHT / gridSize) - 3;
+        } else if (PPS < 30) {
+            PPS -= amount * 1;
+        } else if (PPS < 50) {
+            PPS -= amount * 2;
+        } else if (PPS < 70) {
+            PPS -= amount * 3;
+        }  else if (PPS >= 70) {
+            if ((PPS -= amount * 4) >= 150) {
+                PPS = 149;
+            } else {
+                PPS -= amount * 3;
+            }
+        }
+        resizeSprites();
+        return false;
+    }
 }

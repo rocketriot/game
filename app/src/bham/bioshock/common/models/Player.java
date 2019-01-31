@@ -37,6 +37,12 @@ public class Player {
         this.textureID = 0;
     }
 
+    public Player(Coordinates coordinates, int textureID) {
+        this.id = UUID.randomUUID();
+        this.coordinates = coordinates;
+        this.textureID = textureID;
+    }
+
     public UUID getId() {
         return id;
     }
