@@ -21,14 +21,15 @@ public class Player {
     /** Specifies if the player is controlled by AI */
     public boolean isCpu = false;
 
-    public Player(Coordinates coordinates) {
+    /** THe numbwer of points the player has */
+    private int points =0;
+
+    public Player() {
         this.id = UUID.randomUUID();
-        this.coordinates = coordinates;
     }
 
-    public Player(Coordinates coordinates, boolean isCpu) {
+    public Player(boolean isCpu) {
         this.id = UUID.randomUUID();
-        this.coordinates = coordinates;
         this.isCpu = isCpu;
     }
 
@@ -66,5 +67,13 @@ public class Player {
 
     public void setCpu(boolean cpu) {
         isCpu = cpu;
+    }
+
+    public int getPoints(){
+        return points;
+    }
+
+    public void setPoints(int points){
+        this.points = points;
     }
 }
