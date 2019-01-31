@@ -70,6 +70,10 @@ public class Client extends Game {
 		this.setScreen(screen);
 	}
 
+	public Model getModel() {
+		return model;
+	}
+
 	public static void main(String[] args) {
 		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
 		config.foregroundFPS = 60;
