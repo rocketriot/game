@@ -7,22 +7,26 @@ import java.util.UUID;
  */
 public class Player {
     /** ID of the player */
-    public UUID id;
+    private UUID id;
+
+    /** Username of the player */
+    private String username;
 
     /** Location of the player */
-    public Coordinates coordinates;
+    private Coordinates coordinates;
 
     /** The amount of fuel the player has left */
-    public float fuel = 100.0f;
+    private float fuel = 100.0f;
 
     /** The number of planets the player has captured */
-    public int planetsCaptured = 0;
+    private int planetsCaptured = 0;
 
     /** Specifies if the player is controlled by AI */
-    public boolean isCpu = false;
+    private boolean isCpu = false;
 
-    public Player() {
+    public Player(String username) {
         this.id = UUID.randomUUID();
+        this.username = username;
     }
 
     public Player(boolean isCpu) {
@@ -32,6 +36,10 @@ public class Player {
 
     public UUID getId() {
         return id;
+    }
+
+    public String getUsername() {
+        return username;
     }
 
     public Coordinates getCoordinates() {
