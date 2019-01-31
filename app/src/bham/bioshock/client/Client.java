@@ -39,27 +39,27 @@ public class Client extends Game {
 	/** Loads up the views */
 	private void loadViews() {
 		// Main Menu
-		MainMenuController mainMenuController = new MainMenuController(this, model);
+		MainMenuController mainMenuController = new MainMenuController(this);
 		controllers.put(View.MAIN_MENU, mainMenuController);
 		screens.put(View.MAIN_MENU, new MainMenuScreen(mainMenuController));
 
 		// How To
-		HowToController howToController = new HowToController(this, model);
+		HowToController howToController = new HowToController(this);
 		controllers.put(View.HOW_TO, howToController);
 		screens.put(View.HOW_TO, new HowToScreen(howToController));
 
 		// Preferences
-		PreferencesController preferencesController = new PreferencesController(this, model);
+		PreferencesController preferencesController = new PreferencesController(this);
 		controllers.put(View.PREFERENCES, preferencesController);
 		screens.put(View.PREFERENCES, new PreferencesScreen(preferencesController));
 
 		// Host Screen
-		HostScreenController hostscreenController = new HostScreenController(this, model);
+		HostScreenController hostscreenController = new HostScreenController(this);
 		controllers.put(View.HOST_SCREEN, hostscreenController);
 		screens.put(View.HOST_SCREEN, new HostScreen(hostscreenController));
 
 		// Game Board
-		GameBoardController gameBoardController = new GameBoardController(this, model);
+		GameBoardController gameBoardController = new GameBoardController(this);
 		controllers.put(View.GAME_BOARD, gameBoardController);
 		screens.put(View.GAME_BOARD, new GameBoardScreen(gameBoardController));
 	}
