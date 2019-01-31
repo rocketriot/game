@@ -16,9 +16,9 @@ public class PreferencesController implements Controller {
     private String name;
     private int difficulty;
 
-    public PreferencesController(Client client, Model model) {
+    public PreferencesController(Client client) {
         this.client = client;
-        this.model = model;
+        this.model = client.getModel();
 
         reader = new XMLReader("app/assets/Preferences/Preferences.XML");
     }
@@ -26,6 +26,7 @@ public class PreferencesController implements Controller {
     private void readPreferences() {
 
     }
+
     public void changeScreen(Client.View screen) {
         client.changeScreen(screen);
     }

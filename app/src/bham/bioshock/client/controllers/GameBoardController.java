@@ -13,9 +13,9 @@ public class GameBoardController implements Controller {
     private Model model;
     private GameBoard gameBoard;
 
-    public GameBoardController(Client client, Model model) {
+    public GameBoardController(Client client) {
         this.client = client;
-        this.model = model;
+        this.model = client.getModel();
 
         gameBoard = model.getGameBoard();
 

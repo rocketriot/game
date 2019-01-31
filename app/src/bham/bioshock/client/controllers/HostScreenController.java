@@ -10,9 +10,9 @@ public class HostScreenController implements Controller {
     private XMLReader game_reader;
     private XMLReader pref_reader;
 
-    public HostScreenController(Client client, Model model) {
+    public HostScreenController(Client client) {
         this.client = client;
-        this.model = model;
+        this.model = client.getModel();
         game_reader = new XMLReader("app/assets/XML/game_desc.xml");
         pref_reader = new XMLReader("app/assets/Preferences/Preferences.XML");
     }
@@ -20,6 +20,7 @@ public class HostScreenController implements Controller {
     public int getMaxPlayers() {
         return game_reader.getInt("max_players");
     }
+
     public int getPreferredPlayers() {
         return pref_reader.getInt("players");
     }
