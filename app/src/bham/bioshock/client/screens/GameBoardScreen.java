@@ -1,5 +1,7 @@
 package bham.bioshock.client.screens;
 
+import bham.bioshock.client.Client;
+import bham.bioshock.client.controllers.GameBoardController;
 import bham.bioshock.common.consts.GridPoint;
 import bham.bioshock.common.models.Asteroid;
 import bham.bioshock.common.models.Planet;
@@ -7,13 +9,18 @@ import bham.bioshock.common.models.Player;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Graphics;
 import com.badlogic.gdx.files.FileHandle;
-import com.badlogic.gdx.graphics.*;
+import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.GL30;
+import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-
-import bham.bioshock.client.controllers.GameBoardController;
+import com.badlogic.gdx.scenes.scene2d.ui.HorizontalGroup;
+import com.badlogic.gdx.scenes.scene2d.ui.SelectBox;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 
 import java.util.ArrayList;
@@ -30,11 +37,11 @@ public class GameBoardScreen extends ScreenMaster {
     private ArrayList<Sprite> asteroidSprites;
     private Sprite sprite;
     private ArrayList<Sprite> playerSprites;
+    private HorizontalGroup topBar;
 
     public GameBoardScreen(final GameBoardController controller) {
         this.controller = controller;
         batch = new SpriteBatch();
-
 
         int screenwidth = 1920;
         int screenheight = 1080;
@@ -44,18 +51,54 @@ public class GameBoardScreen extends ScreenMaster {
         viewport = new FitViewport(screenwidth, screenheight, camera);
         viewport.apply();
 
-        Graphics.DisplayMode display = Gdx.graphics.getDisplayMode();
-        Gdx.graphics.setFullscreenMode(display);
-
-        background = new Texture(Gdx.files.internal("app/assets/backgrounds/game.png"));
-
         genAsteroidSprites();
         genPlanetSprites();
         genPlayerSprites();
 
-        stage = new Stage(viewport, batch);
+        setupUI();
 
     }
+
+    private void setupUI() {
+        background = new Texture(Gdx.files.internal("app/assets/backgrounds/game.png"));
+        stage = new Stage(viewport, batch);
+
+        topBar = new HorizontalGroup();
+        topBar.setFillParent(true);
+        stage.addActor(topBar);
+        topBar.setDebug(true);
+
+        // Adds widgets to the topBar
+        SelectBox optionsMenu = new SelectBox(skin);
+        String[] menuOptions = {"Options Menu", "Settings", "Quit to main menu", "Quit to Desktop"};
+        optionsMenu.setItems(menuOptions);
+        optionsMenu.setSelected(menuOptions[0]);
+        topBar.addActor(optionsMenu);
+        topBar.setPosition(0, Gdx.graphics.getHeight());
+
+        optionsMenu.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                int selected = optionsMenu.getSelectedIndex();
+                switch (selected) {
+                    case 1:
+                        controller.changeScreen(Client.View.PREFERENCES);
+                        optionsMenu.setSelected(menuOptions[0]);
+                        break;
+                    case 2:
+                        controller.changeScreen(Client.View.MAIN_MENU);
+                        optionsMenu.setSelected(menuOptions[0]);
+                        break;
+                    case 3:
+                        Gdx.app.exit();
+                        optionsMenu.setSelected(menuOptions[0]);
+                        break;
+                }
+
+            }
+        });
+    }
+
 
     public void drawBoardObjects() {
         GridPoint[][] grid = controller.getGrid();
@@ -164,7 +207,9 @@ public class GameBoardScreen extends ScreenMaster {
 
     @Override
     public void show() {
-
+        //Graphics.DisplayMode display = Gdx.graphics.getDisplayMode();
+        //Gdx.graphics.setFullscreenMode(display);
+        Gdx.input.setInputProcessor(stage);
     }
 
 
@@ -180,15 +225,16 @@ public class GameBoardScreen extends ScreenMaster {
 
     @Override
     public void hide() {
-
+        Graphics.DisplayMode display = Gdx.graphics.getDisplayMode();
+        Gdx.graphics.setWindowedMode(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
     }
 
     @Override
     public void resize(int width, int height) {
         stage.getBatch().setProjectionMatrix(camera.combined);
+        stage.getViewport().update(width, height, true);
         coordRatio = height / 36f;
         resizeSprites();
-        viewport.update(width, height);
     }
 
     private void resizeSprites() {
@@ -210,8 +256,10 @@ public class GameBoardScreen extends ScreenMaster {
         stage.getBatch().draw(background, 0, 0);
         drawBoardObjects();
         stage.getBatch().end();
-        stage.draw();
         drawGridLines();
+        stage.act(Gdx.graphics.getDeltaTime());
+        // Draw the ui
+        stage.draw();
     }
 
     @Override
