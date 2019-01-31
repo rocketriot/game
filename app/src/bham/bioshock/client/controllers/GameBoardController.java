@@ -7,6 +7,8 @@ import bham.bioshock.common.models.GameBoard;
 import bham.bioshock.common.models.Model;
 import bham.bioshock.common.models.Player;
 
+import java.util.ArrayList;
+
 public class GameBoardController implements Controller {
     private Client client;
     private Model model;
@@ -27,7 +29,8 @@ public class GameBoardController implements Controller {
         gameBoard = model.getGameBoard();
 
         try {
-            gameBoard.generateGrid();
+            ArrayList<Player> players = model.getPlayers();
+            gameBoard.generateGrid(players);
         } catch (Exception e) {
             // Handle no players error
             System.err.println("No Players: ");
@@ -39,8 +42,8 @@ public class GameBoardController implements Controller {
         return gameBoard.getGrid();
     }
 
-    public Player[] getPlayers() {
-        return gameBoard.getPlayers();
+    public ArrayList<Player> getPlayers() {
+        return model.getPlayers();
     }
 
     public void changeScreen(Client.View screen) {

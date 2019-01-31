@@ -29,10 +29,13 @@ public class Player {
         this.coordinates = coordinates;
         this.textureID = 0;
     }
-
-    public Player(Coordinates coordinates, boolean isCpu) {
+        
+    public Player() {
         this.id = UUID.randomUUID();
-        this.coordinates = coordinates;
+    }
+
+    public Player(boolean isCpu) {
+        this.id = UUID.randomUUID();
         this.isCpu = isCpu;
         this.textureID = 0;
     }
