@@ -40,6 +40,7 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
     private final int GAME_WORLD_HEIGHT = 1080;
     private int gridHeight, gridWidth, gridSize;
     private Hud hud;
+    private int mouseDownX, mouseDownY;
 
     public GameBoardScreen(final GameBoardController controller) {
         this.controller = controller;
@@ -302,6 +303,8 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
 
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+        mouseDownX = screenX;
+        mouseDownY = screenY;
         return false;
     }
 
@@ -312,6 +315,9 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
 
     @Override
     public boolean touchDragged(int screenX, int screenY, int pointer) {
+        camera.translate(-(screenX - mouseDownX), screenY - mouseDownY);
+        mouseDownX = screenX;
+        mouseDownY = screenY;
         return false;
     }
 
