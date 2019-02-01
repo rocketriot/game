@@ -18,6 +18,10 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Interpolation;
+import com.badlogic.gdx.math.Vector;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 
@@ -305,6 +309,16 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
         mouseDownX = screenX;
         mouseDownY = screenY;
+        ArrayList<Player> players = controller.getPlayers();
+        Player player = players.get(0);
+        Vector3 coords = new Vector3(screenX, screenY, 0);
+        System.out.println(camera.unproject(coords));
+        System.out.println(camera.position);
+        if (screenX >= player.getCoordinates().getX() * (PPS - 1) && screenX <= player.getCoordinates().getX() * PPS) {
+            if (screenY >= player.getCoordinates().getY() * (PPS - 1) && screenY <= player.getCoordinates().getY() * PPS) {
+                System.out.println("blarg");
+            }
+        }
         return false;
     }
 
