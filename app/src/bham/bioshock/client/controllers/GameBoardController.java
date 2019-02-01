@@ -23,8 +23,12 @@ public class GameBoardController implements Controller {
         Player p2 = new Player(new Coordinates(0, 35), 1);
         Player p3 = new Player(new Coordinates(35, 35), 2);
         Player p4 = new Player(new Coordinates(35, 0), 3);
-        Player[] players = {p1, p2, p3, p4};
-        model.createGameBoard(players);
+
+        model.createGameBoard();
+        model.addPlayer(p1);
+        model.addPlayer(p2);
+        model.addPlayer(p3);
+        model.addPlayer(p4);
 
         gameBoard = model.getGameBoard();
 

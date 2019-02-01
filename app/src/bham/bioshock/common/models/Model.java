@@ -10,7 +10,7 @@ public class Model {
     private GameBoard gameBoard;
 
     /** A list of players */
-    private ArrayList<Player> players;
+    private ArrayList<Player> players = new ArrayList<>();
 
     /**
      * The ID of the player that the client is controlling, only used client-side
