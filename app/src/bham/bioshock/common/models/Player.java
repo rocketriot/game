@@ -21,6 +21,15 @@ public class Player {
     /** Specifies if the player is controlled by AI */
     public boolean isCpu = false;
 
+    /** Player's textureID */
+    private int textureID;
+
+    public Player(Coordinates coordinates) {
+        this.id = UUID.randomUUID();
+        this.coordinates = coordinates;
+        this.textureID = 0;
+    }
+        
     public Player() {
         this.id = UUID.randomUUID();
     }
@@ -28,6 +37,13 @@ public class Player {
     public Player(boolean isCpu) {
         this.id = UUID.randomUUID();
         this.isCpu = isCpu;
+        this.textureID = 0;
+    }
+
+    public Player(Coordinates coordinates, int textureID) {
+        this.id = UUID.randomUUID();
+        this.coordinates = coordinates;
+        this.textureID = textureID;
     }
 
     public UUID getId() {
@@ -64,5 +80,13 @@ public class Player {
 
     public void setCpu(boolean cpu) {
         isCpu = cpu;
+    }
+
+    public int getTextureID() {
+        return textureID;
+    }
+
+    public void setTextureID(int textureID) {
+        this.textureID = textureID;
     }
 }

@@ -1,15 +1,14 @@
 package bham.bioshock.client;
 
-import java.util.HashMap;
-
+import bham.bioshock.client.controllers.*;
+import bham.bioshock.client.screens.*;
+import bham.bioshock.common.models.Model;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 
-import bham.bioshock.common.models.*;
-import bham.bioshock.client.controllers.*;
-import bham.bioshock.client.screens.*;
+import java.util.HashMap;
 
 public class Client extends Game {
 	/** An enum to represent all the views */
