@@ -1,17 +1,11 @@
 package bham.bioshock.client.screens;
 
-import bham.bioshock.*;
 import bham.bioshock.client.Client;
 import bham.bioshock.client.controllers.MainMenuController;
-
-import com.badlogic.gdx.*;
-import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.graphics.*;
-import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
@@ -137,7 +131,7 @@ public class MainMenuScreen extends ScreenMaster {
         join.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                //This is where the networking stuff will go
+                controller.changeScreen(Client.View.GAME_BOARD);
             }
         });
 
