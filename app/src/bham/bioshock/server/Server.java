@@ -1,6 +1,7 @@
 package bham.bioshock.server;
 
 import java.util.ArrayList;
+import java.util.UUID;
 
 import bham.bioshock.common.models.Model;
 import bham.bioshock.common.models.Player;
@@ -23,6 +24,13 @@ public class Server {
         ArrayList<String> arguments = action.getArguments();
 
         switch (action.getCommand()) {
+        case ADD_PLAYER:
+            UUID id = UUID.fromString(arguments.get(0));
+            String username = arguments.get(1);
+
+            model.addPlayer(new Player(id, username));
+
+            service.sendToAll(action);
         default:
             break;
         }

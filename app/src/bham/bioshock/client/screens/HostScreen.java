@@ -15,6 +15,7 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
 public class HostScreen extends ScreenMaster {
+    HostScreenController controller;
 
     private TextButton host_button;
     private Table table;

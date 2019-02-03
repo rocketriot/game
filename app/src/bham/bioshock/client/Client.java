@@ -8,6 +8,7 @@ import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 
 import bham.bioshock.common.models.*;
+import bham.bioshock.communication.Action;
 import bham.bioshock.communication.client.ClientService;
 import bham.bioshock.client.controllers.*;
 import bham.bioshock.client.screens.*;
@@ -64,6 +65,18 @@ public class Client extends Game {
 		GameBoardController gameBoardController = new GameBoardController(this);
 		controllers.put(View.GAME_BOARD, gameBoardController);
 		screens.put(View.GAME_BOARD, new GameBoardScreen(gameBoardController));
+	}
+
+	public void handleServerMessages(Action action) {
+		switch (action.getCommand()) {
+		case ADD_PLAYER:
+			HostScreenController controller = (HostScreenController) controllers.get(View.HOST_SCREEN);
+			controller.onPlayerJoined(action);
+			break;
+
+		default:
+			break;
+		}
 	}
 
 	/** Change the client's screen */
