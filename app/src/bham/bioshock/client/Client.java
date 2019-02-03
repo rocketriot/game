@@ -69,13 +69,19 @@ public class Client extends Game {
 
 	public void handleServerMessages(Action action) {
 		switch (action.getCommand()) {
-		case ADD_PLAYER:
+		case ADD_PLAYER: {
 			HostScreenController controller = (HostScreenController) controllers.get(View.HOST_SCREEN);
 			controller.onPlayerJoined(action);
 			break;
-
-		default:
+		}
+		case START_GAME: {
+			HostScreenController controller = (HostScreenController) controllers.get(View.HOST_SCREEN);
+			controller.onStartGame(action);
 			break;
+		}
+		default: {
+			System.out.println("Received unhandled command: " + action.getCommand().toString());
+		}
 		}
 	}
 

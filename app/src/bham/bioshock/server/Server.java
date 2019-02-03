@@ -1,15 +1,11 @@
 package bham.bioshock.server;
 
-import java.util.ArrayList;
-import java.util.UUID;
-
 import bham.bioshock.common.models.Model;
-import bham.bioshock.common.models.Player;
 import bham.bioshock.communication.Action;
-import bham.bioshock.communication.Command;
 import bham.bioshock.communication.server.CommunicationServer;
 import bham.bioshock.communication.server.ServerHandler;
 import bham.bioshock.communication.server.ServerService;
+import bham.bioshock.server.handlers.HostScreenHandler;
 
 public class Server {
     private Model model;
@@ -20,25 +16,21 @@ public class Server {
         CommunicationServer.start(new ServerHandler(), this);
     }
 
-    public Action handleRequest(Action action, ServerService service) {
-        ArrayList<String> arguments = action.getArguments();
-
+    public void handleRequest(Action action, ServerService service) {
         switch (action.getCommand()) {
         case ADD_PLAYER:
-            UUID id = UUID.fromString(arguments.get(0));
-            String username = arguments.get(1);
-
-            model.addPlayer(new Player(id, username));
-
-            service.sendToAll(action);
+            HostScreenHandler.addPlayer(model, action, service);
+            break;
+        case START_GAME:
+            HostScreenHandler.startGame(model, action, service);
+            break;
         default:
+            System.out.println("Received unhandled command: " + action.getCommand().toString());
             break;
         }
-
-        return null;
     }
 
-    public static void main(String args[]) {
+    public static void main(String[] args) {
         new Server();
     }
 }

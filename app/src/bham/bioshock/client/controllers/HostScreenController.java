@@ -64,11 +64,24 @@ public class HostScreenController implements Controller {
         ArrayList<String> arguments = action.getArguments();
         UUID id = UUID.fromString(arguments.get(0));
         String username = arguments.get(1);
+        boolean isCpu = Boolean.getBoolean(arguments.get(2));
 
-        model.addPlayer(new Player(id, username));
+        model.addPlayer(new Player(id, username, isCpu));
+
     }
 
+    /**
+     * Tells the server to start the game
+     */
     public void startGame() {
+        server.send(new Action(Command.START_GAME));
+    }
+
+    /**
+     * Handle when the server tells the client to start the game
+     */
+    public void onStartGame(Action action) {
+        System.out.println("Ready to start!");
         client.changeScreen(Client.View.GAME_BOARD);
     }
 

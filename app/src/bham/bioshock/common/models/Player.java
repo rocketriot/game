@@ -24,6 +24,12 @@ public class Player {
     /** Specifies if the player is controlled by AI */
     private boolean isCpu = false;
 
+    public Player(UUID id, String username, boolean isCpu) {
+        this.id = id;
+        this.username = username;
+        this.isCpu = isCpu;
+    }
+
     public Player(UUID id, String username) {
         this.id = id;
         this.username = username;
