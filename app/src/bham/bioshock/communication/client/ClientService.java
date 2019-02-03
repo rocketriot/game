@@ -6,6 +6,7 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.concurrent.PriorityBlockingQueue;
 
+import bham.bioshock.client.Client;
 import bham.bioshock.communication.Action;
 
 /**
@@ -18,24 +19,26 @@ public class ClientService extends Thread {
 	private Socket server;
 	private ObjectInputStream fromServer;
 	private ObjectOutputStream toServer;
+	private Client client;
 	private PriorityBlockingQueue<Action> queue = new PriorityBlockingQueue<>();
 
 	/**
 	 * Creates the service and helper objects to send and receive messages
 	 * 
-	 * @param _server
-	 *            socket
-	 * @param fromServer
-	 *            stream from server
-	 * @param toServer
-	 *            stream to server
+	 * @param _server    socket
+	 * @param fromServer stream from server
+	 * @param toServer   stream to server
+	 * @param client     main client
 	 */
-	public ClientService(Socket _server, ObjectInputStream _fromServer, ObjectOutputStream _toServer) {
+	public ClientService(Socket _server, ObjectInputStream _fromServer, ObjectOutputStream _toServer, Client _client) {
 
 		// save socket and streams for communication
 		server = _server;
 		fromServer = _fromServer;
 		toServer = _toServer;
+
+		// Save client to handle actions sent from the server
+		client = _client;
 
 		// Create two client object to send and receive messages
 		receiver = new ClientReceiver(this, fromServer);
@@ -51,14 +54,14 @@ public class ClientService extends Thread {
 		receiver.start();
 
 		try {
-			while(true) {
+			while (true) {
 				// Execute action from a blocking queue
 				execute(queue.take());
 			}
-		} catch(InterruptedException e) {
+		} catch (InterruptedException e) {
 			System.err.println("Client service was interrupted");
 		}
-		
+
 		// wait for the threads to terminate and close the streams
 		close();
 	}
@@ -66,21 +69,27 @@ public class ClientService extends Thread {
 	public void store(Action action) {
 		queue.add(action);
 	}
-	
+
 	/**
-	 * Execute the action and change state if necessary
+	 * Send the action to the server
 	 * 
-	 * @param action
-	 *            to be executed
+	 * @param action to be sent
 	 */
 	public void send(Action action) {
 		sender.send(action);
 	}
 
+	/**
+	 * Execute the action and change state if necessary
+	 * 
+	 * @param action to be executed
+	 */
 	private void execute(Action action) {
-		System.out.println(action.getCommand().toString());
+		if (client != null) {
+			client.handleServerMessages(action);
+		}
 	}
-	
+
 	/**
 	 * Wait for the threads to terminate and than close the sockets and streams
 	 */
@@ -89,7 +98,7 @@ public class ClientService extends Thread {
 			sender.join();
 			System.out.println("Client sender ended");
 			toServer.close();
-			fromServer.close(); 
+			fromServer.close();
 			server.close();
 			receiver.join();
 			System.out.println("Client receiver ended");
