@@ -2,16 +2,16 @@ package bham.bioshock.client;
 
 import java.util.HashMap;
 
+import bham.bioshock.client.controllers.*;
+import bham.bioshock.client.screens.*;
+import bham.bioshock.common.models.Model;
+import bham.bioshock.communication.Action;
+import bham.bioshock.communication.client.ClientService;
+
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
-
-import bham.bioshock.common.models.*;
-import bham.bioshock.communication.Action;
-import bham.bioshock.communication.client.ClientService;
-import bham.bioshock.client.controllers.*;
-import bham.bioshock.client.screens.*;
 
 public class Client extends Game {
 	/** An enum to represent all the views */
