@@ -6,17 +6,20 @@ import bham.bioshock.common.models.Coordinates;
 import bham.bioshock.common.models.GameBoard;
 import bham.bioshock.common.models.Model;
 import bham.bioshock.common.models.Player;
+import bham.bioshock.communication.client.ClientService;
 
 import java.util.ArrayList;
 
 public class GameBoardController implements Controller {
     private Client client;
+    private ClientService server;
     private Model model;
     private GameBoard gameBoard;
 
-    public GameBoardController(Client client, Model model) {
+    public GameBoardController(Client client) {
         this.client = client;
-        this.model = model;
+        this.server = client.getServer();
+        this.model = client.getModel();
 
         //TODO TEMP CODE REMOVE
         Player p1 = new Player(new Coordinates(0, 0), 0);
