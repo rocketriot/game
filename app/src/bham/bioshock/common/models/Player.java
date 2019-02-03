@@ -24,6 +24,9 @@ public class Player {
     /** Player's textureID */
     private int textureID;
 
+    /** Specifies if the player should be highlighted */
+    private boolean isSelected = false;
+
     public Player(Coordinates coordinates) {
         this.id = UUID.randomUUID();
         this.coordinates = coordinates;
@@ -88,5 +91,13 @@ public class Player {
 
     public void setTextureID(int textureID) {
         this.textureID = textureID;
+    }
+
+    public boolean isSelected() {
+        return isSelected;
+    }
+
+    public void setSelected(boolean selected) {
+        isSelected = selected;
     }
 }
