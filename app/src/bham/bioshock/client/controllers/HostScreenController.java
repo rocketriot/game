@@ -16,10 +16,9 @@ import bham.bioshock.communication.Command;
 import bham.bioshock.communication.client.ClientService;
 import bham.bioshock.communication.client.CommunicationClient;
 
-public class HostScreenController implements Controller {
-    private Client client;
-    private ClientService server;
-    private Model model;
+
+public class HostScreenController extends Controller {
+
     private XMLReader game_reader;
     private XMLReader pref_reader;
 
@@ -38,6 +37,7 @@ public class HostScreenController implements Controller {
     public int getPreferredPlayers() {
         return pref_reader.getInt("players");
     }
+
 
     /**
      * Create a connection with the server and wait in lobby when a username is
@@ -60,6 +60,7 @@ public class HostScreenController implements Controller {
         // Add the player to the server
         server.send(new Action(Command.ADD_PLAYER, arguments));
     }
+
 
     /**
      * Handle when the server tells us a new player was added to the game
