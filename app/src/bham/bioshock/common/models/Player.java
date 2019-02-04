@@ -34,20 +34,17 @@ public class Player {
     }
 
     public Player(UUID id, String username) {
-        this.id = id;
-        this.username = username;
+    	this(id, username, false);
     }
 
-    public Player() {
-        this.id = UUID.randomUUID();
+    public Player(String username) {
+    	this(UUID.randomUUID(), username);
     }
-
-    public Player(boolean isCpu) {
-        this.id = UUID.randomUUID();
-        this.isCpu = isCpu;
-        this.textureID = 0;
+    
+    public Player(String username, boolean isCpu) {
+    	this(UUID.randomUUID(), username, isCpu);
     }
-
+    
     public Player(Coordinates coordinates, int textureID) {
         this.id = UUID.randomUUID();
         this.coordinates = coordinates;
