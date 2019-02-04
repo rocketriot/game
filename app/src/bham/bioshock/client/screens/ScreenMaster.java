@@ -2,7 +2,6 @@ package bham.bioshock.client.screens;
 
 import bham.bioshock.client.Client;
 import bham.bioshock.client.controllers.Controller;
-import bham.bioshock.client.controllers.PreferencesController;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
@@ -21,17 +20,28 @@ public abstract class ScreenMaster implements Screen {
     protected Batch batch;
     protected Stack stack;
 
+    protected float screen_width;
+    protected float screen_height;
+
     protected TextButton back_button;
 
     protected Skin skin = new Skin(Gdx.files.internal("app/assets/skins/neon/skin/neon-ui.json"));
 
+    public ScreenMaster() {
+        screen_width = Gdx.graphics.getWidth();
+        screen_height = Gdx.graphics.getHeight();
+    }
+
     @Override
     public void show() {
-
+        addBackButton();
+        //set the back button to take you to main menu - for now
+        setPrevious(Client.View.MAIN_MENU);
+        //drawBackground();
     }
 
 
-    protected void drawBackground(float delta) {
+    protected void drawBackground() {
         //render background
         // clear the screen
         Gdx.gl.glClearColor(0, 0, 0, 0);
@@ -44,12 +54,11 @@ public abstract class ScreenMaster implements Screen {
         batch.draw(background,0,0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         batch.end();
 
-        addBackButton();
 
-        Gdx.input.setInputProcessor(stage);
+        //Gdx.input.setInputProcessor(stage);
 
-        stage.act();
-        stage.draw();
+        //stage.act();
+        //stage.draw();
     }
 
     protected void addBackButton(){
@@ -65,6 +74,13 @@ public abstract class ScreenMaster implements Screen {
                 controller.changeScreen(previous);
             }
         });
+    }
+
+    @Override
+    public void render(float delta) {
+        drawBackground();
+        stage.act(Math.min(Gdx.graphics.getDeltaTime(), 1 / 30f));
+        stage.draw();
     }
 
     @Override

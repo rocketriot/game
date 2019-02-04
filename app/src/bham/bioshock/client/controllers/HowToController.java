@@ -1,15 +1,15 @@
 package bham.bioshock.client.controllers;
 
-import bham.bioshock.client.Client;
+import com.badlogic.gdx.Screen;
 
-public class HowToController implements Controller {
-    private Client client;
+import bham.bioshock.client.Client;
+import bham.bioshock.client.screens.HowToScreen;
+
+
+public class HowToController extends Controller {
 
     public HowToController(Client client) {
         this.client = client;
     }
 
-    public void changeScreen(Client.View screen) {
-        client.changeScreen(screen);
-    }
 }

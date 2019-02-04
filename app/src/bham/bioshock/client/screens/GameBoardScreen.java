@@ -2,6 +2,7 @@ package bham.bioshock.client.screens;
 
 import bham.bioshock.client.controllers.GameBoardController;
 import bham.bioshock.client.scenes.Hud;
+import bham.bioshock.common.consts.Config;
 import bham.bioshock.common.consts.GridPoint;
 import bham.bioshock.common.models.Asteroid;
 import bham.bioshock.common.models.Coordinates;
@@ -37,8 +38,8 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
     private Sprite sprite;
     private ArrayList<Sprite> playerSprites;
     private int PPS;
-    private final int GAME_WORLD_WIDTH = 1920;
-    private final int GAME_WORLD_HEIGHT = 1080;
+    private final int GAME_WORLD_WIDTH = Config.GAME_WORLD_WIDTH;
+    private final int GAME_WORLD_HEIGHT = Config.GAME_WORLD_HEIGHT;
     private int gridHeight, gridWidth, gridSize;
     private Hud hud;
     private int mouseDownX, mouseDownY;
@@ -278,10 +279,11 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
         }
     }
 
-    private void drawBackground() {
-        for (int i = -1; i <= 1; i++) {
-            for (int j = -1; j <= 1; j++) {
-                background.setPosition(i * GAME_WORLD_WIDTH, j * GAME_WORLD_HEIGHT);
+    protected void drawBackground() {
+        super.drawBackground();
+        for(int i = -1; i <= 1; i++) {
+            for(int j = -1; j <= 1; j++) {
+                background.setPosition(i * GAME_WORLD_WIDTH, j* GAME_WORLD_HEIGHT);
                 background.draw(batch);
             }
         }

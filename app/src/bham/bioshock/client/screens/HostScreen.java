@@ -10,6 +10,8 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
+import java.net.ConnectException;
+
 public class HostScreen extends ScreenMaster {
     HostScreenController controller;
 
@@ -24,28 +26,26 @@ public class HostScreen extends ScreenMaster {
         stage = new Stage(new ScreenViewport());
 
         batch = new SpriteBatch();
-        stack = new Stack();
+
+    }
+
+    @Override
+    public void show() {
+        super.show();
+        assemble();
+
+        Gdx.input.setInputProcessor(stage);
     }
 
     @Override
     public void render(float delta) {
-        drawBackground(delta);
-        assemble();
-
-        stage.act();
-        stage.draw();
-
-
+        super.render(delta);
     }
 
     private void assemble() {
         table = drawTable();
 
         stage.addActor(table);
-        //stack.setSize(stage.getWidth(), stage.getHeight());
-        //stack.add(table);
-
-        Gdx.input.setInputProcessor(stage);
     }
 
 
@@ -60,7 +60,7 @@ public class HostScreen extends ScreenMaster {
         SelectBox selectPlayers = new SelectBox(skin);
 
         //get max players from reader
-        HostScreenController contr = (HostScreenController) controller;
+        HostScreenController contr = controller;
         int max_players = contr.getMaxPlayers();
         Array<Integer> selection = new Array<>();
         for(int i = 1; i <= max_players; i++) {
@@ -68,7 +68,7 @@ public class HostScreen extends ScreenMaster {
         }
         selectPlayers.setItems(selection);
         //get Preferred number of players
-        int preferred_players = ((HostScreenController) controller).getPreferredPlayers();
+        int preferred_players = controller.getPreferredPlayers();
         selectPlayers.setSelected(preferred_players);
 
         hostNameField.addListener(new ChangeListener() {
@@ -79,10 +79,6 @@ public class HostScreen extends ScreenMaster {
         });
 
 
-
-
-
-
         //button for start new game
         host_button = new TextButton("Start New Game", skin);
         //host_button.setPosition(stage.getWidth()/2,stage.getHeight()/2);
@@ -91,9 +87,19 @@ public class HostScreen extends ScreenMaster {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 host_name = hostNameField.getText();
+
                 System.out.println("host name =" + host_name);
-                int players = selectPlayers.getSelectedIndex();
-                System.out.println("number of players" + players);
+                //int players = selectPlayers.getSelectedIndex();
+                //System.out.println("number of players" + players);
+
+                //check that the host_name is not null
+                if(host_name == null) {
+                    System.out.print("Please enter a host name");
+                }
+                else {
+                    configureNewGame(host_name);
+                }
+
 
             }
         });
@@ -109,21 +115,19 @@ public class HostScreen extends ScreenMaster {
         return table;
     }
 
-    //    private void configureNewGame() {
-    //        //get the name of the host
-    //        String host_name = "hoster";
-    //        int number_of_player = 2;
-    //        //ask how many players
-    //        controller.configureGame(host_name, number_of_player);
-    //    }
-
-
-    private class HostPopup {
-     /*   private TextField text = new TextField("Enter Name", skin);
-        private InputListener host_name = text.getDefaultInputListener();
-
-        public void hostPopup() {
-            Gdx.input.getTextInput(host_name, "Enter Name", "","");
-        }*/
+    /** Handles when a player joins the lobby */
+    public void onPlayerJoined() {
+        // TODO: implement
     }
+
+    private void configureNewGame(String host_name) {
+        try {
+            controller.connectToServer(host_name);
+        }
+        catch (ConnectException e) {
+            e.printStackTrace();
+        }
+
+    }
+
 }
