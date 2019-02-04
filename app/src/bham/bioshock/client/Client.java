@@ -92,11 +92,6 @@ public class Client extends Game {
 			controller.onStartGame(action);
 			break;
 		}
-		case GET_GAME_BOARD: {
-			GameBoardController controller = (GameBoardController) controllers.get(View.GAME_BOARD);
-			controller.gotGameBoard(action);
-			break;
-		}
 		default: {
 			System.out.println("Received unhandled command: " + action.getCommand().toString());
 		}
