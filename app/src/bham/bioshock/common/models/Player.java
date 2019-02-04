@@ -27,10 +27,14 @@ public class Player {
     /** Player's textureID */
     private int textureID;
 
-    public Player(UUID id, String username, boolean isCpu) {
-        this.id = id;
+    public Player() {
+        this.id = UUID.randomUUID();
+        this.textureID = 0;
+    }
+
+    public Player(String username) {
+        this();
         this.username = username;
-        this.isCpu = isCpu;
     }
 
     public Player(UUID id, String username) {
@@ -38,16 +42,18 @@ public class Player {
         this.username = username;
     }
 
-    public Player() {
-        this.id = UUID.randomUUID();
-    }
-
     public Player(boolean isCpu) {
-        this.id = UUID.randomUUID();
+        this();
         this.isCpu = isCpu;
-        this.textureID = 0;
     }
 
+    public Player(UUID id, String username, boolean isCpu) {
+        this.id = id;
+        this.username = username;
+        this.isCpu = isCpu;
+    }
+
+    @Deprecated
     public Player(Coordinates coordinates, int textureID) {
         this.id = UUID.randomUUID();
         this.coordinates = coordinates;
