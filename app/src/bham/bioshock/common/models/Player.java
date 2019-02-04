@@ -7,50 +7,58 @@ import java.util.UUID;
  */
 public class Player {
     /** ID of the player */
-    public UUID id;
+    private UUID id;
+
+    /** Username of the player */
+    private String username;
 
     /** Location of the player */
-    public Coordinates coordinates;
+    private Coordinates coordinates;
 
     /** The amount of fuel the player has left */
-    public float fuel = 100.0f;
+    private float fuel = 100.0f;
 
     /** The number of planets the player has captured */
-    public int planetsCaptured = 0;
+    private int planetsCaptured = 0;
 
     /** Specifies if the player is controlled by AI */
-    public boolean isCpu = false;
+    private boolean isCpu = false;
 
     /** Player's textureID */
     private int textureID;
 
-    /** Specifies if the player should be highlighted */
-    private boolean isSelected = false;
-
-    public Player(Coordinates coordinates) {
-        this.id = UUID.randomUUID();
-        this.coordinates = coordinates;
-        this.textureID = 0;
-    }
-        
-    public Player() {
-        this.id = UUID.randomUUID();
-    }
-
-    public Player(boolean isCpu) {
-        this.id = UUID.randomUUID();
+    public Player(UUID id, String username, boolean isCpu) {
+        this.id = id;
+        this.username = username;
         this.isCpu = isCpu;
-        this.textureID = 0;
     }
 
-    public Player(Coordinates coordinates, int textureID) {
+    public Player(UUID id, String username) {
+        this(id, username, false);
+    }
+
+    public Player(String username) {
+        this(UUID.randomUUID(), username);
+    }
+
+    public Player(String username, boolean isCpu) {
+        this(UUID.randomUUID(), username, isCpu);
+    }
+
+    public Player(String username, Coordinates coordinates, int textureID) {
+        this.username = username;
         this.id = UUID.randomUUID();
         this.coordinates = coordinates;
         this.textureID = textureID;
     }
 
+
     public UUID getId() {
         return id;
+    }
+
+    public String getUsername() {
+        return username;
     }
 
     public Coordinates getCoordinates() {
@@ -91,13 +99,5 @@ public class Player {
 
     public void setTextureID(int textureID) {
         this.textureID = textureID;
-    }
-
-    public boolean isSelected() {
-        return isSelected;
-    }
-
-    public void setSelected(boolean selected) {
-        isSelected = selected;
     }
 }

@@ -1,20 +1,17 @@
 package bham.bioshock.client.screens;
 
-import bham.bioshock.client.Client;
 import bham.bioshock.client.controllers.HostScreenController;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
-import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
 public class HostScreen extends ScreenMaster {
+    HostScreenController controller;
 
     private TextButton host_button;
     private Table table;
@@ -112,15 +109,14 @@ public class HostScreen extends ScreenMaster {
         return table;
     }
 
+    //    private void configureNewGame() {
+    //        //get the name of the host
+    //        String host_name = "hoster";
+    //        int number_of_player = 2;
+    //        //ask how many players
+    //        controller.configureGame(host_name, number_of_player);
+    //    }
 
-    private void configureNewGame() {
-        //get the name of the host
-        String host_name = "hoster";
-        int number_of_player = 2;
-        //ask how many players
-        HostScreenController contr = (HostScreenController) controller;
-        contr.configureGame(host_name, number_of_player);
-    }
 
     private class HostPopup {
      /*   private TextField text = new TextField("Enter Name", skin);

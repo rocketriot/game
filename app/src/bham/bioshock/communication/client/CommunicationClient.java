@@ -10,16 +10,17 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+import bham.bioshock.client.Client;
 import bham.bioshock.communication.Action;
 import bham.bioshock.communication.Command;
 import bham.bioshock.communication.Config;
 
 public class CommunicationClient {
-	
-	public static InetAddress hostAddress;
-	public static int port = Config.PORT; 
 
-	public static ClientService createConnection() throws ConnectException {
+	public static InetAddress hostAddress;
+	public static int port = Config.PORT;
+
+	public static ClientService createConnection(Client client) throws ConnectException {
 		// Open sockets:
 		ObjectOutputStream toServer = null;
 		ObjectInputStream fromServer = null;
@@ -36,26 +37,27 @@ public class CommunicationClient {
 		}
 
 		// We are connected to the server, create a service to get and send messages
-		ClientService service = new ClientService(server, fromServer, toServer);
+		ClientService service = new ClientService(server, fromServer, toServer, client);
 		service.start();
 		return service;
 	}
-	
+
 	public static void setHostAddress(InetAddress address) {
 		hostAddress = address;
 	}
-	
-	public static ClientService connect(String userName) throws ConnectException {
+
+	public static ClientService connect(String userName, Client client) throws ConnectException {
 		Thread discoveryThread = new Thread(new ClientConnectThread(userName));
 		discoveryThread.start();
 
-	    try {
-	    	discoveryThread.join();
-	    	return createConnection();
-	    } catch (InterruptedException e) {
-	    	System.err.println("Connection interrupted");
-	    } catch (ConnectException e) {}
-	    throw new ConnectException("Connection unsuccessful");
+		try {
+			discoveryThread.join();
+			return createConnection(client);
+		} catch (InterruptedException e) {
+			System.err.println("Connection interrupted");
+		} catch (ConnectException e) {
+		}
+		throw new ConnectException("Connection unsuccessful");
 	}
 
 	public static void main(String[] args) {
@@ -64,22 +66,22 @@ public class CommunicationClient {
 		System.out.println("Enter your username:");
 		String name = sc.nextLine();
 		ClientService service;
-		
+
 		try {
-			service = connect(name);
-			
-			while(true) {
-			    System.out.println("Enter command:");
-			    String command = sc.nextLine();
-			    ArrayList<String> arguments = new ArrayList<String>();
-			    arguments.add(command);
-			    service.send(new Action(Command.TEST, arguments));
+			service = connect(name, null);
+
+			while (true) {
+				System.out.println("Enter command:");
+				String command = sc.nextLine();
+				ArrayList<String> arguments = new ArrayList<String>();
+				arguments.add(command);
+				service.send(new Action(Command.TEST, arguments));
 			}
-			
+
 		} catch (ConnectException e) {
 			System.out.println("Connection error");
 		} finally {
-			sc.close();			
+			sc.close();
 		}
 	}
 

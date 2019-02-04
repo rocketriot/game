@@ -4,24 +4,27 @@ import bham.bioshock.client.controllers.GameBoardController;
 import bham.bioshock.client.scenes.Hud;
 import bham.bioshock.common.consts.GridPoint;
 import bham.bioshock.common.models.Asteroid;
+import bham.bioshock.common.models.Coordinates;
 import bham.bioshock.common.models.Planet;
 import bham.bioshock.common.models.Player;
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Graphics;
-import com.badlogic.gdx.Input;
-import com.badlogic.gdx.InputProcessor;
+import bham.bioshock.common.pathfinding.AStarPathfinding;
+import com.badlogic.gdx.*;
 import com.badlogic.gdx.files.FileHandle;
-import com.badlogic.gdx.graphics.*;
+import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.GL30;
+import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 
 import java.util.ArrayList;
 
 public class GameBoardScreen extends ScreenMaster implements InputProcessor {
+    private final InputMultiplexer inputMultiplexer;
+    private final AStarPathfinding pathFinder;
     private float aspectRatio;
     private GameBoardController controller;
     private SpriteBatch batch;
@@ -45,11 +48,11 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
     public GameBoardScreen(final GameBoardController controller) {
         this.controller = controller;
         batch = new SpriteBatch();
-        hud = new Hud(batch, skin, GAME_WORLD_WIDTH, GAME_WORLD_HEIGHT, controller);
 
         gridWidth = GAME_WORLD_WIDTH - (GAME_WORLD_WIDTH % 36);
-        System.out.println(gridWidth);
         gridHeight = gridWidth;
+
+        pathFinder = new AStarPathfinding(controller.getGrid(), controller.getMainPlayer().getCoordinates(), gridSize, gridSize);
 
         // Pixels Per Square (on the grid)
         PPS = 50;
@@ -67,10 +70,13 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
 
         setupUI();
 
+        inputMultiplexer = new InputMultiplexer();
+        inputMultiplexer.addProcessor(hud.getStage());
+        inputMultiplexer.addProcessor(this);
     }
 
     private void setupUI() {
-        stage = new Stage(viewport, batch);
+        hud = new Hud(batch, skin, GAME_WORLD_WIDTH, GAME_WORLD_HEIGHT, controller);
         background = new Sprite(new Texture(Gdx.files.internal("app/assets/backgrounds/game.png")));
     }
 
@@ -82,7 +88,7 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
                 GridPoint.Type pType = grid[x][y].getType();
                 if (pType == GridPoint.Type.PLAYER) {
                     Player p = (Player) grid[x][y].getValue();
-                    if (p.isSelected() == true) {
+                    if (playerSelected == true && p.equals(controller.getMainPlayer())) {
                         sprite = outlinedPlayerSprites.get(p.getTextureID());
                     } else {
                         sprite = playerSprites.get(p.getTextureID());
@@ -91,7 +97,7 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
                     float yCoord = p.getCoordinates().getY();
                     sprite.setX(xCoord * PPS);
                     sprite.setY(yCoord * PPS);
-                    sprite.draw(stage.getBatch());
+                    sprite.draw(batch);
                 } else if (pType == GridPoint.Type.PLANET) {
                     Planet p = (Planet) grid[x][y].getValue();
                     if (p.isDrawn() == false) {
@@ -101,7 +107,7 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
                         float yCoord = p.getCoordinates().getY();
                         sprite.setX(xCoord * PPS);
                         sprite.setY(yCoord * PPS);
-                        sprite.draw(stage.getBatch());
+                        sprite.draw(batch);
                     }
                 } else if (pType == GridPoint.Type.ASTEROID) {
                     Asteroid a = (Asteroid) grid[x][y].getValue();
@@ -112,7 +118,7 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
                         float yCoord = a.getCoordinates().getY();
                         sprite.setX(xCoord * PPS);
                         sprite.setY(yCoord * PPS);
-                        sprite.draw(stage.getBatch());
+                        sprite.draw(batch);
                     }
                 }
             }
@@ -193,7 +199,7 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
     public void show() {
         //Graphics.DisplayMode display = Gdx.graphics.getDisplayMode();
         //Gdx.graphics.setFullscreenMode(display);
-        Gdx.input.setInputProcessor(this);
+        Gdx.input.setInputProcessor(inputMultiplexer);
     }
 
 
@@ -216,6 +222,7 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
     @Override
     public void resize(int width, int height) {
         viewport.update(width, height, true);
+        hud.viewport.update(width, height, true);
         resizeSprites();
     }
 
@@ -237,35 +244,44 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
     @Override
     public void render(float delta) {
         batch.setProjectionMatrix(camera.combined);
-
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         handleInput();
         camera.update();
 
-        stage.getBatch().begin();
+        batch.begin();
+
         drawBackground();
         drawBoardObjects();
-        stage.getBatch().end();
+        drawPath();
+
+        batch.end();
+
         drawGridLines();
-        stage.act(Gdx.graphics.getDeltaTime());
 
         // Draw the ui
         this.batch.setProjectionMatrix(hud.stage.getCamera().combined);
-        hud.stage.draw();
+        hud.getStage().act(Gdx.graphics.getDeltaTime());
+        hud.getStage().draw();
+    }
+
+    private void drawPath() {
+        if (playerSelected == true) {
+            // TODO Draw Path
+        }
     }
 
     private void drawBackground() {
-        for(int i = -1; i <= 1; i++) {
-            for(int j = -1; j <= 1; j++) {
-                background.setPosition(i * GAME_WORLD_WIDTH, j* GAME_WORLD_HEIGHT);
+        for (int i = -1; i <= 1; i++) {
+            for (int j = -1; j <= 1; j++) {
+                background.setPosition(i * GAME_WORLD_WIDTH, j * GAME_WORLD_HEIGHT);
                 background.draw(batch);
             }
         }
+
     }
 
     @Override
     public void dispose() {
-        stage.dispose();
         batch.dispose();
         hud.dispose();
         background.getTexture().dispose();
@@ -290,7 +306,6 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
     private Vector3 getWorldCoords(int screenX, int screenY) {
         Vector3 coords = new Vector3(screenX, screenY, 0);
         coords = viewport.unproject(coords);
-        System.out.println(coords);
         return coords;
     }
 
@@ -308,7 +323,7 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
             camera.translate(0f, -5f);
         }
         if (Gdx.input.isKeyPressed(Input.Keys.ESCAPE)) {
-            controller.getPlayers().get(0).setSelected(false);
+            playerSelected = false;
         }
     }
 
@@ -340,7 +355,7 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
 
         if (clickCoords.x >= player.getCoordinates().getX() * PPS && clickCoords.x <= (player.getCoordinates().getX() + 1) * PPS) {
             if (clickCoords.y >= player.getCoordinates().getY() * PPS && clickCoords.y <= (player.getCoordinates().getY() + 1) * PPS) {
-                controller.getPlayers().get(0).setSelected(true);
+                playerSelected = true;
             }
         }
         return false;
@@ -353,14 +368,28 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
 
     @Override
     public boolean touchDragged(int screenX, int screenY, int pointer) {
-        camera.translate(-(screenX - mouseDownX), screenY - mouseDownY);
-        mouseDownX = screenX;
-        mouseDownY = screenY;
+        // Mouse camera panning
+        if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
+            camera.translate(-(screenX - mouseDownX), screenY - mouseDownY);
+            mouseDownX = screenX;
+            mouseDownY = screenY;
+            return true;
+        }
         return false;
     }
 
     @Override
     public boolean mouseMoved(int screenX, int screenY) {
+        // TODO show path to mouse pointer
+        if (playerSelected == true) {
+            Vector3 mouseCoords = getWorldCoords(screenX, screenY);
+            Vector3 gridCoords = new Vector3((int) mouseCoords.x / PPS, (int) mouseCoords.y / PPS, 0);
+            if (gridCoords.x < gridSize && gridCoords.x >= 0) {
+                if (gridCoords.y < gridSize && gridCoords.y >= 0) {
+                    System.out.println(pathFinder.pathfind(new Coordinates((int) gridCoords.x, (int) gridCoords.y)));
+                }
+            }
+        }
         return false;
     }
 
@@ -375,7 +404,7 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
             PPS -= amount * 2;
         } else if (PPS < 70) {
             PPS -= amount * 3;
-        }  else if (PPS >= 70) {
+        } else if (PPS >= 70) {
             if ((PPS -= amount * 4) >= 150) {
                 PPS = 149;
             } else {

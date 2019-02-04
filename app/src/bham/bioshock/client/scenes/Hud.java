@@ -16,8 +16,9 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 
 public class Hud implements Disposable {
     private final HorizontalGroup topBar;
+    private final SelectBox optionsMenu;
     public Stage stage;
-    private FitViewport viewport;
+    public FitViewport viewport;
 
     public Hud(SpriteBatch batch, Skin skin, int gameWidth, int gameHeight, Controller controller) {
         viewport = new FitViewport(gameWidth, gameHeight, new OrthographicCamera());
@@ -25,17 +26,18 @@ public class Hud implements Disposable {
 
         topBar = new HorizontalGroup();
         topBar.setFillParent(true);
-        topBar.setDebug(true);
         topBar.top();
 
         // Adds widgets to the topBar
-        SelectBox optionsMenu = new SelectBox(skin);
+        optionsMenu = new SelectBox(skin);
         String[] menuOptions = {"Options Menu", "Settings", "Quit to main menu", "Quit to Desktop"};
         optionsMenu.setItems(menuOptions);
         optionsMenu.setSelected(menuOptions[0]);
         topBar.addActor(optionsMenu);
-        topBar.setPosition(0, gameHeight);
+        topBar.setPosition(0, 0);
+        stage.addActor(topBar);
 
+        // Add listeners for each option
         optionsMenu.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
@@ -57,10 +59,17 @@ public class Hud implements Disposable {
 
             }
         });
-
-        stage.addActor(topBar);
     }
 
+    public Stage getStage() {
+        return stage;
+    }
+
+    public void printDebugInfo() {
+        System.out.println("Space: " + topBar.getSpace());
+        System.out.println("PrefHeight: " + topBar.getPrefHeight());
+        System.out.println("PrefWidth: " + topBar.getPrefWidth());
+    }
 
     @Override
     public void dispose() {
