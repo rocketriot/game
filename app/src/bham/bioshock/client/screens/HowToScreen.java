@@ -38,15 +38,15 @@ public class HowToScreen extends ScreenMaster {
 
     private void assemble() {
         //create container
-        Container<Table> tableContainer = new Container<>();
+        /*Container<Table> tableContainer = new Container<>();
         float container_width = screen_width*0.1f;
         float container_height = screen_height*0.9f;
         tableContainer.setSize(container_width, container_height);
         tableContainer.setPosition((screen_width - container_width)/2.0f, (screen_height-container_height)/2.0f);
-
+*/
         //create table
         textTable = new Table(skin);
-        textTable.setWidth(container_width);
+        textTable.setFillParent(true);
 
         //contents
         Label l1 = new Label("How to PLay", skin);
@@ -54,6 +54,7 @@ public class HowToScreen extends ScreenMaster {
         String game_desc = reader.getTag("game_desc");
         Label desc = new Label(game_desc, skin);
         desc.setWrap(true);
+
         Label l2 = new Label("Controls", skin);
         String controls = reader.getTag("game_controls");
         Label contr = new Label(controls, skin);
@@ -68,9 +69,9 @@ public class HowToScreen extends ScreenMaster {
         textTable.add(l2);
         textTable.add(contr);
 
-        tableContainer.setActor(textTable);
+        //tableContainer.setActor(textTable);
 
-        stage.addActor(tableContainer);
+        stage.addActor(textTable);
 
     }
 
