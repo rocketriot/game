@@ -107,14 +107,15 @@ public class HostScreen extends ScreenMaster {
         return table;
     }
 
+    /** Handles when a player joins the lobby */
+    public void onPlayerJoined() {
+        // TODO: implement
+    }
 
-//    private void configureNewGame() {
-//        //get the name of the host
-//        String host_name = "hoster";
-//        int number_of_player = 2;
-//        //ask how many players
-//        controller.configureGame(host_name, number_of_player);
-//    }
+    /** Handles when start button pressed */
+    private void onStartPressed() {
+        controller.startGame();
+    }
 
     private class HostPopup {
      /*   private TextField text = new TextField("Enter Name", skin);
