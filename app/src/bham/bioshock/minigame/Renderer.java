@@ -43,7 +43,7 @@ public class Renderer {
 		entities.addAll(w.getPlayers());
 		entities.addAll(w.getRockets());
 
-		cam = new OrthographicCamera(16,  9);
+		cam = new OrthographicCamera();
 		
 		batch = new SpriteBatch();
 		backgroundBatch = new SpriteBatch();
@@ -57,7 +57,7 @@ public class Renderer {
 		viewport = new FitViewport(GAME_WORLD_WIDTH, GAME_WORLD_HEIGHT, cam);
 		Player.loadTextures();
 		Rocket.loadTextures();
-		stage = new Stage(viewport, batch);
+		stage = new Stage(viewport);
 		background = new Sprite(new Texture(Gdx.files.internal("app/assets/backgrounds/game.png")));
 	}
 
@@ -69,7 +69,7 @@ public class Renderer {
 		cam.update();
 
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
+		
 		backgroundBatch.begin();
 		backgroundBatch.draw(background, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		backgroundBatch.end();

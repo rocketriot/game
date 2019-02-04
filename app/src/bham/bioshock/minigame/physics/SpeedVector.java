@@ -24,9 +24,13 @@ public class SpeedVector {
 		dx += x1;
 		dy += y1;
 	}
+
+	public void friction(double xForce, double yForce) {
+		dx -= dx * (xForce / mass);
+		dy -= dy * (yForce / mass);
+	}
 	
-	public void stop() {
-		dx = 0;
+	public void stopY() {
 		dy = 0;
 	}
 	

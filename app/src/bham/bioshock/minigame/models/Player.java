@@ -13,9 +13,11 @@ public class Player extends Entity {
 	private PlayerTexture dir;
 	private static HashMap<PlayerTexture, Texture> textures = new HashMap<>();
 	
-	private final double GRAVITY = 0.8;
-	private final double JUMP_FORCE = 25;
-	private float v = 350f;
+	private final double GRAVITY = 5000;
+	private final double JUMP_FORCE = 1400;
+	private final double GROUND_FRICTION = 0.2;
+	private final double AIR_FRICTION = 0.01;
+	private float v = 200f;
 	
 	private boolean flying = false;
 	private SpeedVector speed;
@@ -33,12 +35,16 @@ public class Player extends Entity {
 	}
 	
 	public void moveLeft(float delta) {
-		pos.x -= v * delta;
+		if(!flying) {
+			speed.apply(270, v);
+		}
 		dir = PlayerTexture.LEFT;
 	}
 	
 	public void moveRight(float delta) {
-		pos.x += v * delta;
+		if(!flying) {
+			speed.apply(90, v);			
+		}
 		dir = PlayerTexture.RIGHT;
 	}
 	
@@ -51,15 +57,22 @@ public class Player extends Entity {
 	
 	public void update(float delta) {
 		if(pos.y >= 0) {
-			speed.apply(0, -GRAVITY);
+			speed.apply(180, GRAVITY*delta);
 		} else {
-			speed.stop();
+			speed.stopY();
 			pos.y = 0;
 		}
-		pos.y += speed.dY();
+		pos.y += speed.dY()*delta;
+		pos.x += speed.dX()*delta;
+		
+		if(!flying) {
+			speed.friction(GROUND_FRICTION, 0);						
+		} else {
+			speed.friction(AIR_FRICTION, 0);
+		}
+		
 		dir = PlayerTexture.FRONT;
 		if(flying) {
-			pos.y -= v*delta;
 			if(pos.y <= 0f) {
 				flying = false;
 				pos.y = 0f;
