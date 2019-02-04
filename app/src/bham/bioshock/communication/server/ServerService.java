@@ -20,8 +20,7 @@ public class ServerService extends Thread {
 	private ServerHandler handler;
 	private Server server;
 
-	public ServerService(ObjectInputStream fromClient, ObjectOutputStream toClient, ServerHandler handler,
-			Server server) {
+	public ServerService(ObjectInputStream fromClient, ObjectOutputStream toClient, ServerHandler handler) {
 		// Sender and receiver for sending and receiving messages to/from user
 		this.sender = new ServerSender(toClient);
 
@@ -29,8 +28,6 @@ public class ServerService extends Thread {
 		this.receiver = new ServerReceiver(this, fromClient);
 
 		this.handler = handler;
-
-		this.server = server;
 	}
 
 	public void run() {
@@ -60,27 +57,21 @@ public class ServerService extends Thread {
 		sender.send(action);
 	}
 
-	public void sendToAll(Action action) {
-		handler.sendToAll(action);
-	}
-
 	/**
 	 * Delegates the execution to the appropriate method
 	 * 
 	 * @param action to be executed
 	 */
 	private void execute(Action action) {
-		System.out.println(server);
-		if (server != null) {
-			server.handleRequest(action, this);
-		}
 
-		Command command = action.getCommand();
-		ArrayList<String> arguments = action.getArguments();
-		System.out.println(command);
-		for (String a : arguments) {
-			System.out.print(a + "; ");
-		}
-		System.out.print("\n");
+		handler.handleRequest(action);
+
+//		Command command = action.getCommand();
+//		ArrayList<String> arguments = action.getArguments();
+//		System.out.println(command);
+//		for (String a : arguments) {
+//			System.out.print(a + "; ");
+//		}
+//		System.out.print("\n");
 	}
 }

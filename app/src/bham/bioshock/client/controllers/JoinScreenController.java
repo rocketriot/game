@@ -1,12 +1,13 @@
 package bham.bioshock.client.controllers;
 
+import java.io.Serializable;
 import java.net.ConnectException;
 import java.util.ArrayList;
 import java.util.UUID;
 
-import bham.bioshock.client.screens.JoinScreen;
 import com.badlogic.gdx.Screen;
 
+import bham.bioshock.client.screens.JoinScreen;
 import bham.bioshock.client.Client;
 import bham.bioshock.client.Client.View;
 import bham.bioshock.common.models.Model;
@@ -15,6 +16,7 @@ import bham.bioshock.communication.Action;
 import bham.bioshock.communication.Command;
 import bham.bioshock.communication.client.ClientService;
 import bham.bioshock.communication.client.CommunicationClient;
+import bham.bioshock.server.Server;
 
 public class JoinScreenController extends Controller {
     private Client client;
@@ -32,33 +34,28 @@ public class JoinScreenController extends Controller {
      * entered
      */
     public void connectToServer(String username) throws ConnectException {
+        Server host = new Server();
+        host.start();
+
         // Create server connection
         server = CommunicationClient.connect(username, client);
 
         // Create a new player
-        // generate a user id
-        UUID userID = UUID.randomUUID();
-        Player player = new Player(userID, username);
-
-        // Setup arguments
-        ArrayList<String> arguments = new ArrayList<String>();
-        arguments.add(player.getId().toString());
-        arguments.add(player.getUsername());
+        Player player = new Player(username);
 
         // Add the player to the server
-        server.send(new Action(Command.ADD_PLAYER, arguments));
+        server.send(new Action(Command.ADD_PLAYER, player));
     }
 
     /**
      * Handle when the server tells us a new player was added to the game
      */
     public void onPlayerJoined(Action action) {
-        ArrayList<String> arguments = action.getArguments();
-        UUID id = UUID.fromString(arguments.get(0));
-        String username = arguments.get(1);
-        boolean isCpu = Boolean.getBoolean(arguments.get(2));
-
-        model.addPlayer(new Player(id, username, isCpu));
+        for (Serializable argument : action.getArguments()) {
+            Player player = (Player) argument;
+            model.addPlayer(player);
+            System.out.println("Player: " + player.getUsername() + " connected");
+        }
 
         // screen.onPlayerJoined();
     }
