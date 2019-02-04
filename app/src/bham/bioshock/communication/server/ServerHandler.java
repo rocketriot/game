@@ -5,7 +5,6 @@ import java.util.UUID;
 
 import bham.bioshock.common.models.Model;
 import bham.bioshock.communication.Action;
-import bham.bioshock.server.handlers.HostScreenHandler;
 import bham.bioshock.server.handlers.JoinScreenHandler;
 
 public class ServerHandler {

@@ -44,34 +44,22 @@ public class Player implements Serializable {
         this.username = username;
     }
 
-    public Player(UUID id, String username) {
-    	this(id, username, false);
-    }
-
-    public Player(boolean isCpu) {
+    public Player(String username, boolean isCpu) {
         this();
-        this.isCpu = isCpu;
-    }
-
-    public Player(UUID id, String username, boolean isCpu) {
-        this.id = id;
         this.username = username;
         this.isCpu = isCpu;
     }
 
-    @Deprecated
-    public Player(Coordinates coordinates, int textureID) {
-        this.id = UUID.randomUUID();
-        this.coordinates = coordinates;
-        this.textureID = textureID;
-    }
-
-    public UUID getId() {
-        return id;
+    public boolean isCpu() {
+        return isCpu;
     }
 
     public String getUsername() {
         return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public Coordinates getCoordinates() {
@@ -96,10 +84,6 @@ public class Player implements Serializable {
 
     public void setPlanetsCaptured(int planetsCaptured) {
         this.planetsCaptured = planetsCaptured;
-    }
-
-    public boolean isCpu() {
-        return isCpu;
     }
 
     public void setCpu(boolean cpu) {

@@ -34,9 +34,6 @@ public class JoinScreenController extends Controller {
      * entered
      */
     public void connectToServer(String username) throws ConnectException {
-        Server host = new Server();
-        host.start();
-
         // Create server connection
         server = CommunicationClient.connect(username, client);
 

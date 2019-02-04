@@ -23,10 +23,10 @@ public class GameBoardController extends Controller {
         this.model = client.getModel();
 
         // TODO TEMP CODE REMOVE
-        Player p1 = new Player(new Coordinates(0, 0), 0);
-        Player p2 = new Player(new Coordinates(0, 35), 1);
-        Player p3 = new Player(new Coordinates(35, 35), 2);
-        Player p4 = new Player(new Coordinates(35, 0), 3);
+        Player p1 = new Player();
+        Player p2 = new Player();
+        Player p3 = new Player();
+        Player p4 = new Player();
 
         model.createGameBoard();
         model.addPlayer(p1);
