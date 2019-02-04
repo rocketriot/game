@@ -7,7 +7,6 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 
-
 import com.badlogic.gdx.scenes.scene2d.ui.Container;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 
@@ -19,15 +18,14 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import java.awt.*;
 
 public class MainMenuScreen extends ScreenMaster {
+    private MainMenuController controller;
 
-    //buttons
+    // buttons
     private TextButton host;
     private TextButton howto;
     private TextButton preferences;
     private TextButton exit;
     private TextButton join;
-
-
 
     public MainMenuScreen(final MainMenuController controller) {
         this.controller = controller;
@@ -35,7 +33,6 @@ public class MainMenuScreen extends ScreenMaster {
         // set the stage, which will react to user inputs
         stage = new Stage(new ScreenViewport());
         batch = new SpriteBatch();
-
 
         // calls act with Graphics.getDeltaTime()
 
@@ -72,10 +69,10 @@ public class MainMenuScreen extends ScreenMaster {
 
     private void drawButtons() {
         Container<Table> tableContainer = new Container<>();
-        float container_width = screen_width*0.8f;
-        float container_height = screen_height*0.9f;
+        float container_width = screen_width * 0.8f;
+        float container_height = screen_height * 0.9f;
         tableContainer.setSize(container_width, container_height);
-        tableContainer.setPosition((screen_width - container_width)/2.0f, (screen_height-container_height)/2.0f);
+        tableContainer.setPosition((screen_width - container_width) / 2.0f, (screen_height - container_height) / 2.0f);
 
         // Table to hold menu button, will change this to a better style
         Table table = new Table(skin);
@@ -105,7 +102,7 @@ public class MainMenuScreen extends ScreenMaster {
         stage.addActor(tableContainer);
     }
 
-    private void addListeners(){
+    private void addListeners() {
         // add change listeners for the buttons
         exit.addListener(new ChangeListener() {
             @Override
@@ -117,7 +114,7 @@ public class MainMenuScreen extends ScreenMaster {
         host.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                controller.changeScreen(Client.View.HOST_SCREEN);
+                controller.createServer();
             }
         });
 

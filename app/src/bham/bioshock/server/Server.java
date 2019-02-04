@@ -5,24 +5,27 @@ import bham.bioshock.communication.Action;
 import bham.bioshock.communication.server.CommunicationServer;
 import bham.bioshock.communication.server.ServerHandler;
 import bham.bioshock.communication.server.ServerService;
-import bham.bioshock.server.handlers.HostScreenHandler;
+import bham.bioshock.server.handlers.*;
 
-public class Server {
+public class Server extends Thread {
     private Model model;
 
     public Server() {
         this.model = new Model();
+    }
 
+    public void run() {
         CommunicationServer.start(new ServerHandler(), this);
     }
 
     public void handleRequest(Action action, ServerService service) {
         switch (action.getCommand()) {
         case ADD_PLAYER:
-            HostScreenHandler.addPlayer(model, action, service);
+            JoinScreenHandler.addPlayer(model, action, service);
             break;
         case START_GAME:
-            HostScreenHandler.startGame(model, action, service);
+            JoinScreenHandler.startGame(model, action, service);
+            break;
             break;
         default:
             System.out.println("Received unhandled command: " + action.getCommand().toString());
@@ -31,6 +34,6 @@ public class Server {
     }
 
     public static void main(String[] args) {
-        new Server();
+        (new Server()).start();
     }
 }

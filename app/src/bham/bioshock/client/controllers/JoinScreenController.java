@@ -1,17 +1,14 @@
 package bham.bioshock.client.controllers;
 
 import java.net.ConnectException;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
-import java.util.Random;
 import java.util.UUID;
 
+import bham.bioshock.client.screens.JoinScreen;
 import com.badlogic.gdx.Screen;
 
 import bham.bioshock.client.Client;
-import bham.bioshock.client.XMLReader;
 import bham.bioshock.client.Client.View;
-import bham.bioshock.client.screens.HostScreen;
 import bham.bioshock.common.models.Model;
 import bham.bioshock.common.models.Player;
 import bham.bioshock.communication.Action;
@@ -19,28 +16,16 @@ import bham.bioshock.communication.Command;
 import bham.bioshock.communication.client.ClientService;
 import bham.bioshock.communication.client.CommunicationClient;
 
+public class JoinScreenController extends Controller {
+    private Client client;
+    private Model model;
+    private ClientService server;
 
-public class HostScreenController extends Controller {
-
-    private XMLReader game_reader;
-    private XMLReader pref_reader;
-
-    public HostScreenController(Client client) {
+    public JoinScreenController(Client client) {
         this.client = client;
-        this.server = client.getServer();
         this.model = client.getModel();
-        game_reader = new XMLReader("app/assets/XML/game_desc.xml");
-        pref_reader = new XMLReader("app/assets/Preferences/Preferences.XML");
+        this.server = client.getServer();
     }
-
-    public int getMaxPlayers() {
-        return game_reader.getInt("max_players");
-    }
-
-    public int getPreferredPlayers() {
-        return pref_reader.getInt("players");
-    }
-
 
     /**
      * Create a connection with the server and wait in lobby when a username is
@@ -51,7 +36,7 @@ public class HostScreenController extends Controller {
         server = CommunicationClient.connect(username, client);
 
         // Create a new player
-        //generate a user id
+        // generate a user id
         UUID userID = UUID.randomUUID();
         Player player = new Player(userID, username);
 
@@ -64,7 +49,6 @@ public class HostScreenController extends Controller {
         server.send(new Action(Command.ADD_PLAYER, arguments));
     }
 
-
     /**
      * Handle when the server tells us a new player was added to the game
      */
@@ -76,7 +60,7 @@ public class HostScreenController extends Controller {
 
         model.addPlayer(new Player(id, username, isCpu));
 
-        screen.onPlayerJoined();
+        // screen.onPlayerJoined();
     }
 
     /**
@@ -95,7 +79,7 @@ public class HostScreenController extends Controller {
     }
 
     public void setScreen(Screen screen) {
-        this.screen = (HostScreen) screen;
+        this.screen = (JoinScreen) screen;
     }
 
     @Override

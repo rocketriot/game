@@ -9,11 +9,9 @@ import bham.bioshock.communication.Action;
 import bham.bioshock.communication.Command;
 import bham.bioshock.communication.server.ServerService;
 
-public class HostScreenHandler {
-	
-    /**
-     * Adds a player to the server and sends the player to all the clients
-     */
+public class JoinScreenHandler {
+
+    /** Adds a player to the server and sends the player to all the clients */
     public static void addPlayer(Model model, Action action, ServerService service) {
         ArrayList<String> arguments = action.getArguments();
         UUID id = UUID.fromString(arguments.get(0));
@@ -35,13 +33,13 @@ public class HostScreenHandler {
         }
     }
 
-    /**
-     * Creates CPU players and starts the game
-     */
+    /** Creates CPU players and starts the game */
     public static void startGame(Model model, Action action, ServerService service) {
         // If there is not 4 players, create CPU players
         while (model.getPlayers().size() != model.MAX_PLAYERS) {
-            Player player = new Player(true);
+            int number = model.getPlayers().size();
+
+            Player player = new Player("Player " + number, true);
             model.addPlayer(player);
 
             ArrayList<String> arguments = new ArrayList<>();
