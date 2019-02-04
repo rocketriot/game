@@ -298,6 +298,7 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
 
     @Override
     public void dispose() {
+        stage.dispose();
         batch.dispose();
         hud.dispose();
         background.getTexture().dispose();
