@@ -59,29 +59,12 @@ public class CommunicationClient {
 		}
 		throw new ConnectException("Connection unsuccessful");
 	}
-
+	
 	public static void main(String[] args) {
-		// Get name
-		Scanner sc = new Scanner(System.in);
-		System.out.println("Enter your username:");
-		String name = sc.nextLine();
-		ClientService service;
-
 		try {
-			service = connect(name, null);
-
-			while (true) {
-				System.out.println("Enter command:");
-				String command = sc.nextLine();
-				ArrayList<String> arguments = new ArrayList<String>();
-				arguments.add(command);
-				service.send(new Action(Command.TEST, arguments));
-			}
-
+			CommunicationClient.connect("Test", null);
 		} catch (ConnectException e) {
-			System.out.println("Connection error");
-		} finally {
-			sc.close();
+			e.printStackTrace();
 		}
 	}
 

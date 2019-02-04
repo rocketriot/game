@@ -9,6 +9,7 @@ import bham.bioshock.communication.Action;
 import bham.bioshock.communication.client.ClientService;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+import bham.bioshock.server.Server;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Screen;
@@ -21,7 +22,7 @@ public class Client extends Game {
 	
 	/** An enum to represent all the views */
 	public enum View {
-		MAIN_MENU, HOW_TO, LOADING, GAME_BOARD, PREFERENCES, HOST_SCREEN
+		MAIN_MENU, HOW_TO, LOADING, GAME_BOARD, PREFERENCES, JOIN_SCREEN
 	}
 
 	/** Stores all the controllers */
@@ -32,6 +33,8 @@ public class Client extends Game {
 
 	/** Stores all data */
 	private Model model;
+
+	private Server hostingServer;
 
 	private ClientService server;
 
@@ -67,12 +70,12 @@ public class Client extends Game {
 		controllers.put(View.PREFERENCES, preferencesController);
 		screens.put(View.PREFERENCES, preferencesScreen);
 
-		// Host Screen
-		HostScreenController hostScreenController = new HostScreenController(this);
-		HostScreen hostScreen = new HostScreen(hostScreenController);
-		hostScreenController.setScreen(hostScreen);
-		controllers.put(View.HOST_SCREEN, hostScreenController);
-		screens.put(View.HOST_SCREEN, hostScreen);
+		// Join Screen
+		JoinScreenController joinScreenController = new JoinScreenController(this);
+		JoinScreen joinScreen = new JoinScreen(joinScreenController);
+		joinScreenController.setScreen(joinScreen);
+		controllers.put(View.JOIN_SCREEN, joinScreenController);
+		screens.put(View.JOIN_SCREEN, joinScreen);
 
 		// Game Board
 		GameBoardController gameBoardController = new GameBoardController(this);
@@ -85,12 +88,12 @@ public class Client extends Game {
 	public void handleServerMessages(Action action) {
 		switch (action.getCommand()) {
 		case ADD_PLAYER: {
-			HostScreenController controller = (HostScreenController) controllers.get(View.HOST_SCREEN);
+			JoinScreenController controller = (JoinScreenController) controllers.get(View.JOIN_SCREEN);
 			controller.onPlayerJoined(action);
 			break;
 		}
 		case START_GAME: {
-			HostScreenController controller = (HostScreenController) controllers.get(View.HOST_SCREEN);
+			JoinScreenController controller = (JoinScreenController) controllers.get(View.JOIN_SCREEN);
 			controller.onStartGame(action);
 			break;
 		}
@@ -112,6 +115,11 @@ public class Client extends Game {
 
 	public ClientService getServer() {
 		return server;
+	}
+
+	public void createHostingServer() {
+		this.hostingServer = new Server();
+		hostingServer.start();
 	}
 
 	public static void main(String[] args) {
