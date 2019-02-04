@@ -2,10 +2,6 @@ package bham.bioshock.client.controllers;
 
 import java.io.Serializable;
 import java.net.ConnectException;
-import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.Random;
-import java.util.UUID;
 
 import com.badlogic.gdx.Screen;
 
@@ -13,13 +9,10 @@ import bham.bioshock.client.Client;
 import bham.bioshock.client.XMLReader;
 import bham.bioshock.client.Client.View;
 import bham.bioshock.client.screens.HostScreen;
-import bham.bioshock.common.models.Model;
 import bham.bioshock.common.models.Player;
 import bham.bioshock.communication.Action;
 import bham.bioshock.communication.Command;
-import bham.bioshock.communication.client.ClientService;
 import bham.bioshock.communication.client.CommunicationClient;
-import bham.bioshock.communication.server.CommunicationServer;
 import bham.bioshock.server.Server;
 
 
@@ -51,6 +44,7 @@ public class HostScreenController extends Controller {
      */
     public void connectToServer(String username) throws ConnectException {
         Server host = new Server();
+        host.start();
 
     	// Create server connection
         server = CommunicationClient.connect(username, client);
@@ -69,10 +63,11 @@ public class HostScreenController extends Controller {
     public void onPlayerJoined(Action action) {
     	for(Serializable argument : action.getArguments()) {
     		Player player = (Player) argument;
-    		model.addPlayer(player);    		
+    		model.addPlayer(player);
+    		System.out.println("Player: " + player.getUsername() + " connected");
     	}
 
-        ((HostScreen) screen).onPlayerJoined();
+        //((HostScreen) screen).onPlayerJoined();
     }
 
     /**

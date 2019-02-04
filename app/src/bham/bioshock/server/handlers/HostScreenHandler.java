@@ -2,14 +2,12 @@ package bham.bioshock.server.handlers;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.UUID;
 
 import bham.bioshock.common.models.Model;
 import bham.bioshock.common.models.Player;
 import bham.bioshock.communication.Action;
 import bham.bioshock.communication.Command;
 import bham.bioshock.communication.server.ServerHandler;
-import bham.bioshock.communication.server.ServerService;
 
 public class HostScreenHandler {
 	

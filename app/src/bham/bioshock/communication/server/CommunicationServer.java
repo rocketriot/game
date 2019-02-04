@@ -15,7 +15,6 @@ public class CommunicationServer {
 		ObjectInputStream fromClient = new ObjectInputStream(socket.getInputStream());
 		ObjectOutputStream toClient = new ObjectOutputStream(socket.getOutputStream());
 
-		System.out.println("New client connected");
 		// Service to execute business logic
 		ServerService service = new ServerService(fromClient, toClient, handler);
 		service.start();
