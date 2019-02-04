@@ -152,6 +152,7 @@ public class AStarPathfinding {
 
         // iterate through the list to get an entrySet
         for (Coordinates currentCoords : list) {
+            System.out.println(aStarGrid);
             PathfindingValues value = aStarGrid[currentCoords.getX()][currentCoords.getY()];
 
             // check if the point can be traversed to

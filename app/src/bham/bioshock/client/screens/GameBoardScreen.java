@@ -383,10 +383,13 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
         // TODO show path to mouse pointer
         if (playerSelected == true) {
             Vector3 mouseCoords = getWorldCoords(screenX, screenY);
-            Vector3 gridCoords = new Vector3((int) mouseCoords.x / PPS, (int) mouseCoords.y / PPS, 0);
-            if (gridCoords.x < gridSize && gridCoords.x >= 0) {
-                if (gridCoords.y < gridSize && gridCoords.y >= 0) {
-                    System.out.println(pathFinder.pathfind(new Coordinates((int) gridCoords.x, (int) gridCoords.y)));
+            Coordinates gridCoords = new Coordinates((int) mouseCoords.x / PPS, (int) mouseCoords.y / PPS);
+            if (gridCoords.getX() < gridSize && gridCoords.getX() >= 0) {
+                if (gridCoords.getY() < gridSize && gridCoords.getY() >= 0) {
+                    if (!gridCoords.isEqual(controller.getMainPlayer().getCoordinates())) {
+                        System.out.println(gridCoords.getX() + ", " + gridCoords.getY());
+                        System.out.println(pathFinder.pathfind(gridCoords));
+                    }
                 }
             }
         }
