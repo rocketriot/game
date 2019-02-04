@@ -1,9 +1,8 @@
 package bham.bioshock.common.pathfinding;
 
 import bham.bioshock.common.consts.GridPoint;
-import bham.bioshock.common.models.*;
+import bham.bioshock.common.models.Coordinates;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -43,6 +42,7 @@ public class AStarPathfinding {
     // method to call to actually find the path
     public ArrayList<Coordinates> pathfind(Coordinates goalPosition) {
         setGoalPosition(goalPosition);
+        aStarGrid[startPosition.getX()][startPosition.getY()].setTotalCost(0);
 
         // open list - list of all generated nodes
         ArrayList<Coordinates> openList = new ArrayList<>();
@@ -54,8 +54,6 @@ public class AStarPathfinding {
 
         // while there are points to check
         while (!openList.isEmpty()) {
-            // set the start position to be passable as this will be a player
-            aStarGrid[startPosition.getX()][startPosition.getY()].setPassable(true);
             Coordinates currentPosition = findMinPoint(openList); // get coordinates of point with smallest cost
             openList.remove(currentPosition);
             closedList.add(currentPosition);

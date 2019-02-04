@@ -45,6 +45,8 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
     private int mouseDownX, mouseDownY;
     private boolean playerSelected = false;
     private ArrayList<Sprite> outlinedPlayerSprites;
+    private ArrayList<Coordinates> path = new ArrayList<>();
+    private Coordinates oldGridCoords = new Coordinates(-1, -1);
 
     public GameBoardScreen(final GameBoardController controller) {
         this.controller = controller;
@@ -273,7 +275,11 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
             Gdx.gl.glEnable(GL30.GL_BLEND);
             Gdx.gl.glBlendFunc(GL30.GL_SRC_ALPHA, GL30.GL_ONE_MINUS_SRC_ALPHA);
             sh.setColor(124, 252, 0, 0.4f);
-            //sh.rect(PPS * );
+            if (path.size() > 0) {
+                for (Coordinates c : path) {
+                    sh.rect(PPS * c.getX(), PPS * c.getY(), PPS, PPS);
+                }
+            }
             sh.end();
             Gdx.gl.glDisable(GL30.GL_BLEND);
         }
@@ -394,12 +400,13 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
         if (playerSelected == true) {
             Vector3 mouseCoords = getWorldCoords(screenX, screenY);
             Coordinates gridCoords = new Coordinates((int) mouseCoords.x / PPS, (int) mouseCoords.y / PPS);
-            if (gridCoords.getX() < gridSize && gridCoords.getX() >= 0) {
-                if (gridCoords.getY() < gridSize && gridCoords.getY() >= 0) {
-                    if (!gridCoords.isEqual(controller.getMainPlayer().getCoordinates())) {
-                        System.out.println(controller.getMainPlayer().getCoordinates().getX() + ", " + controller.getMainPlayer().getCoordinates().getY());
-                        System.out.println(gridCoords.getX() + ", " + gridCoords.getY());
-                        System.out.println(pathFinder.pathfind(gridCoords));
+            if (!oldGridCoords.isEqual(gridCoords)) {
+                if (gridCoords.getX() < gridSize && gridCoords.getX() >= 0) {
+                    if (gridCoords.getY() < gridSize && gridCoords.getY() >= 0) {
+                        if (!gridCoords.isEqual(controller.getMainPlayer().getCoordinates())) {
+                            path = pathFinder.pathfind(gridCoords);
+                            oldGridCoords = gridCoords;
+                        }
                     }
                 }
             }
