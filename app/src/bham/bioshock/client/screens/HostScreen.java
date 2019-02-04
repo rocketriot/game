@@ -123,6 +123,10 @@ public class HostScreen extends ScreenMaster {
         return table;
     }
 
+    /** Handles when a player joins the lobby */
+    public void onPlayerJoined() {
+        // TODO: implement
+    }
 
     private void configureNewGame(String host_name) {
         try {

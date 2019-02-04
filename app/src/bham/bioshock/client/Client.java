@@ -43,28 +43,38 @@ public class Client extends Game {
 	private void loadViews() {
 		// Main Menu
 		MainMenuController mainMenuController = new MainMenuController(this);
+		MainMenuScreen mainMenuScreen = new MainMenuScreen(mainMenuController);
+		mainMenuController.setScreen(mainMenuScreen);
 		controllers.put(View.MAIN_MENU, mainMenuController);
-		screens.put(View.MAIN_MENU, new MainMenuScreen(mainMenuController));
+		screens.put(View.MAIN_MENU, mainMenuScreen);
 
 		// How To
 		HowToController howToController = new HowToController(this);
+		HowToScreen howToScreen = new HowToScreen(howToController);
+		howToController.setScreen(howToScreen);
 		controllers.put(View.HOW_TO, howToController);
-		screens.put(View.HOW_TO, new HowToScreen(howToController));
+		screens.put(View.HOW_TO, howToScreen);
 
 		// Preferences
 		PreferencesController preferencesController = new PreferencesController(this);
+		PreferencesScreen preferencesScreen = new PreferencesScreen(preferencesController);
+		preferencesController.setScreen(preferencesScreen);
 		controllers.put(View.PREFERENCES, preferencesController);
-		screens.put(View.PREFERENCES, new PreferencesScreen(preferencesController));
+		screens.put(View.PREFERENCES, preferencesScreen);
 
 		// Host Screen
-		HostScreenController hostscreenController = new HostScreenController(this);
-		controllers.put(View.HOST_SCREEN, hostscreenController);
-		screens.put(View.HOST_SCREEN, new HostScreen(hostscreenController));
+		HostScreenController hostScreenController = new HostScreenController(this);
+		HostScreen hostScreen = new HostScreen(hostScreenController);
+		hostScreenController.setScreen(hostScreen);
+		controllers.put(View.HOST_SCREEN, hostScreenController);
+		screens.put(View.HOST_SCREEN, hostScreen);
 
 		// Game Board
 		GameBoardController gameBoardController = new GameBoardController(this);
+		GameBoardScreen gameBoardScreen = new GameBoardScreen(gameBoardController);
+		gameBoardController.setScreen(gameBoardScreen);
 		controllers.put(View.GAME_BOARD, gameBoardController);
-		screens.put(View.GAME_BOARD, new GameBoardScreen(gameBoardController));
+		screens.put(View.GAME_BOARD, gameBoardScreen);
 	}
 
 	public void handleServerMessages(Action action) {

@@ -1,6 +1,7 @@
 package bham.bioshock.client.controllers;
 
 import bham.bioshock.client.Client;
+import bham.bioshock.client.screens.GameBoardScreen;
 import bham.bioshock.common.consts.GridPoint;
 import bham.bioshock.common.models.Coordinates;
 import bham.bioshock.common.models.GameBoard;
@@ -20,7 +21,7 @@ public class GameBoardController extends Controller {
         this.server = client.getServer();
         this.model = client.getModel();
 
-        //TODO TEMP CODE REMOVE
+        // TODO TEMP CODE REMOVE
         Player p1 = new Player(new Coordinates(0, 0), 0);
         Player p2 = new Player(new Coordinates(0, 35), 1);
         Player p3 = new Player(new Coordinates(35, 35), 2);

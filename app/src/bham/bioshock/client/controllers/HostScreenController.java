@@ -6,9 +6,12 @@ import java.util.ArrayList;
 import java.util.Random;
 import java.util.UUID;
 
+import com.badlogic.gdx.Screen;
+
 import bham.bioshock.client.Client;
 import bham.bioshock.client.XMLReader;
 import bham.bioshock.client.Client.View;
+import bham.bioshock.client.screens.HostScreen;
 import bham.bioshock.common.models.Model;
 import bham.bioshock.common.models.Player;
 import bham.bioshock.communication.Action;
@@ -73,6 +76,7 @@ public class HostScreenController extends Controller {
 
         model.addPlayer(new Player(id, username, isCpu));
 
+        screen.onPlayerJoined();
     }
 
     /**
@@ -88,6 +92,10 @@ public class HostScreenController extends Controller {
     public void onStartGame(Action action) {
         System.out.println("Ready to start!");
         client.changeScreen(Client.View.GAME_BOARD);
+    }
+
+    public void setScreen(Screen screen) {
+        this.screen = (HostScreen) screen;
     }
 
     @Override
