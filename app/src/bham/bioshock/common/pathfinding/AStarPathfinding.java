@@ -54,6 +54,8 @@ public class AStarPathfinding {
 
         // while there are points to check
         while (!openList.isEmpty()) {
+            // set the start position to be passable as this will be a player
+            aStarGrid[startPosition.getX()][startPosition.getY()].setPassable(true);
             Coordinates currentPosition = findMinPoint(openList); // get coordinates of point with smallest cost
             openList.remove(currentPosition);
             closedList.add(currentPosition);
@@ -137,9 +139,6 @@ public class AStarPathfinding {
             }
         }
 
-        // set the start position to be passable as this will be a player
-        tempGrid[startPosition.getX()][startPosition.getY()].setPassable(true);
-        
         return tempGrid;
     }
 
