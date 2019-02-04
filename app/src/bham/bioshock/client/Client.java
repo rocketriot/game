@@ -7,6 +7,8 @@ import bham.bioshock.client.screens.*;
 import bham.bioshock.common.models.Model;
 import bham.bioshock.communication.Action;
 import bham.bioshock.communication.client.ClientService;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Screen;
@@ -14,6 +16,9 @@ import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 
 public class Client extends Game {
+	
+	private static final Logger logger = LogManager.getLogger(Client.class);
+	
 	/** An enum to represent all the views */
 	public enum View {
 		MAIN_MENU, HOW_TO, LOADING, GAME_BOARD, PREFERENCES, HOST_SCREEN
@@ -110,6 +115,8 @@ public class Client extends Game {
 	}
 
 	public static void main(String[] args) {
+		logger.info("Logger test INFO");
+		logger.trace("Logger test TRACE");
 		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
 		config.foregroundFPS = 60;
 
