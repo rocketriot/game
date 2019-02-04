@@ -27,6 +27,9 @@ public class Player {
     /** Player's textureID */
     private int textureID;
 
+    /** The number of points the player has */
+    private int points =0;
+
     public Player() {
         this.id = UUID.randomUUID();
         this.textureID = 0;
@@ -98,6 +101,14 @@ public class Player {
 
     public void setCpu(boolean cpu) {
         isCpu = cpu;
+    }
+
+    public int getPoints(){
+        return points;
+    }
+
+    public void setPoints(int points){
+        this.points = points;
     }
 
     public int getTextureID() {
