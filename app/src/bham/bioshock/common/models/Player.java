@@ -21,7 +21,7 @@ public class Player {
     /** Specifies if the player is controlled by AI */
     public boolean isCpu = false;
 
-    /** THe numbwer of points the player has */
+    /** The number of points the player has */
     private int points =0;
 
     public Player() {
