@@ -11,13 +11,9 @@ import bham.bioshock.communication.client.ClientService;
 
 import java.util.ArrayList;
 
-import com.badlogic.gdx.Screen;
 
-public class GameBoardController implements Controller {
-    private Client client;
-    private ClientService server;
-    private GameBoardScreen screen;
-    private Model model;
+public class GameBoardController extends Controller {
+
     private GameBoard gameBoard;
 
     public GameBoardController(Client client) {
@@ -57,11 +53,5 @@ public class GameBoardController implements Controller {
         return model.getPlayers();
     }
 
-    public void setScreen(Screen screen) {
-        this.screen = (GameBoardScreen) screen;
-    }
 
-    public void changeScreen(Client.View screen) {
-        client.changeScreen(screen);
-    }
 }

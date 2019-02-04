@@ -7,10 +7,8 @@ import bham.bioshock.client.XMLReader;
 import bham.bioshock.client.screens.PreferencesScreen;
 import bham.bioshock.common.models.Model;
 
-public class PreferencesController implements Controller {
-    private Client client;
-    private PreferencesScreen screen;
-    private Model model;
+public class PreferencesController extends Controller {
+
 
     private XMLReader reader;
 
@@ -31,11 +29,4 @@ public class PreferencesController implements Controller {
 
     }
 
-    public void setScreen(Screen screen) {
-        this.screen = (PreferencesScreen) screen;
-    }
-
-    public void changeScreen(Client.View screen) {
-        client.changeScreen(screen);
-    }
 }

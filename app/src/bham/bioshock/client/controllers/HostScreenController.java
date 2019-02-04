@@ -1,7 +1,9 @@
 package bham.bioshock.client.controllers;
 
 import java.net.ConnectException;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Random;
 import java.util.UUID;
 
 import com.badlogic.gdx.Screen;
@@ -17,11 +19,8 @@ import bham.bioshock.communication.Command;
 import bham.bioshock.communication.client.ClientService;
 import bham.bioshock.communication.client.CommunicationClient;
 
-public class HostScreenController implements Controller {
-    private Client client;
-    private ClientService server;
-    private HostScreen screen;
-    private Model model;
+
+public class HostScreenController extends Controller {
 
     private XMLReader game_reader;
     private XMLReader pref_reader;
@@ -42,6 +41,7 @@ public class HostScreenController implements Controller {
         return pref_reader.getInt("players");
     }
 
+
     /**
      * Create a connection with the server and wait in lobby when a username is
      * entered
@@ -51,7 +51,9 @@ public class HostScreenController implements Controller {
         server = CommunicationClient.connect(username, client);
 
         // Create a new player
-        Player player = new Player(username);
+        //generate a user id
+        UUID userID = UUID.randomUUID();
+        Player player = new Player(userID, username);
 
         // Setup arguments
         ArrayList<String> arguments = new ArrayList<String>();
@@ -61,6 +63,7 @@ public class HostScreenController implements Controller {
         // Add the player to the server
         server.send(new Action(Command.ADD_PLAYER, arguments));
     }
+
 
     /**
      * Handle when the server tells us a new player was added to the game
@@ -99,4 +102,5 @@ public class HostScreenController implements Controller {
     public void changeScreen(View view) {
         client.changeScreen(view);
     }
+
 }
