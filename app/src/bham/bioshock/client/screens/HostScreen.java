@@ -64,7 +64,7 @@ public class HostScreen extends ScreenMaster {
         SelectBox selectPlayers = new SelectBox(skin);
 
         //get max players from reader
-        HostScreenController contr = (HostScreenController) controller;
+        HostScreenController contr = controller;
         int max_players = contr.getMaxPlayers();
         Array<Integer> selection = new Array<>();
         for(int i = 1; i <= max_players; i++) {
@@ -72,7 +72,7 @@ public class HostScreen extends ScreenMaster {
         }
         selectPlayers.setItems(selection);
         //get Preferred number of players
-        int preferred_players = ((HostScreenController) controller).getPreferredPlayers();
+        int preferred_players = controller.getPreferredPlayers();
         selectPlayers.setSelected(preferred_players);
 
         hostNameField.addListener(new ChangeListener() {
@@ -81,10 +81,6 @@ public class HostScreen extends ScreenMaster {
                 host_name = hostNameField.getText();
             }
         });
-
-
-
-
 
 
         //button for start new game
