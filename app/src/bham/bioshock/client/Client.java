@@ -115,8 +115,6 @@ public class Client extends Game {
 	}
 
 	public static void main(String[] args) {
-		logger.info("Logger test INFO");
-		logger.trace("Logger test TRACE");
 		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
 		config.foregroundFPS = 60;
 
