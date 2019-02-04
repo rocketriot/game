@@ -1,7 +1,9 @@
 package bham.bioshock.client.controllers;
 
 import java.net.ConnectException;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Random;
 import java.util.UUID;
 
 import bham.bioshock.client.Client;
@@ -46,7 +48,9 @@ public class HostScreenController implements Controller {
         server = CommunicationClient.connect(username, client);
 
         // Create a new player
-        Player player = new Player(username);
+        //generate a user id
+        UUID userID = UUID.randomUUID();
+        Player player = new Player(userID, username);
 
         // Setup arguments
         ArrayList<String> arguments = new ArrayList<String>();
@@ -89,4 +93,5 @@ public class HostScreenController implements Controller {
     public void changeScreen(View view) {
         client.changeScreen(view);
     }
+
 }
