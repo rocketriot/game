@@ -235,7 +235,7 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
             s.setSize(PPS * 3, PPS * 3);
         }
         for (Sprite s : asteroidSprites) {
-            s.setSize(PPS * 4, PPS * 3);
+            s.setSize(PPS * 3, PPS * 4);
         }
         for (Sprite s : playerSprites) {
             s.setSize(PPS * 1, PPS * 1);
@@ -372,6 +372,7 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
         if (clickCoords.x >= player.getCoordinates().getX() * PPS && clickCoords.x <= (player.getCoordinates().getX() + 1) * PPS) {
             if (clickCoords.y >= player.getCoordinates().getY() * PPS && clickCoords.y <= (player.getCoordinates().getY() + 1) * PPS) {
                 playerSelected = true;
+                path = new ArrayList<>();
             }
         }
         return false;
