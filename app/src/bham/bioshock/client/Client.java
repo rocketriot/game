@@ -2,14 +2,16 @@ package bham.bioshock.client;
 
 import java.util.HashMap;
 
+import bham.bioshock.client.controllers.*;
+import bham.bioshock.client.screens.*;
+import bham.bioshock.common.models.Model;
+import bham.bioshock.communication.Action;
+import bham.bioshock.communication.client.ClientService;
+
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
-
-import bham.bioshock.common.models.*;
-import bham.bioshock.client.controllers.*;
-import bham.bioshock.client.screens.*;
 
 public class Client extends Game {
 	/** An enum to represent all the views */
@@ -26,10 +28,11 @@ public class Client extends Game {
 	/** Stores all data */
 	private Model model;
 
+	private ClientService server;
+
 	@Override
 	public void create() {
 		model = new Model();
-
 		loadViews();
 
 		// Set the first screen to the main menu
@@ -39,35 +42,71 @@ public class Client extends Game {
 	/** Loads up the views */
 	private void loadViews() {
 		// Main Menu
-		MainMenuController mainMenuController = new MainMenuController(this, model);
+		MainMenuController mainMenuController = new MainMenuController(this);
+		MainMenuScreen mainMenuScreen = new MainMenuScreen(mainMenuController);
+		mainMenuController.setScreen(mainMenuScreen);
 		controllers.put(View.MAIN_MENU, mainMenuController);
-		screens.put(View.MAIN_MENU, new MainMenuScreen(mainMenuController));
+		screens.put(View.MAIN_MENU, mainMenuScreen);
 
 		// How To
-		HowToController howToController = new HowToController(this, model);
+		HowToController howToController = new HowToController(this);
+		HowToScreen howToScreen = new HowToScreen(howToController);
+		howToController.setScreen(howToScreen);
 		controllers.put(View.HOW_TO, howToController);
-		screens.put(View.HOW_TO, new HowToScreen(howToController));
+		screens.put(View.HOW_TO, howToScreen);
 
 		// Preferences
-		PreferencesController preferencesController = new PreferencesController(this, model);
+		PreferencesController preferencesController = new PreferencesController(this);
+		PreferencesScreen preferencesScreen = new PreferencesScreen(preferencesController);
+		preferencesController.setScreen(preferencesScreen);
 		controllers.put(View.PREFERENCES, preferencesController);
-		screens.put(View.PREFERENCES, new PreferencesScreen(preferencesController));
+		screens.put(View.PREFERENCES, preferencesScreen);
 
 		// Host Screen
-		HostScreenController hostscreenController = new HostScreenController(this, model);
-		controllers.put(View.HOST_SCREEN, hostscreenController);
-		screens.put(View.HOST_SCREEN, new HostScreen(hostscreenController));
+		HostScreenController hostScreenController = new HostScreenController(this);
+		HostScreen hostScreen = new HostScreen(hostScreenController);
+		hostScreenController.setScreen(hostScreen);
+		controllers.put(View.HOST_SCREEN, hostScreenController);
+		screens.put(View.HOST_SCREEN, hostScreen);
 
 		// Game Board
-		GameBoardController gameBoardController = new GameBoardController(this, model);
+		GameBoardController gameBoardController = new GameBoardController(this);
+		GameBoardScreen gameBoardScreen = new GameBoardScreen(gameBoardController);
+		gameBoardController.setScreen(gameBoardScreen);
 		controllers.put(View.GAME_BOARD, gameBoardController);
-		screens.put(View.GAME_BOARD, new GameBoardScreen(gameBoardController));
+		screens.put(View.GAME_BOARD, gameBoardScreen);
+	}
+
+	public void handleServerMessages(Action action) {
+		switch (action.getCommand()) {
+		case ADD_PLAYER: {
+			HostScreenController controller = (HostScreenController) controllers.get(View.HOST_SCREEN);
+			controller.onPlayerJoined(action);
+			break;
+		}
+		case START_GAME: {
+			HostScreenController controller = (HostScreenController) controllers.get(View.HOST_SCREEN);
+			controller.onStartGame(action);
+			break;
+		}
+		default: {
+			System.out.println("Received unhandled command: " + action.getCommand().toString());
+		}
+		}
 	}
 
 	/** Change the client's screen */
 	public void changeScreen(View view) {
 		Screen screen = screens.get(view);
 		this.setScreen(screen);
+	}
+
+	public Model getModel() {
+		return model;
+	}
+
+	public ClientService getServer() {
+		return server;
 	}
 
 	public static void main(String[] args) {

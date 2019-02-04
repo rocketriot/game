@@ -12,26 +12,36 @@ import com.badlogic.gdx.files.FileHandle;
 /**
  * Stores the data of a player on the game board
  */
-public class Planet {
-    /** ID of the planet */
+public class Asteroid {
+    /**
+     * ID of the planet
+     */
     private UUID id;
 
-    /** Name of the planet */
+    /**
+     * Name of the asteroid
+     */
     private String name;
 
-    /** Location of the planet */
+    /**
+     * Location of the asteroid
+     */
     private Coordinates coordinates;
 
-    /** If captured, specifies the player that has captured the planet */
+    /**
+     * If captured, specifies the player that has captured the asteroid
+     */
     private Player playerCaptured = null;
 
-    /** Stores whether the object has been drawn this cycle */
+    /**
+     * Stores whether the object has been drawn this cycle
+     */
     private boolean drawn = false;
 
     /** The texture ID for the object */
     private int textureID;
 
-    public Planet(String name, Coordinates coordinates) {
+    public Asteroid(String name, Coordinates coordinates) {
         this.id = UUID.randomUUID();
         this.name = name;
         this.coordinates = coordinates;

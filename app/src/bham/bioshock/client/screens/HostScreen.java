@@ -14,7 +14,10 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
+import java.net.ConnectException;
+
 public class HostScreen extends ScreenMaster {
+    HostScreenController controller;
 
     private TextButton host_button;
     private Table table;
@@ -27,28 +30,26 @@ public class HostScreen extends ScreenMaster {
         stage = new Stage(new ScreenViewport());
 
         batch = new SpriteBatch();
-        stack = new Stack();
+
+    }
+
+    @Override
+    public void show() {
+        super.show();
+        assemble();
+
+        Gdx.input.setInputProcessor(stage);
     }
 
     @Override
     public void render(float delta) {
-        drawBackground(delta);
-        assemble();
-
-        stage.act();
-        stage.draw();
-
-
+        super.render(delta);
     }
 
     private void assemble() {
         table = drawTable();
 
         stage.addActor(table);
-        //stack.setSize(stage.getWidth(), stage.getHeight());
-        //stack.add(table);
-
-        Gdx.input.setInputProcessor(stage);
     }
 
 
@@ -94,9 +95,19 @@ public class HostScreen extends ScreenMaster {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 host_name = hostNameField.getText();
+
                 System.out.println("host name =" + host_name);
-                int players = selectPlayers.getSelectedIndex();
-                System.out.println("number of players" + players);
+                //int players = selectPlayers.getSelectedIndex();
+                //System.out.println("number of players" + players);
+
+                //check that the host_name is not null
+                if(host_name == null) {
+                    System.out.print("Please enter a host name");
+                }
+                else {
+                    configureNewGame(host_name);
+                }
+
 
             }
         });
@@ -112,22 +123,19 @@ public class HostScreen extends ScreenMaster {
         return table;
     }
 
-
-    private void configureNewGame() {
-        //get the name of the host
-        String host_name = "hoster";
-        int number_of_player = 2;
-        //ask how many players
-        HostScreenController contr = (HostScreenController) controller;
-        contr.configureGame(host_name, number_of_player);
+    /** Handles when a player joins the lobby */
+    public void onPlayerJoined() {
+        // TODO: implement
     }
 
-    private class HostPopup {
-     /*   private TextField text = new TextField("Enter Name", skin);
-        private InputListener host_name = text.getDefaultInputListener();
+    private void configureNewGame(String host_name) {
+        try {
+            controller.connectToServer(host_name);
+        }
+        catch (ConnectException e) {
+            e.printStackTrace();
+        }
 
-        public void hostPopup() {
-            Gdx.input.getTextInput(host_name, "Enter Name", "","");
-        }*/
     }
+
 }

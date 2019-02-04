@@ -1,17 +1,16 @@
 package bham.bioshock.client.screens;
 
-import bham.bioshock.*;
 import bham.bioshock.client.Client;
 import bham.bioshock.client.controllers.MainMenuController;
-
-import com.badlogic.gdx.*;
-import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.graphics.*;
-import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+
+
+import com.badlogic.gdx.scenes.scene2d.ui.Container;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
@@ -29,19 +28,14 @@ public class MainMenuScreen extends ScreenMaster {
     private TextButton join;
 
 
+
     public MainMenuScreen(final MainMenuController controller) {
         this.controller = controller;
-
-        // determine screen size
-        Dimension screensize = Toolkit.getDefaultToolkit().getScreenSize();
-        int screenwidth = screensize.width;
-        int screenheight = screensize.height;
-
-        // camera = new OrthographicCamera(screenwidth, screenheight);
 
         // set the stage, which will react to user inputs
         stage = new Stage(new ScreenViewport());
         batch = new SpriteBatch();
+
 
         // calls act with Graphics.getDeltaTime()
 
@@ -49,17 +43,12 @@ public class MainMenuScreen extends ScreenMaster {
 
     @Override
     public void show() {
-
-
-    }
-
-    @Override
-    public void render(float delta) {
-        drawBackground(delta);
+        super.show();
         drawButtons();
         addListeners();
-    }
 
+        Gdx.input.setInputProcessor(stage);
+    }
 
     @Override
     public void pause() {
@@ -76,32 +65,44 @@ public class MainMenuScreen extends ScreenMaster {
 
     }
 
-
+    @Override
+    public void render(float delta) {
+        super.render(delta);
+    }
 
     private void drawButtons() {
-        // Table to hold menu button, will change this to a better style
-        Table table = new Table();
-        table.setFillParent(true);
-        stage.addActor(table);
+        Container<Table> tableContainer = new Container<>();
+        float container_width = screen_width*0.8f;
+        float container_height = screen_height*0.9f;
+        tableContainer.setSize(container_width, container_height);
+        tableContainer.setPosition((screen_width - container_width)/2.0f, (screen_height-container_height)/2.0f);
 
-        // adding button
+        // Table to hold menu button, will change this to a better style
+        Table table = new Table(skin);
+
+        // adding buttons
         // skins to be styled later
 
-         host = new TextButton("Host Game", skin);
-         join = new TextButton("Join Game", skin);
-         howto = new TextButton("How to Play", skin);
-         preferences = new TextButton("Preferences", skin);
-         exit = new TextButton("Exit", skin);
+        host = new TextButton("Host Game", skin);
+        join = new TextButton("Join Game", skin);
+        howto = new TextButton("How to Play", skin);
+        preferences = new TextButton("Preferences", skin);
+        exit = new TextButton("Exit", skin);
 
         // add the buttons to the table
+        table.row();
         table.add(host).fillX().uniform();
         table.row();
         table.add(join).fillX().uniform();
+        table.row();
         table.add(howto).fillX().uniform();
         table.row();
         table.add(preferences).fillX().uniform();
         table.row();
         table.add(exit).fillX().uniform();
+
+        tableContainer.setActor(table);
+        stage.addActor(tableContainer);
     }
 
     private void addListeners(){
@@ -137,7 +138,7 @@ public class MainMenuScreen extends ScreenMaster {
         join.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                //This is where the networking stuff will go
+                controller.changeScreen(Client.View.GAME_BOARD);
             }
         });
 

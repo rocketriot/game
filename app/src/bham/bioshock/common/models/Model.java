@@ -9,8 +9,11 @@ public class Model {
     /** Contains all of the information about the game board */
     private GameBoard gameBoard;
 
+    /** Max number of players in a game */
+    public final int MAX_PLAYERS = 4;
+
     /** A list of players */
-    private ArrayList<Player> players;
+    private ArrayList<Player> players = new ArrayList<>(MAX_PLAYERS);
 
     /**
      * The ID of the player that the client is controlling, only used client-side

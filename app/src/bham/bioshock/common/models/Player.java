@@ -7,34 +7,68 @@ import java.util.UUID;
  */
 public class Player {
     /** ID of the player */
-    public UUID id;
+    private UUID id;
+
+    /** Username of the player */
+    private String username;
 
     /** Location of the player */
-    public Coordinates coordinates;
+    private Coordinates coordinates;
 
     /** The amount of fuel the player has left */
-    public float fuel = 100.0f;
+    private float fuel = 100.0f;
 
     /** The number of planets the player has captured */
-    public int planetsCaptured = 0;
+    private int planetsCaptured = 0;
 
     /** Specifies if the player is controlled by AI */
-    public boolean isCpu = false;
+    private boolean isCpu = false;
+
+    /** Player's textureID */
+    private int textureID;
 
     /** The number of points the player has */
     private int points =0;
 
     public Player() {
         this.id = UUID.randomUUID();
+        this.textureID = 0;
+    }
+
+    public Player(String username) {
+        this();
+        this.username = username;
+    }
+
+    public Player(UUID id, String username) {
+        this.id = id;
+        this.username = username;
     }
 
     public Player(boolean isCpu) {
-        this.id = UUID.randomUUID();
+        this();
         this.isCpu = isCpu;
+    }
+
+    public Player(UUID id, String username, boolean isCpu) {
+        this.id = id;
+        this.username = username;
+        this.isCpu = isCpu;
+    }
+
+    @Deprecated
+    public Player(Coordinates coordinates, int textureID) {
+        this.id = UUID.randomUUID();
+        this.coordinates = coordinates;
+        this.textureID = textureID;
     }
 
     public UUID getId() {
         return id;
+    }
+
+    public String getUsername() {
+        return username;
     }
 
     public Coordinates getCoordinates() {
@@ -75,5 +109,13 @@ public class Player {
 
     public void setPoints(int points){
         this.points = points;
+    }
+
+    public int getTextureID() {
+        return textureID;
+    }
+
+    public void setTextureID(int textureID) {
+        this.textureID = textureID;
     }
 }
