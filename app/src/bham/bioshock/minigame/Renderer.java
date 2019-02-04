@@ -7,11 +7,9 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Stack;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
@@ -26,7 +24,6 @@ public class Renderer {
 	private Player mainPlayer;
 	private ArrayList<Entity> entities;
 	
-	private Stack stack;
 	private OrthographicCamera cam;
 	private Sprite background;
 	private Stage stage;
@@ -40,20 +37,17 @@ public class Renderer {
 
 	public Renderer(World _w) {
 		w = _w;
-		mainPlayer = w.getPlayer();
+		mainPlayer = w.getMainPlayer();
 		
 		entities = new ArrayList<Entity>();
-		entities.add(new Rocket(320, 0, 1));
-		entities.add(new Player(-140, 0));
-		entities.add(new Player(140, 0));
-		entities.add(new Player(220, 0));
+		entities.addAll(w.getPlayers());
+		entities.addAll(w.getRockets());
 
 		cam = new OrthographicCamera(16,  9);
 		
 		batch = new SpriteBatch();
 		backgroundBatch = new SpriteBatch();
 		
-		cam.position.set(mainPlayer.getX(), mainPlayer.getY(), 0);
 		cam.update();
 
 		loadSprites();
@@ -71,7 +65,7 @@ public class Renderer {
 		batch.setProjectionMatrix(cam.combined);
 		
 		updatePosition();
-		cam.position.set(mainPlayer.getX(), (GAME_WORLD_HEIGHT / 2 ) + mainPlayer.getY(), 0);
+		cam.position.set(mainPlayer.getX(), GAME_WORLD_HEIGHT / 2, 0);
 		cam.update();
 
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
@@ -95,12 +89,15 @@ public class Renderer {
 	
 	public void updatePosition() {
 		float dt = Gdx.graphics.getDeltaTime();
-		mainPlayer.startMove();
-		if(Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
+		mainPlayer.update(dt);
+		if(Gdx.input.isKeyPressed(Input.Keys.LEFT) || Gdx.input.isKeyPressed(Input.Keys.A)) {
 			mainPlayer.moveLeft(dt);
 		}
-		if(Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
+		if(Gdx.input.isKeyPressed(Input.Keys.RIGHT) || Gdx.input.isKeyPressed(Input.Keys.D)) {
 			mainPlayer.moveRight(dt);
+		}
+		if(Gdx.input.isKeyPressed(Input.Keys.UP) || Gdx.input.isKeyPressed(Input.Keys.W)) {
+			mainPlayer.jump(dt);
 		}
 	}
 	

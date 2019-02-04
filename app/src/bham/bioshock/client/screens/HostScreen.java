@@ -38,8 +38,6 @@ public class HostScreen extends ScreenMaster {
 
         stage.act();
         stage.draw();
-
-
     }
 
     private void assemble() {
