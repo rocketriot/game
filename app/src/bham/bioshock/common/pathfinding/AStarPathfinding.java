@@ -136,6 +136,10 @@ public class AStarPathfinding {
                 }
             }
         }
+
+        // set the start position to be passable as this will be a player
+        tempGrid[startPosition.getX()][startPosition.getY()].setPassable(true);
+        
         return tempGrid;
     }
 
