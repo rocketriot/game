@@ -1,5 +1,6 @@
 package bham.bioshock.client.controllers;
 
+import java.io.Serializable;
 import java.net.ConnectException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
@@ -18,6 +19,7 @@ import bham.bioshock.communication.Action;
 import bham.bioshock.communication.Command;
 import bham.bioshock.communication.client.ClientService;
 import bham.bioshock.communication.client.CommunicationClient;
+import bham.bioshock.communication.messages.AddPlayerMessage;
 
 
 public class HostScreenController extends Controller {
@@ -51,17 +53,10 @@ public class HostScreenController extends Controller {
         server = CommunicationClient.connect(username, client);
 
         // Create a new player
-        //generate a user id
-        UUID userID = UUID.randomUUID();
-        Player player = new Player(userID, username);
-
-        // Setup arguments
-        ArrayList<String> arguments = new ArrayList<String>();
-        arguments.add(player.getId().toString());
-        arguments.add(player.getUsername());
+        Player player = new Player(username);
 
         // Add the player to the server
-        server.send(new Action(Command.ADD_PLAYER, arguments));
+        server.send(new Action(Command.ADD_PLAYER, new AddPlayerMessage(player)));
     }
 
 
@@ -69,12 +64,11 @@ public class HostScreenController extends Controller {
      * Handle when the server tells us a new player was added to the game
      */
     public void onPlayerJoined(Action action) {
-        ArrayList<String> arguments = action.getArguments();
-        UUID id = UUID.fromString(arguments.get(0));
-        String username = arguments.get(1);
-        boolean isCpu = Boolean.getBoolean(arguments.get(2));
-
-        model.addPlayer(new Player(id, username, isCpu));
+    	for(Serializable argument : action.getArguments()) {
+    		AddPlayerMessage message = (AddPlayerMessage) argument;
+    		Player player = message.getPlayer();
+    		model.addPlayer(player);    		
+    	}
 
         ((HostScreen) screen).onPlayerJoined();
     }
