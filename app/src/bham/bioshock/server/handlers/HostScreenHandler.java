@@ -10,6 +10,7 @@ import bham.bioshock.communication.Command;
 import bham.bioshock.communication.server.ServerService;
 
 public class HostScreenHandler {
+	
     /**
      * Adds a player to the server and sends the player to all the clients
      */

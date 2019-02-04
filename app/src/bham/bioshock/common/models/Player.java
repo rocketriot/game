@@ -41,8 +41,7 @@ public class Player {
     }
 
     public Player(UUID id, String username) {
-        this.id = id;
-        this.username = username;
+    	this(id, username, false);
     }
 
     public Player(boolean isCpu) {
