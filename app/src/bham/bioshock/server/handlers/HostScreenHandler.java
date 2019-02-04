@@ -8,7 +8,6 @@ import bham.bioshock.common.models.Model;
 import bham.bioshock.common.models.Player;
 import bham.bioshock.communication.Action;
 import bham.bioshock.communication.Command;
-import bham.bioshock.communication.messages.AddPlayerMessage;
 import bham.bioshock.communication.server.ServerHandler;
 import bham.bioshock.communication.server.ServerService;
 
@@ -19,10 +18,9 @@ public class HostScreenHandler {
      * @throws Exception 
      */
     public static void addPlayer(Model model, Action action, ServerHandler hander) throws Exception {
-    	AddPlayerMessage message = (AddPlayerMessage) action.getArgument(0); 
+    	Player player = (Player) action.getArgument(0); 
 
         // Add a player to the model
-    	Player player = new Player(message.id, message.username);
     	model.addPlayer(player);
 
         // Send add player action to all clients
@@ -44,8 +42,7 @@ public class HostScreenHandler {
         while (model.getPlayers().size() != model.MAX_PLAYERS) {
             Player player = new Player(true);
             model.addPlayer(player);
-            AddPlayerMessage message = new AddPlayerMessage(player);
-            cpuPlayers.add(message);
+            cpuPlayers.add(player);
         }
         
         // Send new CPU players to all clients

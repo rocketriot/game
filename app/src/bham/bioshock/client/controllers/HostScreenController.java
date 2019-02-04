@@ -19,7 +19,8 @@ import bham.bioshock.communication.Action;
 import bham.bioshock.communication.Command;
 import bham.bioshock.communication.client.ClientService;
 import bham.bioshock.communication.client.CommunicationClient;
-import bham.bioshock.communication.messages.AddPlayerMessage;
+import bham.bioshock.communication.server.CommunicationServer;
+import bham.bioshock.server.Server;
 
 
 public class HostScreenController extends Controller {
@@ -49,14 +50,16 @@ public class HostScreenController extends Controller {
      * entered
      */
     public void connectToServer(String username) throws ConnectException {
-        // Create server connection
+        Server host = new Server();
+
+    	// Create server connection
         server = CommunicationClient.connect(username, client);
 
         // Create a new player
         Player player = new Player(username);
 
         // Add the player to the server
-        server.send(new Action(Command.ADD_PLAYER, new AddPlayerMessage(player)));
+        server.send(new Action(Command.ADD_PLAYER, player));
     }
 
 
@@ -65,8 +68,7 @@ public class HostScreenController extends Controller {
      */
     public void onPlayerJoined(Action action) {
     	for(Serializable argument : action.getArguments()) {
-    		AddPlayerMessage message = (AddPlayerMessage) argument;
-    		Player player = message.getPlayer();
+    		Player player = (Player) argument;
     		model.addPlayer(player);    		
     	}
 

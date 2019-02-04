@@ -7,7 +7,6 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 import bham.bioshock.communication.Config;
-import bham.bioshock.server.Server;
 
 public class CommunicationServer {
 	private static ServerService createNewConnection(Socket socket, ServerHandler handler)
@@ -16,6 +15,7 @@ public class CommunicationServer {
 		ObjectInputStream fromClient = new ObjectInputStream(socket.getInputStream());
 		ObjectOutputStream toClient = new ObjectOutputStream(socket.getOutputStream());
 
+		System.out.println("New client connected");
 		// Service to execute business logic
 		ServerService service = new ServerService(fromClient, toClient, handler);
 		service.start();

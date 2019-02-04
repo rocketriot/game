@@ -59,6 +59,14 @@ public class CommunicationClient {
 		}
 		throw new ConnectException("Connection unsuccessful");
 	}
+	
+	public static void main(String[] args) {
+		try {
+			CommunicationClient.connect("Test", null);
+		} catch (ConnectException e) {
+			e.printStackTrace();
+		}
+	}
 
 //	public static void main(String[] args) {
 //		// Get name
