@@ -51,13 +51,14 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
 
         gridWidth = GAME_WORLD_WIDTH - (GAME_WORLD_WIDTH % 36);
         gridHeight = gridWidth;
+        gridSize = controller.getGrid().length;
 
         pathFinder = new AStarPathfinding(controller.getGrid(), controller.getMainPlayer().getCoordinates(), gridSize, gridSize);
+        System.out.println(controller.getGrid().length);
 
         // Pixels Per Square (on the grid)
         PPS = 50;
 
-        gridSize = controller.getGrid().length;
 
         aspectRatio = (float) Gdx.graphics.getHeight() / (float) Gdx.graphics.getWidth();
         camera = new OrthographicCamera();
@@ -266,7 +267,14 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
 
     private void drawPath() {
         if (playerSelected == true) {
-            // TODO Draw Path
+            sh.setProjectionMatrix(camera.combined);
+            sh.begin(ShapeRenderer.ShapeType.Filled);
+            Gdx.gl.glEnable(GL30.GL_BLEND);
+            Gdx.gl.glBlendFunc(GL30.GL_SRC_ALPHA, GL30.GL_ONE_MINUS_SRC_ALPHA);
+            sh.setColor(124, 252, 0, 0.4f);
+            //sh.rect(PPS * );
+            sh.end();
+            Gdx.gl.glDisable(GL30.GL_BLEND);
         }
     }
 
@@ -387,6 +395,7 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
             if (gridCoords.getX() < gridSize && gridCoords.getX() >= 0) {
                 if (gridCoords.getY() < gridSize && gridCoords.getY() >= 0) {
                     if (!gridCoords.isEqual(controller.getMainPlayer().getCoordinates())) {
+                        System.out.println(controller.getMainPlayer().getCoordinates().getX() + ", " + controller.getMainPlayer().getCoordinates().getY());
                         System.out.println(gridCoords.getX() + ", " + gridCoords.getY());
                         System.out.println(pathFinder.pathfind(gridCoords));
                     }
