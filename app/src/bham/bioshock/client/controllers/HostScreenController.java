@@ -76,7 +76,7 @@ public class HostScreenController extends Controller {
 
         model.addPlayer(new Player(id, username, isCpu));
 
-        screen.onPlayerJoined();
+        ((HostScreen) screen).onPlayerJoined();
     }
 
     /**
