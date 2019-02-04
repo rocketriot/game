@@ -2,6 +2,7 @@ package bham.bioshock.client.controllers;
 
 import bham.bioshock.client.AppPreferences;
 import bham.bioshock.client.Client;
+import bham.bioshock.client.screens.ScreenMaster;
 import bham.bioshock.common.models.Model;
 import bham.bioshock.communication.client.ClientService;
 import bham.bioshock.server.Server;
@@ -16,6 +17,8 @@ public abstract class Controller {
     protected Client client;
     protected Model model;
     protected ClientService server;
+    protected ScreenMaster screen;
+
 
     public  Controller() {
         preferences = new AppPreferences();
@@ -26,5 +29,9 @@ public abstract class Controller {
 
     public AppPreferences getPreferences() {
         return preferences;
+    }
+
+    public void setScreen(ScreenMaster Screen) {
+        this.screen = screen;
     }
 }
