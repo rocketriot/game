@@ -7,17 +7,16 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 import bham.bioshock.communication.Config;
-import bham.bioshock.server.Server;
 
 public class CommunicationServer {
-	private static ServerService createNewConnection(Socket socket, ServerHandler handler, Server server)
+	private static ServerService createNewConnection(Socket socket, ServerHandler handler)
 			throws IOException {
 		// Create streams for input and output
 		ObjectInputStream fromClient = new ObjectInputStream(socket.getInputStream());
 		ObjectOutputStream toClient = new ObjectOutputStream(socket.getOutputStream());
 
 		// Service to execute business logic
-		ServerService service = new ServerService(fromClient, toClient, handler, server);
+		ServerService service = new ServerService(fromClient, toClient, handler);
 		service.start();
 		return service;
 	}
@@ -28,7 +27,7 @@ public class CommunicationServer {
 		return discoveryThread;
 	}
 
-	public static void start(ServerHandler handler, Server server) {
+	public static void start(ServerHandler handler) {
 		ServerSocket serverSocket = null;
 
 		try {
@@ -43,17 +42,13 @@ public class CommunicationServer {
 			while (true) {
 				Socket socket = serverSocket.accept();
 				// Create streams and objects for sending messages to and from client
-				ServerService service = createNewConnection(socket, handler, server);
+				ServerService service = createNewConnection(socket, handler);
 				handler.register(service);
 			}
 		} catch (IOException e) {
 			System.err.println("IO error " + e.getMessage());
 		}
 		discoveryThread.interrupt();
-	}
-
-	public static void main(String[] args) {
-		start(new ServerHandler(), null);
 	}
 
 }
