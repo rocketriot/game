@@ -41,7 +41,7 @@ public class HostScreenHandler {
     public static void startGame(Model model, Action action, ServerService service) {
         // If there is not 4 players, create CPU players
         while (model.getPlayers().size() != model.MAX_PLAYERS) {
-            Player player = new Player("Player", true);
+            Player player = new Player(true);
             model.addPlayer(player);
 
             ArrayList<String> arguments = new ArrayList<>();
