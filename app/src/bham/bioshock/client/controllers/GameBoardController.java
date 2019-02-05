@@ -1,15 +1,17 @@
 package bham.bioshock.client.controllers;
 
 import bham.bioshock.client.Client;
-import bham.bioshock.common.models.*;
 import bham.bioshock.common.consts.GridPoint;
+import bham.bioshock.common.models.Coordinates;
+import bham.bioshock.common.models.GameBoard;
+import bham.bioshock.common.models.Planet;
+import bham.bioshock.common.models.Player;
 import bham.bioshock.common.pathfinding.AStarPathfinding;
-import bham.bioshock.client.screens.GameBoardScreen;
-import bham.bioshock.communication.client.ClientService;
-import static bham.bioshock.common.consts.GridPoint.Type.*;
 
 import java.util.ArrayList;
 import java.util.Random;
+
+import static bham.bioshock.common.consts.GridPoint.Type.*;
 
 
 public class GameBoardController extends Controller {
@@ -17,6 +19,7 @@ public class GameBoardController extends Controller {
     private GameBoard gameBoard;
     private Player mainPlayer;
     private GridPoint[][] grid;
+    private AStarPathfinding pathFinder;
 
 
     public GameBoardController(Client client) {
@@ -48,7 +51,8 @@ public class GameBoardController extends Controller {
             System.err.println("No Players: ");
             e.printStackTrace();
         }
-        GridPoint[][] grid = gameBoard.getGrid();
+        grid = gameBoard.getGrid();
+        pathFinder = new AStarPathfinding(grid, mainPlayer.getCoordinates(),36,36);
     }
 
     public GridPoint[][] getGrid() {
@@ -71,25 +75,45 @@ public class GameBoardController extends Controller {
         this.mainPlayer = p;
     }
 
-    public void move(Player player, Coordinates destination){
-        Coordinates currentPosition = player.getCoordinates();
-        float fuel = player.getFuel();
+    public AStarPathfinding getPathFinder() {
+        return pathFinder;
+    }
 
-        AStarPathfinding pathFinder = new AStarPathfinding(grid, currentPosition,36,36);
+    public boolean[] getPathColour(ArrayList<Coordinates> path) {
+        boolean[] allowedMove = new boolean[path.size()];
+        float fuel = mainPlayer.getFuel();
+        for (int i = 0; i < path.size(); i++) {
+            if (fuel < 10f) {
+                allowedMove[i] = false;
+            } else {
+                allowedMove[i] = true;
+                fuel -= 10;
+            }
+        }
+        return allowedMove;
+    }
+
+    public void move(Coordinates destination){
+        float fuel = mainPlayer.getFuel();
+
         ArrayList<Coordinates> path = pathFinder.pathfind(destination);
 
+        // pathsize - 1 since path includes start position
+        float pathCost = (path.size() - 1) * 10;
+
         // check if the player has enough fuel
-        if(player.getFuel() > path.size()) {
-            player.setCoordinates(destination);
-            fuel = fuel- path.size();
-            player.setFuel(fuel- path.size());
+        if(mainPlayer.getFuel() > pathCost) {
+            mainPlayer.setCoordinates(destination);
+            fuel -= pathCost;
+            mainPlayer.setFuel(fuel);
 
             int x = destination.getX();
-            int y= destination.getY();
+            int y = destination.getY();
             if(grid[x][y].getType() == PLANET)
                 startMinigame();
             else if(grid[x][y].getType() == FUEL)
-                player.setFuel(fuel + 3);
+                mainPlayer.setFuel(fuel + 30);
+            pathFinder.setStartPosition(mainPlayer.getCoordinates());
         }
     }
 

@@ -8,7 +8,6 @@ import bham.bioshock.common.models.Asteroid;
 import bham.bioshock.common.models.Coordinates;
 import bham.bioshock.common.models.Planet;
 import bham.bioshock.common.models.Player;
-import bham.bioshock.common.pathfinding.AStarPathfinding;
 import com.badlogic.gdx.*;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
@@ -25,8 +24,6 @@ import java.util.ArrayList;
 
 public class GameBoardScreen extends ScreenMaster implements InputProcessor {
     private final InputMultiplexer inputMultiplexer;
-    private final AStarPathfinding pathFinder;
-    private float aspectRatio;
     private GameBoardController controller;
     private SpriteBatch batch;
     private Sprite background;
@@ -56,24 +53,22 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
         gridHeight = gridWidth;
         gridSize = controller.getGrid().length;
 
-        pathFinder = new AStarPathfinding(controller.getGrid(), controller.getMainPlayer().getCoordinates(), gridSize, gridSize);
-        System.out.println(controller.getGrid().length);
-
         // Pixels Per Square (on the grid)
         PPS = 50;
 
-
-        aspectRatio = (float) Gdx.graphics.getHeight() / (float) Gdx.graphics.getWidth();
+        // Setup camera and viewport
         camera = new OrthographicCamera();
         viewport = new FitViewport(GAME_WORLD_WIDTH, GAME_WORLD_HEIGHT, camera);
         viewport.apply();
 
+        // Generate the arraylists of sprites
         genAsteroidSprites();
         genPlanetSprites();
         genPlayerSprites();
 
         setupUI();
 
+        // Setup the input processing
         inputMultiplexer = new InputMultiplexer();
         inputMultiplexer.addProcessor(hud.getStage());
         inputMultiplexer.addProcessor(this);
@@ -274,22 +269,28 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
             sh.begin(ShapeRenderer.ShapeType.Filled);
             Gdx.gl.glEnable(GL30.GL_BLEND);
             Gdx.gl.glBlendFunc(GL30.GL_SRC_ALPHA, GL30.GL_ONE_MINUS_SRC_ALPHA);
-            sh.setColor(124, 252, 0, 0.4f);
-            if (path.size() > 0) {
-                for (Coordinates c : path) {
-                    sh.rect(PPS * c.getX(), PPS * c.getY(), PPS, PPS);
+            boolean[] allowedPath = controller.getPathColour(path);
+            for (int i = 0; i < path.size(); i++) {
+                if (allowedPath[i] == false) {
+                    // Red
+                    sh.setColor(255, 0, 0, 0.5f);
+                } else if (allowedPath[i] == true){
+                    // Green
+                    sh.setColor(124, 252, 0, 0.4f);
                 }
+                sh.rect(PPS * path.get(i).getX(), PPS * path.get(i).getY(), PPS, PPS);
             }
             sh.end();
             Gdx.gl.glDisable(GL30.GL_BLEND);
         }
     }
 
+
     protected void drawBackground() {
 
-        for(int i = -1; i <= 1; i++) {
-            for(int j = -1; j <= 1; j++) {
-                background.setPosition(i * GAME_WORLD_WIDTH, j* GAME_WORLD_HEIGHT);
+        for (int i = -1; i <= 1; i++) {
+            for (int j = -1; j <= 1; j++) {
+                background.setPosition(i * GAME_WORLD_WIDTH, j * GAME_WORLD_HEIGHT);
                 background.draw(batch);
             }
         }
@@ -361,20 +362,26 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
 
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-        // Used for mouse panning
-        mouseDownX = screenX;
-        mouseDownY = screenY;
-
-        // Selecting your ship
         Vector3 clickCoords = getWorldCoords(screenX, screenY);
-        ArrayList<Player> players = controller.getPlayers();
-        Player player = players.get(0);
+        if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
+            // Used for mouse panning
+            mouseDownX = screenX;
+            mouseDownY = screenY;
 
-        if (clickCoords.x >= player.getCoordinates().getX() * PPS && clickCoords.x <= (player.getCoordinates().getX() + 1) * PPS) {
-            if (clickCoords.y >= player.getCoordinates().getY() * PPS && clickCoords.y <= (player.getCoordinates().getY() + 1) * PPS) {
-                playerSelected = true;
-                path = new ArrayList<>();
+            // Selecting your ship
+            ArrayList<Player> players = controller.getPlayers();
+            Player player = players.get(0);
+
+            if (clickCoords.x >= player.getCoordinates().getX() * PPS && clickCoords.x <= (player.getCoordinates().getX() + 1) * PPS) {
+                if (clickCoords.y >= player.getCoordinates().getY() * PPS && clickCoords.y <= (player.getCoordinates().getY() + 1) * PPS) {
+                    playerSelected = true;
+                    path = new ArrayList<>();
+                }
             }
+            return true;
+        } else if (Gdx.input.isButtonPressed(Input.Buttons.RIGHT)) {
+            Coordinates gridCoords = new Coordinates((int) clickCoords.x / PPS, (int) clickCoords.y / PPS);
+            controller.move(gridCoords);
         }
         return false;
     }
@@ -398,15 +405,14 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
 
     @Override
     public boolean mouseMoved(int screenX, int screenY) {
-        // TODO show path to mouse pointer
         if (playerSelected == true) {
             Vector3 mouseCoords = getWorldCoords(screenX, screenY);
             Coordinates gridCoords = new Coordinates((int) mouseCoords.x / PPS, (int) mouseCoords.y / PPS);
             if (!oldGridCoords.isEqual(gridCoords)) {
-                if (gridCoords.getX() < gridSize && gridCoords.getX() >= 0) {
-                    if (gridCoords.getY() < gridSize && gridCoords.getY() >= 0) {
+                if (gridCoords.getX() < gridSize - 1 && gridCoords.getX() >= 0) {
+                    if (gridCoords.getY() < gridSize - 1 && gridCoords.getY() >= 0) {
                         if (!gridCoords.isEqual(controller.getMainPlayer().getCoordinates())) {
-                            path = pathFinder.pathfind(gridCoords);
+                            path = controller.getPathFinder().pathfind(gridCoords);
                             oldGridCoords = gridCoords;
                         }
                     }
