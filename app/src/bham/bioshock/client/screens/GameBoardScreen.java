@@ -70,6 +70,10 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
 
     }
 
+    public void updateGrid(GridPoint[][] grid) {
+        // TODO: handles when the grid changes
+    }
+
     private void setupUI() {
         stage = new Stage(viewport, batch);
         background = new Sprite(new Texture(Gdx.files.internal("app/assets/backgrounds/game.png")));

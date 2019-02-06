@@ -1,18 +1,28 @@
 package bham.bioshock.client.controllers;
 
 import bham.bioshock.client.Client;
+import bham.bioshock.client.screens.GameBoardScreen;
 import bham.bioshock.common.models.*;
 import bham.bioshock.common.consts.GridPoint;
 import bham.bioshock.common.pathfinding.AStarPathfinding;
-import bham.bioshock.client.screens.GameBoardScreen;
+import bham.bioshock.common.models.GameBoard;
+import bham.bioshock.common.models.Player;
+import bham.bioshock.communication.Action;
+import bham.bioshock.communication.Command;
 import bham.bioshock.communication.client.ClientService;
+
 import static bham.bioshock.common.consts.GridPoint.Type.*;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Random;
 
+import com.badlogic.gdx.Screen;
 
 public class GameBoardController extends Controller {
+    private Client client;
+    private ClientService server;
+    private GameBoardScreen screen;
 
     private GameBoard gameBoard;
     private GridPoint[][] grid;
@@ -21,30 +31,20 @@ public class GameBoardController extends Controller {
         this.client = client;
         this.server = client.getServer();
         this.model = client.getModel();
+    }
 
-        // TODO TEMP CODE REMOVE
-        Player p1 = new Player();
-        Player p2 = new Player();
-        Player p3 = new Player();
-        Player p4 = new Player();
+    public void onShow() {
+        // Fetch the game board from the server
+        server.send(new Action(Command.GET_GAME_BOARD));
+    }
 
-        model.createGameBoard();
-        model.addPlayer(p1);
-        model.addPlayer(p2);
-        model.addPlayer(p3);
-        model.addPlayer(p4);
+    /** Handles when the server sends the game board to the client */
+    public void gotGameBoard(Action action) {
+        ArrayList<Serializable> arguments = action.getArguments();
+        grid = (GridPoint[][]) arguments.get(0);
 
-        gameBoard = model.getGameBoard();
-
-        try {
-            ArrayList<Player> players = model.getPlayers();
-            gameBoard.generateGrid(players);
-        } catch (Exception e) {
-            // Handle no players error
-            System.err.println("No Players: ");
-            e.printStackTrace();
-        }
-        GridPoint[][] grid = gameBoard.getGrid();
+        gameBoard.setGrid(grid);
+        screen.updateGrid(grid);
     }
 
     public GridPoint[][] getGrid() {
@@ -106,6 +106,10 @@ public class GameBoardController extends Controller {
 
         Coordinates newCoordinates = new Coordinates(x,y);
         player.setCoordinates(newCoordinates);
+    }
+
+    public void setScreen(Screen screen) {
+        this.screen = (GameBoardScreen) screen;
     }
 
 }
