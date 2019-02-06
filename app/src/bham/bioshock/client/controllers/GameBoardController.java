@@ -2,28 +2,28 @@ package bham.bioshock.client.controllers;
 
 import bham.bioshock.client.Client;
 import bham.bioshock.client.screens.GameBoardScreen;
-import bham.bioshock.common.models.*;
 import bham.bioshock.common.consts.GridPoint;
-import bham.bioshock.common.pathfinding.AStarPathfinding;
+import bham.bioshock.common.models.Coordinates;
 import bham.bioshock.common.models.GameBoard;
+import bham.bioshock.common.models.Planet;
 import bham.bioshock.common.models.Player;
+import bham.bioshock.common.pathfinding.AStarPathfinding;
 import bham.bioshock.communication.Action;
 import bham.bioshock.communication.Command;
 import bham.bioshock.communication.client.ClientService;
-
-import static bham.bioshock.common.consts.GridPoint.Type.*;
+import com.badlogic.gdx.Screen;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Random;
 
-import com.badlogic.gdx.Screen;
+import static bham.bioshock.common.consts.GridPoint.Type.*;
 
 public class GameBoardController extends Controller {
     private Client client;
     private ClientService server;
     private GameBoardScreen screen;
-
+    private int gridSize;
     private GameBoard gameBoard;
     private GridPoint[][] grid;
 
@@ -31,6 +31,9 @@ public class GameBoardController extends Controller {
         this.client = client;
         this.server = client.getServer();
         this.model = client.getModel();
+        gameBoard = new GameBoard();
+        gameBoard.setGrid(null);
+        gridSize = 0;
     }
 
     public void onShow() {
@@ -42,9 +45,9 @@ public class GameBoardController extends Controller {
     public void gotGameBoard(Action action) {
         ArrayList<Serializable> arguments = action.getArguments();
         grid = (GridPoint[][]) arguments.get(0);
-
         gameBoard.setGrid(grid);
-        screen.updateGrid(grid);
+        setGridSize(grid.length);
+        screen.updateGrid();
     }
 
     public GridPoint[][] getGrid() {
@@ -112,4 +115,11 @@ public class GameBoardController extends Controller {
         this.screen = (GameBoardScreen) screen;
     }
 
+    public int getGridSize() {
+        return gridSize;
+    }
+
+    public void setGridSize(int gridSize) {
+        this.gridSize = gridSize;
+    }
 }

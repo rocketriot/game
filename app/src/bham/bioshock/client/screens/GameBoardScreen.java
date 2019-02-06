@@ -49,13 +49,12 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
         hud = new Hud(batch, skin, GAME_WORLD_WIDTH, GAME_WORLD_HEIGHT, controller);
 
         gridWidth = GAME_WORLD_WIDTH - (GAME_WORLD_WIDTH % 36);
-        System.out.println(gridWidth);
         gridHeight = gridWidth;
 
         // Pixels Per Square (on the grid)
         PPS = 50;
 
-        gridSize = controller.getGrid().length;
+        gridSize = controller.getGridSize();
 
         aspectRatio = (float) Gdx.graphics.getHeight() / (float) Gdx.graphics.getWidth();
         camera = new OrthographicCamera();
@@ -70,8 +69,8 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
 
     }
 
-    public void updateGrid(GridPoint[][] grid) {
-        // TODO: handles when the grid changes
+    public void updateGrid() {
+        gridSize = controller.getGridSize();
     }
 
     private void setupUI() {
@@ -229,22 +228,24 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
 
     @Override
     public void render(float delta) {
-        batch.setProjectionMatrix(camera.combined);
+        if (controller.getGrid() != null) {
+            batch.setProjectionMatrix(camera.combined);
 
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        handleInput();
-        camera.update();
+            Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+            handleInput();
+            camera.update();
 
-        stage.getBatch().begin();
-        drawBackground();
-        drawBoardObjects();
-        stage.getBatch().end();
-        drawGridLines();
-        stage.act(Gdx.graphics.getDeltaTime());
+            stage.getBatch().begin();
+            drawBackground();
+            drawBoardObjects();
+            stage.getBatch().end();
+            drawGridLines();
+            stage.act(Gdx.graphics.getDeltaTime());
 
-        // Draw the ui
-        this.batch.setProjectionMatrix(hud.stage.getCamera().combined);
-        hud.stage.draw();
+            // Draw the ui
+            this.batch.setProjectionMatrix(hud.stage.getCamera().combined);
+            hud.stage.draw();
+        }
     }
 
     protected void drawBackground() {
