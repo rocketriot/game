@@ -83,6 +83,13 @@ public class Client extends Game {
 		gameBoardController.setScreen(gameBoardScreen);
 		controllers.put(View.GAME_BOARD, gameBoardController);
 		screens.put(View.GAME_BOARD, gameBoardScreen);
+
+		// Loading
+		LoadingController loadingController = new LoadingController(this);
+		LoadingScreen loadingScreen = new LoadingScreen(loadingController);
+		loadingController.setScreen(loadingScreen);
+		controllers.put(View.LOADING, loadingController);
+		screens.put(View.LOADING, loadingScreen);
 	}
 
 	public void handleServerMessages(Action action) {
