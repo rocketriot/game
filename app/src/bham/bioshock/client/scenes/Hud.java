@@ -22,6 +22,8 @@ public class Hud implements Disposable {
     public Stage stage;
     public FitViewport viewport;
     private ProgressBar fuelBar;
+    private String fuelString;
+    private TextArea fuelLabel;
 
     public Hud(SpriteBatch batch, Skin skin, int gameWidth, int gameHeight, GameBoardController controller) {
         this.controller = controller;
@@ -37,6 +39,9 @@ public class Hud implements Disposable {
     private void setupFuelBar() {
         fuelBar = new ProgressBar(0, 100, 1, false, skin);
         fuelBar.setValue(100);
+        fuelString = "Fuel: " + controller.getMainPlayer().getFuel() + "/100.0";
+        fuelLabel = new TextArea(fuelString, skin);
+        topBar.addActor(fuelLabel);
         topBar.addActor(fuelBar);
 
     }
@@ -77,6 +82,12 @@ public class Hud implements Disposable {
 
             }
         });
+    }
+
+    public void updateHud() {
+        fuelBar.setValue(controller.getMainPlayer().getFuel());
+        fuelString = "Fuel: " + controller.getMainPlayer().getFuel() + "/100.0";
+        fuelLabel.setText(fuelString);
     }
 
     public Stage getStage() {

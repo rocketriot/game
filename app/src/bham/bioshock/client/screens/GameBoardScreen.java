@@ -72,6 +72,8 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
         inputMultiplexer = new InputMultiplexer();
         inputMultiplexer.addProcessor(hud.getStage());
         inputMultiplexer.addProcessor(this);
+
+        sh = new ShapeRenderer();
     }
 
     private void setupUI() {
@@ -171,7 +173,6 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
     }
 
     public void drawGridLines() {
-        sh = new ShapeRenderer();
         sh.setProjectionMatrix(camera.combined);
         sh.begin(ShapeRenderer.ShapeType.Line);
         Gdx.gl.glEnable(GL30.GL_BLEND);
@@ -260,6 +261,7 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
         // Draw the ui
         this.batch.setProjectionMatrix(hud.stage.getCamera().combined);
         hud.getStage().act(Gdx.graphics.getDeltaTime());
+        hud.updateHud();
         hud.getStage().draw();
     }
 
@@ -270,11 +272,16 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
             Gdx.gl.glEnable(GL30.GL_BLEND);
             Gdx.gl.glBlendFunc(GL30.GL_SRC_ALPHA, GL30.GL_ONE_MINUS_SRC_ALPHA);
             boolean[] allowedPath = controller.getPathColour(path);
-            for (int i = 0; i < path.size(); i++) {
-                if (allowedPath[i] == false) {
+            // Draw white box at player position
+            sh.setColor(255, 255, 255, 0.4f);
+            Coordinates playerCoords = controller.getMainPlayer().getCoordinates();
+            sh.rect(PPS * playerCoords.getX(), PPS * playerCoords.getY(), PPS, PPS);
+            // Draw Path
+            for (int i = 1; i < path.size(); i++) {
+                if (allowedPath[i - 1] == false) {
                     // Red
                     sh.setColor(255, 0, 0, 0.5f);
-                } else if (allowedPath[i] == true){
+                } else if (allowedPath[i - 1] == true){
                     // Green
                     sh.setColor(124, 252, 0, 0.4f);
                 }
@@ -381,7 +388,9 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
             return true;
         } else if (Gdx.input.isButtonPressed(Input.Buttons.RIGHT)) {
             Coordinates gridCoords = new Coordinates((int) clickCoords.x / PPS, (int) clickCoords.y / PPS);
-            controller.move(gridCoords);
+            if (!controller.getMainPlayer().getCoordinates().isEqual(gridCoords)) {
+                controller.move(gridCoords);
+            }
         }
         return false;
     }
@@ -405,6 +414,7 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
 
     @Override
     public boolean mouseMoved(int screenX, int screenY) {
+        // Pathfind to mouse coordinates
         if (playerSelected == true) {
             Vector3 mouseCoords = getWorldCoords(screenX, screenY);
             Coordinates gridCoords = new Coordinates((int) mouseCoords.x / PPS, (int) mouseCoords.y / PPS);

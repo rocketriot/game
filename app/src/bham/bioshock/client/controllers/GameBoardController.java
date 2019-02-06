@@ -102,7 +102,7 @@ public class GameBoardController extends Controller {
         float pathCost = (path.size() - 1) * 10;
 
         // check if the player has enough fuel
-        if(mainPlayer.getFuel() > pathCost) {
+        if(mainPlayer.getFuel() >= pathCost) {
             mainPlayer.setCoordinates(destination);
             fuel -= pathCost;
             mainPlayer.setFuel(fuel);
@@ -114,6 +114,8 @@ public class GameBoardController extends Controller {
             else if(grid[x][y].getType() == FUEL)
                 mainPlayer.setFuel(fuel + 30);
             pathFinder.setStartPosition(mainPlayer.getCoordinates());
+            //TODO REMOVE PRINT
+            System.out.println(mainPlayer.getFuel());
         }
     }
 
