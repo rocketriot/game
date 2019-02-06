@@ -30,7 +30,14 @@ public class AStarPathfinding {
     // the maximum y value of the map
     private int maxY;
 
-    // instantiation method
+    /*
+     * Method to instantiate the AStarPathfinding object
+     *
+     * @param   grid           The grid from the game board to pathfind on
+     * @param   startPosition  The position that the pathfinding needs to start from
+     * @param   maxX           The maximum x value of the grid, i.e. the x limit of the game map
+     * @param   maxY           The maximum y value of the grid, i.e. the y limit of the game map
+     */
     public AStarPathfinding(GridPoint[][] grid, Coordinates startPosition, int maxX, int maxY) {
         setStartPosition(startPosition);
         this.maxX = maxX;
@@ -39,7 +46,12 @@ public class AStarPathfinding {
         setGameGrid(grid);
     }
 
-    // method to call to actually find the path
+    /*
+     * Method to find the path between the start position and the inputted goal position
+     *
+     * @param   goalPosition    The position on the grid that the path needs to end at
+     * @return                  The path that the algorithm has found to be the shortest
+     */
     public ArrayList<Coordinates> pathfind(Coordinates goalPosition) {
         setGoalPosition(goalPosition);
         aStarGrid = setAStarGrid(); // set the A* Grid to be the current grid
@@ -105,12 +117,20 @@ public class AStarPathfinding {
         return new ArrayList<>();
     }
 
-    // method to set the start position
+    /*
+     * Method to set the start position of the pathfinding algorithm
+     *
+     * @param startPosition The position that the pathfinding needs to start from
+     */
     public void setStartPosition(Coordinates startPosition) {
         this.startPosition = startPosition;
     }
 
-    // method to set the goal position
+    /*
+     * Method to set the goal position of the pathfinding algorithm
+     *
+     * @param startPosition The position that the pathfinding needs to get to
+     */
     public void setGoalPosition(Coordinates goalPosition) {
         this.goalPosition = goalPosition;
     }
@@ -121,7 +141,11 @@ public class AStarPathfinding {
         //aStarGrid = setAStarGrid();
     }
 
-    //method to setup the basics of the pathfindingValues grid
+    /*
+     * Method to set the aStarGrid to the current grid. This grid stores the heuristic values
+     * that the pathfinding algorithm uses to determine which point to go to next, as well as
+     * whether each point is passable and the parent of each point.
+     */
     private PathfindingValues[][] setAStarGrid() {
 
         PathfindingValues[][] tempGrid = new PathfindingValues[maxX][maxY]; // temporary grid to return
@@ -141,12 +165,19 @@ public class AStarPathfinding {
         return tempGrid;
     }
 
-    // insert something into the open/closed lists
+    /*
+     * Method to insert a value into the required list - either the open or closed list
+     */
     private void insertIntoList(ArrayList<Coordinates> list, Coordinates coords) {
         list.add(coords);
     }
 
-    // method to find the point on the grid that has the minimum value in a list
+    /*
+     * Method to find the point in a list that has the smallest heuristic value for expansion
+     *
+     * @param list The list that contains the coordinates to be searched through
+     * @return     The Coordinate value of the point with the smallest heuristic value
+     */
     private Coordinates findMinPoint(ArrayList<Coordinates> list) {
 
         int minimumCost = Integer.MAX_VALUE;
@@ -234,7 +265,12 @@ public class AStarPathfinding {
         aStarGrid[point.getX()][point.getY()].setParent(parent);
     }
 
-    // method to get the found path from the end node to the start node
+    /*
+     * Method to get the found path, working backwards from the goal point using the parent point
+     * stored in the aStarGrid for each point
+     *
+     * @return The shortest path, stored in an ArrayList
+     */
     private ArrayList<Coordinates> getPath() {
         ArrayList<Coordinates> path = new ArrayList<>();
         Coordinates currentPoint = goalPosition;
