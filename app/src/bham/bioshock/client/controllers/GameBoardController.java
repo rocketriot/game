@@ -24,6 +24,7 @@ public class GameBoardController extends Controller {
     private ClientService server;
     private GameBoardScreen screen;
 
+    private Model model;
     private GameBoard gameBoard;
     private GridPoint[][] grid;
 
@@ -31,6 +32,8 @@ public class GameBoardController extends Controller {
         this.client = client;
         this.server = client.getServer();
         this.model = client.getModel();
+
+        gameBoard = model.getGameBoard();
     }
 
     /** When the game board is on the screen */
