@@ -2,38 +2,28 @@ package bham.bioshock.client.controllers;
 
 import bham.bioshock.client.Client;
 import bham.bioshock.client.Client.View;
-import bham.bioshock.client.XMLReader;
-import bham.bioshock.client.screens.HostScreen;
+import bham.bioshock.client.screens.JoinScreen;
+import bham.bioshock.common.models.Model;
 import bham.bioshock.common.models.Player;
 import bham.bioshock.communication.Action;
 import bham.bioshock.communication.Command;
+import bham.bioshock.communication.client.ClientService;
 import bham.bioshock.communication.client.CommunicationClient;
 import com.badlogic.gdx.Screen;
 
+import java.io.Serializable;
 import java.net.ConnectException;
-import java.util.ArrayList;
-import java.util.UUID;
 
-public class HostScreenController extends Controller {
-    private XMLReader game_reader;
-    private XMLReader pref_reader;
+public class JoinScreenController extends Controller {
+    private Client client;
+    private Model model;
+    private ClientService server;
 
-    public HostScreenController(Client client) {
+    public JoinScreenController(Client client) {
         this.client = client;
-        this.server = client.getServer();
         this.model = client.getModel();
-        game_reader = new XMLReader("app/assets/XML/game_desc.xml");
-        pref_reader = new XMLReader("app/assets/Preferences/Preferences.XML");
+        this.server = client.getServer();
     }
-
-    public int getMaxPlayers() {
-        return game_reader.getInt("max_players");
-    }
-
-    public int getPreferredPlayers() {
-        return pref_reader.getInt("players");
-    }
-
 
     /**
      * Create a connection with the server and wait in lobby when a username is
@@ -44,32 +34,23 @@ public class HostScreenController extends Controller {
         server = CommunicationClient.connect(username, client);
 
         // Create a new player
-        //generate a user id
-        UUID userID = UUID.randomUUID();
-        Player player = new Player(userID, username);
-
-        // Setup arguments
-        ArrayList<String> arguments = new ArrayList<String>();
-        arguments.add(player.getId().toString());
-        arguments.add(player.getUsername());
+        Player player = new Player(username);
 
         // Add the player to the server
-        server.send(new Action(Command.ADD_PLAYER, arguments));
+        server.send(new Action(Command.ADD_PLAYER, player));
     }
-
 
     /**
      * Handle when the server tells us a new player was added to the game
      */
     public void onPlayerJoined(Action action) {
-        ArrayList<String> arguments = action.getArguments();
-        UUID id = UUID.fromString(arguments.get(0));
-        String username = arguments.get(1);
-        boolean isCpu = Boolean.getBoolean(arguments.get(2));
+        for (Serializable argument : action.getArguments()) {
+            Player player = (Player) argument;
+            model.addPlayer(player);
+            System.out.println("Player: " + player.getUsername() + " connected");
+        }
 
-        model.addPlayer(new Player(id, username, isCpu));
-
-        ((HostScreen) screen).onPlayerJoined();
+        // screen.onPlayerJoined();
     }
 
     /**
@@ -88,7 +69,7 @@ public class HostScreenController extends Controller {
     }
 
     public void setScreen(Screen screen) {
-        this.screen = (HostScreen) screen;
+        this.screen = (JoinScreen) screen;
     }
 
     @Override

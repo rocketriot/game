@@ -27,7 +27,7 @@ public class DiscoveryThread implements Runnable {
 				String message = new String(packet.getData()).trim();
 				String[] values = message.split(";");
 				if (values[0].equals(Command.COMM_DISCOVER.toString())) {
-					System.out.println(values[1] + " connected");
+
 					byte[] sendData = Command.COMM_DISCOVER_RESPONSE.getBytes();
 
 					// Send a response

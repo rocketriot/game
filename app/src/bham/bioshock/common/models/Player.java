@@ -1,12 +1,16 @@
 package bham.bioshock.common.models;
 
+import java.io.Serializable;
 import java.util.UUID;
 
 /**
  * Stores the data of a player on the game board
  */
-public class Player {
-    /** ID of the player */
+public class Player implements Serializable {
+
+	private static final long serialVersionUID = 5775730008817100527L;
+
+	/** ID of the player */
     private UUID id;
 
     /** Username of the player */
@@ -40,35 +44,22 @@ public class Player {
         this.username = username;
     }
 
-    public Player(UUID id, String username) {
-    	this(id, username, false);
-    }
-
-    public Player(boolean isCpu) {
+    public Player(String username, boolean isCpu) {
         this();
-        this.isCpu = isCpu;
-    }
-
-    public Player(UUID id, String username, boolean isCpu) {
-        this.id = id;
         this.username = username;
         this.isCpu = isCpu;
     }
 
-    @Deprecated
-    public Player(Coordinates coordinates, int textureID) {
-        this.id = UUID.randomUUID();
-        this.coordinates = coordinates;
-        this.textureID = textureID;
-    }
-
-
-    public UUID getId() {
-        return id;
+    public boolean isCpu() {
+        return isCpu;
     }
 
     public String getUsername() {
         return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public Coordinates getCoordinates() {
@@ -93,10 +84,6 @@ public class Player {
 
     public void setPlanetsCaptured(int planetsCaptured) {
         this.planetsCaptured = planetsCaptured;
-    }
-
-    public boolean isCpu() {
-        return isCpu;
     }
 
     public void setCpu(boolean cpu) {

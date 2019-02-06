@@ -1,36 +1,26 @@
 package bham.bioshock.server;
 
 import bham.bioshock.common.models.Model;
-import bham.bioshock.communication.Action;
 import bham.bioshock.communication.server.CommunicationServer;
 import bham.bioshock.communication.server.ServerHandler;
 import bham.bioshock.communication.server.ServerService;
-import bham.bioshock.server.handlers.HostScreenHandler;
+import bham.bioshock.server.handlers.*;
 
-public class Server {
+public class Server extends Thread {
     private Model model;
+    private ServerHandler handler;
 
     public Server() {
         this.model = new Model();
-
-        CommunicationServer.start(new ServerHandler(), this);
+        this.handler = new ServerHandler(model);
     }
 
-    public void handleRequest(Action action, ServerService service) {
-        switch (action.getCommand()) {
-        case ADD_PLAYER:
-            HostScreenHandler.addPlayer(model, action, service);
-            break;
-        case START_GAME:
-            HostScreenHandler.startGame(model, action, service);
-            break;
-        default:
-            System.out.println("Received unhandled command: " + action.getCommand().toString());
-            break;
-        }
+    public void run() {
+        CommunicationServer.start(handler);
     }
 
     public static void main(String[] args) {
-        new Server();
+        Server s = new Server();
+        s.start();
     }
 }

@@ -23,8 +23,8 @@ public class Action implements Serializable, Comparable<Action> {
 	/**
 	 * Arguments for action
 	 */
-	private ArrayList<String> arguments;
-	
+	private ArrayList<Serializable> arguments;
+
 	private long created;
 
 	/**
@@ -33,7 +33,7 @@ public class Action implements Serializable, Comparable<Action> {
 	 * @param _command to be sent through socket
 	 * @param _arguments
 	 */
-	public Action(Command _command, ArrayList<String> _arguments) {
+	public Action(Command _command, ArrayList<Serializable> _arguments) {
 		command = _command;
 		arguments = _arguments;
 		created = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC);
@@ -41,6 +41,11 @@ public class Action implements Serializable, Comparable<Action> {
 	
 	public Action(Command _command) {
 		this(_command, null);
+	}
+	
+	public Action(Command _command, Serializable _message) {
+		this(_command, new ArrayList<>());
+		arguments.add(_message);
 	}
 
 	/**
@@ -57,11 +62,18 @@ public class Action implements Serializable, Comparable<Action> {
 	 * 
 	 * @return list of arguments
 	 */
-	public ArrayList<String> getArguments() {
+	public ArrayList<Serializable> getArguments() {
 		if (arguments == null) {
-			return new ArrayList<String>();
+			return new ArrayList<Serializable>();
 		}
 		return arguments;
+	}
+	
+	public Serializable getArgument(int i) throws Exception {
+		if(arguments.size() < i) {
+			throw new Exception("No argument " + Integer.toString(i) + " Command: " + command);
+		}
+		return arguments.get(i);
 	}
 
 	@Override
