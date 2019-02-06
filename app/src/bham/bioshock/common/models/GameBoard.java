@@ -2,13 +2,17 @@ package bham.bioshock.common.models;
 
 import bham.bioshock.common.consts.GridPoint;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Random;
 
 /**
  * Stores the data required for the main game board
  */
-public class GameBoard {
+public class GameBoard implements Serializable {
+
+    private static final long serialVersionUID = 5775730008817100527L;
+
     /**
      * A grid containing the locations of all the planets, players, fuel boxes etc
      */
