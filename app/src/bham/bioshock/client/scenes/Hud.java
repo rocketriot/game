@@ -1,29 +1,47 @@
 package bham.bioshock.client.scenes;
 
 import bham.bioshock.client.Client;
-import bham.bioshock.client.controllers.Controller;
+import bham.bioshock.client.controllers.GameBoardController;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.HorizontalGroup;
-import com.badlogic.gdx.scenes.scene2d.ui.SelectBox;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 
 public class Hud implements Disposable {
-    private final HorizontalGroup topBar;
-    private final SelectBox optionsMenu;
+    private final Skin skin;
+    private final int gameWidth;
+    private final int gameHeight;
+    private GameBoardController controller;
+    private HorizontalGroup topBar;
+    private SelectBox optionsMenu;
     public Stage stage;
     public FitViewport viewport;
+    private ProgressBar fuelBar;
 
-    public Hud(SpriteBatch batch, Skin skin, int gameWidth, int gameHeight, Controller controller) {
+    public Hud(SpriteBatch batch, Skin skin, int gameWidth, int gameHeight, GameBoardController controller) {
+        this.controller = controller;
+        this.skin = skin;
+        this.gameWidth = gameWidth;
+        this.gameHeight = gameHeight;
         viewport = new FitViewport(gameWidth, gameHeight, new OrthographicCamera());
         stage = new Stage(viewport, batch);
+        setupTopBar();
+        setupFuelBar();
+    }
 
+    private void setupFuelBar() {
+        fuelBar = new ProgressBar(0, 100, 1, false, skin);
+        fuelBar.setValue(100);
+        topBar.addActor(fuelBar);
+
+    }
+
+    private void setupTopBar() {
         topBar = new HorizontalGroup();
         topBar.setFillParent(true);
         topBar.top();
