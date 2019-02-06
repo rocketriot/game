@@ -14,7 +14,7 @@ public class Rocket extends Entity {
 	public Rocket(float _x, float _y, int _color) {
 		super(_x, _y);
 		color = _color;
-		SIZE = 650;
+		SIZE = 300;
 	}
 	
 	public static void loadTextures() {
@@ -26,6 +26,11 @@ public class Rocket extends Entity {
 	
 	public Texture getTexture() {
 		return textures.get(color);
+	}
+	
+	public void load() {
+		super.load();
+		sprite.setOrigin(sprite.getWidth()/2, 0);
 	}
 
 }

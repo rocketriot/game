@@ -24,16 +24,60 @@ public class SpeedVector {
 		dx += x1;
 		dy += y1;
 	}
-
-	public void friction(double xForce, double yForce) {
-		dx -= dx * (xForce / mass);
-		dy -= dy * (yForce / mass);
-	}
 	
 	public void stopY() {
 		dy = 0;
 	}
 	
+	public void stop() {
+		dx = 0;
+		dy = 0;
+	}
+	
+	public double getSpeedAngle() {
+		double length = Math.sqrt(dx * dx + dy * dy);
+		double speedAngle = Math.asin(dx/length);
+		if(dy < 0) {
+			speedAngle = Math.PI - speedAngle;
+		}
+		return speedAngle;
+	}
+	
+	public void stop(double angleDegrees) {
+		Vector v = stopVector(angleDegrees);
+		dx -= v.dx;
+		dy -= v.dy;
+	}
+	
+	public Vector stopVector(double angleDegrees) {
+		double angle = Math.toRadians(angleDegrees);
+		double length = Math.sqrt(dx * dx + dy * dy);
+		if(length == 0) return new Vector(0, 0);
+		double da = getSpeedAngle() - angle;
+		
+		double groundV = Math.cos(da) * length;
+		double dx1 = Math.sin(angle) * groundV;
+		double dy1 = Math.cos(angle) * groundV;
+		
+		return new Vector(dx1, dy1);
+	}
+	
+	public void friction(double angleDegrees, double u) {
+		Vector v = stopVector(getSpeedAngle());
+		dx -= v.dx * u;
+		dy -= v.dy * u;
+	}
+	
 	public double dX() { return dx; }
 	public double dY() { return dy; }
+	
+	private class Vector {
+		public double dx;
+		public double dy;
+		
+		public Vector(double dx, double dy) {
+			this.dx = dx;
+			this.dy = dy;
+		}
+	}
 }
