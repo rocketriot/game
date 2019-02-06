@@ -3,10 +3,7 @@ package bham.bioshock.client.controllers;
 import bham.bioshock.client.Client;
 import bham.bioshock.client.screens.GameBoardScreen;
 import bham.bioshock.common.consts.GridPoint;
-import bham.bioshock.common.models.Coordinates;
-import bham.bioshock.common.models.GameBoard;
-import bham.bioshock.common.models.Planet;
-import bham.bioshock.common.models.Player;
+import bham.bioshock.common.models.*;
 import bham.bioshock.common.pathfinding.AStarPathfinding;
 import bham.bioshock.communication.Action;
 import bham.bioshock.communication.Command;
@@ -23,7 +20,11 @@ public class GameBoardController extends Controller {
     private Client client;
     private ClientService server;
     private GameBoardScreen screen;
+
     private int gridSize;
+    private boolean receivedBoard = false;
+
+    private Model model;
     private GameBoard gameBoard;
     private GridPoint[][] grid;
 
@@ -31,22 +32,22 @@ public class GameBoardController extends Controller {
         this.client = client;
         this.server = client.getServer();
         this.model = client.getModel();
-        gameBoard = new GameBoard();
-        gameBoard.setGrid(null);
-        gridSize = 0;
+        gameBoard = model.getGameBoard();
     }
 
+    /** When the game board is on the screen */
     public void onShow() {
         // Fetch the game board from the server
         server.send(new Action(Command.GET_GAME_BOARD));
     }
 
     /** Handles when the server sends the game board to the client */
-    public void gotGameBoard(Action action) {
+    public void gameBoardReceived(Action action) {
         ArrayList<Serializable> arguments = action.getArguments();
         grid = (GridPoint[][]) arguments.get(0);
         gameBoard.setGrid(grid);
         setGridSize(grid.length);
+        receivedBoard = true;
         screen.updateGrid();
     }
 
@@ -121,5 +122,9 @@ public class GameBoardController extends Controller {
 
     public void setGridSize(int gridSize) {
         this.gridSize = gridSize;
+    }
+
+    public boolean hasReceivedBoard() {
+        return receivedBoard;
     }
 }

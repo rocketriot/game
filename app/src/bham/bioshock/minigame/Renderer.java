@@ -4,11 +4,14 @@ import java.util.ArrayList;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
@@ -24,6 +27,7 @@ public class Renderer {
 	private Player mainPlayer;
 	private ArrayList<Entity> entities;
 	
+	ShapeRenderer renderer;
 	private OrthographicCamera cam;
 	private Sprite background;
 	private Stage stage;
@@ -38,6 +42,7 @@ public class Renderer {
 	public Renderer(World _w) {
 		w = _w;
 		mainPlayer = w.getMainPlayer();
+		renderer = new ShapeRenderer();
 		
 		entities = new ArrayList<Entity>();
 		entities.addAll(w.getPlayers());
@@ -59,13 +64,19 @@ public class Renderer {
 		Rocket.loadTextures();
 		stage = new Stage(viewport);
 		background = new Sprite(new Texture(Gdx.files.internal("app/assets/backgrounds/game.png")));
+		
+		mainPlayer.load();
+		for(Entity e : entities) {
+			e.load();
+		}
 	}
 
 	public void render(float delta) {
 		batch.setProjectionMatrix(cam.combined);
+		renderer.setProjectionMatrix(cam.combined);
 		
 		updatePosition();
-		cam.position.set(mainPlayer.getX(), GAME_WORLD_HEIGHT / 2, 0);
+		cam.position.set(mainPlayer.getX(), mainPlayer.getY(), 0);
 		cam.update();
 
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
@@ -74,16 +85,27 @@ public class Renderer {
 		backgroundBatch.draw(background, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		backgroundBatch.end();
 		
+		drawPlanet();
 		batch.begin();
-		drawPlayers();
+		drawEntities();
 		drawMainPlayer();
-		
 		batch.end();
 	}
 	
-	public void drawPlayers() {
+	public void drawPlanet() {
+		renderer.begin(ShapeType.Filled);
+		renderer.setColor(Color.SALMON);
+		renderer.circle(0, 0, (float) World.PLANET_RADIUS+2);
+		renderer.end();
+	}
+	
+	public void drawEntities() {
 		for(Entity e : entities) {
-			batch.draw(e.getTexture(), e.getX(), e.getY(), e.getSize(), e.getSize());
+			Sprite sprite = e.getSprite();
+			sprite.setPosition(e.getX(), e.getY());
+			e.updateRotation();
+			sprite.draw(batch);
+			e.update(Gdx.graphics.getDeltaTime());
 		}
 	}
 	
@@ -102,7 +124,12 @@ public class Renderer {
 	}
 	
 	public void drawMainPlayer() {
-		batch.draw(mainPlayer.getTexture(), mainPlayer.getX(), mainPlayer.getY(), mainPlayer.getSize(), mainPlayer.getSize());
+		Sprite sprite = mainPlayer.getSprite();
+		sprite.setTexture(mainPlayer.getTexture());
+		sprite.setPosition(mainPlayer.getX(), mainPlayer.getY());
+		sprite.setRotation((float) -mainPlayer.angleFromCenter());
+
+		sprite.draw(batch);
 	}
 
 	public void resize(int width, int height) {

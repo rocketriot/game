@@ -228,7 +228,7 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
 
     @Override
     public void render(float delta) {
-        if (controller.getGrid() != null) {
+        if (controller.hasReceivedBoard() == true) {
             batch.setProjectionMatrix(camera.combined);
 
             Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
@@ -245,6 +245,8 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
             // Draw the ui
             this.batch.setProjectionMatrix(hud.stage.getCamera().combined);
             hud.stage.draw();
+        } else {
+            //TODO WAITING SCREEN
         }
     }
 

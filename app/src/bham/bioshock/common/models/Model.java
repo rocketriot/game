@@ -7,7 +7,7 @@ import java.util.ArrayList;
  */
 public class Model {
     /** Contains all of the information about the game board */
-    private GameBoard gameBoard;
+    private GameBoard gameBoard = null;
 
     /** Max number of players in a game */
     public final int MAX_PLAYERS = 4;
