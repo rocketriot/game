@@ -17,9 +17,9 @@ import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 
 public class Client extends Game {
-	
+
 	private static final Logger logger = LogManager.getLogger(Client.class);
-	
+
 	/** An enum to represent all the views */
 	public enum View {
 		MAIN_MENU, HOW_TO, LOADING, GAME_BOARD, PREFERENCES, JOIN_SCREEN
@@ -95,6 +95,11 @@ public class Client extends Game {
 		case START_GAME: {
 			JoinScreenController controller = (JoinScreenController) controllers.get(View.JOIN_SCREEN);
 			controller.onStartGame(action);
+			break;
+		}
+		case GET_GAME_BOARD: {
+			GameBoardController controller = (GameBoardController) controllers.get(View.GAME_BOARD);
+			controller.gameBoardReceived(action);
 			break;
 		}
 		default: {

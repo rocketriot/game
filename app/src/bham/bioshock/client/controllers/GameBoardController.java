@@ -33,13 +33,14 @@ public class GameBoardController extends Controller {
         this.model = client.getModel();
     }
 
+    /** When the game board is on the screen */
     public void onShow() {
         // Fetch the game board from the server
         server.send(new Action(Command.GET_GAME_BOARD));
     }
 
     /** Handles when the server sends the game board to the client */
-    public void gotGameBoard(Action action) {
+    public void gameBoardReceived(Action action) {
         ArrayList<Serializable> arguments = action.getArguments();
         grid = (GridPoint[][]) arguments.get(0);
 
