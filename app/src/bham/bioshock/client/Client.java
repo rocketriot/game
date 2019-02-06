@@ -122,6 +122,10 @@ public class Client extends Game {
 		return server;
 	}
 
+	public void setServer(ClientService server) {
+		this.server = server;
+	}
+
 	public void createHostingServer() {
 		this.hostingServer = new Server();
 		hostingServer.start();

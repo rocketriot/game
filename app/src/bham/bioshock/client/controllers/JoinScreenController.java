@@ -37,6 +37,8 @@ public class JoinScreenController extends Controller {
         // Create server connection
         server = CommunicationClient.connect(username, client);
 
+        client.setServer(server);
+
         // Create a new player
         Player player = new Player(username);
 
