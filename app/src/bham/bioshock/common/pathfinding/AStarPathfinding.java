@@ -101,7 +101,7 @@ public class AStarPathfinding {
             }
             // add the current node to the closed list
         }
-        return null;
+        return new ArrayList<>();
     }
 
     // method to set the start position
