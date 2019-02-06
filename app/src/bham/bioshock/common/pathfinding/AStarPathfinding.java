@@ -42,6 +42,7 @@ public class AStarPathfinding {
     // method to call to actually find the path
     public ArrayList<Coordinates> pathfind(Coordinates goalPosition) {
         setGoalPosition(goalPosition);
+        aStarGrid = setAStarGrid(); // set the A* Grid to be the current grid
         aStarGrid[startPosition.getX()][startPosition.getY()].setTotalCost(0);
 
         // open list - list of all generated nodes
@@ -117,7 +118,7 @@ public class AStarPathfinding {
     //method to set the game grid
     public void setGameGrid(GridPoint[][] grid) {
         gameGrid = grid;
-        aStarGrid = setAStarGrid();
+        //aStarGrid = setAStarGrid();
     }
 
     //method to setup the basics of the pathfindingValues grid
@@ -248,5 +249,4 @@ public class AStarPathfinding {
         Collections.reverse(path);
         return path;
     }
-
 }
