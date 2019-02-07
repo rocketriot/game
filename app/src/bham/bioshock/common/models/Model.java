@@ -20,8 +20,9 @@ public class Model {
      */
     private int playerId;
 
-    public GameBoard createGameBoard() {
+    public GameBoard createGameBoard() throws Exception {
         gameBoard = new GameBoard();
+        gameBoard.generateGrid(players);
         return gameBoard;
     }
 

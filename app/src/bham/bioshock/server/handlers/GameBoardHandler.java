@@ -13,7 +13,7 @@ public class GameBoardHandler {
     /**
      * Adds a player to the server and sends the player to all the clients
      */
-    public static void getGameBoard(Model model, Action action, ServerHandler handler) {
+    public static void getGameBoard(Model model, Action action, ServerHandler handler) throws Exception {
         GameBoard gameBoard = model.getGameBoard();
 
         // Create an initial game board when starting the game
