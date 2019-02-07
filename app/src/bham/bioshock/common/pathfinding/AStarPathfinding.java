@@ -199,12 +199,24 @@ public class AStarPathfinding {
         return nextPoint;
     }
 
-    // method to find the heuristic values for a node using Manhattan Distance
+    /*
+     * Method to find the heuristic value for a given point
+     *
+     * @param position The coordinates of the point you want to calculate the heuristic value for
+     * @return         The heuristic value found
+     */
     private int findHeuristic(Coordinates position) {
         return (Math.abs(goalPosition.getX() - position.getX()) + Math.abs(goalPosition.getY() - position.getY()));
     }
 
-    // method to generate the successors of the current point
+    /*
+     * Method generate the successors of a given point in all 4 directions, checking if they are valid first
+     *
+     * @param currentPoint The coordinates of the current point to generate the successors for
+     * @param closedList   The closed list, containing all the already closed nodes that you do not want to become
+     *                     successors to another node
+     * @return             A list of the valid successors found
+     */
     private ArrayList<Coordinates> generateSuccessors(Coordinates currentPoint, ArrayList<Coordinates> closedList) {
 
         ArrayList<Coordinates> successors = new ArrayList<>();
