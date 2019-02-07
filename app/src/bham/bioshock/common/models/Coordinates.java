@@ -1,9 +1,13 @@
 package bham.bioshock.common.models;
 
+import java.io.Serializable;
+
 /**
  * Stores x and y coordinates
  */
-public class Coordinates {
+public class Coordinates implements Serializable {
+    private static final long serialVersionUID = 5775730008817100527L;
+
     private int x;
     private int y;
 
@@ -28,8 +32,8 @@ public class Coordinates {
         this.y = y;
     }
 
-    public Boolean isEqual(Coordinates toCheck){
-        if (x == toCheck.getX() && y == toCheck.getY()){
+    public Boolean isEqual(Coordinates toCheck) {
+        if (x == toCheck.getX() && y == toCheck.getY()) {
             return true;
         } else {
             return false;
