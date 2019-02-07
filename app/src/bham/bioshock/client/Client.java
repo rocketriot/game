@@ -7,6 +7,7 @@ import bham.bioshock.client.screens.*;
 import bham.bioshock.common.models.Model;
 import bham.bioshock.communication.Action;
 import bham.bioshock.communication.client.ClientService;
+import com.badlogic.gdx.Gdx;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 import bham.bioshock.server.Server;
@@ -93,26 +94,28 @@ public class Client extends Game {
 	}
 
 	public void handleServerMessages(Action action) {
-		switch (action.getCommand()) {
-		case ADD_PLAYER: {
-			JoinScreenController controller = (JoinScreenController) controllers.get(View.JOIN_SCREEN);
-			controller.onPlayerJoined(action);
-			break;
-		}
-		case START_GAME: {
-			JoinScreenController controller = (JoinScreenController) controllers.get(View.JOIN_SCREEN);
-			controller.onStartGame(action);
-			break;
-		}
-		case GET_GAME_BOARD: {
-			GameBoardController controller = (GameBoardController) controllers.get(View.GAME_BOARD);
-			controller.gameBoardReceived(action);
-			break;
-		}
-		default: {
-			System.out.println("Received unhandled command: " + action.getCommand().toString());
-		}
-		}
+		Gdx.app.postRunnable(() -> {
+			switch (action.getCommand()) {
+			case ADD_PLAYER: {
+				JoinScreenController controller = (JoinScreenController) controllers.get(View.JOIN_SCREEN);
+				controller.onPlayerJoined(action);
+				break;
+			}
+			case START_GAME: {
+				JoinScreenController controller = (JoinScreenController) controllers.get(View.JOIN_SCREEN);
+				controller.onStartGame(action);
+				break;
+			}
+			case GET_GAME_BOARD: {
+				GameBoardController controller = (GameBoardController) controllers.get(View.GAME_BOARD);
+				controller.gameBoardReceived(action);
+				break;
+			}
+			default: {
+				System.out.println("Received unhandled command: " + action.getCommand().toString());
+			}
+			}
+		});
 	}
 
 	/** Change the client's screen */
