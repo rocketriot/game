@@ -7,7 +7,7 @@ import java.util.ArrayList;
  */
 public class Model {
     /** Contains all of the information about the game board */
-    private GameBoard gameBoard = null;
+    private GameBoard gameBoard = new GameBoard();
 
     /** Max number of players in a game */
     public final int MAX_PLAYERS = 4;
@@ -20,8 +20,7 @@ public class Model {
      */
     private int playerId;
 
-    public GameBoard createGameBoard() throws Exception {
-        gameBoard = new GameBoard();
+    public GameBoard generateGrid() throws Exception {
         gameBoard.generateGrid(players);
         return gameBoard;
     }

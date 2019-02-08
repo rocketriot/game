@@ -16,10 +16,8 @@ public class GameBoardHandler {
     public static void getGameBoard(Model model, Action action, ServerHandler handler) throws Exception {
         GameBoard gameBoard = model.getGameBoard();
 
-        // Create an initial game board when starting the game
-        if (gameBoard == null) {
-            gameBoard = model.createGameBoard();
-        }
+        // Generate a grid when starting the game
+        if (gameBoard.getGrid() == null) model.generateGrid();
 
         ArrayList<Serializable> response = new ArrayList<>();
         response.add(gameBoard);

@@ -69,28 +69,22 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
 
     }
 
-    public void updateGrid() {
-        gridSize = controller.getGridSize();
-    }
-
     private void setupUI() {
         stage = new Stage(viewport, batch);
         background = new Sprite(new Texture(Gdx.files.internal("app/assets/backgrounds/game.png")));
     }
 
-
     public void drawBoardObjects() {
         GridPoint[][] grid = controller.getGrid();
+
         for (int x = 0; x < grid.length; x++) {
             for (int y = 0; y < grid[x].length; y++) {
                 GridPoint.Type pType = grid[x][y].getType();
                 if (pType == GridPoint.Type.PLAYER) {
                     Player p = (Player) grid[x][y].getValue();
                     sprite = playerSprites.get(p.getTextureID());
-                    float xCoord = p.getCoordinates().getX();
-                    float yCoord = p.getCoordinates().getY();
-                    sprite.setX(xCoord * PPS);
-                    sprite.setY(yCoord * PPS);
+                    sprite.setX(x * PPS);
+                    sprite.setY(y * PPS);
                     sprite.draw(stage.getBatch());
                 } else if (pType == GridPoint.Type.PLANET) {
                     Planet p = (Planet) grid[x][y].getValue();
@@ -186,11 +180,12 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
 
     @Override
     public void show() {
-        //Graphics.DisplayMode display = Gdx.graphics.getDisplayMode();
-        //Gdx.graphics.setFullscreenMode(display);
+        controller.onShow();
+
+        // Graphics.DisplayMode display = Gdx.graphics.getDisplayMode();
+        // Gdx.graphics.setFullscreenMode(display);
         Gdx.input.setInputProcessor(this);
     }
-
 
     @Override
     public void pause() {
@@ -228,33 +223,29 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
 
     @Override
     public void render(float delta) {
-        if (controller.hasReceivedBoard() == true) {
-            batch.setProjectionMatrix(camera.combined);
+        batch.setProjectionMatrix(camera.combined);
 
-            Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-            handleInput();
-            camera.update();
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        handleInput();
+        camera.update();
 
-            stage.getBatch().begin();
-            drawBackground();
-            drawBoardObjects();
-            stage.getBatch().end();
-            drawGridLines();
-            stage.act(Gdx.graphics.getDeltaTime());
+        stage.getBatch().begin();
+        drawBackground();
+        drawBoardObjects();
+        stage.getBatch().end();
+        drawGridLines();
+        stage.act(Gdx.graphics.getDeltaTime());
 
-            // Draw the ui
-            this.batch.setProjectionMatrix(hud.stage.getCamera().combined);
-            hud.stage.draw();
-        } else {
-            //TODO WAITING SCREEN
-        }
+        // Draw the ui
+        this.batch.setProjectionMatrix(hud.stage.getCamera().combined);
+        hud.stage.draw();
     }
 
     protected void drawBackground() {
 
-        for(int i = -1; i <= 1; i++) {
-            for(int j = -1; j <= 1; j++) {
-                background.setPosition(i * GAME_WORLD_WIDTH, j* GAME_WORLD_HEIGHT);
+        for (int i = -1; i <= 1; i++) {
+            for (int j = -1; j <= 1; j++) {
+                background.setPosition(i * GAME_WORLD_WIDTH, j * GAME_WORLD_HEIGHT);
                 background.draw(batch);
             }
         }
@@ -345,7 +336,7 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
             PPS -= amount * 2;
         } else if (PPS < 70) {
             PPS -= amount * 3;
-        }  else if (PPS >= 70) {
+        } else if (PPS >= 70) {
             if ((PPS -= amount * 4) >= 150) {
                 PPS = 149;
             } else {

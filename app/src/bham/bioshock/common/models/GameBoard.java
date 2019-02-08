@@ -18,7 +18,7 @@ public class GameBoard implements Serializable {
     /**
      * A grid containing the locations of all the planets, players, fuel boxes etc
      */
-    private GridPoint[][] grid = new GridPoint[GRID_SIZE][GRID_SIZE];
+    private GridPoint[][] grid;
 
     /** Generates a grid with randomly positioned entities */
     public GridPoint[][] generateGrid(ArrayList<Player> players) throws Exception {
@@ -26,6 +26,15 @@ public class GameBoard implements Serializable {
         if (players.size() != 4) {
             throw new Exception("NotEnoughPlayers");
         }
+
+        // initialize grid
+        grid = new GridPoint[GRID_SIZE][GRID_SIZE];
+
+        // Updates coordinates in player
+        players.get(0).setCoordinates(new Coordinates(0, 0));
+        players.get(1).setCoordinates(new Coordinates(0, GRID_SIZE - 1));
+        players.get(2).setCoordinates(new Coordinates(GRID_SIZE - 1, GRID_SIZE - 1));
+        players.get(3).setCoordinates(new Coordinates(GRID_SIZE - 1, 0));
 
         // Add the players to the board
         grid[0][0] = new GridPoint(GridPoint.Type.PLAYER, players.get(0));
