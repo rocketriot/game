@@ -3,7 +3,6 @@ package bham.bioshock.client.controllers;
 import java.io.Serializable;
 import java.net.ConnectException;
 import java.util.ArrayList;
-import java.util.UUID;
 
 import com.badlogic.gdx.Screen;
 
@@ -16,7 +15,6 @@ import bham.bioshock.communication.Action;
 import bham.bioshock.communication.Command;
 import bham.bioshock.communication.client.ClientService;
 import bham.bioshock.communication.client.CommunicationClient;
-import bham.bioshock.server.Server;
 
 public class JoinScreenController extends Controller {
     private Client client;
@@ -55,8 +53,13 @@ public class JoinScreenController extends Controller {
             model.addPlayer(player);
             System.out.println("Player: " + player.getUsername() + " connected");
         }
+    }
 
-        // screen.onPlayerJoined();
+    /**
+     * Fetches players from the model
+     */
+    public ArrayList<Player> getPlayers() {
+        return model.getPlayers();
     }
 
     /**
