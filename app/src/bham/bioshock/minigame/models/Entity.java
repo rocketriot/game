@@ -8,6 +8,9 @@ import bham.bioshock.minigame.PlayerTexture;
 import bham.bioshock.minigame.World;
 import bham.bioshock.minigame.physics.SpeedVector;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 
 public abstract class Entity {
 		
@@ -21,9 +24,12 @@ public abstract class Entity {
 	private float rotation;
 	
 	protected SpeedVector speed;
+
+	protected Position[] border;
 	
 	public Entity(float x, float y) {
 		pos = new Position(x, y);
+		border = new Position[3];
 		speed = new SpeedVector();
 	}
 	
@@ -84,7 +90,6 @@ public abstract class Entity {
 	}
 	
 	public abstract Texture getTexture();
-	
 	public void load() {
 		sprite = new Sprite(getTexture());
 		sprite.setSize(getSize(), getSize());
@@ -106,6 +111,9 @@ public abstract class Entity {
 		pos.y += speed.dY()*delta;
 		pos.x += speed.dX()*delta;
 
+		// change the border when the entity is moved
+		calculateBorder();
+
 		if(isFlying()) {
 			speed.apply(angle, World.GRAVITY*delta);			
 		} else {
@@ -117,4 +125,24 @@ public abstract class Entity {
 		}
 
 	}
+
+	public void calculateBorder(){
+		float width = sprite.getWidth();
+		float height = sprite.getHeight();
+		// bottom-right corner
+		Position pos2 = new Position(sprite.getX() + width, sprite.getY());
+
+		//upper-left corner
+		Position pos3 = new Position(sprite.getX(), sprite.getY() + height);
+
+		//upper-right corner
+		Position pos4 = new Position(sprite.getX() + width,sprite.getY() + height);
+
+		this.border[0]= pos;
+		this.border[1] = pos2;
+		this.border[2]=pos3;
+		this.border[3]=pos4;
+
+	}
+
 }

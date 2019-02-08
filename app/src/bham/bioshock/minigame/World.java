@@ -30,7 +30,7 @@ public class World {
 		// Seed players
 		players.add(new Player(-2140, 0));
 		players.add(new Player(2140, 2100));
-		players.add(new Player(220, -2100));	
+		players.add(new Player(220, -2100));
 		
 		// Seed rockets
 		rockets.add(new Rocket(-300, 2000, 1));
