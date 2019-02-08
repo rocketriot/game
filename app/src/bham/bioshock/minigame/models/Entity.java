@@ -25,11 +25,10 @@ public abstract class Entity {
 	
 	protected SpeedVector speed;
 
-	protected Position[] border;
+	protected ArrayList<Position> fullBorder;
 	
 	public Entity(float x, float y) {
 		pos = new Position(x, y);
-		border = new Position[3];
 		speed = new SpeedVector();
 	}
 	
@@ -112,7 +111,7 @@ public abstract class Entity {
 		pos.x += speed.dX()*delta;
 
 		// change the border when the entity is moved
-		calculateBorder();
+		calculateFullBorder();
 
 		if(isFlying()) {
 			speed.apply(angle, World.GRAVITY*delta);			
@@ -126,7 +125,7 @@ public abstract class Entity {
 
 	}
 
-	public void calculateBorder(){
+	private Position[] calculateBorderCorners(){
 		float width = sprite.getWidth();
 		float height = sprite.getHeight();
 		// bottom-right corner
@@ -138,11 +137,46 @@ public abstract class Entity {
 		//upper-right corner
 		Position pos4 = new Position(sprite.getX() + width,sprite.getY() + height);
 
-		this.border[0]= pos;
-		this.border[1] = pos2;
-		this.border[2]=pos3;
-		this.border[3]=pos4;
+		Position[] border = new Position[4];
+		border[0]= pos;
+		border[1] = pos2;
+		border[2]=pos3;
+		border[3]=pos4;
 
+		return border;
 	}
+
+	private ArrayList<Position> calculateFullBorder(){
+		Position[] border = calculateBorderCorners();
+
+		// get bottom line - from bottom-left to bottom-right corner
+		for(float i = pos.x; i<= border[1].x;i++ ){
+			Position current = new Position(i, pos.y);
+			fullBorder.add(current);
+		}
+
+		// get left line - from bottom-left to upper-left corner
+		for(float i = pos.y; i<= border[2].y;i++ ){
+			Position current = new Position(pos.x, i);
+			fullBorder.add(current);
+		}
+
+		// get upper line - from upper-left to upper-right corner
+		for(float i = border[2].x; i<= border[3].x;i++ ){
+			Position current = new Position(i, border[2].y);
+			fullBorder.add(current);
+		}
+
+		// get left line - from upper-right to bottom-right corner
+		for(float i = border[3].y; i<= border[1].y;i++ ){
+			Position current = new Position(border[1].x, i);
+			fullBorder.add(current);
+		}
+	}
+
+	public ArrayList<Position> getBorder(){
+		return this.fullBorder;
+	}
+
 
 }

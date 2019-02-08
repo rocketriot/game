@@ -15,6 +15,21 @@ public class Map {
     private ArrayList<Position> entities;
 
     public Map(World world){
+
         this.world = world;
+        entities = new ArrayList<Position>();
+        setOccupiedPlaces();
+    }
+
+    public void setOccupiedPlaces(){
+        Player main = world.getMainPlayer();
+        entities.add(main.getPos());
+        entities.addAll(main.getBorder());
+
+        ArrayList<Player> players = world.getPlayers();
+        ArrayList<Rocket> rockets = world.getRockets();
+
+        players.forEach(e-> entities.addAll(e.getBorder()));
+        rockets.forEach(e-> entities.addAll(e.getBorder()));
     }
 }
