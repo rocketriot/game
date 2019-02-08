@@ -1,6 +1,7 @@
 package bham.bioshock.common.models;
 
 import java.io.File;
+import java.io.Serializable;
 import java.nio.file.Files;
 import java.util.Random;
 import java.util.UUID;
@@ -12,7 +13,10 @@ import com.badlogic.gdx.files.FileHandle;
 /**
  * Stores the data of a player on the game board
  */
-public class Asteroid {
+public class Asteroid implements Serializable {
+
+    private static final long serialVersionUID = 5775730008817100527L;
+
     /**
      * ID of the planet
      */

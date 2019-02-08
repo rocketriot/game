@@ -2,6 +2,7 @@ package bham.bioshock.client.scenes;
 
 import bham.bioshock.client.Client;
 import bham.bioshock.client.controllers.GameBoardController;
+import bham.bioshock.common.models.Player;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -12,10 +13,12 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 
+import java.util.ArrayList;
+
 public class Hud implements Disposable {
     private final Skin skin;
-    private final int gameWidth;
-    private final int gameHeight;
+    private final float gameWidth;
+    private final float gameHeight;
     private GameBoardController controller;
     private HorizontalGroup topBar;
     private SelectBox optionsMenu;
@@ -24,26 +27,49 @@ public class Hud implements Disposable {
     private ProgressBar fuelBar;
     private String fuelString;
     private TextArea fuelLabel;
+    private Table table;
+    private ArrayList<Label> labels;
 
     public Hud(SpriteBatch batch, Skin skin, int gameWidth, int gameHeight, GameBoardController controller) {
         this.controller = controller;
         this.skin = skin;
-        this.gameWidth = gameWidth;
-        this.gameHeight = gameHeight;
-        viewport = new FitViewport(gameWidth, gameHeight, new OrthographicCamera());
+        this.gameWidth = gameWidth / 1.5f;
+        this.gameHeight = gameHeight /1.5f;
+        viewport = new FitViewport(this.gameWidth, this.gameHeight, new OrthographicCamera());
         stage = new Stage(viewport, batch);
         setupTopBar();
         setupFuelBar();
+        setupScoreList();
     }
 
     private void setupFuelBar() {
         fuelBar = new ProgressBar(0, 100, 1, false, skin);
         fuelBar.setValue(100);
-        fuelString = "Fuel: " + controller.getMainPlayer().getFuel() + "/100.0";
+        fuelString = "Fuel: " + "100.0" + "/100.0";
         fuelLabel = new TextArea(fuelString, skin);
         topBar.addActor(fuelLabel);
         topBar.addActor(fuelBar);
+    }
 
+    private void setupScoreList() {
+        table = new Table();
+        table.top();
+        table.setPosition(0 , 0);
+        table.setFillParent(true);
+        stage.addActor(table);
+
+        labels = new ArrayList<>();
+
+        for (int i = 0; i < 4; i++) {
+            String pointsString = "Player" + i + ": " + "0";
+            labels.add(new Label(pointsString, skin));
+        }
+
+        for (Label l : labels) {
+            table.add(l);
+            table.padLeft((gameWidth - l.getPrefWidth()));
+            table.row();
+        }
     }
 
     private void setupTopBar() {
@@ -88,16 +114,30 @@ public class Hud implements Disposable {
         fuelBar.setValue(controller.getMainPlayer().getFuel());
         fuelString = "Fuel: " + controller.getMainPlayer().getFuel() + "/100.0";
         fuelLabel.setText(fuelString);
+
+        ArrayList<Player> players = controller.getPlayers();
+        /*for (int i = 0; i < 4; i++) {
+            labels.get(i).setText(players.get(i).getUsername() + ": " + players.get(i).getPoints());
+        }*/
+
+
+        table.clearChildren();
+        labels = new ArrayList<>();
+
+        for (int i = 0; i < 4; i++) {
+            String pointsString = (players.get(i).getUsername() + ": " + players.get(i).getPoints());
+            labels.add(new Label(pointsString, skin));
+        }
+
+        for (Label l : labels) {
+            table.add(l);
+            table.padLeft((gameWidth - l.getPrefWidth()));
+            table.row();
+        }
     }
 
     public Stage getStage() {
         return stage;
-    }
-
-    public void printDebugInfo() {
-        System.out.println("Space: " + topBar.getSpace());
-        System.out.println("PrefHeight: " + topBar.getPrefHeight());
-        System.out.println("PrefWidth: " + topBar.getPrefWidth());
     }
 
     @Override

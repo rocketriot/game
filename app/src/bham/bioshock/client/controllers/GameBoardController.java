@@ -1,62 +1,74 @@
 package bham.bioshock.client.controllers;
 
 import bham.bioshock.client.Client;
+import bham.bioshock.client.Client.View;
+import bham.bioshock.client.screens.GameBoardScreen;
 import bham.bioshock.common.consts.GridPoint;
-import bham.bioshock.common.models.Coordinates;
-import bham.bioshock.common.models.GameBoard;
-import bham.bioshock.common.models.Planet;
-import bham.bioshock.common.models.Player;
+import bham.bioshock.common.models.*;
 import bham.bioshock.common.pathfinding.AStarPathfinding;
+import bham.bioshock.communication.Action;
+import bham.bioshock.communication.Command;
+import bham.bioshock.communication.client.ClientService;
 
+import com.badlogic.gdx.Screen;
+
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Random;
 
 import static bham.bioshock.common.consts.GridPoint.Type.*;
 
-
 public class GameBoardController extends Controller {
+    private Client client;
+    private ClientService server;
 
+    private Model model;
     private GameBoard gameBoard;
     private Player mainPlayer;
     private GridPoint[][] grid;
     private AStarPathfinding pathFinder;
-
+    private boolean receivedGrid = false;
 
     public GameBoardController(Client client) {
         this.client = client;
         this.server = client.getServer();
         this.model = client.getModel();
-
-        // TODO TEMP CODE REMOVE
-        Player p1 = new Player();
-        Player p2 = new Player();
-        Player p3 = new Player();
-        Player p4 = new Player();
-
-        setMainPlayer(p1);
-
-        model.createGameBoard();
-        model.addPlayer(p1);
-        model.addPlayer(p2);
-        model.addPlayer(p3);
-        model.addPlayer(p4);
-
         gameBoard = model.getGameBoard();
+    }
 
-        try {
-            ArrayList<Player> players = model.getPlayers();
-            gameBoard.generateGrid(players);
-        } catch (Exception e) {
-            // Handle no players error
-            System.err.println("No Players: ");
-            e.printStackTrace();
+    /** When the game board is on the screen */
+    public void onShow() {
+        // Update server connection from null since we should be connected
+        server = client.getServer();
+        // If the grid is not yet loaded, go to loading screen and fetch the game board
+        // from the server
+        if (gameBoard.getGrid() == null) {
+            server.send(new Action(Command.GET_GAME_BOARD));
+            client.changeScreen(View.LOADING);
         }
+    }
+
+    /** Handles when the server sends the game board to the client */
+    public void gameBoardReceived(Action action) {
+        // Update gameboard from arguments
+        ArrayList<Serializable> arguments = action.getArguments();
+        gameBoard = (GameBoard) arguments.get(0);
         grid = gameBoard.getGrid();
+        client.changeScreen(View.GAME_BOARD);
+
+        receivedGrid = true;
+
+        //TODO change to client's player
+        setMainPlayer(model.getPlayers().get(0));
         pathFinder = new AStarPathfinding(grid, mainPlayer.getCoordinates(),36,36);
     }
 
     public GridPoint[][] getGrid() {
         return gameBoard.getGrid();
+    }
+
+    public int getGridSize() {
+        return gameBoard.GRID_SIZE;
     }
 
     public ArrayList<Player> getPlayers() {
@@ -76,6 +88,7 @@ public class GameBoardController extends Controller {
     }
 
     public AStarPathfinding getPathFinder() {
+        pathFinder.setStartPosition(mainPlayer.getCoordinates());
         return pathFinder;
     }
 
@@ -95,7 +108,6 @@ public class GameBoardController extends Controller {
 
     public void move(Coordinates destination){
         float fuel = mainPlayer.getFuel();
-
         ArrayList<Coordinates> path = pathFinder.pathfind(destination);
 
         // pathsize - 1 since path includes start position
@@ -114,18 +126,16 @@ public class GameBoardController extends Controller {
             else if(grid[x][y].getType() == FUEL)
                 mainPlayer.setFuel(fuel + 30);
             pathFinder.setStartPosition(mainPlayer.getCoordinates());
-            //TODO REMOVE PRINT
-            System.out.println(mainPlayer.getFuel());
         }
     }
 
-    public void startMinigame(){
+    public void startMinigame() {
 
     }
 
     public void miniGameWon(Player player, Planet planet) {
         // winner gets the planet, previous owner loses it
-        if(planet.getPlayerCaptured() != null) {
+        if (planet.getPlayerCaptured() != null) {
             Player loser = planet.getPlayerCaptured();
             loser.setPlanetsCaptured(loser.getPlanetsCaptured() - 1);
         }
@@ -134,15 +144,25 @@ public class GameBoardController extends Controller {
         player.setPoints(player.getPoints() + 100);
     }
 
-    public void miniGameLost(Player player){
-       // if player attacks planet and doesn't win gets moved in a random position
-        int x,y;
+    public void miniGameLost(Player player) {
+        GridPoint[][] grid = gameBoard.getGrid();
+
+        // if player attacks planet and doesn't win gets moved in a random position
+        int x, y;
         do {
             x = new Random().nextInt();
             y = new Random().nextInt();
-        } while(grid[x][y].getType() != EMPTY);
+        } while (grid[x][y].getType() != EMPTY);
 
-        Coordinates newCoordinates = new Coordinates(x,y);
+        Coordinates newCoordinates = new Coordinates(x, y);
         player.setCoordinates(newCoordinates);
+    }
+
+    public void setScreen(Screen screen) {
+        this.screen = (GameBoardScreen) screen;
+    }
+
+    public boolean hasReceivedGrid() {
+        return receivedGrid;
     }
 }

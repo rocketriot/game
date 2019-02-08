@@ -1,9 +1,14 @@
 package bham.bioshock.common.consts;
 
+import java.io.Serializable;
+
 /**
  * Specifies what is at the location of a grid
  */
-public class GridPoint {
+public class GridPoint implements Serializable {
+
+    private static final long serialVersionUID = 5775730008817100527L;
+
     /** Types of the grid point */
     public enum Type {
         PLAYER, PLANET, ASTEROID, FUEL, EMPTY

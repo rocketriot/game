@@ -1,11 +1,14 @@
 package bham.bioshock.common.models;
 
+import java.io.Serializable;
 import java.util.UUID;
 
 /**
  * Stores the data of a fuel box
  */
-public class Fuel {
+public class Fuel implements Serializable {
+    private static final long serialVersionUID = 5775730008817100527L;
+
     /** ID of the fuel */
     private UUID id;
 

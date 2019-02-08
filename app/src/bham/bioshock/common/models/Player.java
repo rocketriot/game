@@ -32,7 +32,7 @@ public class Player implements Serializable {
     private int textureID;
 
     /** The number of points the player has */
-    private int points =0;
+    private int points = 0;
 
     public Player() {
         this.id = UUID.randomUUID();
@@ -90,11 +90,11 @@ public class Player implements Serializable {
         isCpu = cpu;
     }
 
-    public int getPoints(){
+    public int getPoints() {
         return points;
     }
 
-    public void setPoints(int points){
+    public void setPoints(int points) {
         this.points = points;
     }
 

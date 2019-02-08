@@ -51,12 +51,11 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
 
         gridWidth = GAME_WORLD_WIDTH - (GAME_WORLD_WIDTH % 36);
         gridHeight = gridWidth;
-        gridSize = controller.getGrid().length;
 
         // Pixels Per Square (on the grid)
         PPS = 50;
 
-        // Setup camera and viewport
+        gridSize = controller.getGridSize();
         camera = new OrthographicCamera();
         viewport = new FitViewport(GAME_WORLD_WIDTH, GAME_WORLD_HEIGHT, camera);
         viewport.apply();
@@ -81,33 +80,31 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
         background = new Sprite(new Texture(Gdx.files.internal("app/assets/backgrounds/game.png")));
     }
 
-
     public void drawBoardObjects() {
         GridPoint[][] grid = controller.getGrid();
+
         for (int x = 0; x < grid.length; x++) {
             for (int y = 0; y < grid[x].length; y++) {
                 GridPoint.Type pType = grid[x][y].getType();
                 if (pType == GridPoint.Type.PLAYER) {
                     Player p = (Player) grid[x][y].getValue();
+                    //TODO remove code once player is sent
+                    p.setCoordinates(new Coordinates(x, y));
                     if (playerSelected == true && p.equals(controller.getMainPlayer())) {
                         sprite = outlinedPlayerSprites.get(p.getTextureID());
                     } else {
                         sprite = playerSprites.get(p.getTextureID());
                     }
-                    float xCoord = p.getCoordinates().getX();
-                    float yCoord = p.getCoordinates().getY();
-                    sprite.setX(xCoord * PPS);
-                    sprite.setY(yCoord * PPS);
+                    sprite.setX(x * PPS);
+                    sprite.setY(y * PPS);
                     sprite.draw(batch);
                 } else if (pType == GridPoint.Type.PLANET) {
                     Planet p = (Planet) grid[x][y].getValue();
                     if (p.isDrawn() == false) {
                         p.setDrawn(true);
                         sprite = planetSprites.get(p.getTextureID());
-                        float xCoord = p.getCoordinates().getX();
-                        float yCoord = p.getCoordinates().getY();
-                        sprite.setX(xCoord * PPS);
-                        sprite.setY(yCoord * PPS);
+                        sprite.setX(x * PPS);
+                        sprite.setY(y * PPS);
                         sprite.draw(batch);
                     }
                 } else if (pType == GridPoint.Type.ASTEROID) {
@@ -115,10 +112,8 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
                     if (a.isDrawn() == false) {
                         a.setDrawn(true);
                         sprite = asteroidSprites.get(a.getTextureID());
-                        float xCoord = a.getCoordinates().getX();
-                        float yCoord = a.getCoordinates().getY();
-                        sprite.setX(xCoord * PPS);
-                        sprite.setY(yCoord * PPS);
+                        sprite.setX(x * PPS);
+                        sprite.setY(y * PPS);
                         sprite.draw(batch);
                     }
                 }
@@ -197,11 +192,12 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
 
     @Override
     public void show() {
-        //Graphics.DisplayMode display = Gdx.graphics.getDisplayMode();
-        //Gdx.graphics.setFullscreenMode(display);
+        controller.onShow();
+
+        // Graphics.DisplayMode display = Gdx.graphics.getDisplayMode();
+        // Gdx.graphics.setFullscreenMode(display);
         Gdx.input.setInputProcessor(inputMultiplexer);
     }
-
 
     @Override
     public void pause() {
@@ -243,26 +239,28 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
 
     @Override
     public void render(float delta) {
-        batch.setProjectionMatrix(camera.combined);
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        handleInput();
-        camera.update();
+        if (controller.hasReceivedGrid() == true) {
+            batch.setProjectionMatrix(camera.combined);
+            Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+            handleInput();
+            camera.update();
 
-        batch.begin();
+            batch.begin();
 
-        drawBackground();
-        drawBoardObjects();
-        drawPath();
+            drawBackground();
+            drawBoardObjects();
+            drawPath();
 
-        batch.end();
+            batch.end();
 
-        drawGridLines();
+            drawGridLines();
 
-        // Draw the ui
-        this.batch.setProjectionMatrix(hud.stage.getCamera().combined);
-        hud.getStage().act(Gdx.graphics.getDeltaTime());
-        hud.updateHud();
-        hud.getStage().draw();
+            // Draw the ui
+            this.batch.setProjectionMatrix(hud.stage.getCamera().combined);
+            hud.getStage().act(Gdx.graphics.getDeltaTime());
+            hud.updateHud();
+            hud.getStage().draw();
+        }
     }
 
     private void drawPath() {

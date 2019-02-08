@@ -1,5 +1,12 @@
 package bham.bioshock.client.controllers;
 
+import java.io.Serializable;
+import java.net.ConnectException;
+import java.util.ArrayList;
+
+import com.badlogic.gdx.Screen;
+
+import bham.bioshock.client.screens.JoinScreen;
 import bham.bioshock.client.Client;
 import bham.bioshock.client.Client.View;
 import bham.bioshock.client.screens.JoinScreen;
@@ -9,10 +16,6 @@ import bham.bioshock.communication.Action;
 import bham.bioshock.communication.Command;
 import bham.bioshock.communication.client.ClientService;
 import bham.bioshock.communication.client.CommunicationClient;
-import com.badlogic.gdx.Screen;
-
-import java.io.Serializable;
-import java.net.ConnectException;
 
 public class JoinScreenController extends Controller {
     private Client client;
@@ -33,6 +36,8 @@ public class JoinScreenController extends Controller {
         // Create server connection
         server = CommunicationClient.connect(username, client);
 
+        client.setServer(server);
+
         // Create a new player
         Player player = new Player(username);
 
@@ -49,8 +54,13 @@ public class JoinScreenController extends Controller {
             model.addPlayer(player);
             System.out.println("Player: " + player.getUsername() + " connected");
         }
+    }
 
-        // screen.onPlayerJoined();
+    /**
+     * Fetches players from the model
+     */
+    public ArrayList<Player> getPlayers() {
+        return model.getPlayers();
     }
 
     /**
