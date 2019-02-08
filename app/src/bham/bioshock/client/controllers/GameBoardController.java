@@ -25,7 +25,6 @@ public class GameBoardController extends Controller {
     private Model model;
     private GameBoard gameBoard;
     private Player mainPlayer;
-    private GridPoint[][] grid;
     private AStarPathfinding pathFinder;
     private boolean receivedGrid = false;
 
@@ -42,7 +41,7 @@ public class GameBoardController extends Controller {
         server = client.getServer();
         // If the grid is not yet loaded, go to loading screen and fetch the game board
         // from the server
-        if (gameBoard.getGrid() == null) {
+        if (receivedGrid == false) {
             server.send(new Action(Command.GET_GAME_BOARD));
             client.changeScreen(View.LOADING);
         }
@@ -53,14 +52,13 @@ public class GameBoardController extends Controller {
         // Update gameboard from arguments
         ArrayList<Serializable> arguments = action.getArguments();
         gameBoard = (GameBoard) arguments.get(0);
-        grid = gameBoard.getGrid();
         client.changeScreen(View.GAME_BOARD);
 
         receivedGrid = true;
 
         //TODO change to client's player
         setMainPlayer(model.getPlayers().get(0));
-        pathFinder = new AStarPathfinding(grid, mainPlayer.getCoordinates(),36,36);
+        pathFinder = new AStarPathfinding(gameBoard.getGrid(), mainPlayer.getCoordinates(),36,36);
     }
 
     public GridPoint[][] getGrid() {
@@ -108,6 +106,7 @@ public class GameBoardController extends Controller {
 
     public void move(Coordinates destination){
         float fuel = mainPlayer.getFuel();
+        GridPoint[][] grid = gameBoard.getGrid();
         ArrayList<Coordinates> path = pathFinder.pathfind(destination);
 
         // pathsize - 1 since path includes start position

@@ -37,7 +37,7 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
     private int PPS;
     private final int GAME_WORLD_WIDTH = Config.GAME_WORLD_WIDTH;
     private final int GAME_WORLD_HEIGHT = Config.GAME_WORLD_HEIGHT;
-    private int gridHeight, gridWidth, gridSize;
+    private int gridSize;
     private Hud hud;
     private int mouseDownX, mouseDownY;
     private boolean playerSelected = false;
@@ -48,9 +48,6 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
     public GameBoardScreen(final GameBoardController controller) {
         this.controller = controller;
         batch = new SpriteBatch();
-
-        gridWidth = GAME_WORLD_WIDTH - (GAME_WORLD_WIDTH % 36);
-        gridHeight = gridWidth;
 
         // Pixels Per Square (on the grid)
         PPS = 50;
