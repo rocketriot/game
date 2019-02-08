@@ -7,6 +7,7 @@ import bham.bioshock.client.screens.*;
 import bham.bioshock.common.models.Model;
 import bham.bioshock.communication.Action;
 import bham.bioshock.communication.client.ClientService;
+import com.badlogic.gdx.Gdx;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 import bham.bioshock.server.Server;
@@ -17,9 +18,9 @@ import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 
 public class Client extends Game {
-	
+
 	private static final Logger logger = LogManager.getLogger(Client.class);
-	
+
 	/** An enum to represent all the views */
 	public enum View {
 		MAIN_MENU, HOW_TO, LOADING, GAME_BOARD, PREFERENCES, JOIN_SCREEN
@@ -83,24 +84,38 @@ public class Client extends Game {
 		gameBoardController.setScreen(gameBoardScreen);
 		controllers.put(View.GAME_BOARD, gameBoardController);
 		screens.put(View.GAME_BOARD, gameBoardScreen);
+
+		// Loading
+		LoadingController loadingController = new LoadingController(this);
+		LoadingScreen loadingScreen = new LoadingScreen(loadingController);
+		loadingController.setScreen(loadingScreen);
+		controllers.put(View.LOADING, loadingController);
+		screens.put(View.LOADING, loadingScreen);
 	}
 
 	public void handleServerMessages(Action action) {
-		switch (action.getCommand()) {
-		case ADD_PLAYER: {
-			JoinScreenController controller = (JoinScreenController) controllers.get(View.JOIN_SCREEN);
-			controller.onPlayerJoined(action);
-			break;
-		}
-		case START_GAME: {
-			JoinScreenController controller = (JoinScreenController) controllers.get(View.JOIN_SCREEN);
-			controller.onStartGame(action);
-			break;
-		}
-		default: {
-			System.out.println("Received unhandled command: " + action.getCommand().toString());
-		}
-		}
+		Gdx.app.postRunnable(() -> {
+			switch (action.getCommand()) {
+			case ADD_PLAYER: {
+				JoinScreenController controller = (JoinScreenController) controllers.get(View.JOIN_SCREEN);
+				controller.onPlayerJoined(action);
+				break;
+			}
+			case START_GAME: {
+				JoinScreenController controller = (JoinScreenController) controllers.get(View.JOIN_SCREEN);
+				controller.onStartGame(action);
+				break;
+			}
+			case GET_GAME_BOARD: {
+				GameBoardController controller = (GameBoardController) controllers.get(View.GAME_BOARD);
+				controller.gameBoardReceived(action);
+				break;
+			}
+			default: {
+				System.out.println("Received unhandled command: " + action.getCommand().toString());
+			}
+			}
+		});
 	}
 
 	/** Change the client's screen */
@@ -115,6 +130,10 @@ public class Client extends Game {
 
 	public ClientService getServer() {
 		return server;
+	}
+
+	public void setServer(ClientService server) {
+		this.server = server;
 	}
 
 	public void createHostingServer() {
