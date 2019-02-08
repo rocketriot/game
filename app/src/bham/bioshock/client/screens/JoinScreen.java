@@ -24,6 +24,7 @@ public class JoinScreen extends ScreenMaster {
 
         try {
             controller.connectToServer("test");
+            controller.startGame();
         } catch (ConnectException e) {
             // Handle connection error
         }

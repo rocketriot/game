@@ -3,8 +3,6 @@ package bham.bioshock.server;
 import bham.bioshock.common.models.Model;
 import bham.bioshock.communication.server.CommunicationServer;
 import bham.bioshock.communication.server.ServerHandler;
-import bham.bioshock.communication.server.ServerService;
-import bham.bioshock.server.handlers.*;
 
 public class Server extends Thread {
     private Model model;

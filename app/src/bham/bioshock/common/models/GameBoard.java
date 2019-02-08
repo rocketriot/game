@@ -2,17 +2,23 @@ package bham.bioshock.common.models;
 
 import bham.bioshock.common.consts.GridPoint;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Random;
 
 /**
  * Stores the data required for the main game board
  */
-public class GameBoard {
+public class GameBoard implements Serializable {
+
+    private static final long serialVersionUID = 5775730008817100527L;
+
+    public final int GRID_SIZE = 36;
+
     /**
      * A grid containing the locations of all the planets, players, fuel boxes etc
      */
-    private GridPoint[][] grid = new GridPoint[36][36];
+    private GridPoint[][] grid;
 
     /** Generates a grid with randomly positioned entities */
     public GridPoint[][] generateGrid(ArrayList<Player> players) throws Exception {
@@ -21,11 +27,20 @@ public class GameBoard {
             throw new Exception("NotEnoughPlayers");
         }
 
+        // initialize grid
+        grid = new GridPoint[GRID_SIZE][GRID_SIZE];
+
+        // Updates coordinates in player
+        players.get(0).setCoordinates(new Coordinates(0, 0));
+        players.get(1).setCoordinates(new Coordinates(0, GRID_SIZE - 1));
+        players.get(2).setCoordinates(new Coordinates(GRID_SIZE - 1, GRID_SIZE - 1));
+        players.get(3).setCoordinates(new Coordinates(GRID_SIZE - 1, 0));
+
         // Add the players to the board
         grid[0][0] = new GridPoint(GridPoint.Type.PLAYER, players.get(0));
-        grid[0][35] = new GridPoint(GridPoint.Type.PLAYER, players.get(1));
-        grid[35][35] = new GridPoint(GridPoint.Type.PLAYER, players.get(2));
-        grid[35][0] = new GridPoint(GridPoint.Type.PLAYER, players.get(3));
+        grid[0][GRID_SIZE - 1] = new GridPoint(GridPoint.Type.PLAYER, players.get(1));
+        grid[GRID_SIZE - 1][GRID_SIZE - 1] = new GridPoint(GridPoint.Type.PLAYER, players.get(2));
+        grid[GRID_SIZE - 1][0] = new GridPoint(GridPoint.Type.PLAYER, players.get(3));
 
         // Go through each point and generate it's type
         for (int i = 0; i < grid.length; i++) {
@@ -59,7 +74,7 @@ public class GameBoard {
 
         // Generate a planet
         // Check if able to fit a planet in the grid
-        if (randomFloat <= 0.030 && x < 34 && y < 34) {
+        if (randomFloat <= 0.030 && x < GRID_SIZE - 2 && y < GRID_SIZE - 2) {
             // Check if the planet will overwrite an asteroid
             if (grid[x + 2][y] == null && grid[x][y + 2] == null && grid[x + 2][y + 2] == null) {
                 // Create a new planet
@@ -76,7 +91,7 @@ public class GameBoard {
 
         // Generate an asteroid
         // Check if able to fit an asteroid in the grid
-        if (randomFloat <= 0.04 && x < 33 && y < 32) {
+        if (randomFloat <= 0.04 && x < GRID_SIZE - 3 && y < GRID_SIZE - 4) {
             // Check if the asteroid will overwrite an planet
             if (grid[x + 3][y] == null && grid[x][y + 2] == null && grid[x + 2][y + 3] == null) {
                 // Create a new asteroid

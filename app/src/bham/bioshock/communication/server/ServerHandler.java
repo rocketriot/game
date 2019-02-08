@@ -5,6 +5,7 @@ import java.util.UUID;
 
 import bham.bioshock.common.models.Model;
 import bham.bioshock.communication.Action;
+import bham.bioshock.server.handlers.GameBoardHandler;
 import bham.bioshock.server.handlers.JoinScreenHandler;
 
 public class ServerHandler {
@@ -43,6 +44,9 @@ public class ServerHandler {
 				break;
 			case START_GAME:
 				JoinScreenHandler.startGame(model, action, this);
+				break;
+			case GET_GAME_BOARD:
+				GameBoardHandler.getGameBoard(model, action, this);
 				break;
 			default:
 				System.out.println("Received unhandled command: " + action.getCommand().toString());

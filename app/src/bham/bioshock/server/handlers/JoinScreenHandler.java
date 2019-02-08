@@ -19,6 +19,10 @@ public class JoinScreenHandler {
     public static void addPlayer(Model model, Action action, ServerHandler hander) throws Exception {
         Player player = (Player) action.getArgument(0);
 
+        // Set the texture ID of the player
+        int textureId = model.getPlayers().size();
+        player.setTextureID(textureId);
+
         // Add a player to the model
         model.addPlayer(player);
 
@@ -42,6 +46,11 @@ public class JoinScreenHandler {
             int number = model.getPlayers().size();
 
             Player player = new Player("Player " + number, true);
+
+            // Set the texture ID of the player
+            int textureId = model.getPlayers().size();
+            player.setTextureID(textureId);
+
             model.addPlayer(player);
             cpuPlayers.add(player);
         }
