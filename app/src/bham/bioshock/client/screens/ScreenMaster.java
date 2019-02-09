@@ -2,7 +2,6 @@ package bham.bioshock.client.screens;
 
 import bham.bioshock.client.Client;
 import bham.bioshock.client.controllers.Controller;
-import bham.bioshock.client.controllers.PreferencesController;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;

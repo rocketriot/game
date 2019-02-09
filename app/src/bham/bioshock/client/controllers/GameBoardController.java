@@ -24,6 +24,9 @@ public class GameBoardController extends Controller {
 
     private Model model;
     private GameBoard gameBoard;
+    private Player mainPlayer;
+    private AStarPathfinding pathFinder;
+    private boolean receivedGrid = false;
 
     public GameBoardController(Client client) {
         this.client = client;
@@ -36,10 +39,9 @@ public class GameBoardController extends Controller {
     public void onShow() {
         // Update server connection from null since we should be connected
         server = client.getServer();
-
         // If the grid is not yet loaded, go to loading screen and fetch the game board
         // from the server
-        if (gameBoard.getGrid() == null) {
+        if (receivedGrid == false) {
             server.send(new Action(Command.GET_GAME_BOARD));
             client.changeScreen(View.LOADING);
         }
@@ -50,8 +52,13 @@ public class GameBoardController extends Controller {
         // Update gameboard from arguments
         ArrayList<Serializable> arguments = action.getArguments();
         gameBoard = (GameBoard) arguments.get(0);
-
         client.changeScreen(View.GAME_BOARD);
+
+        receivedGrid = true;
+
+        //TODO change to client's player
+        setMainPlayer(model.getPlayers().get(0));
+        pathFinder = new AStarPathfinding(gameBoard.getGrid(), mainPlayer.getCoordinates(),36,36);
     }
 
     public GridPoint[][] getGrid() {
@@ -70,28 +77,54 @@ public class GameBoardController extends Controller {
         client.changeScreen(screen);
     }
 
-    public void move(Player player, Coordinates destination) {
+    public Player getMainPlayer() {
+        return mainPlayer;
+    }
+
+    public void setMainPlayer(Player p) {
+        this.mainPlayer = p;
+    }
+
+    public AStarPathfinding getPathFinder() {
+        pathFinder.setStartPosition(mainPlayer.getCoordinates());
+        return pathFinder;
+    }
+
+    public boolean[] getPathColour(ArrayList<Coordinates> path) {
+        boolean[] allowedMove = new boolean[path.size()];
+        float fuel = mainPlayer.getFuel();
+        for (int i = 0; i < path.size(); i++) {
+            if (fuel < 10f) {
+                allowedMove[i] = false;
+            } else {
+                allowedMove[i] = true;
+                fuel -= 10;
+            }
+        }
+        return allowedMove;
+    }
+
+    public void move(Coordinates destination){
+        float fuel = mainPlayer.getFuel();
         GridPoint[][] grid = gameBoard.getGrid();
-
-        Coordinates currentPosition = player.getCoordinates();
-        float fuel = player.getFuel();
-
-        AStarPathfinding pathFinder = new AStarPathfinding(grid, currentPosition, gameBoard.GRID_SIZE,
-                gameBoard.GRID_SIZE);
         ArrayList<Coordinates> path = pathFinder.pathfind(destination);
 
+        // pathsize - 1 since path includes start position
+        float pathCost = (path.size() - 1) * 10;
+
         // check if the player has enough fuel
-        if (player.getFuel() > path.size()) {
-            player.setCoordinates(destination);
-            fuel = fuel - path.size();
-            player.setFuel(fuel - path.size());
+        if(mainPlayer.getFuel() >= pathCost) {
+            mainPlayer.setCoordinates(destination);
+            fuel -= pathCost;
+            mainPlayer.setFuel(fuel);
 
             int x = destination.getX();
             int y = destination.getY();
-            if (grid[x][y].getType() == PLANET)
+            if(grid[x][y].getType() == PLANET)
                 startMinigame();
-            else if (grid[x][y].getType() == FUEL)
-                player.setFuel(fuel + 3);
+            else if(grid[x][y].getType() == FUEL)
+                mainPlayer.setFuel(fuel + 30);
+            pathFinder.setStartPosition(mainPlayer.getCoordinates());
         }
     }
 
@@ -126,5 +159,9 @@ public class GameBoardController extends Controller {
 
     public void setScreen(Screen screen) {
         this.screen = (GameBoardScreen) screen;
+    }
+
+    public boolean hasReceivedGrid() {
+        return receivedGrid;
     }
 }

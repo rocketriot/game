@@ -9,6 +9,7 @@ import com.badlogic.gdx.Screen;
 import bham.bioshock.client.screens.JoinScreen;
 import bham.bioshock.client.Client;
 import bham.bioshock.client.Client.View;
+import bham.bioshock.client.screens.JoinScreen;
 import bham.bioshock.common.models.Model;
 import bham.bioshock.common.models.Player;
 import bham.bioshock.communication.Action;
