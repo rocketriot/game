@@ -7,6 +7,7 @@ import bham.bioshock.common.Position;
 import bham.bioshock.minigame.PlayerTexture;
 import bham.bioshock.minigame.World;
 import bham.bioshock.minigame.physics.SpeedVector;
+import com.badlogic.gdx.math.Rectangle;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -110,9 +111,6 @@ public abstract class Entity {
 		pos.y += speed.dY()*delta;
 		pos.x += speed.dX()*delta;
 
-		// change the border when the entity is moved
-		calculateFullBorder();
-
 		if(isFlying()) {
 			speed.apply(angle, World.GRAVITY*delta);			
 		} else {
@@ -125,58 +123,12 @@ public abstract class Entity {
 
 	}
 
-	private Position[] calculateBorderCorners(){
-		float width = sprite.getWidth();
-		float height = sprite.getHeight();
-		// bottom-right corner
-		Position pos2 = new Position(sprite.getX() + width, sprite.getY());
-
-		//upper-left corner
-		Position pos3 = new Position(sprite.getX(), sprite.getY() + height);
-
-		//upper-right corner
-		Position pos4 = new Position(sprite.getX() + width,sprite.getY() + height);
-
-		Position[] border = new Position[4];
-		border[0]= pos;
-		border[1] = pos2;
-		border[2]=pos3;
-		border[3]=pos4;
-
-		return border;
+	// returns rectangle of the sprite
+	public Rectangle getRectangle(){
+		return sprite.getBoundingRectangle();
 	}
 
-	private ArrayList<Position> calculateFullBorder(){
-		Position[] border = calculateBorderCorners();
 
-		// get bottom line - from bottom-left to bottom-right corner
-		for(float i = pos.x; i<= border[1].x;i++ ){
-			Position current = new Position(i, pos.y);
-			fullBorder.add(current);
-		}
-
-		// get left line - from bottom-left to upper-left corner
-		for(float i = pos.y; i<= border[2].y;i++ ){
-			Position current = new Position(pos.x, i);
-			fullBorder.add(current);
-		}
-
-		// get upper line - from upper-left to upper-right corner
-		for(float i = border[2].x; i<= border[3].x;i++ ){
-			Position current = new Position(i, border[2].y);
-			fullBorder.add(current);
-		}
-
-		// get left line - from upper-right to bottom-right corner
-		for(float i = border[3].y; i<= border[1].y;i++ ){
-			Position current = new Position(border[1].x, i);
-			fullBorder.add(current);
-		}
-	}
-
-	public ArrayList<Position> getBorder(){
-		return this.fullBorder;
-	}
 
 
 }

@@ -12,6 +12,8 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
+import com.badlogic.gdx.math.Circle;
+import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
@@ -37,6 +39,7 @@ public class Renderer {
 
 	private final int GAME_WORLD_WIDTH = Config.GAME_WORLD_WIDTH;
 	private final int GAME_WORLD_HEIGHT = Config.GAME_WORLD_HEIGHT;
+	private Circle mainPlanet;
 	
 
 	public Renderer(World _w) {
@@ -96,6 +99,8 @@ public class Renderer {
 		renderer.begin(ShapeType.Filled);
 		renderer.setColor(Color.SALMON);
 		renderer.circle(0, 0, (float) World.PLANET_RADIUS+2);
+		// bounding circle
+		mainPlanet = new Circle(0,0,(float)World.PLANET_RADIUS-10);
 		renderer.end();
 	}
 	
@@ -112,14 +117,22 @@ public class Renderer {
 	public void updatePosition() {
 		float dt = Gdx.graphics.getDeltaTime();
 		mainPlayer.update(dt);
+
 		if(Gdx.input.isKeyPressed(Input.Keys.LEFT) || Gdx.input.isKeyPressed(Input.Keys.A)) {
 			mainPlayer.moveLeft(dt);
+
+			if(Intersector.overlaps(mainPlanet,mainPlayer.getRectangle()))
+				System.out.println(mainPlayer.getRectangle());
 		}
 		if(Gdx.input.isKeyPressed(Input.Keys.RIGHT) || Gdx.input.isKeyPressed(Input.Keys.D)) {
 			mainPlayer.moveRight(dt);
+			if(Intersector.overlaps(mainPlanet,mainPlayer.getRectangle()))
+				System.out.println(mainPlayer.getRectangle());
 		}
 		if(Gdx.input.isKeyPressed(Input.Keys.UP) || Gdx.input.isKeyPressed(Input.Keys.W)) {
 			mainPlayer.jump(dt);
+			if(Intersector.overlaps(mainPlanet,mainPlayer.getRectangle()))
+				System.out.println(mainPlayer.getRectangle());
 		}
 	}
 	

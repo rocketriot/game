@@ -2,6 +2,9 @@ package bham.bioshock.minigame.models;
 
 import bham.bioshock.common.Position;
 import bham.bioshock.minigame.World;
+import com.badlogic.gdx.graphics.g3d.particles.values.RectangleSpawnShapeValue;
+import com.badlogic.gdx.math.Circle;
+import com.badlogic.gdx.math.Rectangle;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -11,25 +14,20 @@ public class Map {
     /** The world */
     private World world;
 
-    /** the occupied positions */
-    private ArrayList<Position> entities;
+    /** Platforms */
+    private ArrayList<Rectangle> platforms;
 
     public Map(World world){
-
         this.world = world;
-        entities = new ArrayList<Position>();
-        setOccupiedPlaces();
+        Circle mainPlanet = new Circle(0,0,(float)world.PLANET_RADIUS-10);
     }
 
-    public void setOccupiedPlaces(){
-        Player main = world.getMainPlayer();
-        entities.add(main.getPos());
-        entities.addAll(main.getBorder());
-
-        ArrayList<Player> players = world.getPlayers();
-        ArrayList<Rocket> rockets = world.getRockets();
-
-        players.forEach(e-> entities.addAll(e.getBorder()));
-        rockets.forEach(e-> entities.addAll(e.getBorder()));
+    public void addPlatform(Rectangle platform){
+        platforms.add(platform);
     }
+
+    public ArrayList<Rectangle> getPlatforms(){
+        return platforms;
+    }
+
 }

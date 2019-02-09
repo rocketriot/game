@@ -19,7 +19,6 @@ public class World {
 	
 	public World() {
 		mainPlayer = new Player(10, 2100);
-		
 		players = new ArrayList<>();
 		rockets = new ArrayList<>();
 		
