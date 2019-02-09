@@ -213,12 +213,13 @@ public class AStarPathfinding {
      * @return         The heuristic value found
      */
     private double findHeuristic(Coordinates position) {
-       int dx1 = position.getX() - goalPosition.getX();
-       int dy1 = position.getY() - goalPosition.getY();
-       int dx2 = startPosition.getX() - goalPosition.getX();
-       int dy2 = startPosition.getY() - goalPosition.getY();
-       int cross = Math.abs(dx1*dy2 - dx2*dy1);
-       return (cross * 0.001);
+//       int dx1 = position.getX() - goalPosition.getX();
+//       int dy1 = position.getY() - goalPosition.getY();
+//       int dx2 = startPosition.getX() - goalPosition.getX();
+//       int dy2 = startPosition.getY() - goalPosition.getY();
+//       int cross = Math.abs(dx1*dy2 - dx2*dy1);
+//       return (cross);
+        return (Math.abs(position.getX() - goalPosition.getX()) + Math.abs(position.getY() - goalPosition.getY()));
     }
 
     /*
