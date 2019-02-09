@@ -85,20 +85,20 @@ public class AStarPathfinding {
                     // calculate current path cost
                     int successorPathCost = aStarGrid[x][y].getPathCost() + TRANSITION_COST;
                     // calculate the heuristic cost
-                    int successorHeuristicCost = findHeuristic(currentSuccessor);
+                    double successorHeuristicCost = findHeuristic(currentSuccessor);
                     // update the total cost value
-                    int totalCost = successorPathCost + successorHeuristicCost;
+                    double totalCost = successorPathCost + successorHeuristicCost;
 
                     // check if the successor is already in the open list
                     if (checkList(currentSuccessor, openList)) {
-                        int openCost = aStarGrid[x][y].getTotalCost();
+                        double openCost = aStarGrid[x][y].getTotalCost();
                         // check if the total cost calculated is less than the one stored for the point
                         if (openCost > totalCost) { // if so, update the values
                             updateValues(currentSuccessor, successorPathCost, successorHeuristicCost, currentPosition);
                         }
                         // else check if the node is already in the closed list
                     } else if (checkList(currentSuccessor, closedList)) {
-                        int closedCost = aStarGrid[x][y].getTotalCost();
+                        double closedCost = aStarGrid[x][y].getTotalCost();
                         // check if the total cost calculated is less than the one stored for the point
                         if (closedCost > totalCost) { // if so, update the values and move point to open list
                             updateValues(currentSuccessor, successorPathCost, successorHeuristicCost, currentPosition);
@@ -135,10 +135,13 @@ public class AStarPathfinding {
         this.goalPosition = goalPosition;
     }
 
-    //method to set the game grid
+    /*
+     * Method to set the game grid that will be used for pathfinding
+     *
+     * @param grid The grid that will be used
+     */
     public void setGameGrid(GridPoint[][] grid) {
         gameGrid = grid;
-        //aStarGrid = setAStarGrid();
     }
 
     /*
@@ -161,12 +164,14 @@ public class AStarPathfinding {
                 }
             }
         }
-
         return tempGrid;
     }
 
     /*
      * Method to insert a value into the required list - either the open or closed list
+     *
+     * @param list   The list to add to
+     * @param coords The coordinates to add
      */
     private void insertIntoList(ArrayList<Coordinates> list, Coordinates coords) {
         list.add(coords);
@@ -180,7 +185,7 @@ public class AStarPathfinding {
      */
     private Coordinates findMinPoint(ArrayList<Coordinates> list) {
 
-        int minimumCost = Integer.MAX_VALUE;
+        double minimumCost = Integer.MAX_VALUE;
         Coordinates nextPoint = new Coordinates(Integer.MAX_VALUE, Integer.MAX_VALUE);
 
         // iterate through the list to get an entrySet
@@ -200,17 +205,24 @@ public class AStarPathfinding {
     }
 
     /*
-     * Method to find the heuristic value for a given point
+     * Method to find the heuristic value for a given point - takes the cross product of the Manhattan distance
+     * from the current point to the goal and from the start point to the goal and scales it so that it prefers
+     * straight paths to the goal
      *
      * @param position The coordinates of the point you want to calculate the heuristic value for
      * @return         The heuristic value found
      */
-    private int findHeuristic(Coordinates position) {
-        return (Math.abs(goalPosition.getX() - position.getX()) + Math.abs(goalPosition.getY() - position.getY()));
+    private double findHeuristic(Coordinates position) {
+       int dx1 = position.getX() - goalPosition.getX();
+       int dy1 = position.getY() - goalPosition.getY();
+       int dx2 = startPosition.getX() - goalPosition.getX();
+       int dy2 = startPosition.getY() - goalPosition.getY();
+       int cross = Math.abs(dx1*dy2 - dx2*dy1);
+       return (cross * 0.001);
     }
 
     /*
-     * Method generate the successors of a given point in all 4 directions, checking if they are valid first
+     * Method to generate the successors of a given point in all 4 directions, checking if they are valid first
      *
      * @param currentPoint The coordinates of the current point to generate the successors for
      * @param closedList   The closed list, containing all the already closed nodes that you do not want to become
@@ -248,7 +260,12 @@ public class AStarPathfinding {
         return successors;
     }
 
-    // method to check whether a coordinate is valid
+    /*
+     * Method to check whether the point is valid - is within the board coordinates and is passable
+     *
+     * @param point The coordinates of the point to check
+     * @return             Whether the point is valid or not
+     */
     private Boolean isValid(Coordinates point) {
         int x = point.getX();
         int y = point.getY();
@@ -259,7 +276,13 @@ public class AStarPathfinding {
         }
     }
 
-    // method to check whether a coordinate is in one of the lists
+    /*
+     * Method to check whether a coordinate is in the open or closed list
+     *
+     * @param coordinate    The coordinate to check
+     * @param list          The list to check
+     * @return              Whether the coordinate is in the list
+     */
     private Boolean checkList(Coordinates coordinate, ArrayList<Coordinates> list) {
         for (Coordinates listCoord : list) {
             if (listCoord.isEqual(coordinate)) {
@@ -269,8 +292,15 @@ public class AStarPathfinding {
         return false;
     }
 
-    // method to update the values of a point in the aStarGrid
-    private void updateValues(Coordinates point, int pathCost, int heuristicCost, Coordinates parent) {
+    /*
+     * Method to update the values of a position in the A* Grid
+     *
+     * @param point         The point to update
+     * @param pathCost      The new path cost of the point to update
+     * @param heuristicCost The new heuristic cost of the point to update
+     * @param parent        The new parent of the point to update
+     */
+    private void updateValues(Coordinates point, int pathCost, double heuristicCost, Coordinates parent) {
         aStarGrid[point.getX()][point.getY()].setPathCost(pathCost);
         aStarGrid[point.getX()][point.getY()].setHeuristicCost(heuristicCost);
         aStarGrid[point.getX()][point.getY()].updateTotalCost();
