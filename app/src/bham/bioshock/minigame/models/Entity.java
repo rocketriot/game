@@ -2,6 +2,7 @@ package bham.bioshock.minigame.models;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 import bham.bioshock.common.Position;
 import bham.bioshock.minigame.PlayerTexture;
@@ -83,7 +84,7 @@ public abstract class Entity {
 		}
 	}
 	
-	public abstract Texture getTexture();
+	public abstract TextureRegion getTexture();
 	
 	public void load() {
 		sprite = new Sprite(getTexture());

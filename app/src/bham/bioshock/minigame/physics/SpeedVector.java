@@ -34,6 +34,10 @@ public class SpeedVector {
 		dy = 0;
 	}
 	
+	public double getValue() {
+		return Math.sqrt(dx * dx + dy * dy);
+	}
+	
 	public double getSpeedAngle() {
 		double length = Math.sqrt(dx * dx + dy * dy);
 		double speedAngle = Math.asin(dx/length);
