@@ -125,7 +125,7 @@ public class Renderer {
 	
 	public void drawMainPlayer() {
 		Sprite sprite = mainPlayer.getSprite();
-		sprite.setTexture(mainPlayer.getTexture());
+		sprite.setRegion(mainPlayer.getTexture());
 		sprite.setPosition(mainPlayer.getX(), mainPlayer.getY());
 		sprite.setRotation((float) -mainPlayer.angleFromCenter());
 
