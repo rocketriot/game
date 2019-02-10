@@ -18,11 +18,15 @@ public class SpeedVector {
 	public void apply(double angle, double force) {
 		double acceleration = force / mass;
 		double radians = Math.toRadians(angle);
-		double x1 = acceleration * Math.sin(radians);
-		double y1 = acceleration * Math.cos(radians);
+		double x1 = round( acceleration * Math.sin(radians) );
+		double y1 = round( acceleration * Math.cos(radians) );
 		
 		dx += x1;
 		dy += y1;
+	}
+	
+	private double round(double value) {
+		return Math.round(value * 1000) / 1000;
 	}
 	
 	public void stopY() {
@@ -40,7 +44,7 @@ public class SpeedVector {
 		if(dy < 0) {
 			speedAngle = Math.PI - speedAngle;
 		}
-		return speedAngle;
+		return round( Math.toDegrees(speedAngle) );
 	}
 	
 	public void stop(double angleDegrees) {
@@ -53,7 +57,7 @@ public class SpeedVector {
 		double angle = Math.toRadians(angleDegrees);
 		double length = Math.sqrt(dx * dx + dy * dy);
 		if(length == 0) return new Vector(0, 0);
-		double da = getSpeedAngle() - angle;
+		double da = Math.toRadians(getSpeedAngle() - angleDegrees);
 		
 		double groundV = Math.cos(da) * length;
 		double dx1 = Math.sin(angle) * groundV;

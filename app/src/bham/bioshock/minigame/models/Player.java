@@ -14,7 +14,7 @@ public class Player extends Entity {
 	
 	private final double JUMP_FORCE = 300;
 
-	private float v = 20f;
+	private float v = 40f;
 	
 	public Player(float x, float y) {
 		super(x, y);
