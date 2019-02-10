@@ -12,6 +12,7 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
@@ -20,6 +21,7 @@ import bham.bioshock.common.consts.Config;
 import bham.bioshock.minigame.models.Entity;
 import bham.bioshock.minigame.models.Player;
 import bham.bioshock.minigame.models.Rocket;
+import bham.bioshock.minigame.physics.Gravity;
 
 public class Renderer {
 
@@ -29,12 +31,14 @@ public class Renderer {
 	
 	ShapeRenderer renderer;
 	private OrthographicCamera cam;
+	Vector3 lerpTarget = new Vector3();
 	private Sprite background;
 	private Stage stage;
 	private SpriteBatch batch;
 	private SpriteBatch backgroundBatch;
 	private Viewport viewport;
-
+	private double camRotation;
+	
 	private final int GAME_WORLD_WIDTH = Config.GAME_WORLD_WIDTH;
 	private final int GAME_WORLD_HEIGHT = Config.GAME_WORLD_HEIGHT;
 	
@@ -52,6 +56,7 @@ public class Renderer {
 		
 		batch = new SpriteBatch();
 		backgroundBatch = new SpriteBatch();
+		camRotation = 0;
 		
 		cam.update();
 
@@ -76,7 +81,11 @@ public class Renderer {
 		renderer.setProjectionMatrix(cam.combined);
 		
 		updatePosition();
-		cam.position.set(mainPlayer.getX(), mainPlayer.getY(), 0);
+		cam.position.lerp(lerpTarget.set(mainPlayer.getX(), mainPlayer.getY(), 0), 3f*delta);
+		
+		double rotation = -Gravity.getAngleTo(cam.position.x, cam.position.y);
+		cam.rotate((float) (camRotation - rotation));
+		camRotation = rotation;
 		cam.update();
 
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
@@ -95,7 +104,7 @@ public class Renderer {
 	public void drawPlanet() {
 		renderer.begin(ShapeType.Filled);
 		renderer.setColor(Color.SALMON);
-		renderer.circle(0, 0, (float) World.PLANET_RADIUS+2);
+		renderer.circle(0, 0, (float) World.PLANET_RADIUS);
 		renderer.end();
 	}
 	
@@ -103,7 +112,7 @@ public class Renderer {
 		for(Entity e : entities) {
 			Sprite sprite = e.getSprite();
 			sprite.setPosition(e.getX(), e.getY());
-			e.updateRotation();
+			sprite.setRotation((float) e.getRotation());
 			sprite.draw(batch);
 			e.update(Gdx.graphics.getDeltaTime());
 		}

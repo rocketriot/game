@@ -62,4 +62,37 @@ public class SpeedVectorTests {
 		v.apply(270, 10);
 		assertEquals(225, v.getSpeedAngle());
 	}
+	
+	@Test
+	public void testStop() {
+		SpeedVector v = new SpeedVector();
+		
+		v.apply(0, 200);
+		v.stop(0);
+		assertEquals(0, v.dX());
+		assertEquals(0, v.dY());
+		
+		v.apply(45, 100);
+		v.stop(0);
+		assertEquals(70, v.dX());
+		assertEquals(0, v.dY());
+		
+		v.stop(90);
+		assertEquals(0, v.dX());
+		assertEquals(0, v.dY());
+		
+		v.apply(270, 100);
+		v.stop(225);
+		assertEquals(-50, v.dX());
+		assertEquals(50, v.dY());
+	}
+	
+	@Test
+	public void testFriction() {
+		SpeedVector v = new SpeedVector();
+		
+		v.apply(90, 100);
+		v.friction(0.5);
+	}
+	
 }

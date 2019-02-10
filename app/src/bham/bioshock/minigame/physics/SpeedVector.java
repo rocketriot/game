@@ -26,16 +26,7 @@ public class SpeedVector {
 	}
 	
 	private double round(double value) {
-		return Math.round(value * 1000) / 1000;
-	}
-	
-	public void stopY() {
-		dy = 0;
-	}
-	
-	public void stop() {
-		dx = 0;
-		dy = 0;
+		return Math.round(value * 10000) / 10000;
 	}
 	
 	public double getValue() {
@@ -43,7 +34,7 @@ public class SpeedVector {
 	}
 	
 	public double getSpeedAngle() {
-		double length = Math.sqrt(dx * dx + dy * dy);
+		double length = getValue();
 		double speedAngle = Math.asin(dx/length);
 		if(dy < 0) {
 			speedAngle = Math.PI - speedAngle;
@@ -57,9 +48,15 @@ public class SpeedVector {
 		dy -= v.dy;
 	}
 	
-	public Vector stopVector(double angleDegrees) {
+	public void friction(double u) {
+		Vector v = stopVector(getSpeedAngle());
+		dx -= v.dx * u;
+		dy -= v.dy * u;
+	}
+	
+	private Vector stopVector(double angleDegrees) {
 		double angle = Math.toRadians(angleDegrees);
-		double length = Math.sqrt(dx * dx + dy * dy);
+		double length = getValue();
 		if(length == 0) return new Vector(0, 0);
 		double da = Math.toRadians(getSpeedAngle() - angleDegrees);
 		
@@ -67,13 +64,7 @@ public class SpeedVector {
 		double dx1 = Math.sin(angle) * groundV;
 		double dy1 = Math.cos(angle) * groundV;
 		
-		return new Vector(dx1, dy1);
-	}
-	
-	public void friction(double angleDegrees, double u) {
-		Vector v = stopVector(getSpeedAngle());
-		dx -= v.dx * u;
-		dy -= v.dy * u;
+		return new Vector(round(dx1), round(dy1));
 	}
 	
 	public double dX() { return dx; }
