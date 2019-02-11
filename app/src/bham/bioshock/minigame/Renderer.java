@@ -122,17 +122,20 @@ public class Renderer {
 			mainPlayer.moveLeft(dt);
 
 			if(Intersector.overlaps(mainPlanet,mainPlayer.getRectangle()))
-				System.out.println(mainPlayer.getRectangle());
+				//System.out.println(mainPlayer.getRectangle());
+				mainPlayer.col(dt);
 		}
 		if(Gdx.input.isKeyPressed(Input.Keys.RIGHT) || Gdx.input.isKeyPressed(Input.Keys.D)) {
 			mainPlayer.moveRight(dt);
+
 			if(Intersector.overlaps(mainPlanet,mainPlayer.getRectangle()))
-				System.out.println(mainPlayer.getRectangle());
+				mainPlayer.col(dt);
 		}
 		if(Gdx.input.isKeyPressed(Input.Keys.UP) || Gdx.input.isKeyPressed(Input.Keys.W)) {
 			mainPlayer.jump(dt);
+
 			if(Intersector.overlaps(mainPlanet,mainPlayer.getRectangle()))
-				System.out.println(mainPlayer.getRectangle());
+				mainPlayer.col(dt);
 		}
 	}
 	

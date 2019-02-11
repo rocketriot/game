@@ -123,6 +123,15 @@ public abstract class Entity {
 
 	}
 
+
+	public void col(float delta) {
+		double angle = angleToCenterOfGravity();
+		double angleFromCenter = angleFromCenter();
+
+
+			speed.stop(angleFromCenter);
+
+	}
 	// returns rectangle of the sprite
 	public Rectangle getRectangle(){
 		return sprite.getBoundingRectangle();
