@@ -48,6 +48,8 @@ project(":app") {
         compile "com.badlogicgames.gdx:gdx-box2d-platform:$gdxVersion:natives-desktop"
         compile "com.badlogicgames.gdx:gdx:$gdxVersion"
         compile "com.badlogicgames.gdx:gdx-box2d:$gdxVersion"
+        compile "com.badlogicgames.gdx:gdx-freetype:$gdxVersion"
+        compile "com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-desktop"
         compile group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.11.1'
         compile group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.11.1'
         testCompile 'junit:junit:4.12'

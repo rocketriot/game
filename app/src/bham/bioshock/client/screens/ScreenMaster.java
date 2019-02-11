@@ -4,9 +4,13 @@ import bham.bioshock.client.Client;
 import bham.bioshock.client.controllers.Controller;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
@@ -23,6 +27,9 @@ public abstract class ScreenMaster implements Screen {
     protected float screen_width;
     protected float screen_height;
 
+    protected BitmapFont font12;
+    protected BitmapFont font18;
+
     protected TextButton back_button;
 
     protected Skin skin = new Skin(Gdx.files.internal("app/assets/skins/neon/skin/neon-ui.json"));
@@ -34,12 +41,34 @@ public abstract class ScreenMaster implements Screen {
 
     @Override
     public void show() {
+        setupFonts();
+
         addBackButton();
         //set the back button to take you to main menu - for now
         setPrevious(Client.View.MAIN_MENU);
         //drawBackground();
     }
 
+    /** Set's up all the fonts needed for the screen */
+    private void setupFonts() {
+        FileHandle fontSource = Gdx.files.internal("app/assets/fonts/font.otf");
+        font12 = generateFont(fontSource, 12);
+        font18 = generateFont(fontSource, 18);
+    }
+
+    /** Generates a bitmap font from source */
+    private BitmapFont generateFont(FileHandle source, int size) {
+        // Specify font size
+        FreeTypeFontParameter parameter = new FreeTypeFontParameter();
+        parameter.size = size;
+
+        // Generate font
+        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(source);
+        BitmapFont font = generator.generateFont(parameter);
+        generator.dispose();
+
+        return font;
+    }
 
     protected void drawBackground() {
         //render background
