@@ -41,6 +41,10 @@ public class Model {
         players.add(player);
     }
 
+    public void setPlayers(ArrayList<Player> players) {
+        this.players = players;
+    }
+
     public int getPlayerId() {
         return playerId;
     }

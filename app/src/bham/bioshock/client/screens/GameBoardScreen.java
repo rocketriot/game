@@ -32,6 +32,7 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
     private ShapeRenderer sh;
     private ArrayList<Sprite> planetSprites;
     private ArrayList<Sprite> asteroidSprites;
+    private ArrayList<Coordinates> drawMoveCoords;
     private Sprite sprite;
     private ArrayList<Sprite> playerSprites;
     private int PPS;
@@ -77,6 +78,13 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
         background = new Sprite(new Texture(Gdx.files.internal("app/assets/backgrounds/game.png")));
     }
 
+    /**
+     * Draws the player move
+     */
+    public void drawPlayerMove(float delta) {
+
+    }
+
     public void drawBoardObjects() {
         GridPoint[][] grid = controller.getGrid();
 
@@ -85,8 +93,10 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
                 GridPoint.Type pType = grid[x][y].getType();
                 if (pType == GridPoint.Type.PLAYER) {
                     Player p = (Player) grid[x][y].getValue();
+
                     //TODO remove code once player is sent
                     p.setCoordinates(new Coordinates(x, y));
+
                     if (playerSelected == true && p.equals(controller.getMainPlayer())) {
                         sprite = outlinedPlayerSprites.get(p.getTextureID());
                     } else {
@@ -261,7 +271,7 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
     }
 
     private void drawPath() {
-        if (playerSelected == true) {
+        if (playerSelected == true && path != null) {
             sh.setProjectionMatrix(camera.combined);
             sh.begin(ShapeRenderer.ShapeType.Filled);
             Gdx.gl.glEnable(GL30.GL_BLEND);
@@ -289,7 +299,6 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
 
 
     protected void drawBackground() {
-
         for (int i = -1; i <= 1; i++) {
             for (int j = -1; j <= 1; j++) {
                 background.setPosition(i * GAME_WORLD_WIDTH, j * GAME_WORLD_HEIGHT);
@@ -301,7 +310,6 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
 
     @Override
     public void dispose() {
-        stage.dispose();
         batch.dispose();
         hud.dispose();
         background.getTexture().dispose();

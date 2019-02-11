@@ -3,6 +3,7 @@ package bham.bioshock.client.controllers;
 import bham.bioshock.client.Client;
 import bham.bioshock.client.Client.View;
 import bham.bioshock.client.screens.GameBoardScreen;
+import bham.bioshock.common.Direction;
 import bham.bioshock.common.consts.GridPoint;
 import bham.bioshock.common.models.*;
 import bham.bioshock.common.pathfinding.AStarPathfinding;
@@ -91,30 +92,40 @@ public class GameBoardController extends Controller {
     }
 
     public boolean[] getPathColour(ArrayList<Coordinates> path) {
-        boolean[] allowedMove = new boolean[path.size()];
-        float fuel = mainPlayer.getFuel();
-        for (int i = 0; i < path.size(); i++) {
-            if (fuel < 10f) {
-                allowedMove[i] = false;
-            } else {
-                allowedMove[i] = true;
-                fuel -= 10;
+        if (path != null) {
+            boolean[] allowedMove = new boolean[path.size()];
+            float fuel = mainPlayer.getFuel();
+            for (int i = 0; i < path.size(); i++) {
+                if (fuel < 10f) {
+                    allowedMove[i] = false;
+                } else {
+                    allowedMove[i] = true;
+                    fuel -= 10;
+                }
             }
+            return allowedMove;
+        } else {
+            return null;
         }
-        return allowedMove;
     }
 
     public void move(Coordinates destination){
         float fuel = mainPlayer.getFuel();
         GridPoint[][] grid = gameBoard.getGrid();
         ArrayList<Coordinates> path = pathFinder.pathfind(destination);
+        Coordinates playerCoords = mainPlayer.getCoordinates();
 
         // pathsize - 1 since path includes start position
         float pathCost = (path.size() - 1) * 10;
 
         // check if the player has enough fuel
         if(mainPlayer.getFuel() >= pathCost) {
+            // Update grid and player
+            grid[playerCoords.getX()][playerCoords.getY()].setType(EMPTY);
             mainPlayer.setCoordinates(destination);
+            grid[destination.getX()][destination.getY()].setType(PLAYER);
+            grid[destination.getX()][destination.getY()].setValue(mainPlayer);
+
             fuel -= pathCost;
             mainPlayer.setFuel(fuel);
 
@@ -125,12 +136,66 @@ public class GameBoardController extends Controller {
             else if(grid[x][y].getType() == FUEL)
                 mainPlayer.setFuel(fuel + 30);
             pathFinder.setStartPosition(mainPlayer.getCoordinates());
+            generateMove(path, destination);
         }
+    }
+
+    private void generateMove(ArrayList<Coordinates> path, Coordinates destination) {
+        ArrayList<Direction> directions = new ArrayList<>();
+        ArrayList<Integer> distance = new ArrayList<>();
+        Coordinates lastPosition = mainPlayer.getCoordinates();
+        Direction currentDir = Direction.NONE;
+        int currentDist = 0;
+
+        for(Coordinates c : path) {
+            Coordinates moveDir = c.sub(lastPosition);
+            lastPosition = c;
+            if (moveDir.getX() > 0) {
+                if (moveDir.getY() > 0) {
+                    if (currentDir.equals(Direction.UP)) {
+                        currentDist += 1;
+                    } else {
+                        directions.add(currentDir);
+                        distance.add(currentDist);
+                        currentDir = Direction.UP;
+                    }
+                } else {
+                    if (currentDir.equals(Direction.DOWN)) {
+                        currentDist += 1;
+                    } else {
+                        directions.add(currentDir);
+                        distance.add(currentDist);
+                        currentDir = Direction.DOWN;
+                    }
+                }
+            } else {
+                if (moveDir.getY() > 0) {
+                    if (currentDir.equals(Direction.RIGHT)) {
+                        currentDist += 1;
+                    } else {
+                        directions.add(currentDir);
+                        distance.add(currentDist);
+                        currentDir = Direction.RIGHT;
+                    }
+                } else {
+                    if (currentDir.equals(Direction.LEFT)) {
+                        currentDist += 1;
+                    } else {
+                        directions.add(currentDir);
+                        distance.add(currentDist);
+                        currentDir = Direction.LEFT;
+                    }
+                }
+            }
+        }
+        BoardMove boardMove = new BoardMove(directions, distance, mainPlayer.getCoordinates(), destination);
+        mainPlayer.setBoardMove(boardMove);
     }
 
     public void startMinigame() {
 
     }
+
 
     public void miniGameWon(Player player, Planet planet) {
         // winner gets the planet, previous owner loses it

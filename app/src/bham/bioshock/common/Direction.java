@@ -1,5 +1,5 @@
 package bham.bioshock.common;
 
 public enum Direction {
-	NONE, LEFT, RIGHT
+	NONE, LEFT, RIGHT, UP, DOWN
 }
