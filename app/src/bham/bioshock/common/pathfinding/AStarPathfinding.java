@@ -206,32 +206,20 @@ public class AStarPathfinding {
     }
 
     /*
-     * Method to find the heuristic value for a given point - uses Manhattan distance.
-     *
-     * Tie breaking uses the cross product of the distance from the start to the goal and the current to the goal
-     * to prefer straight paths.
+     * Method to find the heuristic value for a given point - uses the cross product of the distance from the start to
+     * the goal and the current to the goal to prefer straight paths.
      *
      * @param position The coordinates of the point you want to calculate the heuristic value for
      * @return         The heuristic value found
      */
     private double findHeuristic(Coordinates position) {
-        //calculate Manhattan distance
-        //int h = (Math.abs(position.getX() - goalPosition.getX()) + Math.abs(position.getY() - goalPosition.getY()));
         int h = 0;
-
-        // create tie-break
-
-        // TIE BREAK METHOD 1
         int dx1 = position.getX() - goalPosition.getX();
         int dy1 = position.getY() - goalPosition.getY();
         int dx2 = startPosition.getX() - goalPosition.getX();
         int dy2 = startPosition.getY() - goalPosition.getY();
         int cross = Math.abs(dx1 * dy2 - dx2 * dy1);
         h += cross * 0.001;
-
-        //TIE BREAK METHOD 2
-//        h *= (1.1);
-
         return h;
     }
 
