@@ -105,7 +105,7 @@ public class MainMenuScreen extends ScreenMaster {
           @Override
           public void changed(ChangeEvent event, Actor actor) {
               /** Bring up a dialogue to ask the user for a host name then start the new server */
-              showDialogue();
+              showHostDialogue();
               //controller.createServer();
           }
         });
@@ -131,7 +131,7 @@ public class MainMenuScreen extends ScreenMaster {
           @Override
           public void changed(ChangeEvent event, Actor actor) {
               //Do something to add a new player...
-            controller.changeScreen(Client.View.GAME_BOARD);
+            showJoinDialogue();
           }
         });
 
@@ -139,7 +139,7 @@ public class MainMenuScreen extends ScreenMaster {
 
   }
 
-    private void showDialogue() {
+    private void showHostDialogue() {
 
 
         TextField textField = new TextField("name", skin);
@@ -169,5 +169,37 @@ public class MainMenuScreen extends ScreenMaster {
 
         diag.show(stage);
     }
+
+    private void showJoinDialogue() {
+
+
+    TextField textField = new TextField("name", skin);
+
+    Dialog diag = new Dialog("Join Game", skin){
+
+      protected void result(Object object)
+      {
+
+        if(object.equals(true)) {
+          String username = textField.getText();
+
+          //send the name to the connection
+            controller.addPlayerToConnection(username);
+
+        }
+        else {
+          System.out.println("Cancelled..");
+        }
+      }
+
+    };
+
+    diag.text(new Label("Please enter a username", skin));
+    diag.getContentTable().add(textField);
+    diag.button("OK", true);
+    diag.button("Cancel", false);
+
+    diag.show(stage);
+  }
 
 }
