@@ -2,6 +2,7 @@ package bham.bioshock.client.screens;
 
 import bham.bioshock.client.controllers.GameBoardController;
 import bham.bioshock.client.scenes.Hud;
+import bham.bioshock.common.Direction;
 import bham.bioshock.common.consts.Config;
 import bham.bioshock.common.consts.GridPoint;
 import bham.bioshock.common.models.*;
@@ -80,53 +81,59 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
     /**
      * Draws the player move
      */
-    public void drawPlayerMove() {
-        Player player = controller.getMainPlayer();
+    public void drawPlayerMove(Player player) {
         BoardMove boardMove = player.getBoardMove();
-        if (boardMove != null) {
-            if (boardMove.getDirections().size() == 0) {
-                firstMove = true;
-                player.setBoardMove(null);
-            }
-
-            float distanceToMove = 100 * Gdx.graphics.getDeltaTime();
-            movingSprite = planetSprites.get(player.getTextureID());
-            if (firstMove == true) {
-                sprite.setX(boardMove.getStartCoords().getX() * PPS);
-                sprite.setY(boardMove.getStartCoords().getY() * PPS);
-                firstMove = false;
+        if (boardMove.getDirections().size() == 0) {
+            player.setBoardMove(null);
+        } else if (boardMove != null) {
+            float distanceToMove = 150f * Gdx.graphics.getDeltaTime();
+            movingSprite = playerSprites.get(player.getTextureID());
+            if (boardMove.getDirections().get(0).equals(Direction.NONE)) {
+                movingSprite.setX(boardMove.getStartCoords().getX() * PPS);
+                movingSprite.setY(boardMove.getStartCoords().getY() * PPS);
+                boardMove.getPosition().remove(0);
+                boardMove.getDirections().remove(0);
             }
             switch (boardMove.getDirections().get(0)) {
                 case UP:
+                    movingSprite.setRotation(0);
                     movingSprite.translateY(distanceToMove);
-                    if (movingSprite.getY() >= boardMove.getPosition().get(0).getY()) {
-                        movingSprite.setY(boardMove.getPosition().get(0).getY());
+                    if (movingSprite.getY() >= boardMove.getPosition().get(0).getY() * PPS) {
+                        movingSprite.setY(boardMove.getPosition().get(0).getY() * PPS);
                         boardMove.getPosition().remove(0);
                         boardMove.getDirections().remove(0);
                     }
+                    break;
                 case DOWN:
+                    movingSprite.setRotation(180);
                     movingSprite.translateY(-distanceToMove);
-                    if (movingSprite.getY() <= boardMove.getPosition().get(0).getY()) {
-                        movingSprite.setY(boardMove.getPosition().get(0).getY());
+                    if (movingSprite.getY() <= boardMove.getPosition().get(0).getY() * PPS) {
+                        movingSprite.setY(boardMove.getPosition().get(0).getY() * PPS);
                         boardMove.getPosition().remove(0);
                         boardMove.getDirections().remove(0);
                     }
+                    break;
                 case RIGHT:
+                    movingSprite.setCenter(movingSprite.getX() + PPS / 2, movingSprite.getY() + PPS /2);
+                    movingSprite.setOriginCenter();
+                    movingSprite.setRotation(270);
                     movingSprite.translateX(distanceToMove);
-                    if (movingSprite.getX() >= boardMove.getPosition().get(0).getX()) {
-                        movingSprite.setX(boardMove.getPosition().get(0).getX());
+                    if (movingSprite.getX() >= boardMove.getPosition().get(0).getX() * PPS) {
+                        movingSprite.setX(boardMove.getPosition().get(0).getX() * PPS);
                         boardMove.getPosition().remove(0);
                         boardMove.getDirections().remove(0);
                     }
+                    break;
                 case LEFT:
+                    movingSprite.setRotation(90);
                     movingSprite.translateX(-distanceToMove);
-                    if (movingSprite.getX() <= boardMove.getPosition().get(0).getX()) {
-                        movingSprite.setX(boardMove.getPosition().get(0).getX());
+                    if (movingSprite.getX() <= boardMove.getPosition().get(0).getX() * PPS) {
+                        movingSprite.setX(boardMove.getPosition().get(0).getX() * PPS);
                         boardMove.getPosition().remove(0);
                         boardMove.getDirections().remove(0);
                     }
+                    break;
             }
-            System.out.println(movingSprite.getX() + ", " + movingSprite.getY());
             movingSprite.draw(batch);
         }
     }
@@ -138,33 +145,34 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
             for (int y = 0; y < grid[x].length; y++) {
                 GridPoint.Type pType = grid[x][y].getType();
                 if (pType == GridPoint.Type.PLAYER) {
-                    Player p = (Player) grid[x][y].getValue();
+                    Player player = (Player) grid[x][y].getValue();
 
                     //TODO remove code once player is sent
-                    p.setCoordinates(new Coordinates(x, y));
-
-                    if (playerSelected == true && p.equals(controller.getMainPlayer())) {
-                        sprite = outlinedPlayerSprites.get(p.getTextureID());
+                    player.setCoordinates(new Coordinates(x, y));
+                    if (player.getBoardMove() != null){
+                        drawPlayerMove(player);
+                    } else if (playerSelected == true && player.equals(controller.getMainPlayer())) {
+                        sprite = outlinedPlayerSprites.get(player.getTextureID());
                     } else {
-                        sprite = playerSprites.get(p.getTextureID());
+                        sprite = playerSprites.get(player.getTextureID());
                     }
                     sprite.setX(x * PPS);
                     sprite.setY(y * PPS);
                     sprite.draw(batch);
                 } else if (pType == GridPoint.Type.PLANET) {
-                    Planet p = (Planet) grid[x][y].getValue();
-                    if (p.isDrawn() == false) {
-                        p.setDrawn(true);
-                        sprite = planetSprites.get(p.getTextureID());
+                    Planet planet = (Planet) grid[x][y].getValue();
+                    if (planet.isDrawn() == false) {
+                        planet.setDrawn(true);
+                        sprite = planetSprites.get(planet.getTextureID());
                         sprite.setX(x * PPS);
                         sprite.setY(y * PPS);
                         sprite.draw(batch);
                     }
                 } else if (pType == GridPoint.Type.ASTEROID) {
-                    Asteroid a = (Asteroid) grid[x][y].getValue();
-                    if (a.isDrawn() == false) {
-                        a.setDrawn(true);
-                        sprite = asteroidSprites.get(a.getTextureID());
+                    Asteroid asteroid = (Asteroid) grid[x][y].getValue();
+                    if (asteroid.isDrawn() == false) {
+                        asteroid.setDrawn(true);
+                        sprite = asteroidSprites.get(asteroid.getTextureID());
                         sprite.setX(x * PPS);
                         sprite.setY(y * PPS);
                         sprite.draw(batch);
@@ -176,11 +184,11 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
             for (int y = 0; y < grid[x].length; y++) {
                 GridPoint.Type pType = grid[x][y].getType();
                 if (pType == GridPoint.Type.PLANET) {
-                    Planet p = (Planet) grid[x][y].getValue();
-                    p.setDrawn(false);
+                    Planet asteroid = (Planet) grid[x][y].getValue();
+                    asteroid.setDrawn(false);
                 } else if (pType == GridPoint.Type.ASTEROID) {
-                    Asteroid a = (Asteroid) grid[x][y].getValue();
-                    a.setDrawn(false);
+                    Asteroid asteroid = (Asteroid) grid[x][y].getValue();
+                    asteroid.setDrawn(false);
                 }
             }
         }
@@ -303,7 +311,6 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
             drawBackground();
             drawBoardObjects();
             drawPath();
-            drawPlayerMove();
 
             batch.end();
 

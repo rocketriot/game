@@ -136,52 +136,63 @@ public class GameBoardController extends Controller {
             else if(grid[x][y].getType() == FUEL)
                 mainPlayer.setFuel(fuel + 30);
             pathFinder.setStartPosition(mainPlayer.getCoordinates());
-            generateMove(path, destination);
+            generateMove(path, destination, playerCoords);
         }
     }
 
-    private void generateMove(ArrayList<Coordinates> path, Coordinates destination) {
+    private void generateMove(ArrayList<Coordinates> path, Coordinates destination, Coordinates startPosition) {
         ArrayList<Direction> directions = new ArrayList<>();
         ArrayList<Coordinates> position = new ArrayList<>();
-        Coordinates lastPosition = mainPlayer.getCoordinates();
+        Coordinates lastPosition = startPosition;
         Direction currentDir = Direction.NONE;
 
         for(Coordinates c : path) {
             Coordinates moveDir = c.sub(lastPosition);
             lastPosition = c;
-            if (moveDir.getX() > 0) {
+            if (moveDir.getX() == 0) {
                 if (moveDir.getY() > 0) {
-                    if (!currentDir.equals(Direction.UP)) {
+                    if (currentDir.equals(Direction.NONE)) {
+                        currentDir = Direction.UP;
+                    } else if (!currentDir.equals(Direction.UP)) {
                         directions.add(currentDir);
                         position.add(lastPosition);
                         currentDir = Direction.UP;
                     }
-                } else {
-                    if (!currentDir.equals(Direction.DOWN)) {
+                } else if (moveDir.getY() < 0){
+                    if (currentDir.equals(Direction.NONE)) {
+                        currentDir = Direction.DOWN;
+                    } else if (!currentDir.equals(Direction.DOWN)) {
                         directions.add(currentDir);
                         position.add(lastPosition);
                         currentDir = Direction.DOWN;
                     }
+                } else {
+                    directions.add(Direction.NONE);
+                    position.add(lastPosition);
                 }
             } else {
-                if (moveDir.getY() > 0) {
-                    if (!currentDir.equals(Direction.RIGHT)) {
+                if (moveDir.getX() > 0) {
+                    if (currentDir.equals(Direction.NONE)) {
+                        currentDir = Direction.RIGHT;
+                    } else if (!currentDir.equals(Direction.RIGHT)) {
                         directions.add(currentDir);
                         position.add(lastPosition);
                         currentDir = Direction.RIGHT;
                     }
-                } else {
-                    if (!currentDir.equals(Direction.LEFT)) {
+                } else if (moveDir.getX() < 0) {
+                    if (currentDir.equals(Direction.NONE)) {
+                        currentDir = Direction.LEFT;
+                    } else if (!currentDir.equals(Direction.LEFT)) {
                         directions.add(currentDir);
                         position.add(lastPosition);
                         currentDir = Direction.LEFT;
                     }
                 }
             }
-            directions.add(currentDir);
-            position.add(lastPosition);
         }
-        BoardMove boardMove = new BoardMove(directions, position, mainPlayer.getCoordinates(), destination);
+        directions.add(currentDir);
+        position.add(lastPosition);
+        BoardMove boardMove = new BoardMove(directions, position, startPosition, destination);
         mainPlayer.setBoardMove(boardMove);
     }
 
