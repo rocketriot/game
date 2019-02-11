@@ -29,6 +29,8 @@ public class Hud implements Disposable {
     private TextArea fuelLabel;
     private Table table;
     private ArrayList<Label> labels;
+    private HorizontalGroup bottomBar;
+    private TextButton endTurnButton;
 
     public Hud(SpriteBatch batch, Skin skin, int gameWidth, int gameHeight, GameBoardController controller) {
         this.controller = controller;
@@ -40,6 +42,21 @@ public class Hud implements Disposable {
         setupTopBar();
         setupFuelBar();
         setupScoreList();
+        setupBottomBar();
+    }
+
+    private void setupBottomBar() {
+        bottomBar = new HorizontalGroup();
+        bottomBar.bottom();
+        endTurnButton = new TextButton("End Turn", skin);
+        bottomBar.addActor(endTurnButton);
+        stage.addActor(bottomBar);
+        endTurnButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                //TODO Add end turn code
+            }
+        })
     }
 
     private void setupFuelBar() {
@@ -116,10 +133,6 @@ public class Hud implements Disposable {
         fuelLabel.setText(fuelString);
 
         ArrayList<Player> players = controller.getPlayers();
-        /*for (int i = 0; i < 4; i++) {
-            labels.get(i).setText(players.get(i).getUsername() + ": " + players.get(i).getPoints());
-        }*/
-
 
         table.clearChildren();
         labels = new ArrayList<>();
