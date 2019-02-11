@@ -113,6 +113,7 @@ public class AStarPathfinding {
                 }
             }
             // add the current node to the closed list
+            closedList.add(currentPosition);
         }
         return new ArrayList<>();
     }
@@ -198,10 +199,6 @@ public class AStarPathfinding {
                 if (value.getTotalCost() < minimumCost) {
                     minimumCost = value.getTotalCost();
                     nextPoint = currentCoords;
-                } else if (value.getTotalCost() == minimumCost) {
-
-                    minimumCost = value.getTotalCost();
-                    nextPoint = currentCoords;
                 }
             }
         }
@@ -209,21 +206,29 @@ public class AStarPathfinding {
     }
 
     /*
-     * Method to find the heuristic value for a given point - takes the cross product of the Manhattan distance
-     * from the current point to the goal and from the start point to the goal and scales it so that it prefers
-     * straight paths to the goal
+     * Method to find the heuristic value for a given point - uses Manhattan distance
      *
      * @param position The coordinates of the point you want to calculate the heuristic value for
      * @return         The heuristic value found
      */
     private double findHeuristic(Coordinates position) {
-//       int dx1 = position.getX() - goalPosition.getX();
-//       int dy1 = position.getY() - goalPosition.getY();
-//       int dx2 = startPosition.getX() - goalPosition.getX();
-//       int dy2 = startPosition.getY() - goalPosition.getY();
-//       int cross = Math.abs(dx1*dy2 - dx2*dy1);
-//       return (cross);
-        return (Math.abs(position.getX() - goalPosition.getX()) + Math.abs(position.getY() - goalPosition.getY()));
+        //calculate Manhattan distance
+        int h = (Math.abs(position.getX() - goalPosition.getX()) + Math.abs(position.getY() - goalPosition.getY()));
+
+        // create tie-break
+
+        // TIE BREAK METHOD 1
+//        int dx1 = position.getX() - goalPosition.getX();
+//        int dy1 = position.getY() - goalPosition.getY();
+//        int dx2 = startPosition.getX() - goalPosition.getX();
+//        int dy2 = startPosition.getY() - goalPosition.getY();
+//        int cross = Math.abs(dx1*dy2 - dx2*dy1);
+//        h += cross*0.001;
+
+        //TIE BREAK METHOD 2
+//        h *= (1.1);
+        
+        return h;
     }
 
     /*
