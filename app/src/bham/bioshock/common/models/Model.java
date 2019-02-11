@@ -1,6 +1,7 @@
 package bham.bioshock.common.models;
 
 import java.util.ArrayList;
+import java.util.UUID;
 
 /** Stores all of the models */
 public class Model {
@@ -12,7 +13,7 @@ public class Model {
   private ArrayList<Player> players = new ArrayList<>(MAX_PLAYERS);
 
   /** The ID of the player that the client is controlling, only used client-side */
-  private int playerId;
+  private UUID mainPlayerId;
 
   public GameBoard generateGrid() throws Exception {
     gameBoard.generateGrid(players);
@@ -35,11 +36,15 @@ public class Model {
     players.add(player);
   }
 
-  public int getPlayerId() {
-    return playerId;
+  public Player getMainPlayer() {
+    for (Player player : players) {
+      if (player.getId() == mainPlayerId) return player;
+    }
+
+    return null;
   }
 
-  public void setPlayerId(int playerId) {
-    this.playerId = playerId;
+  public void setMainPlayer(Player player) {
+    this.mainPlayerId = player.getId();
   }
 }
