@@ -6,13 +6,13 @@ import java.io.Serializable;
 import java.util.ArrayList;
 
 public class BoardMove implements Serializable {
-    private ArrayList<Integer> distance;
+    private ArrayList<Coordinates> position;
     private ArrayList<Direction> directions;
     private Coordinates startCoords, endCoords;
 
-    public BoardMove(ArrayList<Direction> directions, ArrayList<Integer> distance, Coordinates startCoords, Coordinates endCoords) {
+    public BoardMove(ArrayList<Direction> directions, ArrayList<Coordinates> position, Coordinates startCoords, Coordinates endCoords) {
         this.directions = directions;
-        this.distance = distance;
+        this.position = position;
         this.endCoords = endCoords;
         this.startCoords = startCoords;
     }
@@ -21,8 +21,8 @@ public class BoardMove implements Serializable {
         return directions;
     }
 
-    public ArrayList<Integer> getDistance() {
-        return distance;
+    public ArrayList<Coordinates> getPosition() {
+        return position;
     }
 
     public Coordinates getStartCoords() {

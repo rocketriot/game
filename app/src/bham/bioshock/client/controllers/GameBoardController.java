@@ -142,53 +142,46 @@ public class GameBoardController extends Controller {
 
     private void generateMove(ArrayList<Coordinates> path, Coordinates destination) {
         ArrayList<Direction> directions = new ArrayList<>();
-        ArrayList<Integer> distance = new ArrayList<>();
+        ArrayList<Coordinates> position = new ArrayList<>();
         Coordinates lastPosition = mainPlayer.getCoordinates();
         Direction currentDir = Direction.NONE;
-        int currentDist = 0;
 
         for(Coordinates c : path) {
             Coordinates moveDir = c.sub(lastPosition);
             lastPosition = c;
             if (moveDir.getX() > 0) {
                 if (moveDir.getY() > 0) {
-                    if (currentDir.equals(Direction.UP)) {
-                        currentDist += 1;
-                    } else {
+                    if (!currentDir.equals(Direction.UP)) {
                         directions.add(currentDir);
-                        distance.add(currentDist);
+                        position.add(lastPosition);
                         currentDir = Direction.UP;
                     }
                 } else {
-                    if (currentDir.equals(Direction.DOWN)) {
-                        currentDist += 1;
-                    } else {
+                    if (!currentDir.equals(Direction.DOWN)) {
                         directions.add(currentDir);
-                        distance.add(currentDist);
+                        position.add(lastPosition);
                         currentDir = Direction.DOWN;
                     }
                 }
             } else {
                 if (moveDir.getY() > 0) {
-                    if (currentDir.equals(Direction.RIGHT)) {
-                        currentDist += 1;
-                    } else {
+                    if (!currentDir.equals(Direction.RIGHT)) {
                         directions.add(currentDir);
-                        distance.add(currentDist);
+                        position.add(lastPosition);
                         currentDir = Direction.RIGHT;
                     }
                 } else {
-                    if (currentDir.equals(Direction.LEFT)) {
-                        currentDist += 1;
-                    } else {
+                    if (!currentDir.equals(Direction.LEFT)) {
                         directions.add(currentDir);
-                        distance.add(currentDist);
+                        position.add(lastPosition);
                         currentDir = Direction.LEFT;
                     }
                 }
             }
+            directions.add(currentDir);
+            position.add(lastPosition);
         }
-        BoardMove boardMove = new BoardMove(directions, distance, mainPlayer.getCoordinates(), destination);
+        BoardMove boardMove = new BoardMove(directions, position, mainPlayer.getCoordinates(), destination);
         mainPlayer.setBoardMove(boardMove);
     }
 
