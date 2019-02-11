@@ -48,6 +48,10 @@ public class Player implements Serializable {
     this.isCpu = isCpu;
   }
 
+  public UUID getId() {
+    return id;
+  }
+
   public boolean isCpu() {
     return isCpu;
   }

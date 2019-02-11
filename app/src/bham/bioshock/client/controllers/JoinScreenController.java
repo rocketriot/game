@@ -35,6 +35,7 @@ public class JoinScreenController extends Controller {
 
     // Create a new player
     Player player = new Player(username);
+    model.setMainPlayer(player);
 
     // Add the player to the server
     server.send(new Action(Command.ADD_PLAYER, player));
