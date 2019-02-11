@@ -1,150 +1,157 @@
 package bham.bioshock.client;
 
-import java.util.HashMap;
-
 import bham.bioshock.client.controllers.*;
 import bham.bioshock.client.screens.*;
 import bham.bioshock.common.models.Model;
 import bham.bioshock.communication.Action;
 import bham.bioshock.communication.client.ClientService;
-import com.badlogic.gdx.Gdx;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
 import bham.bioshock.server.Server;
-
 import com.badlogic.gdx.Game;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import java.util.HashMap;
 
 public class Client extends Game {
 
-	private static final Logger logger = LogManager.getLogger(Client.class);
+  private static final Logger logger = LogManager.getLogger(Client.class);
+  /** Stores all the controllers */
+  private HashMap<View, Controller> controllers = new HashMap<View, Controller>();
+  /** Stores all the screens */
+  private HashMap<View, Screen> screens = new HashMap<View, Screen>();
+  /** Stores all data */
+  private Model model;
+  private Server hostingServer;
+  private ClientService server;
 
-	/** An enum to represent all the views */
-	public enum View {
-		MAIN_MENU, HOW_TO, LOADING, GAME_BOARD, PREFERENCES, JOIN_SCREEN
-	}
+  public static void main(String[] args) {
+    LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
+    config.foregroundFPS = 60;
 
-	/** Stores all the controllers */
-	private HashMap<View, Controller> controllers = new HashMap<View, Controller>();
+    new LwjglApplication(new Client(), config);
+  }
 
-	/** Stores all the screens */
-	private HashMap<View, Screen> screens = new HashMap<View, Screen>();
+  @Override
+  public void create() {
+    model = new Model();
+    loadViews();
 
-	/** Stores all data */
-	private Model model;
+    // Set the first screen to the main menu
+    changeScreen(View.MAIN_MENU);
+  }
 
-	private Server hostingServer;
+  /** Loads up the views */
+  private void loadViews() {
+    // Main Menu
+    MainMenuController mainMenuController = new MainMenuController(this);
+    MainMenuScreen mainMenuScreen = new MainMenuScreen(mainMenuController);
+    mainMenuController.setScreen(mainMenuScreen);
+    controllers.put(View.MAIN_MENU, mainMenuController);
+    screens.put(View.MAIN_MENU, mainMenuScreen);
 
-	private ClientService server;
+    // How To
+    HowToController howToController = new HowToController(this);
+    HowToScreen howToScreen = new HowToScreen(howToController);
+    howToController.setScreen(howToScreen);
+    controllers.put(View.HOW_TO, howToController);
+    screens.put(View.HOW_TO, howToScreen);
 
-	@Override
-	public void create() {
-		model = new Model();
-		loadViews();
+    // Preferences
+    PreferencesController preferencesController = new PreferencesController(this);
+    PreferencesScreen preferencesScreen = new PreferencesScreen(preferencesController);
+    preferencesController.setScreen(preferencesScreen);
+    controllers.put(View.PREFERENCES, preferencesController);
+    screens.put(View.PREFERENCES, preferencesScreen);
 
-		// Set the first screen to the main menu
-		changeScreen(View.MAIN_MENU);
-	}
+    // Join Screen
+    JoinScreenController joinScreenController = new JoinScreenController(this);
+    JoinScreen joinScreen = new JoinScreen(joinScreenController);
+    joinScreenController.setScreen(joinScreen);
+    controllers.put(View.JOIN_SCREEN, joinScreenController);
+    screens.put(View.JOIN_SCREEN, joinScreen);
 
-	/** Loads up the views */
-	private void loadViews() {
-		// Main Menu
-		MainMenuController mainMenuController = new MainMenuController(this);
-		MainMenuScreen mainMenuScreen = new MainMenuScreen(mainMenuController);
-		mainMenuController.setScreen(mainMenuScreen);
-		controllers.put(View.MAIN_MENU, mainMenuController);
-		screens.put(View.MAIN_MENU, mainMenuScreen);
+    // Game Board
+    GameBoardController gameBoardController = new GameBoardController(this);
+    GameBoardScreen gameBoardScreen = new GameBoardScreen(gameBoardController);
+    gameBoardController.setScreen(gameBoardScreen);
+    controllers.put(View.GAME_BOARD, gameBoardController);
+    screens.put(View.GAME_BOARD, gameBoardScreen);
 
-		// How To
-		HowToController howToController = new HowToController(this);
-		HowToScreen howToScreen = new HowToScreen(howToController);
-		howToController.setScreen(howToScreen);
-		controllers.put(View.HOW_TO, howToController);
-		screens.put(View.HOW_TO, howToScreen);
+    // Loading
+    LoadingController loadingController = new LoadingController(this);
+    LoadingScreen loadingScreen = new LoadingScreen(loadingController);
+    loadingController.setScreen(loadingScreen);
+    controllers.put(View.LOADING, loadingController);
+    screens.put(View.LOADING, loadingScreen);
+  }
 
-		// Preferences
-		PreferencesController preferencesController = new PreferencesController(this);
-		PreferencesScreen preferencesScreen = new PreferencesScreen(preferencesController);
-		preferencesController.setScreen(preferencesScreen);
-		controllers.put(View.PREFERENCES, preferencesController);
-		screens.put(View.PREFERENCES, preferencesScreen);
+  public void handleServerMessages(Action action) {
+    Gdx.app.postRunnable(
+        () -> {
+          switch (action.getCommand()) {
+            case ADD_PLAYER:
+              {
+                JoinScreenController controller =
+                    (JoinScreenController) controllers.get(View.JOIN_SCREEN);
+                controller.onPlayerJoined(action);
+                break;
+              }
+            case START_GAME:
+              {
+                JoinScreenController controller =
+                    (JoinScreenController) controllers.get(View.JOIN_SCREEN);
+                controller.onStartGame(action);
+                break;
+              }
+            case GET_GAME_BOARD:
+              {
+                GameBoardController controller =
+                    (GameBoardController) controllers.get(View.GAME_BOARD);
+                controller.gameBoardReceived(action);
+                break;
+              }
+            default:
+              {
+                System.out.println("Received unhandled command: " + action.getCommand().toString());
+              }
+          }
+        });
+  }
 
-		// Join Screen
-		JoinScreenController joinScreenController = new JoinScreenController(this);
-		JoinScreen joinScreen = new JoinScreen(joinScreenController);
-		joinScreenController.setScreen(joinScreen);
-		controllers.put(View.JOIN_SCREEN, joinScreenController);
-		screens.put(View.JOIN_SCREEN, joinScreen);
+  /** Change the client's screen */
+  public void changeScreen(View view) {
+    Screen screen = screens.get(view);
+    this.setScreen(screen);
+  }
 
-		// Game Board
-		GameBoardController gameBoardController = new GameBoardController(this);
-		GameBoardScreen gameBoardScreen = new GameBoardScreen(gameBoardController);
-		gameBoardController.setScreen(gameBoardScreen);
-		controllers.put(View.GAME_BOARD, gameBoardController);
-		screens.put(View.GAME_BOARD, gameBoardScreen);
+  public Model getModel() {
+    return model;
+  }
 
-		// Loading
-		LoadingController loadingController = new LoadingController(this);
-		LoadingScreen loadingScreen = new LoadingScreen(loadingController);
-		loadingController.setScreen(loadingScreen);
-		controllers.put(View.LOADING, loadingController);
-		screens.put(View.LOADING, loadingScreen);
-	}
+  public ClientService getServer() {
+    return server;
+  }
 
-	public void handleServerMessages(Action action) {
-		Gdx.app.postRunnable(() -> {
-			switch (action.getCommand()) {
-			case ADD_PLAYER: {
-				JoinScreenController controller = (JoinScreenController) controllers.get(View.JOIN_SCREEN);
-				controller.onPlayerJoined(action);
-				break;
-			}
-			case START_GAME: {
-				JoinScreenController controller = (JoinScreenController) controllers.get(View.JOIN_SCREEN);
-				controller.onStartGame(action);
-				break;
-			}
-			case GET_GAME_BOARD: {
-				GameBoardController controller = (GameBoardController) controllers.get(View.GAME_BOARD);
-				controller.gameBoardReceived(action);
-				break;
-			}
-			default: {
-				System.out.println("Received unhandled command: " + action.getCommand().toString());
-			}
-			}
-		});
-	}
+  public void setServer(ClientService server) {
+    this.server = server;
+  }
 
-	/** Change the client's screen */
-	public void changeScreen(View view) {
-		Screen screen = screens.get(view);
-		this.setScreen(screen);
-	}
+  public void createHostingServer() {
+    this.hostingServer = new Server();
+    hostingServer.start();
+  }
 
-	public Model getModel() {
-		return model;
-	}
-
-	public ClientService getServer() {
-		return server;
-	}
-
-	public void setServer(ClientService server) {
-		this.server = server;
-	}
-
-	public void createHostingServer() {
-		this.hostingServer = new Server();
-		hostingServer.start();
-	}
-
-	public static void main(String[] args) {
-		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
-		config.foregroundFPS = 60;
-
-		new LwjglApplication(new Client(), config);
-	}
+  /** An enum to represent all the views */
+  public enum View {
+    MAIN_MENU,
+    HOW_TO,
+    LOADING,
+    GAME_BOARD,
+    PREFERENCES,
+    JOIN_SCREEN
+  }
 }
