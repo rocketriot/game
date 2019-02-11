@@ -151,7 +151,6 @@ public class MainMenuScreen extends ScreenMaster {
 
                 if(object.equals(true)) {
                     String host_name = textField.getText();
-                    System.out.println("Player: " + textField.getText());
 
                     //send the name to the connection
                     controller.createServer(host_name);

@@ -22,7 +22,7 @@ public class Client extends Game {
   /** Stores all the controllers */
   private HashMap<View, Controller> controllers = new HashMap<View, Controller>();
   /** Stores all the screens */
-  private HashMap<View, Screen> screens = new HashMap<View, Screen>();
+  private HashMap<View, ScreenMaster> screens = new HashMap<View, ScreenMaster>();
   /** Stores all data */
   private Model model;
   private Server hostingServer;
@@ -147,6 +147,10 @@ public class Client extends Game {
 
   public Controller getController(View view) {
     return controllers.get(view);
+  }
+
+  public ScreenMaster getScreen(View view) {
+    return screens.get(view);
   }
 
   /** An enum to represent all the views */
