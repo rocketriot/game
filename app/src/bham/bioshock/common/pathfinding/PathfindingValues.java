@@ -26,12 +26,12 @@ public class PathfindingValues {
             setPathCost(pathCost);
             setHeuristicCost(heuristicCost);
             updateTotalCost();
-            this.passable = true;
+            setPassable(true);
         } else {
             setPathCost(Integer.MAX_VALUE);
             setHeuristicCost(Integer.MAX_VALUE);
             setTotalCost(Integer.MAX_VALUE);
-            this.passable = false;
+            setPassable(false);
         }
 
         if (parent != null){
@@ -88,5 +88,11 @@ public class PathfindingValues {
     public void setParent(Coordinates parent) {
         this.parent = parent;
     }
+
+    // method to set whether a point is passable
+    public void setPassable(Boolean passable) {
+        this.passable = passable;
+    }
+
 
 }

@@ -1,24 +1,30 @@
 package bham.bioshock.minigame.models;
 
-import java.util.HashMap;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 import bham.bioshock.minigame.PlayerTexture;
 
 public class Player extends Entity {
+	
+	private static Animation<TextureRegion> walkAnimation;
+	private static TextureRegion frontTexture;
+	private static final int FRAMES = 11;
 		
 	private PlayerTexture dir;
-	private static HashMap<PlayerTexture, Texture> textures = new HashMap<>();
+	float animationTime;
 	
-	private final double JUMP_FORCE = 300;
+	private final double JUMP_FORCE = 700;
 
-	private float v = 20f;
+	private float v = 700f;
 	
 	public Player(float x, float y) {
 		super(x, y);
-		SIZE = 50;
+		SIZE = 100;
+		animationTime = 0;
+		fromGround = -25;
 		update(0);
 	}
 	
@@ -28,14 +34,14 @@ public class Player extends Entity {
 	
 	public void moveLeft(float delta) {
 		if(!isFlying()) {
-			speed.apply(angleFromCenter() + 270, v);	
+			speed.apply(angleFromCenter() + 270, v*GROUND_FRICTION);	
 		}
 		dir = PlayerTexture.LEFT;
 	}
 	
 	public void moveRight(float delta) {
 		if(!isFlying()) {
-			speed.apply(angleFromCenter() + 90, v);	
+			speed.apply(angleFromCenter() + 90, v*GROUND_FRICTION);	
 		}
 		dir = PlayerTexture.RIGHT;
 	}
@@ -48,17 +54,37 @@ public class Player extends Entity {
 	
 	public void update(float delta) {
 		super.update(delta);
+		animationTime += delta;
 		dir = PlayerTexture.FRONT;
 	}
 	
-	public Texture getTexture() {
-		return textures.get(dir);
+	public TextureRegion getTexture() {
+		if(dir == PlayerTexture.FRONT) {
+			return frontTexture;
+		}
+		TextureRegion region = walkAnimation.getKeyFrame(animationTime, true);
+		if(region.isFlipX()) {
+			region.flip(true, false);
+		}
+		if (dir == PlayerTexture.LEFT) {
+			region.flip(true, false);
+		}
+		return region;
 	}
 
 	public static void loadTextures() {
-		textures.put(PlayerTexture.LEFT, new Texture(Gdx.files.internal("app/assets/minigame/left.png")));
-		textures.put(PlayerTexture.RIGHT, new Texture(Gdx.files.internal("app/assets/minigame/right.png")));
-		textures.put(PlayerTexture.FRONT, new Texture(Gdx.files.internal("app/assets/minigame/face.png")));
+		Texture walkSheet = new Texture(Gdx.files.internal("app/assets/minigame/astronaut.png"));
+		
+		TextureRegion[][] tmp = TextureRegion.split(walkSheet, walkSheet.getWidth() / FRAMES, walkSheet.getHeight());
+				
+		TextureRegion[] walkFrames = new TextureRegion[FRAMES - 1];
+		int index = 0;
+		frontTexture = tmp[0][0];
+		for (int i = 1; i < FRAMES; i++) {
+			walkFrames[index++] = tmp[0][i];
+		}
+		
+		walkAnimation = new Animation<TextureRegion>(0.1f, walkFrames);
 	}
 
 	
