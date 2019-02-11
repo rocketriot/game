@@ -13,10 +13,12 @@ import com.badlogic.gdx.graphics.GL30;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.ParticleEffect;
+import com.badlogic.gdx.graphics.g2d.ParticleEffectPool;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 
 import java.util.ArrayList;
@@ -31,7 +33,6 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
     private ShapeRenderer sh;
     private ArrayList<Sprite> planetSprites;
     private ArrayList<Sprite> asteroidSprites;
-    private ArrayList<Coordinates> drawMoveCoords;
     private Sprite sprite;
     private ArrayList<Sprite> playerSprites;
     private int PPS;
@@ -45,7 +46,8 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
     private ArrayList<Coordinates> path = new ArrayList<>();
     private Coordinates oldGridCoords = new Coordinates(-1, -1);
     private Sprite movingSprite;
-    private ParticleEffect rocketTrail;
+    private ParticleEffectPool trailPool;
+    private Array<ParticleEffectPool.PooledEffect> effects = new Array<>();
 
     public GameBoardScreen(final GameBoardController controller) {
         this.controller = controller;
@@ -76,10 +78,10 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
     }
 
     private void genEffects() {
-        rocketTrail = new ParticleEffect();
+        ParticleEffect rocketTrail = new ParticleEffect();
         rocketTrail.load(Gdx.files.internal("app/assets/particle-effects/rocket-trail.p"), Gdx.files.internal("app/assets/particle-effects"));
-        rocketTrail.findEmitter("rocket trail").setContinuous(true);
-        rocketTrail.start();
+        rocketTrail.setEmittersCleanUpBlendFunction(false);
+        trailPool = new ParticleEffectPool(rocketTrail, 1, 2);
     }
 
     private void setupUI() {
@@ -91,6 +93,7 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
      * Draws the player move
      */
     public void drawPlayerMove(Player player) {
+        ParticleEffectPool.PooledEffect effect = trailPool.obtain();
         BoardMove boardMove = player.getBoardMove();
         if (boardMove.getDirections().size() == 0) {
             player.setBoardMove(null);
@@ -107,11 +110,9 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
                 case UP:
                     movingSprite.setRotation(0);
                     movingSprite.translateY(distanceToMove);
-                    rocketTrail.setPosition((movingSprite.getX() + 0.5f) * PPS, movingSprite.getY() * PPS);
-                    rocketTrail.draw(batch, Gdx.graphics.getDeltaTime());
-                    if (rocketTrail.isComplete()) {
-                        rocketTrail.reset();
-                    }
+
+                    effect.setPosition((movingSprite.getX() + 0.5f) * PPS, movingSprite.getY() * PPS);
+                    effects.add(effect);
                     if (movingSprite.getY() >= boardMove.getPosition().get(0).getY() * PPS) {
                         movingSprite.setY(boardMove.getPosition().get(0).getY() * PPS);
                         boardMove.getPosition().remove(0);
@@ -161,7 +162,7 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
                 if (pType == GridPoint.Type.PLAYER) {
                     Player player = (Player) grid[x][y].getValue();
 
-                    //TODO remove code once player is sent
+                    //TODO remove code once player is sent/received by server
                     player.setCoordinates(new Coordinates(x, y));
                     if (player.getBoardMove() != null){
                         drawPlayerMove(player);
@@ -271,8 +272,8 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
     public void show() {
         controller.onShow();
 
-        // Graphics.DisplayMode display = Gdx.graphics.getDisplayMode();
-        // Gdx.graphics.setFullscreenMode(display);
+        Graphics.DisplayMode display = Gdx.graphics.getDisplayMode();
+        Gdx.graphics.setFullscreenMode(display);
         Gdx.input.setInputProcessor(inputMultiplexer);
     }
 
@@ -327,6 +328,7 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
             drawBackground();
             drawBoardObjects();
             drawPath();
+            drawEffects(delta);
 
             batch.end();
 
@@ -337,6 +339,17 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
             hud.getStage().act(Gdx.graphics.getDeltaTime());
             hud.updateHud();
             hud.getStage().draw();
+        }
+    }
+
+    private void drawEffects(float delta) {
+        for (int i = effects.size - 1; i >= 0; i--) {
+            ParticleEffectPool.PooledEffect effect = effects.get(i);
+            effect.draw(batch, delta);
+            if (effect.isComplete()) {
+                effect.free();
+                effects.removeIndex(i);
+            }
         }
     }
 
@@ -384,7 +397,6 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
         hud.dispose();
         background.getTexture().dispose();
         sh.dispose();
-        rocketTrail.dispose();
         for (Sprite s : planetSprites) {
             s.getTexture().dispose();
         }
