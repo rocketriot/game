@@ -198,6 +198,10 @@ public class AStarPathfinding {
                 if (value.getTotalCost() < minimumCost) {
                     minimumCost = value.getTotalCost();
                     nextPoint = currentCoords;
+                } else if (value.getTotalCost() == minimumCost) {
+
+                    minimumCost = value.getTotalCost();
+                    nextPoint = currentCoords;
                 }
             }
         }

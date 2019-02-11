@@ -93,6 +93,4 @@ public class PathfindingValues {
     public void setPassable(Boolean passable) {
         this.passable = passable;
     }
-
-
 }
