@@ -82,11 +82,6 @@ public abstract class ScreenMaster implements Screen {
     batch.begin();
     batch.draw(background, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
     batch.end();
-
-    // Gdx.input.setInputProcessor(stage);
-
-    // stage.act();
-    // stage.draw();
   }
 
   protected void addBackButton() {

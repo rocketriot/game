@@ -20,12 +20,5 @@ public class JoinScreen extends ScreenMaster {
   @Override
   public void show() {
     super.show();
-
-    try {
-      controller.connectToServer("test");
-      controller.startGame();
-    } catch (ConnectException e) {
-      // Handle connection error
-    }
   }
 }

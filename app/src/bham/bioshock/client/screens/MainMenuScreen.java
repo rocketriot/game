@@ -6,9 +6,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Container;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
@@ -106,7 +104,9 @@ public class MainMenuScreen extends ScreenMaster {
         new ChangeListener() {
           @Override
           public void changed(ChangeEvent event, Actor actor) {
-            controller.createServer();
+              /** Bring up a dialogue to ask the user for a host name then start the new server */
+              showDialogue();
+              //controller.createServer();
           }
         });
 
@@ -130,10 +130,45 @@ public class MainMenuScreen extends ScreenMaster {
         new ChangeListener() {
           @Override
           public void changed(ChangeEvent event, Actor actor) {
+              //Do something to add a new player...
             controller.changeScreen(Client.View.GAME_BOARD);
           }
         });
 
-    Gdx.input.setInputProcessor(stage);
+
+
   }
+
+    private void showDialogue() {
+
+
+        TextField textField = new TextField("name", skin);
+
+        Dialog diag = new Dialog("Host Game", skin){
+
+            protected void result(Object object)
+            {
+
+                if(object.equals(true)) {
+                    String host_name = textField.getText();
+                    System.out.println("Player: " + textField.getText());
+
+                    //send the name to the connection
+                    controller.createServer(host_name);
+                }
+                else {
+                    System.out.println("Cancelled..");
+                }
+            }
+
+        };
+
+        diag.text(new Label("Please enter a host name", skin));
+        diag.getContentTable().add(textField);
+        diag.button("OK", true);
+        diag.button("Cancel", false);
+
+        diag.show(stage);
+    }
+
 }

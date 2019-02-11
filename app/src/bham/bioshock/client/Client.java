@@ -145,6 +145,10 @@ public class Client extends Game {
     hostingServer.start();
   }
 
+  public Controller getController(View view) {
+    return controllers.get(view);
+  }
+
   /** An enum to represent all the views */
   public enum View {
     MAIN_MENU,
@@ -154,4 +158,6 @@ public class Client extends Game {
     PREFERENCES,
     JOIN_SCREEN
   }
+
+
 }
