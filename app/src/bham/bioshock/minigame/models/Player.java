@@ -16,13 +16,15 @@ public class Player extends Entity {
 	private PlayerTexture dir;
 	float animationTime;
 	
-	private final double JUMP_FORCE = 300;
-	private float v = 20f;
+	private final double JUMP_FORCE = 700;
+
+	private float v = 700f;
 	
 	public Player(float x, float y) {
 		super(x, y);
 		SIZE = 100;
 		animationTime = 0;
+		fromGround = -25;
 		update(0);
 	}
 	
@@ -32,14 +34,14 @@ public class Player extends Entity {
 	
 	public void moveLeft(float delta) {
 		if(!isFlying()) {
-			speed.apply(angleFromCenter() + 270, v);	
+			speed.apply(angleFromCenter() + 270, v*GROUND_FRICTION);	
 		}
 		dir = PlayerTexture.LEFT;
 	}
 	
 	public void moveRight(float delta) {
 		if(!isFlying()) {
-			speed.apply(angleFromCenter() + 90, v);	
+			speed.apply(angleFromCenter() + 90, v*GROUND_FRICTION);	
 		}
 		dir = PlayerTexture.RIGHT;
 	}
@@ -65,8 +67,7 @@ public class Player extends Entity {
 			region.flip(true, false);
 		}
 		if (dir == PlayerTexture.LEFT) {
-			region.flip(true, false);				
-			return region;
+			region.flip(true, false);
 		}
 		return region;
 	}

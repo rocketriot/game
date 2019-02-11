@@ -1,31 +1,32 @@
 package bham.bioshock.minigame.models;
 
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 import bham.bioshock.common.Position;
-import bham.bioshock.minigame.PlayerTexture;
 import bham.bioshock.minigame.World;
+import bham.bioshock.minigame.physics.Gravity;
 import bham.bioshock.minigame.physics.SpeedVector;
 
 
 public abstract class Entity {
 		
 	protected int SIZE = 50;
-	private final double GROUND_FRICTION = 0.2;
-	private final double AIR_FRICTION = 0.01;
+	protected final double GROUND_FRICTION = 0.2;
+	private final double AIR_FRICTION = 0.001;
 	
 	protected Position pos;
 	protected boolean loaded = false;
 	protected Sprite sprite;
 	private float rotation;
+	protected float fromGround;
 	
 	protected SpeedVector speed;
 	
 	public Entity(float x, float y) {
 		pos = new Position(x, y);
 		speed = new SpeedVector();
+		fromGround = 0;
 	}
 	
 	public Entity() {
@@ -61,27 +62,19 @@ public abstract class Entity {
 		double dy = getY() - World.GRAVITY_POS.y;
 		
 		double toCenter = Math.sqrt(dx*dx + dy*dy);
-		return toCenter - World.PLANET_RADIUS;
+		return toCenter - (World.PLANET_RADIUS + fromGround);
 	}
 	
 	public double angleToCenterOfGravity() {
 		return 180 + angleFromCenter();
 	}
 	
-	public void updateRotation() {
-		sprite.setRotation((float) -angleFromCenter() + rotation);
+	public double getRotation() {
+		return -angleFromCenter() + rotation;
 	}
 	
 	public double angleFromCenter() {
-		double dx = getX() - World.GRAVITY_POS.x;
-		double dy = getY() - World.GRAVITY_POS.y;
-		double distance = distanceFromGround() + World.PLANET_RADIUS;
-
-		if(dy > 0) {
-			return Math.toDegrees( Math.asin(dx/distance) );			
-		} else {
-			return 180 - Math.toDegrees( Math.asin(dx/distance) );	
-		}
+		return Gravity.getAngleTo(getX(), getY());
 	}
 	
 	public abstract TextureRegion getTexture();
@@ -114,8 +107,8 @@ public abstract class Entity {
 		}
 		
 		if(!isFlying()) {
-			speed.friction(angleFromCenter, GROUND_FRICTION);						
+			speed.friction(GROUND_FRICTION);						
 		}
-
+		
 	}
 }

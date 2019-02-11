@@ -14,7 +14,7 @@ public class World {
 	
 	public static final Position GRAVITY_POS = new Position(0f, 0f);
 	public static final double PLANET_RADIUS = 2000;
-	public static final double GRAVITY = 200;
+	public static final double GRAVITY = 1500;
 	
 	
 	public World() {
