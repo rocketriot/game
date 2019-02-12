@@ -6,9 +6,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Container;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
@@ -91,7 +89,7 @@ public class MainMenuScreen extends ScreenMaster {
 
   private void addListeners() {
     Router router = this.router;
-    
+
     // add change listeners for the buttons
     exit.addListener(new ChangeListener() {
       @Override
@@ -103,7 +101,8 @@ public class MainMenuScreen extends ScreenMaster {
     host.addListener(new ChangeListener() {
       @Override
       public void changed(ChangeEvent event, Actor actor) {
-        // TODO: Handler it
+        /** Bring up a dialogue to ask the user for a host name then start the new server */
+        showHostDialogue();
         // controller.createServer();
       }
     });
@@ -125,10 +124,80 @@ public class MainMenuScreen extends ScreenMaster {
     join.addListener(new ChangeListener() {
       @Override
       public void changed(ChangeEvent event, Actor actor) {
-        router.call(Route.JOIN_SCREEN);
+        // Do something to add a new player...
+        showJoinDialogue();
       }
     });
 
-    Gdx.input.setInputProcessor(stage);
   }
+
+  private void showHostDialogue() {
+
+
+    TextField textField = new TextField("", skin);
+
+    Dialog diag = new Dialog("Host Game", skin) {
+
+      protected void result(Object object) {
+
+        if (object.equals(true)) {
+          String host_name = textField.getText();
+          if (host_name.equals("")) {
+            Alert("Please Enter a Host Name");
+          } else {
+            // send the name to the connection
+            controller.createServer(host_name);
+          }
+
+
+        } else {
+          System.out.println("Cancelled..");
+        }
+      }
+
+    };
+
+    diag.text(new Label("Please enter a host name", skin));
+    diag.getContentTable().add(textField);
+    diag.button("OK", true);
+    diag.button("Cancel", false);
+
+    diag.show(stage);
+  }
+
+  private void showJoinDialogue() {
+
+
+    TextField textField = new TextField("", skin);
+
+    Dialog diag = new Dialog("Join Game", skin) {
+
+      protected void result(Object object) {
+
+        if (object.equals(true)) {
+          String username = textField.getText();
+
+          if (username.equals("")) {
+            Alert("Please Enter a Username");
+          } else {
+            // send the name to the connection
+            controller.addPlayerToConnection(username);
+          }
+
+        } else {
+          System.out.println("Cancelled..");
+        }
+      }
+
+    };
+
+    diag.text(new Label("Please enter a username", skin));
+    diag.getContentTable().add(textField);
+    diag.button("OK", true);
+    diag.button("Cancel", false);
+
+    diag.show(stage);
+  }
+
+
 }
