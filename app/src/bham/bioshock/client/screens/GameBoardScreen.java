@@ -13,7 +13,7 @@ import com.badlogic.gdx.graphics.GL30;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.ParticleEffect;
-import com.badlogic.gdx.graphics.g2d.ParticleEffectPool;
+import com.badlogic.gdx.graphics.g2d.ParticleEmitter;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -46,8 +46,11 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
     private ArrayList<Coordinates> path = new ArrayList<>();
     private Coordinates oldGridCoords = new Coordinates(-1, -1);
     private Sprite movingSprite;
-    private ParticleEffectPool trailPool;
-    private Array<ParticleEffectPool.PooledEffect> effects = new Array<>();
+    private Array<ParticleEffect> effects = new Array<>();
+    private ParticleEffect rocketTrail;
+    private boolean drawRocketTrail;
+    private boolean drawnMove;
+    private float msXCoords, msYCoords, rtXCoords, rtYCoords;
 
     public GameBoardScreen(final GameBoardController controller) {
         this.controller = controller;
@@ -78,10 +81,10 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
     }
 
     private void genEffects() {
-        ParticleEffect rocketTrail = new ParticleEffect();
+        rocketTrail = new ParticleEffect();
         rocketTrail.load(Gdx.files.internal("app/assets/particle-effects/rocket-trail.p"), Gdx.files.internal("app/assets/particle-effects"));
-        rocketTrail.setEmittersCleanUpBlendFunction(false);
-        trailPool = new ParticleEffectPool(rocketTrail, 1, 2);
+        rocketTrail.start();
+        effects.add(rocketTrail);
     }
 
     private void setupUI() {
@@ -93,26 +96,41 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
      * Draws the player move
      */
     public void drawPlayerMove(Player player) {
-        ParticleEffectPool.PooledEffect effect = trailPool.obtain();
         BoardMove boardMove = player.getBoardMove();
         if (boardMove.getDirections().size() == 0) {
+            this.drawRocketTrail = false;
+            playerSelected = true;
             player.setBoardMove(null);
         } else if (boardMove != null) {
-            float distanceToMove = 150f * Gdx.graphics.getDeltaTime();
+            // Calculate distance to travel
+            float distanceToMove = 3 * Gdx.graphics.getDeltaTime();
+
             movingSprite = playerSprites.get(player.getTextureID());
+            movingSprite.setOriginCenter();
+
+            // Only true for first call of each move
             if (boardMove.getDirections().get(0).equals(Direction.NONE)) {
-                movingSprite.setX(boardMove.getStartCoords().getX() * PPS);
-                movingSprite.setY(boardMove.getStartCoords().getY() * PPS);
+                // Flag for renderer to draw rocket trail particle effects
+                this.drawRocketTrail = true;
+
+                // Stops the renderer drawing the old path
+                playerSelected = false;
+                path = null;
+
+                msXCoords = boardMove.getStartCoords().getX();
+                msYCoords = boardMove.getStartCoords().getY();
+
                 boardMove.getPosition().remove(0);
                 boardMove.getDirections().remove(0);
             }
             switch (boardMove.getDirections().get(0)) {
                 case UP:
                     movingSprite.setRotation(0);
-                    movingSprite.translateY(distanceToMove);
+                    msYCoords += distanceToMove;
 
-                    effect.setPosition((movingSprite.getX() + 0.5f) * PPS, movingSprite.getY() * PPS);
-                    effects.add(effect);
+                    rtXCoords = msXCoords + 0.5f;
+                    rtYCoords = msYCoords;
+                    setEmmiterAngle(rocketTrail, 0);
                     if (movingSprite.getY() >= boardMove.getPosition().get(0).getY() * PPS) {
                         movingSprite.setY(boardMove.getPosition().get(0).getY() * PPS);
                         boardMove.getPosition().remove(0);
@@ -121,7 +139,11 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
                     break;
                 case DOWN:
                     movingSprite.setRotation(180);
-                    movingSprite.translateY(-distanceToMove);
+                    msYCoords -= distanceToMove;
+
+                    rtXCoords = msXCoords + 0.5f;
+                    rtYCoords = msYCoords + 1;
+                    setEmmiterAngle(rocketTrail, 180);
                     if (movingSprite.getY() <= boardMove.getPosition().get(0).getY() * PPS) {
                         movingSprite.setY(boardMove.getPosition().get(0).getY() * PPS);
                         boardMove.getPosition().remove(0);
@@ -129,10 +151,12 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
                     }
                     break;
                 case RIGHT:
-                    movingSprite.setCenter(movingSprite.getX() + PPS / 2, movingSprite.getY() + PPS /2);
-                    movingSprite.setOriginCenter();
                     movingSprite.setRotation(270);
-                    movingSprite.translateX(distanceToMove);
+                    msXCoords += distanceToMove;
+
+                    rtXCoords = msXCoords;
+                    rtYCoords = msYCoords + 0.5f;
+                    setEmmiterAngle(rocketTrail, 270);
                     if (movingSprite.getX() >= boardMove.getPosition().get(0).getX() * PPS) {
                         movingSprite.setX(boardMove.getPosition().get(0).getX() * PPS);
                         boardMove.getPosition().remove(0);
@@ -141,7 +165,11 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
                     break;
                 case LEFT:
                     movingSprite.setRotation(90);
-                    movingSprite.translateX(-distanceToMove);
+                    msXCoords -= distanceToMove;
+
+                    rtXCoords = msXCoords + 1;
+                    rtYCoords = msYCoords + 0.5f;
+                    setEmmiterAngle(rocketTrail, 90);
                     if (movingSprite.getX() <= boardMove.getPosition().get(0).getX() * PPS) {
                         movingSprite.setX(boardMove.getPosition().get(0).getX() * PPS);
                         boardMove.getPosition().remove(0);
@@ -149,13 +177,29 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
                     }
                     break;
             }
+            rocketTrail.setPosition(rtXCoords * PPS, rtYCoords * PPS);
+            movingSprite.setX(msXCoords * PPS);
+            movingSprite.setY(msYCoords * PPS);
             movingSprite.draw(batch);
+        }
+    }
+
+    private void setEmmiterAngle(ParticleEffect particleEffect, float angle) {
+        // Align particle effect angle with world
+        angle -= 90;
+        for (ParticleEmitter pe : particleEffect.getEmitters()) {
+            ParticleEmitter.ScaledNumericValue val = pe.getAngle();
+            float amplitude = (val.getHighMax() - val.getHighMin()) / 2f;
+            float h1 = angle + amplitude;
+            float h2 = angle - amplitude;
+            val.setHigh(h1, h2);
+            val.setLow(angle);
         }
     }
 
     public void drawBoardObjects() {
         GridPoint[][] grid = controller.getGrid();
-
+        drawnMove = false;
         for (int x = 0; x < grid.length; x++) {
             for (int y = 0; y < grid[x].length; y++) {
                 GridPoint.Type pType = grid[x][y].getType();
@@ -164,9 +208,10 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
 
                     //TODO remove code once player is sent/received by server
                     player.setCoordinates(new Coordinates(x, y));
-                    if (player.getBoardMove() != null){
+                    if (player.getBoardMove() != null && drawnMove == false){
                         drawPlayerMove(player);
-                    } else {
+                        drawnMove = true;
+                    } else if (player.getBoardMove() == null) {
                         if (playerSelected == true && player.equals(controller.getMainPlayer())) {
                             sprite = outlinedPlayerSprites.get(player.getTextureID());
                         } else {
@@ -243,6 +288,8 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
             Texture outlinedTexture = new Texture(Gdx.files.internal(f.path()));
             outlinedPlayerSprites.add(new Sprite(outlinedTexture));
         }
+
+        movingSprite = new Sprite();
     }
 
     public void drawGridLines() {
@@ -272,8 +319,8 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
     public void show() {
         controller.onShow();
 
-        Graphics.DisplayMode display = Gdx.graphics.getDisplayMode();
-        Gdx.graphics.setFullscreenMode(display);
+        //Graphics.DisplayMode display = Gdx.graphics.getDisplayMode();
+        //Gdx.graphics.setFullscreenMode(display);
         Gdx.input.setInputProcessor(inputMultiplexer);
     }
 
@@ -295,7 +342,7 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
 
     @Override
     public void resize(int width, int height) {
-        viewport.update(width, height, true);
+        viewport.update(width, height);
         hud.viewport.update(width, height, true);
         resizeSprites();
     }
@@ -312,7 +359,10 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
         }
         for (Sprite s : outlinedPlayerSprites) {
             s.setSize(PPS * 1, PPS * 1);
+
         }
+        movingSprite.setSize(PPS * 1, PPS * 1);
+        background.setSize(PPS * 38.4f, PPS * 21.6f);
     }
 
     @Override
@@ -343,12 +393,10 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
     }
 
     private void drawEffects(float delta) {
-        for (int i = effects.size - 1; i >= 0; i--) {
-            ParticleEffectPool.PooledEffect effect = effects.get(i);
-            effect.draw(batch, delta);
-            if (effect.isComplete()) {
-                effect.free();
-                effects.removeIndex(i);
+        if (drawRocketTrail == true) {
+            for (ParticleEffect e : effects) {
+                e.draw(batch);
+                e.update(delta);
             }
         }
     }
@@ -384,7 +432,7 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
     protected void drawBackground() {
         for (int i = -1; i <= 1; i++) {
             for (int j = -1; j <= 1; j++) {
-                background.setPosition(i * GAME_WORLD_WIDTH, j * GAME_WORLD_HEIGHT);
+                background.setPosition(i * background.getWidth(), j * background.getHeight());
                 background.draw(batch);
             }
         }
@@ -473,9 +521,11 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
             }
             return true;
         } else if (Gdx.input.isButtonPressed(Input.Buttons.RIGHT)) {
+            // Move ship to click position
             Coordinates gridCoords = new Coordinates((int) clickCoords.x / PPS, (int) clickCoords.y / PPS);
             if (!controller.getMainPlayer().getCoordinates().isEqual(gridCoords)) {
                 controller.move(gridCoords);
+                return true;
             }
         }
         return false;
@@ -510,6 +560,7 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
                         if (!gridCoords.isEqual(controller.getMainPlayer().getCoordinates())) {
                             path = controller.getPathFinder().pathfind(gridCoords);
                             oldGridCoords = gridCoords;
+                            return true;
                         }
                     }
                 }

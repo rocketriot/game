@@ -56,7 +56,7 @@ public class Hud implements Disposable {
             public void changed(ChangeEvent event, Actor actor) {
                 //TODO Add end turn code
             }
-        })
+        });
     }
 
     private void setupFuelBar() {
