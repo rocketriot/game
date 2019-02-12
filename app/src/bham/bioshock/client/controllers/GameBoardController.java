@@ -49,7 +49,7 @@ public class GameBoardController extends Controller {
     // Update gameboard from arguments
     ArrayList<Serializable> arguments = action.getArguments();
     gameBoard = (GameBoard) arguments.get(0);
-    
+
     ArrayList<Player> players = (ArrayList<Player>) arguments.get(1);
     model.setPlayers(players);
 
@@ -107,13 +107,13 @@ public class GameBoardController extends Controller {
 
   public void move(Coordinates destination) {
     GridPoint[][] grid = gameBoard.getGrid();
-    
+
     pathFinder.setStartPosition(mainPlayer.getCoordinates());
 
     // pathsize - 1 since path includes start position
     ArrayList<Coordinates> path = pathFinder.pathfind(destination);
     float pathCost = (path.size() - 1) * 10;
-    
+
     // check if the player has enough fuel
     if (mainPlayer.getFuel() >= pathCost) {
       // Update player coordinates and fuel
@@ -122,7 +122,7 @@ public class GameBoardController extends Controller {
 
       // Get grid point the user landed on
       GridPoint gridPoint = gameBoard.getGridPoint(destination);
-      
+
       // Check if the player landed on a fuel box
       if (gridPoint.getType() == GridPoint.Type.FUEL) {
         // Decrease players amount of fuel

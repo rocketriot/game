@@ -25,6 +25,7 @@ public class Client extends Game {
   private HashMap<View, Screen> screens = new HashMap<View, Screen>();
   /** Stores all data */
   private Model model;
+
   private Server hostingServer;
   private ClientService server;
 

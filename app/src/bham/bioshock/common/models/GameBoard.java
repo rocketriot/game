@@ -84,14 +84,14 @@ public class GameBoard implements Serializable {
     return grid;
   }
 
+  public void setGrid(GridPoint[][] grid) {
+    this.grid = grid;
+  }
+
   public GridPoint getGridPoint(Coordinates coordinates) {
     int x = coordinates.getX();
     int y = coordinates.getY();
-    
-    return grid[x][y];
-  }
 
-  public void setGrid(GridPoint[][] grid) {
-    this.grid = grid;
+    return grid[x][y];
   }
 }
