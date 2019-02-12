@@ -51,6 +51,14 @@ public class GameBoardController extends Controller {
     gameBoard = (GameBoard) arguments.get(0);
 
     ArrayList<Player> players = (ArrayList<Player>) arguments.get(1);
+
+    // TODO: remove temporary solution to fix coordinates not being sent by the server
+    int last = gameBoard.GRID_SIZE - 1;
+    players.get(0).setCoordinates(new Coordinates(0, 0));
+    players.get(1).setCoordinates(new Coordinates(0, last));
+    players.get(2).setCoordinates(new Coordinates(last, last));
+    players.get(3).setCoordinates(new Coordinates(last, 0));
+
     model.setPlayers(players);
 
     client.changeScreen(View.GAME_BOARD);
