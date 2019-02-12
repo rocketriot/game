@@ -11,8 +11,6 @@ public class AppPreferences {
   private static final String PREF_SOUND_VOLUME = "sound";
   private static final String PREFS_NAME = "rocket_riot";
 
-  public AppPreferences() {}
-
   protected Preferences getPreferences() {
     return Gdx.app.getPreferences(PREFS_NAME);
   }

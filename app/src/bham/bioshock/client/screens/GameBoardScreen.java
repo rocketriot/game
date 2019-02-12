@@ -1,13 +1,16 @@
 package bham.bioshock.client.screens;
 
+import bham.bioshock.client.Router;
 import bham.bioshock.client.controllers.GameBoardController;
 import bham.bioshock.client.scenes.Hud;
 import bham.bioshock.common.consts.Config;
 import bham.bioshock.common.consts.GridPoint;
 import bham.bioshock.common.models.Asteroid;
 import bham.bioshock.common.models.Coordinates;
+import bham.bioshock.common.models.GameBoard;
 import bham.bioshock.common.models.Planet;
 import bham.bioshock.common.models.Player;
+import bham.bioshock.common.models.Store;
 import com.badlogic.gdx.*;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
@@ -26,7 +29,10 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
   private final InputMultiplexer inputMultiplexer;
   private final int GAME_WORLD_WIDTH = Config.GAME_WORLD_WIDTH;
   private final int GAME_WORLD_HEIGHT = Config.GAME_WORLD_HEIGHT;
-  private GameBoardController controller;
+
+  private GameBoard gameBoard;
+  private Store store;
+  
   private SpriteBatch batch;
   private Sprite background;
   private OrthographicCamera camera;
@@ -45,14 +51,17 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
   private ArrayList<Coordinates> path = new ArrayList<>();
   private Coordinates oldGridCoords = new Coordinates(-1, -1);
 
-  public GameBoardScreen(final GameBoardController controller) {
-    this.controller = controller;
+  public GameBoardScreen(Router router, Store store, GameBoard gameBoard, int gridSize) {
+    super(router);
+    
+    this.gameBoard = gameBoard;
+    this.store = store;
+    
     batch = new SpriteBatch();
-
     // Pixels Per Square (on the grid)
     PPS = 50;
 
-    gridSize = controller.getGridSize();
+    this.gridSize = gridSize;
     camera = new OrthographicCamera();
     viewport = new FitViewport(GAME_WORLD_WIDTH, GAME_WORLD_HEIGHT, camera);
     viewport.apply();
@@ -73,12 +82,12 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
   }
 
   private void setupUI() {
-    hud = new Hud(batch, skin, GAME_WORLD_WIDTH, GAME_WORLD_HEIGHT, controller);
+    hud = new Hud(batch, skin, GAME_WORLD_WIDTH, GAME_WORLD_HEIGHT, store);
     background = new Sprite(new Texture(Gdx.files.internal("app/assets/backgrounds/game.png")));
   }
 
   public void drawBoardObjects() {
-    GridPoint[][] grid = controller.getGrid();
+    GridPoint[][] grid = gameBoard.getGrid();
 
     for (int x = 0; x < grid.length; x++) {
       for (int y = 0; y < grid[x].length; y++) {
@@ -87,7 +96,7 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
           Player p = (Player) grid[x][y].getValue();
           // TODO remove code once player is sent
           p.setCoordinates(new Coordinates(x, y));
-          if (playerSelected == true && p.equals(controller.getMainPlayer())) {
+          if (playerSelected == true && p.equals(store.getMainPlayer())) {
             sprite = outlinedPlayerSprites.get(p.getTextureID());
           } else {
             sprite = playerSprites.get(p.getTextureID());
@@ -189,8 +198,6 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
 
   @Override
   public void show() {
-    controller.onShow();
-
     // Graphics.DisplayMode display = Gdx.graphics.getDisplayMode();
     // Gdx.graphics.setFullscreenMode(display);
     Gdx.input.setInputProcessor(inputMultiplexer);
@@ -380,8 +387,8 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
     } else if (Gdx.input.isButtonPressed(Input.Buttons.RIGHT)) {
       Coordinates gridCoords =
           new Coordinates((int) clickCoords.x / PPS, (int) clickCoords.y / PPS);
-      if (!controller.getMainPlayer().getCoordinates().isEqual(gridCoords)) {
-        controller.move(gridCoords);
+      if (!store.getMainPlayer().getCoordinates().isEqual(gridCoords)) {
+        // controller.move(gridCoords);
       }
     }
     return false;

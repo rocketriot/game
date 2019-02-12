@@ -1,18 +1,33 @@
 package bham.bioshock.client.controllers;
 
-import bham.bioshock.client.Client;
-import bham.bioshock.client.Client.View;
+import com.google.inject.Inject;
+import bham.bioshock.client.BoardGame;
+import bham.bioshock.client.Router;
+import bham.bioshock.client.screens.MainMenuScreen;
+import bham.bioshock.common.models.Store;
+import bham.bioshock.server.Server;
 
 public class MainMenuController extends Controller {
-
-  public MainMenuController(Client client) {
-    this.client = client;
+  
+  Server server;
+  BoardGame game;
+  
+  @Inject
+  public MainMenuController(Store store, Router router, BoardGame game, Server server) {
+    super(store, router);
+    this.server = server;
+    this.game = game;
+  }
+  
+  /** Creates a server */
+  private void createServer() {
+    server.start();
   }
 
-  /** Creates a server and send the player to the join screen */
-  public void createServer() {
-    client.createHostingServer();
-
-    changeScreen(View.JOIN_SCREEN);
+  /** Renders main menu */
+  public void show() {
+    createServer();
+    
+    game.setScreen(new MainMenuScreen(router));
   }
 }

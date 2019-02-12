@@ -1,85 +1,70 @@
 package bham.bioshock.client.controllers;
 
-import bham.bioshock.client.Client;
-import bham.bioshock.client.Client.View;
-import bham.bioshock.client.screens.GameBoardScreen;
+import bham.bioshock.client.Router;
+import bham.bioshock.client.Route;
 import bham.bioshock.common.consts.GridPoint;
 import bham.bioshock.common.models.*;
 import bham.bioshock.common.pathfinding.AStarPathfinding;
 import bham.bioshock.communication.Action;
 import bham.bioshock.communication.Command;
-import bham.bioshock.communication.client.ClientService;
-import com.badlogic.gdx.Screen;
-
-import java.io.Serializable;
+import bham.bioshock.communication.client.IClientService;
+import com.google.inject.Inject;
+import com.google.inject.name.Named;
 import java.util.ArrayList;
 import java.util.Random;
-
 import static bham.bioshock.common.consts.GridPoint.Type.*;
 
 public class GameBoardController extends Controller {
-  private Client client;
-  private ClientService server;
 
-  private Model model;
+  private IClientService clientService;
+  private Store store;
+  private Router router;
   private GameBoard gameBoard;
   private Player mainPlayer;
   private AStarPathfinding pathFinder;
   private boolean receivedGrid = false;
 
-  public GameBoardController(Client client) {
-    this.client = client;
-    this.server = client.getServer();
-    this.model = client.getModel();
-    gameBoard = model.getGameBoard();
+  @Inject
+  public GameBoardController(Router router, Store store, IClientService clientService) {
+    super(store, router);
+    this.clientService = clientService;
+    this.router = router;
+    gameBoard = store.getGameBoard();
   }
 
-  /** When the game board is on the screen */
-  public void onShow() {
-    // Update server connection from null since we should be connected
-    server = client.getServer();
+  public void show() {
     // If the grid is not yet loaded, go to loading screen and fetch the game board
     // from the server
     if (receivedGrid == false) {
-      server.send(new Action(Command.GET_GAME_BOARD));
-      client.changeScreen(View.LOADING);
+      router.call(Route.LOADING);
+      clientService.send(new Action(Command.GET_GAME_BOARD));
     }
   }
 
   /** Handles when the server sends the game board to the client */
   public void gameBoardReceived(Action action) {
     // Update gameboard from arguments
-    ArrayList<Serializable> arguments = action.getArguments();
-    gameBoard = (GameBoard) arguments.get(0);
-    client.changeScreen(View.GAME_BOARD);
+    gameBoard = (GameBoard) action.getArgument(0);
 
     receivedGrid = true;
 
     // TODO change to client's player
-    setMainPlayer(model.getPlayers().get(0));
+    setMainPlayer(store.getPlayers().get(0));
     pathFinder = new AStarPathfinding(gameBoard.getGrid(), mainPlayer.getCoordinates(), 36, 36);
+    // router.changeScreen(View.GAME_BOARD);
   }
 
-  public GridPoint[][] getGrid() {
-    return gameBoard.getGrid();
-  }
-
-  public int getGridSize() {
-    return gameBoard.GRID_SIZE;
-  }
-
+  // TODO: Use store
   public ArrayList<Player> getPlayers() {
-    return model.getPlayers();
+    return store.getPlayers();
   }
 
-  public void changeScreen(Client.View screen) {
-    client.changeScreen(screen);
-  }
-
+  // TODO: Use store
   public Player getMainPlayer() {
     return mainPlayer;
   }
 
+  // TODO: Use store
   public void setMainPlayer(Player p) {
     this.mainPlayer = p;
   }
@@ -119,8 +104,10 @@ public class GameBoardController extends Controller {
 
       int x = destination.getX();
       int y = destination.getY();
-      if (grid[x][y].getType() == PLANET) startMinigame();
-      else if (grid[x][y].getType() == FUEL) mainPlayer.setFuel(fuel + 30);
+      if (grid[x][y].getType() == PLANET)
+        startMinigame();
+      else if (grid[x][y].getType() == FUEL)
+        mainPlayer.setFuel(fuel + 30);
       pathFinder.setStartPosition(mainPlayer.getCoordinates());
     }
   }
@@ -150,10 +137,6 @@ public class GameBoardController extends Controller {
 
     Coordinates newCoordinates = new Coordinates(x, y);
     player.setCoordinates(newCoordinates);
-  }
-
-  public void setScreen(Screen screen) {
-    this.screen = (GameBoardScreen) screen;
   }
 
   public boolean hasReceivedGrid() {

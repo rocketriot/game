@@ -1,6 +1,6 @@
 package bham.bioshock.server.handlers;
 
-import bham.bioshock.common.models.Model;
+import bham.bioshock.common.models.Store;
 import bham.bioshock.common.models.Player;
 import bham.bioshock.communication.Action;
 import bham.bioshock.communication.Command;
@@ -16,7 +16,7 @@ public class JoinScreenHandler {
    *
    * @throws Exception
    */
-  public static void addPlayer(Model model, Action action, ServerHandler hander) throws Exception {
+  public static void addPlayer(Store model, Action action, ServerHandler hander) throws Exception {
     Player player = (Player) action.getArgument(0);
 
     // Set the texture ID of the player
@@ -36,7 +36,7 @@ public class JoinScreenHandler {
   }
 
   /** Creates CPU players and starts the game */
-  public static void startGame(Model model, Action action, ServerHandler hander) {
+  public static void startGame(Store model, Action action, ServerHandler hander) {
     ArrayList<Serializable> cpuPlayers = new ArrayList<>();
 
     // If there is not 4 players, create CPU players

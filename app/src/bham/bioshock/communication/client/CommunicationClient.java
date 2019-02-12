@@ -1,8 +1,6 @@
 package bham.bioshock.communication.client;
 
-import bham.bioshock.client.Client;
 import bham.bioshock.communication.Config;
-
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -10,13 +8,23 @@ import java.net.ConnectException;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import com.google.inject.Singleton;
 
+@Singleton
 public class CommunicationClient {
 
-  public static InetAddress hostAddress;
+  public static String hostAddress;
   public static int port = Config.PORT;
+  private ClientService service = null;
 
-  public static ClientService createConnection(Client client) throws ConnectException {
+  public ClientService getConnection() {
+    return service;
+  }
+
+  public ClientService createConnection() throws ConnectException {
+    if (service != null) {
+      return service;
+    }
     // Open sockets:
     ObjectOutputStream toServer = null;
     ObjectInputStream fromServer = null;
@@ -33,34 +41,28 @@ public class CommunicationClient {
     }
 
     // We are connected to the server, create a service to get and send messages
-    ClientService service = new ClientService(server, fromServer, toServer, client);
+    service = new ClientService(server, fromServer, toServer);
     service.start();
     return service;
   }
 
-  public static void setHostAddress(InetAddress address) {
-    hostAddress = address;
-  }
 
-  public static ClientService connect(String userName, Client client) throws ConnectException {
-    Thread discoveryThread = new Thread(new ClientConnectThread(userName));
-    discoveryThread.start();
-
+  public ClientService connect(String userName) throws ConnectException {
+    if(Config.SERVER_ADDRESS.length() == 0) {
+      ClientConnectThread c = new ClientConnectThread();
+      c.run();
+    } else {
+      CommunicationClient.hostAddress = Config.SERVER_ADDRESS;
+    }
+    
     try {
-      discoveryThread.join();
-      return createConnection(client);
-    } catch (InterruptedException e) {
-      System.err.println("Connection interrupted");
+      return createConnection();
     } catch (ConnectException e) {
     }
     throw new ConnectException("Connection unsuccessful");
   }
-
-  public static void main(String[] args) {
-    try {
-      CommunicationClient.connect("Test", null);
-    } catch (ConnectException e) {
-      e.printStackTrace();
-    }
+  
+  public static void setHostAddress(String address) {
+    hostAddress = address;
   }
 }

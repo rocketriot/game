@@ -1,7 +1,6 @@
 package bham.bioshock.client.screens;
 
-import bham.bioshock.client.Client;
-import bham.bioshock.client.controllers.Controller;
+import bham.bioshock.client.Router;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.files.FileHandle;
@@ -19,10 +18,10 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 
 public abstract class ScreenMaster implements Screen {
-  protected Controller controller;
   protected Stage stage;
   protected Batch batch;
   protected Stack stack;
+  protected Router router;
 
   protected float screen_width;
   protected float screen_height;
@@ -34,9 +33,10 @@ public abstract class ScreenMaster implements Screen {
 
   protected Skin skin = new Skin(Gdx.files.internal("app/assets/skins/neon/skin/neon-ui.json"));
 
-  public ScreenMaster() {
-    screen_width = Gdx.graphics.getWidth();
-    screen_height = Gdx.graphics.getHeight();
+  public ScreenMaster(Router router) {
+    this.router = router;
+    this.screen_width = Gdx.graphics.getWidth();
+    this.screen_height = Gdx.graphics.getHeight();
   }
 
   @Override
@@ -45,7 +45,7 @@ public abstract class ScreenMaster implements Screen {
 
     addBackButton();
     // set the back button to take you to main menu - for now
-    setPrevious(Client.View.MAIN_MENU);
+    setPrevious();
     // drawBackground();
   }
 
@@ -95,14 +95,13 @@ public abstract class ScreenMaster implements Screen {
     stage.addActor(back_button);
   }
 
-  protected void setPrevious(final Client.View previous) {
-    back_button.addListener(
-        new ChangeListener() {
-          @Override
-          public void changed(ChangeEvent event, Actor actor) {
-            controller.changeScreen(previous);
-          }
-        });
+  protected void setPrevious() {
+    back_button.addListener(new ChangeListener() {
+      @Override
+      public void changed(ChangeEvent event, Actor actor) {
+        router.back();
+      }
+    });
   }
 
   @Override

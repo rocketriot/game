@@ -1,10 +1,22 @@
 package bham.bioshock.common.models;
 
 import java.util.ArrayList;
+import com.google.inject.*;
+import bham.bioshock.client.AppPreferences;
 import java.util.UUID;
 
 /** Stores all of the models */
-public class Model {
+
+@Singleton
+public class Store {
+  
+  private AppPreferences preferences;
+  
+  @Inject
+  public Store() {
+    this.preferences = new AppPreferences();
+  }
+
   /** Max number of players in a game */
   public final int MAX_PLAYERS = 4;
   /** Contains all of the information about the game board */
@@ -14,7 +26,11 @@ public class Model {
 
   /** The ID of the player that the client is controlling, only used client-side */
   private UUID mainPlayerId;
-
+  
+  public AppPreferences getPreferences() {
+    return preferences;
+  }
+  
   public GameBoard generateGrid() throws Exception {
     gameBoard.generateGrid(players);
     return gameBoard;
@@ -37,6 +53,7 @@ public class Model {
   }
 
   public Player getMainPlayer() {
+    // Might be too slow
     for (Player player : players) {
       if (player.getId() == mainPlayerId) return player;
     }

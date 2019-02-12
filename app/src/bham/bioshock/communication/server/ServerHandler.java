@@ -1,6 +1,6 @@
 package bham.bioshock.communication.server;
 
-import bham.bioshock.common.models.Model;
+import bham.bioshock.common.models.Store;
 import bham.bioshock.communication.Action;
 import bham.bioshock.server.handlers.GameBoardHandler;
 import bham.bioshock.server.handlers.JoinScreenHandler;
@@ -10,10 +10,10 @@ import java.util.UUID;
 
 public class ServerHandler {
 
-  private Model model;
+  private Store model;
   private ArrayList<ServerService> connections;
 
-  public ServerHandler(Model _model) {
+  public ServerHandler(Store _model) {
     connections = new ArrayList<>();
     model = _model;
   }
