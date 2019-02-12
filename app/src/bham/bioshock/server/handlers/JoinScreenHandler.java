@@ -11,13 +11,9 @@ import java.util.ArrayList;
 
 public class JoinScreenHandler {
 
-  /**
-   * Adds a player to the server and sends the player to all the clients
-   *
-   * @throws Exception
-   */
-  public static void addPlayer(Model model, Action action, ServerHandler hander) throws Exception {
-    Player player = (Player) action.getArgument(0);
+  /** Adds a player to the server and sends the player to all the clients */
+  public static void addPlayer(Model model, Action action, ServerHandler hander) {
+    Player player = (Player) action.getArguments().get(0);
 
     // Set the texture ID of the player
     int textureId = model.getPlayers().size();

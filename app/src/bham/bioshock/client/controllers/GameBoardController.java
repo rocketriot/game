@@ -49,6 +49,10 @@ public class GameBoardController extends Controller {
     // Update gameboard from arguments
     ArrayList<Serializable> arguments = action.getArguments();
     gameBoard = (GameBoard) arguments.get(0);
+    
+    ArrayList<Player> players = (ArrayList<Player>) arguments.get(1);
+    model.setPlayers(players);
+
     client.changeScreen(View.GAME_BOARD);
 
     receivedGrid = true;

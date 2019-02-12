@@ -15,9 +15,15 @@ public class Model {
   /** The ID of the player that the client is controlling, only used client-side */
   private UUID mainPlayerId;
 
-  public GameBoard generateGrid() throws Exception {
-    gameBoard.generateGrid(players);
-    return gameBoard;
+  public void generateGrid() {
+    // Set coordinates of the players
+    int last = gameBoard.GRID_SIZE - 1;
+    players.get(0).setCoordinates(new Coordinates(0, 0));
+    players.get(1).setCoordinates(new Coordinates(0, last));
+    players.get(2).setCoordinates(new Coordinates(last, last));
+    players.get(3).setCoordinates(new Coordinates(last, 0));
+
+    gameBoard.generateGrid();
   }
 
   public GameBoard getGameBoard() {
@@ -30,6 +36,10 @@ public class Model {
 
   public ArrayList<Player> getPlayers() {
     return players;
+  }
+
+  public void setPlayers(ArrayList<Player> players) {
+    this.players = players;
   }
 
   public void addPlayer(Player player) {

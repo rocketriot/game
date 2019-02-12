@@ -13,8 +13,7 @@ import java.util.ArrayList;
 
 public class GameBoardHandler {
   /** Creates a game board (if needed) and sends it to the clients */
-  public static void getGameBoard(Model model, Action action, ServerHandler handler)
-      throws Exception {
+  public static void getGameBoard(Model model, Action action, ServerHandler handler) {
     GameBoard gameBoard = model.getGameBoard();
 
     // Generate a grid when starting the game
@@ -22,16 +21,18 @@ public class GameBoardHandler {
 
     ArrayList<Serializable> response = new ArrayList<>();
     response.add(gameBoard);
-
+    response.add(model.getPlayers());
     handler.sendToAll(new Action(Command.GET_GAME_BOARD, response));
   }
 
   /** Handles a player moving on their turn */
   public static void movePlayer(Model model, Action action, ServerHandler handler) {
-    // Get game board and player from arguments and update the model
+    // Get game board and player from arguments
     ArrayList<Serializable> arguments = action.getArguments();
     GameBoard gameBoard = (GameBoard) arguments.get(0);
     Player movingPlayer = (Player) arguments.get(1);
+
+    // Update the model
     model.setGameBoard(gameBoard);
     model.updatePlayer(movingPlayer);
 
