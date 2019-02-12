@@ -83,19 +83,8 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
     for (int x = 0; x < grid.length; x++) {
       for (int y = 0; y < grid[x].length; y++) {
         GridPoint.Type pType = grid[x][y].getType();
-        if (pType == GridPoint.Type.PLAYER) {
-          Player p = (Player) grid[x][y].getValue();
-          // TODO remove code once player is sent
-          p.setCoordinates(new Coordinates(x, y));
-          if (playerSelected == true && p.equals(controller.getMainPlayer())) {
-            sprite = outlinedPlayerSprites.get(p.getTextureID());
-          } else {
-            sprite = playerSprites.get(p.getTextureID());
-          }
-          sprite.setX(x * PPS);
-          sprite.setY(y * PPS);
-          sprite.draw(batch);
-        } else if (pType == GridPoint.Type.PLANET) {
+          
+        if (pType == GridPoint.Type.PLANET) {
           Planet p = (Planet) grid[x][y].getValue();
           if (p.isDrawn() == false) {
             p.setDrawn(true);
@@ -127,6 +116,17 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
           a.setDrawn(false);
         }
       }
+    }
+
+    for (Player player: controller.getPlayers()) {
+      sprite = playerSprites.get(player.getTextureID());
+      
+      if (playerSelected == true && player.equals(controller.getMainPlayer()))
+        sprite = outlinedPlayerSprites.get(player.getTextureID());
+
+      sprite.setX(player.getCoordinates().getX() * PPS);
+      sprite.setY(player.getCoordinates().getY() * PPS);
+      sprite.draw(batch);
     }
   }
 
