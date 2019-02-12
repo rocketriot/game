@@ -60,8 +60,6 @@ public class JoinScreen extends ScreenMaster {
   public void show() {
     super.show();
 
-    addBackButton();
-
     buildJoinScreen();
   }
 

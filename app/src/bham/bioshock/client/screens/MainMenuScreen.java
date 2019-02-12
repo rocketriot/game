@@ -142,7 +142,7 @@ public class MainMenuScreen extends ScreenMaster {
     private void showHostDialogue() {
 
 
-        TextField textField = new TextField("name", skin);
+        TextField textField = new TextField("", skin);
 
         Dialog diag = new Dialog("Host Game", skin){
 
@@ -151,9 +151,15 @@ public class MainMenuScreen extends ScreenMaster {
 
                 if(object.equals(true)) {
                     String host_name = textField.getText();
+                    if (host_name.equals("")) {
+                        Alert("Please Enter a Host Name");
+                    }
+                    else {
+                        //send the name to the connection
+                        controller.createServer(host_name);
+                    }
 
-                    //send the name to the connection
-                    controller.createServer(host_name);
+
                 }
                 else {
                     System.out.println("Cancelled..");
@@ -173,7 +179,7 @@ public class MainMenuScreen extends ScreenMaster {
     private void showJoinDialogue() {
 
 
-    TextField textField = new TextField("name", skin);
+    TextField textField = new TextField("", skin);
 
     Dialog diag = new Dialog("Join Game", skin){
 
@@ -183,8 +189,15 @@ public class MainMenuScreen extends ScreenMaster {
         if(object.equals(true)) {
           String username = textField.getText();
 
-          //send the name to the connection
-            controller.addPlayerToConnection(username);
+          if(username.equals("")) {
+              Alert("Please Enter a Username");
+          }
+          else {
+              //send the name to the connection
+              controller.addPlayerToConnection(username);
+          }
+
+
 
         }
         else {
@@ -201,5 +214,6 @@ public class MainMenuScreen extends ScreenMaster {
 
     diag.show(stage);
   }
+
 
 }

@@ -13,9 +13,7 @@ import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.ui.Stack;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 
 public abstract class ScreenMaster implements Screen {
@@ -110,6 +108,9 @@ public abstract class ScreenMaster implements Screen {
   @Override
   public void resize(int width, int height) {
     stage.getViewport().update(width, height, true);
+    screen_width = Gdx.graphics.getWidth();
+    screen_height = Gdx.graphics.getHeight();
+
   }
 
   @Override
@@ -125,5 +126,30 @@ public abstract class ScreenMaster implements Screen {
   public void dispose() {
     stage.dispose();
     batch.dispose();
+  }
+
+  protected void Alert(String alert_text) {
+
+
+    Dialog diag = new Dialog("", skin){
+
+      protected void result(Object object)
+      {
+
+        if(object.equals(true)) {
+
+        }
+        else {
+
+        }
+      }
+
+    };
+
+    diag.text(new Label(alert_text, skin));
+    diag.button("OK", true);
+    //diag.button("Cancel", false);
+
+    diag.show(stage);
   }
 }

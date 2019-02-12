@@ -28,6 +28,7 @@ public class MainMenuController extends Controller {
       //jsc.startGame();
     } catch (ConnectException e) {
       // Handle connection error
+      System.err.println("CONNECTION ERROR");
     }
 
     changeScreen(View.JOIN_SCREEN);
