@@ -15,7 +15,10 @@ public enum Command {
   // Game board
   GET_GAME_BOARD,
   UPDATE_GAME_BOARD,
-  MOVE_PLAYER_ON_BOARD;
+  MOVE_PLAYER_ON_BOARD,
+  
+  // Minigame
+  START_MINIGAME;
 
   // @formatter:on
 

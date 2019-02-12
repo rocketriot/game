@@ -26,17 +26,11 @@ public class GameBoard implements Serializable {
     // initialize grid
     grid = new GridPoint[GRID_SIZE][GRID_SIZE];
 
-    // Updates coordinates in player
+    // Set coordinates of the players
     players.get(0).setCoordinates(new Coordinates(0, 0));
     players.get(1).setCoordinates(new Coordinates(0, GRID_SIZE - 1));
     players.get(2).setCoordinates(new Coordinates(GRID_SIZE - 1, GRID_SIZE - 1));
     players.get(3).setCoordinates(new Coordinates(GRID_SIZE - 1, 0));
-
-    // Add the players to the board
-    grid[0][0] = new GridPoint(GridPoint.Type.PLAYER, players.get(0));
-    grid[0][GRID_SIZE - 1] = new GridPoint(GridPoint.Type.PLAYER, players.get(1));
-    grid[GRID_SIZE - 1][GRID_SIZE - 1] = new GridPoint(GridPoint.Type.PLAYER, players.get(2));
-    grid[GRID_SIZE - 1][0] = new GridPoint(GridPoint.Type.PLAYER, players.get(3));
 
     // Go through each point and generate it's type
     for (int i = 0; i < grid.length; i++) {
@@ -47,8 +41,6 @@ public class GameBoard implements Serializable {
         }
       }
     }
-
-    // players - exact pos on each corner
 
     return grid;
   }
@@ -102,6 +94,13 @@ public class GameBoard implements Serializable {
 
   public GridPoint[][] getGrid() {
     return grid;
+  }
+
+  public GridPoint getGridPoint(Coordinates coordinates) {
+    int x = coordinates.getX();
+    int y = coordinates.getY();
+    
+    return grid[x][y];
   }
 
   public void setGrid(GridPoint[][] grid) {

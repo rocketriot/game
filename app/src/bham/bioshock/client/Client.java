@@ -114,6 +114,13 @@ public class Client extends Game {
                 controller.gameBoardReceived(action);
                 break;
               }
+            case MOVE_PLAYER_ON_BOARD:
+              {
+                GameBoardController controller =
+                    (GameBoardController) controllers.get(View.GAME_BOARD);
+                controller.moveReceived(action);
+                break;
+              }
             default:
               {
                 System.out.println("Received unhandled command: " + action.getCommand().toString());

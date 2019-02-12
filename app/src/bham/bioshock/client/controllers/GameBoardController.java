@@ -15,8 +15,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Random;
 
-import static bham.bioshock.common.consts.GridPoint.Type.*;
-
 public class GameBoardController extends Controller {
   private Client client;
   private ClientService server;
@@ -104,25 +102,46 @@ public class GameBoardController extends Controller {
   }
 
   public void move(Coordinates destination) {
-    float fuel = mainPlayer.getFuel();
     GridPoint[][] grid = gameBoard.getGrid();
-    ArrayList<Coordinates> path = pathFinder.pathfind(destination);
+    
+    pathFinder.setStartPosition(mainPlayer.getCoordinates());
 
     // pathsize - 1 since path includes start position
+    ArrayList<Coordinates> path = pathFinder.pathfind(destination);
     float pathCost = (path.size() - 1) * 10;
-
+    
     // check if the player has enough fuel
     if (mainPlayer.getFuel() >= pathCost) {
+      // Update player coordinates and fuel
       mainPlayer.setCoordinates(destination);
-      fuel -= pathCost;
-      mainPlayer.setFuel(fuel);
+      mainPlayer.decreaseFuel(pathCost);
 
-      int x = destination.getX();
-      int y = destination.getY();
-      if (grid[x][y].getType() == PLANET) startMinigame();
-      else if (grid[x][y].getType() == FUEL) mainPlayer.setFuel(fuel + 30);
-      pathFinder.setStartPosition(mainPlayer.getCoordinates());
+      // Get grid point the user landed on
+      GridPoint gridPoint = gameBoard.getGridPoint(destination);
+      
+      // Check if the player landed on a fuel box
+      if (gridPoint.getType() == GridPoint.Type.FUEL) {
+        // Decrease players amount of fuel
+        Fuel fuel = (Fuel) gridPoint.getValue();
+        mainPlayer.decreaseFuel(fuel.getValue());
+      }
+
+      // Send the updated grid to the server
+      ArrayList<Serializable> arguments = new ArrayList<>();
+      arguments.add(grid);
+      arguments.add(mainPlayer);
+      server.send(new Action(Command.MOVE_PLAYER_ON_BOARD, arguments));
     }
+  }
+
+  /** Player move received from the server */
+  public void moveReceived(Action action) {
+    // Get game board and player from arguments and update the model
+    ArrayList<Serializable> arguments = action.getArguments();
+    GameBoard gameBoard = (GameBoard) arguments.get(0);
+    Player movingPlayer = (Player) arguments.get(1);
+    model.setGameBoard(gameBoard);
+    model.updatePlayer(movingPlayer);
   }
 
   public void startMinigame() {}
@@ -146,7 +165,7 @@ public class GameBoardController extends Controller {
     do {
       x = new Random().nextInt();
       y = new Random().nextInt();
-    } while (grid[x][y].getType() != EMPTY);
+    } while (grid[x][y].getType() != GridPoint.Type.EMPTY);
 
     Coordinates newCoordinates = new Coordinates(x, y);
     player.setCoordinates(newCoordinates);

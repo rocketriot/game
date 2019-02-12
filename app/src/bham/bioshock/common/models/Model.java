@@ -36,6 +36,12 @@ public class Model {
     players.add(player);
   }
 
+  public void updatePlayer(Player updatingPlayer) {
+    for (Player player : players) {
+      if (player.getId() == updatingPlayer.getId()) player = updatingPlayer;
+    }
+  }
+
   public Player getMainPlayer() {
     for (Player player : players) {
       if (player.getId() == mainPlayerId) return player;
