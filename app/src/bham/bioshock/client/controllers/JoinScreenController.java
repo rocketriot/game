@@ -47,6 +47,9 @@ public class JoinScreenController extends Controller {
       Player player = (Player) argument;
       model.addPlayer(player);
       System.out.println("Player: " + player.getUsername() + " connected");
+
+      //change the label
+      updateLabels(player);
     }
   }
 
@@ -73,5 +76,13 @@ public class JoinScreenController extends Controller {
   @Override
   public void changeScreen(View view) {
     client.changeScreen(view);
+  }
+
+  private void updateLabels(Player player) {
+      //get the number of players
+    int num_players = getPlayers().size() - 1;
+    JoinScreen js = (JoinScreen) client.getScreen(View.JOIN_SCREEN);
+    js.changePlayerName(js.getPlayer_names().get(num_players), player.getUsername());
+    js.changeWaitLabel(js.getWaiting_labels().get(num_players), JoinScreen.WaitText.CONNECTED);
   }
 }
