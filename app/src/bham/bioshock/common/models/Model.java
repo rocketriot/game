@@ -54,7 +54,8 @@ public class Model {
 
   public Player getMainPlayer() {
     for (Player player : players) {
-      if (player.getId() == mainPlayerId) return player;
+      if (player.getId().equals(mainPlayerId))
+        return player;
     }
 
     return null;

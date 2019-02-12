@@ -23,7 +23,6 @@ public class GameBoardController extends Controller {
   private GameBoard gameBoard;
   private Player mainPlayer;
   private AStarPathfinding pathFinder;
-  private boolean receivedGrid = false;
 
   public GameBoardController(Client client) {
     this.client = client;
@@ -38,7 +37,7 @@ public class GameBoardController extends Controller {
     server = client.getServer();
     // If the grid is not yet loaded, go to loading screen and fetch the game board
     // from the server
-    if (receivedGrid == false) {
+    if (!hasReceivedGrid()) {
       server.send(new Action(Command.GET_GAME_BOARD));
       client.changeScreen(View.LOADING);
     }
@@ -60,13 +59,10 @@ public class GameBoardController extends Controller {
     players.get(3).setCoordinates(new Coordinates(last, 0));
 
     model.setPlayers(players);
+    mainPlayer = model.getMainPlayer();
 
     client.changeScreen(View.GAME_BOARD);
 
-    receivedGrid = true;
-
-    // TODO change to client's player
-    setMainPlayer(model.getPlayers().get(0));
     pathFinder = new AStarPathfinding(gameBoard.getGrid(), mainPlayer.getCoordinates(), 36, 36);
   }
 
@@ -88,10 +84,6 @@ public class GameBoardController extends Controller {
 
   public Player getMainPlayer() {
     return mainPlayer;
-  }
-
-  public void setMainPlayer(Player p) {
-    this.mainPlayer = p;
   }
 
   public AStarPathfinding getPathFinder() {
@@ -140,7 +132,7 @@ public class GameBoardController extends Controller {
 
       // Send the updated grid to the server
       ArrayList<Serializable> arguments = new ArrayList<>();
-      arguments.add(grid);
+      arguments.add(gameBoard);
       arguments.add(mainPlayer);
       server.send(new Action(Command.MOVE_PLAYER_ON_BOARD, arguments));
     }
@@ -188,6 +180,6 @@ public class GameBoardController extends Controller {
   }
 
   public boolean hasReceivedGrid() {
-    return receivedGrid;
+    return gameBoard.getGrid() != null;
   }
 }
