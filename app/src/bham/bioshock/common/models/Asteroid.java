@@ -1,100 +1,89 @@
 package bham.bioshock.common.models;
 
-import java.io.File;
-import java.nio.file.Files;
-import java.util.Random;
-import java.util.UUID;
-
-import bham.bioshock.common.models.Player;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 
-/**
- * Stores the data of a player on the game board
- */
-public class Asteroid {
-    /**
-     * ID of the planet
-     */
-    private UUID id;
+import java.io.Serializable;
+import java.util.Random;
+import java.util.UUID;
 
-    /**
-     * Name of the asteroid
-     */
-    private String name;
+/** Stores the data of a player on the game board */
+public class Asteroid implements Serializable {
 
-    /**
-     * Location of the asteroid
-     */
-    private Coordinates coordinates;
+  private static final long serialVersionUID = 5775730008817100527L;
 
-    /**
-     * If captured, specifies the player that has captured the asteroid
-     */
-    private Player playerCaptured = null;
+  /** ID of the planet */
+  private UUID id;
 
-    /**
-     * Stores whether the object has been drawn this cycle
-     */
-    private boolean drawn = false;
+  /** Name of the asteroid */
+  private String name;
 
-    /** The texture ID for the object */
-    private int textureID;
+  /** Location of the asteroid */
+  private Coordinates coordinates;
 
-    public Asteroid(String name, Coordinates coordinates) {
-        this.id = UUID.randomUUID();
-        this.name = name;
-        this.coordinates = coordinates;
-        this.randomiseTexture();
-    }
+  /** If captured, specifies the player that has captured the asteroid */
+  private Player playerCaptured = null;
 
-    public UUID getId() {
-        return id;
-    }
+  /** Stores whether the object has been drawn this cycle */
+  private boolean drawn = false;
 
-    private void randomiseTexture() {
-        FileHandle[] fh = Gdx.files.internal("app/assets/entities/planets").list();
-        Random r = new Random();
-        this.setTextureID(r.nextInt(fh.length));
-    }
+  /** The texture ID for the object */
+  private int textureID;
 
-    public String getName() {
-        return name;
-    }
+  public Asteroid(String name, Coordinates coordinates) {
+    this.id = UUID.randomUUID();
+    this.name = name;
+    this.coordinates = coordinates;
+    this.randomiseTexture();
+  }
 
-    public void setName(String name) {
-        this.name = name;
-    }
+  public UUID getId() {
+    return id;
+  }
 
-    public Coordinates getCoordinates() {
-        return coordinates;
-    }
+  private void randomiseTexture() {
+    FileHandle[] fh = Gdx.files.internal("app/assets/entities/planets").list();
+    Random r = new Random();
+    this.setTextureID(r.nextInt(fh.length));
+  }
 
-    public void setCoordinates(Coordinates coordinates) {
-        this.coordinates = coordinates;
-    }
+  public String getName() {
+    return name;
+  }
 
-    public Player getPlayerCaptured() {
-        return playerCaptured;
-    }
+  public void setName(String name) {
+    this.name = name;
+  }
 
-    public void setPlayerCaptured(Player playerCaptured) {
-        this.playerCaptured = playerCaptured;
-    }
+  public Coordinates getCoordinates() {
+    return coordinates;
+  }
 
-    public boolean isDrawn() {
-        return drawn;
-    }
+  public void setCoordinates(Coordinates coordinates) {
+    this.coordinates = coordinates;
+  }
 
-    public void setDrawn(boolean drawn) {
-        this.drawn = drawn;
-    }
+  public Player getPlayerCaptured() {
+    return playerCaptured;
+  }
 
-    public int getTextureID() {
-        return textureID;
-    }
+  public void setPlayerCaptured(Player playerCaptured) {
+    this.playerCaptured = playerCaptured;
+  }
 
-    public void setTextureID(int textureID) {
-        this.textureID = textureID;
-    }
+  public boolean isDrawn() {
+    return drawn;
+  }
+
+  public void setDrawn(boolean drawn) {
+    this.drawn = drawn;
+  }
+
+  public int getTextureID() {
+    return textureID;
+  }
+
+  public void setTextureID(int textureID) {
+    this.textureID = textureID;
+  }
 }

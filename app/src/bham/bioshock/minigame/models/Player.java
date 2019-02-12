@@ -1,96 +1,86 @@
 package bham.bioshock.minigame.models;
 
-import java.util.HashMap;
-
+import bham.bioshock.minigame.PlayerTexture;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
-
-import bham.bioshock.minigame.PlayerTexture;
-import bham.bioshock.minigame.physics.SpeedVector;
+import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 public class Player extends Entity {
-		
-	private PlayerTexture dir;
-	private static HashMap<PlayerTexture, Texture> textures = new HashMap<>();
-	
-	private final double GRAVITY = 5000;
-	private final double JUMP_FORCE = 1400;
-	private final double GROUND_FRICTION = 0.2;
-	private final double AIR_FRICTION = 0.01;
-	private float v = 200f;
-	
-	private boolean flying = false;
-	private SpeedVector speed;
-	
-	
-	public Player(float x, float y) {
-		super(x, y);
-		SIZE = 150;
-		speed = new SpeedVector();
-		update(0);
-	}
-	
-	public Player() {
-		this(0f, 0f);
-	}
-	
-	public void moveLeft(float delta) {
-		if(!flying) {
-			speed.apply(270, v);
-		}
-		dir = PlayerTexture.LEFT;
-	}
-	
-	public void moveRight(float delta) {
-		if(!flying) {
-			speed.apply(90, v);			
-		}
-		dir = PlayerTexture.RIGHT;
-	}
-	
-	public void jump(float delta) {
-		if(!flying) {
-			speed.apply(0, JUMP_FORCE);			
-		}
-		flying = true;
-	}
-	
-	public void update(float delta) {
-		if(pos.y >= 0) {
-			speed.apply(180, GRAVITY*delta);
-		} else {
-			speed.stopY();
-			pos.y = 0;
-		}
-		pos.y += speed.dY()*delta;
-		pos.x += speed.dX()*delta;
-		
-		if(!flying) {
-			speed.friction(GROUND_FRICTION, 0);						
-		} else {
-			speed.friction(AIR_FRICTION, 0);
-		}
-		
-		dir = PlayerTexture.FRONT;
-		if(flying) {
-			if(pos.y <= 0f) {
-				flying = false;
-				pos.y = 0f;
-			}
-		}
-	}
-	
-	public static void loadTextures() {
-		textures.put(PlayerTexture.LEFT, new Texture(Gdx.files.internal("app/assets/minigame/left.png")));
-		textures.put(PlayerTexture.RIGHT, new Texture(Gdx.files.internal("app/assets/minigame/right.png")));
-		textures.put(PlayerTexture.FRONT, new Texture(Gdx.files.internal("app/assets/minigame/face.png")));
-	}
-	
-	public static Texture getTexture(PlayerTexture pt) {
-		return textures.get(pt);
-	}
-	
-	public Texture getTexture() {
-		return getTexture(dir);
-	}
+
+  private static final int FRAMES = 11;
+  private static Animation<TextureRegion> walkAnimation;
+  private static TextureRegion frontTexture;
+  private final double JUMP_FORCE = 700;
+  float animationTime;
+  private PlayerTexture dir;
+  private float v = 700f;
+
+  public Player(float x, float y) {
+    super(x, y);
+    SIZE = 100;
+    animationTime = 0;
+    fromGround = -25;
+    update(0);
+  }
+
+  public Player() {
+    this(0f, 0f);
+  }
+
+  public static void loadTextures() {
+    Texture walkSheet = new Texture(Gdx.files.internal("app/assets/minigame/astronaut.png"));
+
+    TextureRegion[][] tmp =
+        TextureRegion.split(walkSheet, walkSheet.getWidth() / FRAMES, walkSheet.getHeight());
+
+    TextureRegion[] walkFrames = new TextureRegion[FRAMES - 1];
+    int index = 0;
+    frontTexture = tmp[0][0];
+    for (int i = 1; i < FRAMES; i++) {
+      walkFrames[index++] = tmp[0][i];
+    }
+
+    walkAnimation = new Animation<TextureRegion>(0.1f, walkFrames);
+  }
+
+  public void moveLeft(float delta) {
+    if (!isFlying()) {
+      speed.apply(angleFromCenter() + 270, v * GROUND_FRICTION);
+    }
+    dir = PlayerTexture.LEFT;
+  }
+
+  public void moveRight(float delta) {
+    if (!isFlying()) {
+      speed.apply(angleFromCenter() + 90, v * GROUND_FRICTION);
+    }
+    dir = PlayerTexture.RIGHT;
+  }
+
+  public void jump(float delta) {
+    if (!isFlying()) {
+      speed.apply(angleFromCenter(), JUMP_FORCE);
+    }
+  }
+
+  public void update(float delta) {
+    super.update(delta);
+    animationTime += delta;
+    dir = PlayerTexture.FRONT;
+  }
+
+  public TextureRegion getTexture() {
+    if (dir == PlayerTexture.FRONT) {
+      return frontTexture;
+    }
+    TextureRegion region = walkAnimation.getKeyFrame(animationTime, true);
+    if (region.isFlipX()) {
+      region.flip(true, false);
+    }
+    if (dir == PlayerTexture.LEFT) {
+      region.flip(true, false);
+    }
+    return region;
+  }
 }

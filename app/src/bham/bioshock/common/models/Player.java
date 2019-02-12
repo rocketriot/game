@@ -1,121 +1,110 @@
 package bham.bioshock.common.models;
 
+import java.io.Serializable;
 import java.util.UUID;
 
-/**
- * Stores the data of a player on the game board
- */
-public class Player {
-    /** ID of the player */
-    private UUID id;
+/** Stores the data of a player on the game board */
+public class Player implements Serializable {
 
-    /** Username of the player */
-    private String username;
+  private static final long serialVersionUID = 5775730008817100527L;
 
-    /** Location of the player */
-    private Coordinates coordinates;
+  /** ID of the player */
+  private UUID id;
 
-    /** The amount of fuel the player has left */
-    private float fuel = 10000.0f;
+  /** Username of the player */
+  private String username;
 
-    /** The number of planets the player has captured */
-    private int planetsCaptured = 0;
+  /** Location of the player */
+  private Coordinates coordinates;
 
-    /** Specifies if the player is controlled by AI */
-    private boolean isCpu = false;
+  /** The amount of fuel the player has left */
+  private float fuel = 100.0f;
 
-    /** Player's textureID */
-    private int textureID;
+  /** The number of planets the player has captured */
+  private int planetsCaptured = 0;
 
-    /** The number of points the player has */
-    private int points =0;
+  /** Specifies if the player is controlled by AI */
+  private boolean isCpu = false;
 
-    public Player() {
-        this.id = UUID.randomUUID();
-        this.textureID = 0;
-    }
+  /** Player's textureID */
+  private int textureID;
 
-    public Player(String username) {
-        this();
-        this.username = username;
-    }
+  /** The number of points the player has */
+  private int points = 0;
 
-    public Player(UUID id, String username) {
-    	this(id, username, false);
-    }
+  public Player() {
+    this.id = UUID.randomUUID();
+    this.textureID = 0;
+  }
 
-    public Player(boolean isCpu) {
-        this();
-        this.isCpu = isCpu;
-    }
+  public Player(String username) {
+    this();
+    this.username = username;
+  }
 
-    public Player(UUID id, String username, boolean isCpu) {
-        this.id = id;
-        this.username = username;
-        this.isCpu = isCpu;
-    }
+  public Player(String username, boolean isCpu) {
+    this();
+    this.username = username;
+    this.isCpu = isCpu;
+  }
 
-    @Deprecated
-    public Player(Coordinates coordinates, int textureID) {
-        this.id = UUID.randomUUID();
-        this.coordinates = coordinates;
-        this.textureID = textureID;
-    }
+  public UUID getId() {
+    return id;
+  }
 
+  public boolean isCpu() {
+    return isCpu;
+  }
 
-    public UUID getId() {
-        return id;
-    }
+  public void setCpu(boolean cpu) {
+    isCpu = cpu;
+  }
 
-    public String getUsername() {
-        return username;
-    }
+  public String getUsername() {
+    return username;
+  }
 
-    public Coordinates getCoordinates() {
-        return coordinates;
-    }
+  public void setUsername(String username) {
+    this.username = username;
+  }
 
-    public void setCoordinates(Coordinates coordinates) {
-        this.coordinates = coordinates;
-    }
+  public Coordinates getCoordinates() {
+    return coordinates;
+  }
 
-    public float getFuel() {
-        return fuel;
-    }
+  public void setCoordinates(Coordinates coordinates) {
+    this.coordinates = coordinates;
+  }
 
-    public void setFuel(float fuel) {
-        this.fuel = fuel;
-    }
+  public float getFuel() {
+    return fuel;
+  }
 
-    public int getPlanetsCaptured() {
-        return planetsCaptured;
-    }
+  public void setFuel(float fuel) {
+    this.fuel = fuel;
+  }
 
-    public void setPlanetsCaptured(int planetsCaptured) {
-        this.planetsCaptured = planetsCaptured;
-    }
+  public int getPlanetsCaptured() {
+    return planetsCaptured;
+  }
 
-    public boolean isCpu() {
-        return isCpu;
-    }
+  public void setPlanetsCaptured(int planetsCaptured) {
+    this.planetsCaptured = planetsCaptured;
+  }
 
-    public void setCpu(boolean cpu) {
-        isCpu = cpu;
-    }
+  public int getPoints() {
+    return points;
+  }
 
-    public int getPoints(){
-        return points;
-    }
+  public void setPoints(int points) {
+    this.points = points;
+  }
 
-    public void setPoints(int points){
-        this.points = points;
-    }
+  public int getTextureID() {
+    return textureID;
+  }
 
-    public int getTextureID() {
-        return textureID;
-    }
-
-    public void setTextureID(int textureID) {
-        this.textureID = textureID;
-    }
+  public void setTextureID(int textureID) {
+    this.textureID = textureID;
+  }
 }

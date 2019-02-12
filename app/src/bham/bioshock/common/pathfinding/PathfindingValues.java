@@ -39,9 +39,8 @@ public class PathfindingValues {
         }
     }
 
-    // method to get the pathCost
-    public int getPathCost() {
-        return pathCost;
+    if (parent != null) {
+      setParent(parent);
     }
 
     // method to get the heuristicCost

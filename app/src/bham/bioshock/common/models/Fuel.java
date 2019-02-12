@@ -1,42 +1,43 @@
 package bham.bioshock.common.models;
 
+import java.io.Serializable;
 import java.util.UUID;
 
-/**
- * Stores the data of a fuel box
- */
-public class Fuel {
-    /** ID of the fuel */
-    private UUID id;
+/** Stores the data of a fuel box */
+public class Fuel implements Serializable {
+  private static final long serialVersionUID = 5775730008817100527L;
 
-    /** Location of the fuel */
-    private Coordinates coordinates;
+  /** ID of the fuel */
+  private UUID id;
 
-    /** The amount of fuel that the fuel box holds */
-    private float value = 20.0f;
+  /** Location of the fuel */
+  private Coordinates coordinates;
 
-    public Fuel(Coordinates coordinates) {
-        this.id = UUID.randomUUID();
-        this.coordinates = coordinates;
-    }
+  /** The amount of fuel that the fuel box holds */
+  private float value = 20.0f;
 
-    public UUID getId() {
-        return id;
-    }
+  public Fuel(Coordinates coordinates) {
+    this.id = UUID.randomUUID();
+    this.coordinates = coordinates;
+  }
 
-    public Coordinates getCoordinates() {
-        return coordinates;
-    }
+  public UUID getId() {
+    return id;
+  }
 
-    public void setCoordinates(Coordinates coordinates) {
-        this.coordinates = coordinates;
-    }
+  public Coordinates getCoordinates() {
+    return coordinates;
+  }
 
-    public float getValue() {
-        return value;
-    }
+  public void setCoordinates(Coordinates coordinates) {
+    this.coordinates = coordinates;
+  }
 
-    public void setValue(float value) {
-        this.value = value;
-    }
+  public float getValue() {
+    return value;
+  }
+
+  public void setValue(float value) {
+    this.value = value;
+  }
 }
