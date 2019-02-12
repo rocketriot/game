@@ -26,21 +26,21 @@ public class PathfindingValues {
             setPathCost(pathCost);
             setHeuristicCost(heuristicCost);
             updateTotalCost();
-            setPassable(true);
         } else {
             setPathCost(Integer.MAX_VALUE);
             setHeuristicCost(Integer.MAX_VALUE);
             setTotalCost(Integer.MAX_VALUE);
-            setPassable(false);
         }
+        this.passable = passable;
 
         if (parent != null){
             setParent(parent);
         }
     }
 
-    if (parent != null) {
-      setParent(parent);
+    // method to get the pathCost
+    public int getPathCost() {
+        return pathCost;
     }
 
     // method to get the heuristicCost
@@ -86,10 +86,5 @@ public class PathfindingValues {
     // method to set the parent
     public void setParent(Coordinates parent) {
         this.parent = parent;
-    }
-
-    // method to set whether a point is passable
-    public void setPassable(Boolean passable) {
-        this.passable = passable;
     }
 }

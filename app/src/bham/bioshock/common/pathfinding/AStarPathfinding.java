@@ -117,8 +117,6 @@ public class AStarPathfinding {
         }
         return new ArrayList<>();
     }
-    return null;
-  }
 
     /*
      * Method to set the start position of the pathfinding algorithm
@@ -154,17 +152,18 @@ public class AStarPathfinding {
      */
     private PathfindingValues[][] setAStarGrid() {
 
-    PathfindingValues[][] tempGrid = new PathfindingValues[maxX][maxY]; // temporary grid to return
+        PathfindingValues[][] tempGrid = new PathfindingValues[maxX][maxY]; // temporary grid to return
 
-    // go through the passed gameGrid and assign values accordingly to the temporary grid
-    for (int x = 0; x < maxX; x++) {
-      for (int y = 0; y < maxY; y++) {
+        // go through the passed gameGrid and assign values accordingly to the temporary grid
+        for (int x = 0; x < maxX; x++) {
+            for (int y = 0; y < maxY; y++) {
 
-        if (gameGrid[x][y].getType() == GridPoint.Type.EMPTY
-            || gameGrid[x][y].getType() == GridPoint.Type.FUEL) {
-          tempGrid[x][y] = new PathfindingValues(0, 0, null, true);
-        } else {
-          tempGrid[x][y] = new PathfindingValues(0, 0, null, false);
+                if (gameGrid[x][y].getType() == GridPoint.Type.EMPTY || gameGrid[x][y].getType() == GridPoint.Type.FUEL) {
+                    tempGrid[x][y] = new PathfindingValues(0, 0, null, true);
+                } else {
+                    tempGrid[x][y] = new PathfindingValues(0, 0, null, false);
+                }
+            }
         }
         return tempGrid;
     }
@@ -190,8 +189,9 @@ public class AStarPathfinding {
         double minimumCost = Integer.MAX_VALUE;
         Coordinates nextPoint = new Coordinates(Integer.MAX_VALUE, Integer.MAX_VALUE);
 
-  // method to find the point on the grid that has the minimum value in a list
-  private Coordinates findMinPoint(ArrayList<Coordinates> list) {
+        // iterate through the list to get an entrySet
+        for (Coordinates currentCoords : list) {
+            PathfindingValues value = aStarGrid[currentCoords.getX()][currentCoords.getY()];
 
             // check if the point can be traversed to
             if (value.isPassable() || currentCoords == startPosition) {
@@ -233,34 +233,33 @@ public class AStarPathfinding {
      */
     private ArrayList<Coordinates> generateSuccessors(Coordinates currentPoint, ArrayList<Coordinates> closedList) {
 
-      // check if the point can be traversed to
-      if (value.isPassable() || currentCoords == startPosition) {
-        // check if the current point has a lower cost than the current lowest cost point
-        if (value.getTotalCost() < minimumCost) {
-          minimumCost = value.getTotalCost();
-          nextPoint = currentCoords;
+        ArrayList<Coordinates> successors = new ArrayList<>();
+
+        // check point directly above current point
+        Coordinates upPoint = new Coordinates(currentPoint.getX(), currentPoint.getY() + 1);
+        if (isValid(upPoint) && !checkList(upPoint, closedList)) {
+            successors.add(upPoint);
         }
-      }
-    }
-    return nextPoint;
-  }
 
-  // method to find the heuristic values for a node using Manhattan Distance
-  private int findHeuristic(Coordinates position) {
-    return (Math.abs(goalPosition.getX() - position.getX())
-        + Math.abs(goalPosition.getY() - position.getY()));
-  }
+        // check point directly below currently point
+        Coordinates downPoint = new Coordinates(currentPoint.getX(), currentPoint.getY() - 1);
+        if (isValid(downPoint) && !checkList(downPoint, closedList)) {
+            successors.add(downPoint);
+        }
 
-  // method to generate the successors of the current point
-  private ArrayList<Coordinates> generateSuccessors(
-      Coordinates currentPoint, ArrayList<Coordinates> closedList) {
+        // check point to the left of the current point
+        Coordinates leftPoint = new Coordinates(currentPoint.getX() - 1, currentPoint.getY());
+        if (isValid(leftPoint) && !checkList(leftPoint, closedList)) {
+            successors.add(leftPoint);
+        }
 
-    ArrayList<Coordinates> successors = new ArrayList<>();
+        // check point to the right of the current point
+        Coordinates rightPoint = new Coordinates(currentPoint.getX() + 1, currentPoint.getY());
+        if (isValid(rightPoint) && !checkList(rightPoint, closedList)) {
+            successors.add(rightPoint);
+        }
 
-    // check point directly above current point
-    Coordinates upPoint = new Coordinates(currentPoint.getX(), currentPoint.getY() + 1);
-    if (isValid(upPoint) && !checkList(upPoint, closedList)) {
-      successors.add(upPoint);
+        return successors;
     }
 
     /*
