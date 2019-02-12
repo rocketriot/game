@@ -7,8 +7,12 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class CommunicationServer {
+  private static final Logger logger = LogManager.getLogger(CommunicationServer.class);
+  
   private static ServerService createNewConnection(Socket socket, ServerHandler handler)
       throws IOException {
     // Create streams for input and output
@@ -33,9 +37,9 @@ public class CommunicationServer {
     try {
       serverSocket = new ServerSocket(Config.PORT);
     } catch (IOException e) {
-      System.err.println("Couldn't listen on port " + Config.PORT);
+      logger.error("Couldn't listen on port " + Config.PORT);
     }
-    System.out.println("Server started!");
+    logger.debug("Server started!");
     Thread discoveryThread = discoverClients();
 
     try {

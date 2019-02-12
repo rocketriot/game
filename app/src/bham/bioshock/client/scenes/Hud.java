@@ -98,16 +98,16 @@ public class Hud implements Disposable {
         int selected = optionsMenu.getSelectedIndex();
         switch (selected) {
           case 1:
-            router.call(Route.PREFERENCES);
             optionsMenu.setSelected(menuOptions[0]);
+            router.call(Route.PREFERENCES);
             break;
           case 2:
-            router.call(Route.MAIN_MENU);
             optionsMenu.setSelected(menuOptions[0]);
+            router.call(Route.MAIN_MENU);
             break;
           case 3:
-            Gdx.app.exit();
             optionsMenu.setSelected(menuOptions[0]);
+            Gdx.app.exit();
             break;
         }
       }

@@ -1,6 +1,7 @@
 package bham.bioshock.client.controllers;
 
 import bham.bioshock.client.Router;
+import bham.bioshock.client.BoardGame;
 import bham.bioshock.client.Route;
 import bham.bioshock.common.consts.GridPoint;
 import bham.bioshock.common.models.*;
@@ -18,6 +19,7 @@ public class GameBoardController extends Controller {
 
   private IClientService clientService;
   private Store store;
+  private BoardGame game;
   private Router router;
   private GameBoard gameBoard;
   private Player mainPlayer;
@@ -25,10 +27,11 @@ public class GameBoardController extends Controller {
   private boolean receivedGrid = false;
 
   @Inject
-  public GameBoardController(Router router, Store store, IClientService clientService) {
+  public GameBoardController(Router router, Store store, IClientService clientService, BoardGame game) {
     super(store, router);
     this.clientService = clientService;
     this.router = router;
+    this.game = game;
     gameBoard = store.getGameBoard();
   }
 
@@ -38,6 +41,8 @@ public class GameBoardController extends Controller {
     if (receivedGrid == false) {
       router.call(Route.LOADING);
       clientService.send(new Action(Command.GET_GAME_BOARD));
+    } else {
+
     }
   }
 
@@ -49,43 +54,15 @@ public class GameBoardController extends Controller {
     receivedGrid = true;
 
     // TODO change to client's player
-    setMainPlayer(store.getPlayers().get(0));
+    // setMainPlayer(store.getPlayers().get(0));
     pathFinder = new AStarPathfinding(gameBoard.getGrid(), mainPlayer.getCoordinates(), 36, 36);
     // router.changeScreen(View.GAME_BOARD);
   }
 
-  // TODO: Use store
-  public ArrayList<Player> getPlayers() {
-    return store.getPlayers();
-  }
-
-  // TODO: Use store
-  public Player getMainPlayer() {
-    return mainPlayer;
-  }
-
-  // TODO: Use store
-  public void setMainPlayer(Player p) {
-    this.mainPlayer = p;
-  }
 
   public AStarPathfinding getPathFinder() {
     pathFinder.setStartPosition(mainPlayer.getCoordinates());
     return pathFinder;
-  }
-
-  public boolean[] getPathColour(ArrayList<Coordinates> path) {
-    boolean[] allowedMove = new boolean[path.size()];
-    float fuel = mainPlayer.getFuel();
-    for (int i = 0; i < path.size(); i++) {
-      if (fuel < 10f) {
-        allowedMove[i] = false;
-      } else {
-        allowedMove[i] = true;
-        fuel -= 10;
-      }
-    }
-    return allowedMove;
   }
 
   public void move(Coordinates destination) {

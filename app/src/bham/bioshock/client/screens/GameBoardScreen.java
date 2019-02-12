@@ -11,6 +11,7 @@ import bham.bioshock.common.models.GameBoard;
 import bham.bioshock.common.models.Planet;
 import bham.bioshock.common.models.Player;
 import bham.bioshock.common.models.Store;
+import bham.bioshock.common.pathfinding.AStarPathfinding;
 import com.badlogic.gdx.*;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
@@ -32,6 +33,7 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
 
   private GameBoard gameBoard;
   private Store store;
+  private AStarPathfinding pathFinder;
   
   private SpriteBatch batch;
   private Sprite background;
@@ -82,7 +84,7 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
   }
 
   private void setupUI() {
-    hud = new Hud(batch, skin, GAME_WORLD_WIDTH, GAME_WORLD_HEIGHT, store);
+    hud = new Hud(batch, skin, GAME_WORLD_WIDTH, GAME_WORLD_HEIGHT, store, router);
     background = new Sprite(new Texture(Gdx.files.internal("app/assets/backgrounds/game.png")));
   }
 
@@ -239,40 +241,54 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
 
   @Override
   public void render(float delta) {
-    if (controller.hasReceivedGrid() == true) {
-      batch.setProjectionMatrix(camera.combined);
-      Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-      handleInput();
-      camera.update();
+    batch.setProjectionMatrix(camera.combined);
+    Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+    handleInput();
+    camera.update();
 
-      batch.begin();
+    batch.begin();
 
-      drawBackground();
-      drawBoardObjects();
-      drawPath();
+    drawBackground();
+    drawBoardObjects();
+    drawPath();
 
-      batch.end();
+    batch.end();
 
-      drawGridLines();
+    drawGridLines();
 
-      // Draw the ui
-      this.batch.setProjectionMatrix(hud.stage.getCamera().combined);
-      hud.getStage().act(Gdx.graphics.getDeltaTime());
-      hud.updateHud();
-      hud.getStage().draw();
-    }
+    // Draw the ui
+    this.batch.setProjectionMatrix(hud.stage.getCamera().combined);
+    hud.getStage().act(Gdx.graphics.getDeltaTime());
+    hud.updateHud();
+    hud.getStage().draw();
   }
 
+  public boolean[] getPathColour(ArrayList<Coordinates> path) {
+    boolean[] allowedMove = new boolean[path.size()];
+    float fuel = store.getMainPlayer().getFuel();
+    for (int i = 0; i < path.size(); i++) {
+      if (fuel < 10f) {
+        allowedMove[i] = false;
+      } else {
+        allowedMove[i] = true;
+        fuel -= 10;
+      }
+    }
+    return allowedMove;
+  }
+  
   private void drawPath() {
     if (playerSelected == true) {
       sh.setProjectionMatrix(camera.combined);
       sh.begin(ShapeRenderer.ShapeType.Filled);
       Gdx.gl.glEnable(GL30.GL_BLEND);
       Gdx.gl.glBlendFunc(GL30.GL_SRC_ALPHA, GL30.GL_ONE_MINUS_SRC_ALPHA);
-      boolean[] allowedPath = controller.getPathColour(path);
+      
+      boolean[] allowedPath = getPathColour(path);
+      
       // Draw white box at player position
       sh.setColor(255, 255, 255, 0.4f);
-      Coordinates playerCoords = controller.getMainPlayer().getCoordinates();
+      Coordinates playerCoords = store.getMainPlayer().getCoordinates();
       sh.rect(PPS * playerCoords.getX(), PPS * playerCoords.getY(), PPS, PPS);
       // Draw Path
       for (int i = 1; i < path.size(); i++) {
@@ -372,7 +388,7 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
       mouseDownY = screenY;
 
       // Selecting your ship
-      ArrayList<Player> players = controller.getPlayers();
+      ArrayList<Player> players = store.getPlayers();
       Player player = players.get(0);
 
       if (clickCoords.x >= player.getCoordinates().getX() * PPS
@@ -421,8 +437,8 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
       if (!oldGridCoords.isEqual(gridCoords)) {
         if (gridCoords.getX() < gridSize - 1 && gridCoords.getX() >= 0) {
           if (gridCoords.getY() < gridSize - 1 && gridCoords.getY() >= 0) {
-            if (!gridCoords.isEqual(controller.getMainPlayer().getCoordinates())) {
-              path = controller.getPathFinder().pathfind(gridCoords);
+            if (!gridCoords.isEqual(store.getMainPlayer().getCoordinates())) {
+              path = pathFinder.pathfind(gridCoords);
               oldGridCoords = gridCoords;
             }
           }

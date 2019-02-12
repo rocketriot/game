@@ -1,6 +1,7 @@
 package bham.bioshock.communication.client;
 
 import bham.bioshock.communication.Config;
+import bham.bioshock.communication.server.CommunicationServer;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -8,11 +9,15 @@ import java.net.ConnectException;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import com.google.inject.Singleton;
 
 @Singleton
 public class CommunicationClient {
 
+  private static final Logger logger = LogManager.getLogger(CommunicationClient.class);
+  
   public static String hostAddress;
   public static int port = Config.PORT;
   private ClientService service = null;
@@ -43,6 +48,7 @@ public class CommunicationClient {
     // We are connected to the server, create a service to get and send messages
     service = new ClientService(server, fromServer, toServer);
     service.start();
+    logger.debug("Client connected!");
     return service;
   }
 
