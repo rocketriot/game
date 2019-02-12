@@ -20,7 +20,7 @@ public class Player implements Serializable {
     private Coordinates coordinates;
 
     /** The amount of fuel the player has left */
-    private float fuel = 10000.0f;
+    private float fuel = 100.0f;
 
     /** The number of planets the player has captured */
     private int planetsCaptured = 0;
