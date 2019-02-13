@@ -31,7 +31,6 @@ public abstract class ScreenMaster implements Screen {
   protected TextButton back_button;
 
   protected Skin skin = new Skin(Gdx.files.internal("app/assets/skins/neon/skin/neon-ui.json"));
-  private Texture background;
 
   public ScreenMaster() {
     screen_width = Gdx.graphics.getWidth();
@@ -46,8 +45,6 @@ public abstract class ScreenMaster implements Screen {
     // set the back button to take you to main menu - for now
     setPrevious(Client.View.MAIN_MENU);
     // drawBackground();
-    // Create background
-    background = new Texture(Gdx.files.internal("app/assets/backgrounds/menu.png"));
   }
 
   /** Set's up all the fonts needed for the screen */
@@ -77,6 +74,8 @@ public abstract class ScreenMaster implements Screen {
     Gdx.gl.glClearColor(0, 0, 0, 0);
     Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
+    // Create background
+    Texture background = new Texture(Gdx.files.internal("app/assets/backgrounds/menu.png"));
 
     batch.begin();
     batch.draw(background, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
@@ -127,7 +126,6 @@ public abstract class ScreenMaster implements Screen {
   public void dispose() {
     stage.dispose();
     batch.dispose();
-    background.dispose();
   }
 
   protected void Alert(String alert_text) {

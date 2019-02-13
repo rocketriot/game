@@ -19,42 +19,28 @@ public class Hud implements Disposable {
   private final Skin skin;
   private final float gameWidth;
   private final float gameHeight;
-  private GameBoardController controller;
-  private HorizontalGroup topBar;
-  private SelectBox<String> optionsMenu;
   public Stage stage;
   public FitViewport viewport;
+  private GameBoardController controller;
+  private HorizontalGroup topBar;
+  private SelectBox optionsMenu;
   private ProgressBar fuelBar;
   private String fuelString;
   private TextArea fuelLabel;
   private Table table;
   private ArrayList<Label> labels;
 
-  public Hud(SpriteBatch batch, Skin skin, int gameWidth, int gameHeight, GameBoardController controller) {
+  public Hud(
+      SpriteBatch batch, Skin skin, int gameWidth, int gameHeight, GameBoardController controller) {
     this.controller = controller;
     this.skin = skin;
     this.gameWidth = gameWidth / 1.5f;
-    this.gameHeight = gameHeight /1.5f;
+    this.gameHeight = gameHeight / 1.5f;
     viewport = new FitViewport(this.gameWidth, this.gameHeight, new OrthographicCamera());
     stage = new Stage(viewport, batch);
     setupTopBar();
     setupFuelBar();
     setupScoreList();
-    setupBottomBar();
-  }
-
-  private void setupBottomBar() {
-    HorizontalGroup bottomBar = new HorizontalGroup();
-    bottomBar.bottom();
-    TextButton endTurnButton = new TextButton("End Turn", skin);
-    bottomBar.addActor(endTurnButton);
-    stage.addActor(bottomBar);
-    endTurnButton.addListener(new ChangeListener() {
-      @Override
-      public void changed(ChangeEvent event, Actor actor) {
-        //TODO Add end turn code
-      }
-    });
   }
 
   private void setupFuelBar() {
@@ -69,7 +55,7 @@ public class Hud implements Disposable {
   private void setupScoreList() {
     table = new Table();
     table.top();
-    table.setPosition(0 , 0);
+    table.setPosition(0, 0);
     table.setFillParent(true);
     stage.addActor(table);
 
@@ -93,7 +79,7 @@ public class Hud implements Disposable {
     topBar.top();
 
     // Adds widgets to the topBar
-    optionsMenu = new SelectBox<>(skin);
+    optionsMenu = new SelectBox(skin);
     String[] menuOptions = {"Options Menu", "Settings", "Quit to main menu", "Quit to Desktop"};
     optionsMenu.setItems(menuOptions);
     optionsMenu.setSelected(menuOptions[0]);
@@ -102,27 +88,27 @@ public class Hud implements Disposable {
     stage.addActor(topBar);
 
     // Add listeners for each option
-    optionsMenu.addListener(new ChangeListener() {
-      @Override
-      public void changed(ChangeEvent event, Actor actor) {
-        int selected = optionsMenu.getSelectedIndex();
-        switch (selected) {
-          case 1:
-            controller.changeScreen(Client.View.PREFERENCES);
-            optionsMenu.setSelected(menuOptions[0]);
-            break;
-          case 2:
-            controller.changeScreen(Client.View.MAIN_MENU);
-            optionsMenu.setSelected(menuOptions[0]);
-            break;
-          case 3:
-            Gdx.app.exit();
-            optionsMenu.setSelected(menuOptions[0]);
-            break;
-        }
-
-      }
-    });
+    optionsMenu.addListener(
+        new ChangeListener() {
+          @Override
+          public void changed(ChangeEvent event, Actor actor) {
+            int selected = optionsMenu.getSelectedIndex();
+            switch (selected) {
+              case 1:
+                controller.changeScreen(Client.View.PREFERENCES);
+                optionsMenu.setSelected(menuOptions[0]);
+                break;
+              case 2:
+                controller.changeScreen(Client.View.MAIN_MENU);
+                optionsMenu.setSelected(menuOptions[0]);
+                break;
+              case 3:
+                Gdx.app.exit();
+                optionsMenu.setSelected(menuOptions[0]);
+                break;
+            }
+          }
+        });
   }
 
   public void updateHud() {
@@ -131,6 +117,9 @@ public class Hud implements Disposable {
     fuelLabel.setText(fuelString);
 
     ArrayList<Player> players = controller.getPlayers();
+    /*for (int i = 0; i < 4; i++) {
+        labels.get(i).setText(players.get(i).getUsername() + ": " + players.get(i).getPoints());
+    }*/
 
     table.clearChildren();
     labels = new ArrayList<>();
