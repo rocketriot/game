@@ -83,7 +83,7 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
     for (int x = 0; x < grid.length; x++) {
       for (int y = 0; y < grid[x].length; y++) {
         GridPoint.Type pType = grid[x][y].getType();
-          
+
         if (pType == GridPoint.Type.PLANET) {
           Planet p = (Planet) grid[x][y].getValue();
           if (p.isDrawn() == false) {
@@ -118,9 +118,9 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
       }
     }
 
-    for (Player player: controller.getPlayers()) {
+    for (Player player : controller.getPlayers()) {
       sprite = playerSprites.get(player.getTextureID());
-      
+
       if (playerSelected == true && player.equals(controller.getMainPlayer()))
         sprite = outlinedPlayerSprites.get(player.getTextureID());
 

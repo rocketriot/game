@@ -7,10 +7,10 @@ import java.util.UUID;
 public class Model {
   /** Max number of players in a game */
   public final int MAX_PLAYERS = 4;
-  
+
   /** Contains all of the information about the game board */
   private GameBoard gameBoard = new GameBoard();
-  
+
   /** A list of players */
   private ArrayList<Player> players = new ArrayList<>(MAX_PLAYERS);
 
@@ -19,7 +19,7 @@ public class Model {
 
   /** The game's round */
   private int round = 0;
-  
+
   /** The next player's turn */
   private int turn = 0;
 
@@ -62,8 +62,7 @@ public class Model {
 
   public Player getMainPlayer() {
     for (Player player : players) {
-      if (player.getId().equals(mainPlayerId))
-        return player;
+      if (player.getId().equals(mainPlayerId)) return player;
     }
 
     return null;
@@ -82,7 +81,7 @@ public class Model {
   }
 
   /** After a player has finished their turn, set the next turn */
-  public void nextTurn() {    
+  public void nextTurn() {
     // If all players have had their turn, go to next round
     if (++turn == MAX_PLAYERS) {
       round++;

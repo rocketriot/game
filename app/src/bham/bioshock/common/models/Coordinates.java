@@ -31,6 +31,6 @@ public class Coordinates implements Serializable {
   }
 
   public Boolean isEqual(Coordinates toCheck) {
-      return x == toCheck.getX() && y == toCheck.getY();
+    return x == toCheck.getX() && y == toCheck.getY();
   }
 }
