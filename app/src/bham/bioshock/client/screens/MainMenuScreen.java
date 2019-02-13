@@ -140,7 +140,7 @@ public class MainMenuScreen extends ScreenMaster {
         if (object.equals(true)) {
           String host_name = textField.getText();
           if (host_name.equals("")) {
-            Alert("Please Enter a Host Name");
+            alert("Please Enter a Host Name");
           } else {
             // show join screen
             router.call(Route.HOST_GAME, host_name);
@@ -171,7 +171,7 @@ public class MainMenuScreen extends ScreenMaster {
           String username = textField.getText();
 
           if (username.equals("")) {
-            Alert("Please Enter a Username");
+            alert("Please Enter a Username");
           } else {
             router.call(Route.JOIN_SCREEN, username);
           }

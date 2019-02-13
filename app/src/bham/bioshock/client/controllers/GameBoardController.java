@@ -20,7 +20,6 @@ import java.util.Random;
 public class GameBoardController extends Controller {
 
   private IClientService clientService;
-  private BoardGame game;
   private Router router;
   private GameBoard gameBoard;
   private Player mainPlayer;
@@ -28,14 +27,12 @@ public class GameBoardController extends Controller {
 
   @Inject
   public GameBoardController(Router router, Store store, IClientService clientService, BoardGame game) {
-    super(store, router);
+    super(store, router, game);
     this.clientService = clientService;
     this.router = router;
-    this.game = game;
     gameBoard = store.getGameBoard();
     mainPlayer = store.getMainPlayer();
   }
-
   public void show() {
     // If the grid is not yet loaded, go to loading screen and fetch the game board
     // from the server

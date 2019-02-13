@@ -1,6 +1,7 @@
 package bham.bioshock.client.screens;
 
 import bham.bioshock.client.Router;
+import org.lwjgl.opengl.Display;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.files.FileHandle;
@@ -24,6 +25,8 @@ public abstract class ScreenMaster implements Screen {
   protected float screen_width;
   protected float screen_height;
 
+  protected Texture background;
+
   protected BitmapFont font12;
   protected BitmapFont font18;
 
@@ -39,6 +42,9 @@ public abstract class ScreenMaster implements Screen {
 
   @Override
   public void show() {
+    // Create background
+    background = new Texture(Gdx.files.internal("app/assets/backgrounds/menu.png"));
+
     setupFonts();
 
     addBackButton();
@@ -74,9 +80,6 @@ public abstract class ScreenMaster implements Screen {
     Gdx.gl.glClearColor(0, 0, 0, 0);
     Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-    // Create background
-    Texture background = new Texture(Gdx.files.internal("app/assets/backgrounds/menu.png"));
-
     batch.begin();
     batch.draw(background, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
     batch.end();
@@ -109,7 +112,6 @@ public abstract class ScreenMaster implements Screen {
     stage.getViewport().update(width, height, true);
     screen_width = Gdx.graphics.getWidth();
     screen_height = Gdx.graphics.getHeight();
-
   }
 
   @Override
@@ -127,18 +129,15 @@ public abstract class ScreenMaster implements Screen {
     batch.dispose();
   }
 
-  protected void Alert(String alert_text) {
+  public void alert(String alert_text) {
 
+    Dialog diag = new Dialog("", skin) {
 
-    Dialog diag = new Dialog("", skin){
+      protected void result(Object object) {
 
-      protected void result(Object object)
-      {
+        if (object.equals(true)) {
 
-        if(object.equals(true)) {
-
-        }
-        else {
+        } else {
 
         }
       }
@@ -147,7 +146,7 @@ public abstract class ScreenMaster implements Screen {
 
     diag.text(new Label(alert_text, skin));
     diag.button("OK", true);
-    //diag.button("Cancel", false);
+    // diag.button("Cancel", false);
 
     diag.show(stage);
   }

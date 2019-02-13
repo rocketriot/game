@@ -1,5 +1,7 @@
 package bham.bioshock.client.controllers;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.core.Logger;
 import com.google.inject.Inject;
 import bham.bioshock.client.BoardGame;
 import bham.bioshock.client.Route;
@@ -15,7 +17,7 @@ public class MainMenuController extends Controller {
 
   @Inject
   public MainMenuController(Store store, Router router, BoardGame game, Server server) {
-    super(store, router);
+    super(store, router, game);
     this.server = server;
     this.game = game;
   }
@@ -35,6 +37,10 @@ public class MainMenuController extends Controller {
   
   /** Renders main menu */
   public void show() {
-    game.setScreen(new MainMenuScreen(router));
+    setScreen(new MainMenuScreen(router));
+  }
+  
+  public void alert(String message) {
+    store.getScreen().alert(message);
   }
 }

@@ -3,6 +3,7 @@ package bham.bioshock.common.models;
 import java.util.ArrayList;
 import com.google.inject.*;
 import bham.bioshock.client.AppPreferences;
+import bham.bioshock.client.screens.ScreenMaster;
 import java.util.UUID;
 
 /** Stores all of the models */
@@ -11,6 +12,8 @@ import java.util.UUID;
 public class Store {
   
   private AppPreferences preferences;
+  
+  private ScreenMaster currentScreen;
   
   @Inject
   public Store() {
@@ -54,7 +57,15 @@ public class Store {
   public GameBoard getGameBoard() {
     return gameBoard;
   }
+  
+  public void setScreen(ScreenMaster screen) {
+    currentScreen = screen;
+  }
 
+  public ScreenMaster getScreen() {
+    return currentScreen;
+  }
+  
   public void setGameBoard(GameBoard gameBoard) {
     this.gameBoard = gameBoard;
   }
