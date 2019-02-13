@@ -9,12 +9,6 @@ import java.util.Enumeration;
 
 public class ClientConnectThread implements Runnable {
 
-  private String name;
-
-  public ClientConnectThread(String name) {
-    this.name = name;
-  }
-
   private void sendPacket(DatagramSocket c, byte[] data, InetAddress address) {
     try {
       DatagramPacket sendPacket = new DatagramPacket(data, data.length, address, Config.PORT);
@@ -31,7 +25,7 @@ public class ClientConnectThread implements Runnable {
       // Open a random port to send the package
       c = new DatagramSocket();
       c.setBroadcast(true);
-      String broadcastMessage = Command.COMM_DISCOVER.toString() + ";" + this.name;
+      String broadcastMessage = Command.COMM_DISCOVER.toString();
       byte[] data = broadcastMessage.getBytes();
       sendPacket(c, data, InetAddress.getByName("255.255.255.255"));
 
@@ -69,7 +63,7 @@ public class ClientConnectThread implements Runnable {
       // Check if the message is correct
       String message = new String(receivePacket.getData()).trim();
       if (message.equals(Command.COMM_DISCOVER_RESPONSE.toString())) {
-        CommunicationClient.setHostAddress(receivePacket.getAddress());
+        CommunicationClient.setHostAddress(receivePacket.getAddress().toString());
       }
 
       c.close();

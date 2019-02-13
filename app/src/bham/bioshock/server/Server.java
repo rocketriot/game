@@ -1,21 +1,18 @@
 package bham.bioshock.server;
 
-import bham.bioshock.common.models.Model;
+import com.google.inject.Singleton;
+import bham.bioshock.common.models.Store;
 import bham.bioshock.communication.server.CommunicationServer;
 import bham.bioshock.communication.server.ServerHandler;
 
+@Singleton
 public class Server extends Thread {
-  private Model model;
+  private Store store;
   private ServerHandler handler;
 
   public Server() {
-    this.model = new Model();
-    this.handler = new ServerHandler(model);
-  }
-
-  public static void main(String[] args) {
-    Server s = new Server();
-    s.start();
+    this.store = new Store();
+    this.handler = new ServerHandler(store);
   }
 
   public void run() {

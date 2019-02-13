@@ -29,8 +29,7 @@ public class DiscoveryThread implements Runnable {
         socket.receive(packet);
 
         String message = new String(packet.getData()).trim();
-        String[] values = message.split(";");
-        if (values[0].equals(Command.COMM_DISCOVER.toString())) {
+        if (message.equals(Command.COMM_DISCOVER.toString())) {
 
           byte[] sendData = Command.COMM_DISCOVER_RESPONSE.getBytes();
 

@@ -1,6 +1,7 @@
 package bham.bioshock.client.screens;
 
-import bham.bioshock.client.controllers.PreferencesController;
+import bham.bioshock.client.AppPreferences;
+import bham.bioshock.client.Router;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.Event;
 import com.badlogic.gdx.scenes.scene2d.EventListener;
@@ -13,6 +14,8 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
 public class PreferencesScreen extends ScreenMaster {
 
+  private AppPreferences preferences;
+  
   // labels
   private Label soundVolLabel;
   private Label musicVolLabel;
@@ -22,10 +25,10 @@ public class PreferencesScreen extends ScreenMaster {
 
   private Table table;
 
-  public PreferencesScreen(PreferencesController controller) {
-    this.controller = controller;
+  public PreferencesScreen(Router router, AppPreferences preferences) {
+    super(router);
+    this.preferences = preferences;
     stage = new Stage(new ScreenViewport());
-
     batch = stage.getBatch();
   }
 
@@ -47,46 +50,46 @@ public class PreferencesScreen extends ScreenMaster {
 
     // sound on or off
     final CheckBox musicCheckBox = new CheckBox(null, skin);
-    musicCheckBox.setChecked(controller.getPreferences().getMusicEnabled());
+    musicCheckBox.setChecked(preferences.getMusicEnabled());
     musicCheckBox.addListener(
         new EventListener() {
           @Override
           public boolean handle(Event event) {
-            controller.getPreferences().setPrefMusicEnabled(musicCheckBox.isChecked());
+            preferences.setPrefMusicEnabled(musicCheckBox.isChecked());
             return false;
           }
         });
 
     final CheckBox soundCheckBox = new CheckBox(null, skin);
-    soundCheckBox.setChecked(controller.getPreferences().getSoundEnabled());
+    soundCheckBox.setChecked(preferences.getSoundEnabled());
     soundCheckBox.addListener(
         new EventListener() {
           @Override
           public boolean handle(Event event) {
-            controller.getPreferences().setPrefSoundEnabled(soundCheckBox.isChecked());
+            preferences.setPrefSoundEnabled(soundCheckBox.isChecked());
             return false;
           }
         });
 
     // volume control
     final Slider musicVolumeSlider = new Slider(0f, 1f, 0.2f, false, skin);
-    musicVolumeSlider.setValue(controller.getPreferences().getMusicVolume());
+    musicVolumeSlider.setValue(preferences.getMusicVolume());
     musicVolumeSlider.addListener(
         new EventListener() {
           @Override
           public boolean handle(Event event) {
-            controller.getPreferences().setPrefMusicVolume(musicVolumeSlider.getValue());
+            preferences.setPrefMusicVolume(musicVolumeSlider.getValue());
             return false;
           }
         });
 
     final Slider soundVolumeSlider = new Slider(0f, 1f, 0.2f, false, skin);
-    soundVolumeSlider.setValue(controller.getPreferences().getSoundVolume());
+    soundVolumeSlider.setValue(preferences.getSoundVolume());
     soundVolumeSlider.addListener(
         new EventListener() {
           @Override
           public boolean handle(Event event) {
-            controller.getPreferences().setPrefSoundVolume(soundVolumeSlider.getValue());
+            preferences.setPrefSoundVolume(soundVolumeSlider.getValue());
             return false;
           }
         });

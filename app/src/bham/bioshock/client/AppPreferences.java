@@ -10,8 +10,7 @@ public class AppPreferences {
   private static final String PREF_SOUND_ENABLED = "sound.enabled";
   private static final String PREF_SOUND_VOLUME = "sound";
   private static final String PREFS_NAME = "rocket_riot";
-
-  public AppPreferences() {}
+  private static final String PREF_NUM_PLAYERS = "players.num";
 
   protected Preferences getPreferences() {
     return Gdx.app.getPreferences(PREFS_NAME);
@@ -37,6 +36,10 @@ public class AppPreferences {
     return getPreferences().getFloat(PREF_SOUND_VOLUME);
   }
 
+  public int getNumberOfPlayers() {
+    return getPreferences().getInteger(PREF_NUM_PLAYERS);
+  }
+
   public void setPrefSoundEnabled(boolean enabled) {
     getPreferences().putBoolean(PREF_SOUND_ENABLED, enabled);
     getPreferences().flush();
@@ -54,6 +57,11 @@ public class AppPreferences {
 
   public void setPrefSoundVolume(float volume) {
     getPreferences().putFloat(PREF_SOUND_VOLUME, volume);
+    getPreferences().flush();
+  }
+
+  public void setPrefNumPlayers(int players) {
+    getPreferences().putInteger(PREF_NUM_PLAYERS, players);
     getPreferences().flush();
   }
 }

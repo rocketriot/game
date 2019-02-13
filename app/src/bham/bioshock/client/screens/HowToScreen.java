@@ -1,11 +1,12 @@
 package bham.bioshock.client.screens;
 
+import bham.bioshock.client.Router;
 import bham.bioshock.client.XMLReader;
-import bham.bioshock.client.controllers.HowToController;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
@@ -14,8 +15,8 @@ public class HowToScreen extends ScreenMaster {
   private Table textTable;
   private XMLReader reader;
 
-  public HowToScreen(HowToController controller) {
-    this.controller = controller;
+  public HowToScreen(Router router) {
+    super(router);
 
     stage = new Stage(new ScreenViewport());
     batch = new SpriteBatch();
@@ -41,26 +42,28 @@ public class HowToScreen extends ScreenMaster {
 
     // contents
     Label l1 = new Label("How to PLay", skin);
+    Label l2 = new Label("Controls", skin);
+
     // game desciption text is read from the XML file
     String game_desc = reader.getTag("game_desc");
-    Label desc = new Label(game_desc, skin);
-    desc.setWrap(true);
+    Label game_desc_label = new Label(game_desc, skin);
+    game_desc_label.setWrap(true);
 
-    Label l2 = new Label("Controls", skin);
+
     String controls = reader.getTag("game_controls");
-    Label contr = new Label(controls, skin);
-    contr.setWrap(true);
+    Label controls_desc_label = new Label(controls, skin);
+    controls_desc_label.setWrap(true);
 
-    textTable.row().colspan(2);
-    textTable.add(l1);
-    textTable.row().colspan(2);
-    textTable.add(game_desc);
-    textTable.add(desc);
-    textTable.row().colspan(2);
-    textTable.add(l2);
-    textTable.add(contr);
+    ScrollPane scrollPane1 = new ScrollPane(game_desc_label, skin);
+    ScrollPane scrollPane2 = new ScrollPane(controls_desc_label, skin);
 
-    // tableContainer.setActor(textTable);
+    textTable.add(l1).padBottom(20);
+    textTable.row();
+    textTable.add(scrollPane1).width(screen_width*0.6f);
+    textTable.row();
+    textTable.add(l2).padBottom(20);
+    textTable.row();
+    textTable.add(scrollPane2).width(screen_width*0.6f);
 
     stage.addActor(textTable);
   }

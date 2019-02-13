@@ -1,10 +1,22 @@
 package bham.bioshock.common.models;
 
 import java.util.ArrayList;
+import com.google.inject.*;
+import bham.bioshock.client.AppPreferences;
 import java.util.UUID;
 
 /** Stores all of the models */
-public class Model {
+
+@Singleton
+public class Store {
+  
+  private AppPreferences preferences;
+  
+  @Inject
+  public Store() {
+    this.preferences = new AppPreferences();
+  }
+
   /** Max number of players in a game */
   public final int MAX_PLAYERS = 4;
 
@@ -23,6 +35,10 @@ public class Model {
   /** The next player's turn */
   private int turn = 0;
 
+  public AppPreferences getPreferences() {
+    return preferences;
+  }
+  
   public void generateGrid() {
     // Set coordinates of the players
     int last = gameBoard.GRID_SIZE - 1;
@@ -32,6 +48,7 @@ public class Model {
     players.get(3).setCoordinates(new Coordinates(last, 0));
 
     gameBoard.generateGrid();
+  
   }
 
   public GameBoard getGameBoard() {
@@ -61,6 +78,7 @@ public class Model {
   }
 
   public Player getMainPlayer() {
+    // Might be too slow
     for (Player player : players) {
       if (player.getId().equals(mainPlayerId)) return player;
     }

@@ -1,56 +1,61 @@
 package bham.bioshock.client.controllers;
 
-import bham.bioshock.client.Client;
-import bham.bioshock.client.Client.View;
+import bham.bioshock.client.Router;
 import bham.bioshock.client.screens.GameBoardScreen;
+import bham.bioshock.client.BoardGame;
+import bham.bioshock.client.Route;
 import bham.bioshock.common.consts.GridPoint;
 import bham.bioshock.common.models.*;
 import bham.bioshock.common.pathfinding.AStarPathfinding;
 import bham.bioshock.communication.Action;
 import bham.bioshock.communication.Command;
-import bham.bioshock.communication.client.ClientService;
-import com.badlogic.gdx.Screen;
+import bham.bioshock.communication.client.IClientService;
+
+import com.google.inject.Inject;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Random;
 
 public class GameBoardController extends Controller {
-  private Client client;
-  private ClientService server;
 
-  private Model model;
+  private IClientService clientService;
+  private BoardGame game;
+  private Router router;
   private GameBoard gameBoard;
   private Player mainPlayer;
   private AStarPathfinding pathFinder;
 
-  public GameBoardController(Client client) {
-    this.client = client;
-    this.server = client.getServer();
-    this.model = client.getModel();
-    gameBoard = model.getGameBoard();
+  @Inject
+  public GameBoardController(Router router, Store store, IClientService clientService, BoardGame game) {
+    super(store, router);
+    this.clientService = clientService;
+    this.router = router;
+    this.game = game;
+    gameBoard = store.getGameBoard();
+    mainPlayer = store.getMainPlayer();
   }
 
-  /** When the game board is on the screen */
-  public void onShow() {
-    // Update server connection from null since we should be connected
-    server = client.getServer();
+  public void show() {
     // If the grid is not yet loaded, go to loading screen and fetch the game board
     // from the server
     if (!hasReceivedGrid()) {
-      server.send(new Action(Command.GET_GAME_BOARD));
-      client.changeScreen(View.LOADING);
+      clientService.send(new Action(Command.GET_GAME_BOARD));
+      router.call(Route.LOADING);
     }
   }
 
   /** Handles when the server sends the game board to the client */
-  public void gameBoardReceived(Action action) {
-    // Update gameboard from arguments
-    ArrayList<Serializable> arguments = action.getArguments();
-    gameBoard = (GameBoard) arguments.get(0);
+  public void saveGameBoard(GameBoard gameBoard) {
+    store.setGameBoard(gameBoard);
 
-    ArrayList<Player> players = (ArrayList<Player>) arguments.get(1);
+    pathFinder = new AStarPathfinding(gameBoard.getGrid(), mainPlayer.getCoordinates(), 36, 36);
 
+    game.setScreen(new GameBoardScreen(router, store, gameBoard));
+    router.call(Route.GAME_BOARD);
+  }
+
+  public void savePlayers(ArrayList<Player> players) {
     // TODO: remove temporary solution to fix coordinates not being sent by the server
     int last = gameBoard.GRID_SIZE - 1;
     players.get(0).setCoordinates(new Coordinates(0, 0));
@@ -58,51 +63,13 @@ public class GameBoardController extends Controller {
     players.get(2).setCoordinates(new Coordinates(last, last));
     players.get(3).setCoordinates(new Coordinates(last, 0));
 
-    model.setPlayers(players);
-    mainPlayer = model.getMainPlayer();
-
-    client.changeScreen(View.GAME_BOARD);
-
-    pathFinder = new AStarPathfinding(gameBoard.getGrid(), mainPlayer.getCoordinates(), 36, 36);
+    store.setPlayers(players);
   }
 
-  public GridPoint[][] getGrid() {
-    return gameBoard.getGrid();
-  }
-
-  public int getGridSize() {
-    return gameBoard.GRID_SIZE;
-  }
-
-  public ArrayList<Player> getPlayers() {
-    return model.getPlayers();
-  }
-
-  public void changeScreen(Client.View screen) {
-    client.changeScreen(screen);
-  }
-
-  public Player getMainPlayer() {
-    return mainPlayer;
-  }
 
   public AStarPathfinding getPathFinder() {
     pathFinder.setStartPosition(mainPlayer.getCoordinates());
     return pathFinder;
-  }
-
-  public boolean[] getPathColour(ArrayList<Coordinates> path) {
-    boolean[] allowedMove = new boolean[path.size()];
-    float fuel = mainPlayer.getFuel();
-    for (int i = 0; i < path.size(); i++) {
-      if (fuel < 10f) {
-        allowedMove[i] = false;
-      } else {
-        allowedMove[i] = true;
-        fuel -= 10;
-      }
-    }
-    return allowedMove;
   }
 
   public void move(Coordinates destination) {
@@ -134,20 +101,19 @@ public class GameBoardController extends Controller {
       ArrayList<Serializable> arguments = new ArrayList<>();
       arguments.add(gameBoard);
       arguments.add(mainPlayer);
-      server.send(new Action(Command.MOVE_PLAYER_ON_BOARD, arguments));
+      clientService.send(new Action(Command.MOVE_PLAYER_ON_BOARD, arguments));
     }
   }
 
   /** Player move received from the server */
   public void moveReceived(Action action) {
     // Get game board and player from arguments and update the model
-    ArrayList<Serializable> arguments = action.getArguments();
-    GameBoard gameBoard = (GameBoard) arguments.get(0);
-    Player movingPlayer = (Player) arguments.get(1);
-    model.setGameBoard(gameBoard);
-    model.updatePlayer(movingPlayer);
+    GameBoard gameBoard = (GameBoard) action.getArgument(0);
+    Player movingPlayer = (Player) action.getArgument(1);
+    store.setGameBoard(gameBoard);
+    store.updatePlayer(movingPlayer);
 
-    model.nextTurn();
+    store.nextTurn();
   }
 
   public void startMinigame() {}
@@ -177,19 +143,15 @@ public class GameBoardController extends Controller {
     player.setCoordinates(newCoordinates);
   }
 
-  public void setScreen(Screen screen) {
-    this.screen = (GameBoardScreen) screen;
-  }
-
   public boolean hasReceivedGrid() {
     return gameBoard.getGrid() != null;
   }
 
   /** Check if it is the main player's turn */
   public boolean isMainPlayersTurn() {
-    int turn = model.getTurn();
-    Player nextPlayer = model.getPlayers().get(turn);
+    int turn = store.getTurn();
+    Player nextPlayer = store.getPlayers().get(turn);
 
-    return getMainPlayer().getId().equals(nextPlayer.getId());
+    return store.getMainPlayer().getId().equals(nextPlayer.getId());
   }
 }

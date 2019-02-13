@@ -1,8 +1,10 @@
 package bham.bioshock.client.scenes;
 
-import bham.bioshock.client.Client;
+import bham.bioshock.client.Route;
+import bham.bioshock.client.Router;
 import bham.bioshock.client.controllers.GameBoardController;
 import bham.bioshock.common.models.Player;
+import bham.bioshock.common.models.Store;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -12,16 +14,18 @@ import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.viewport.FitViewport;
-
 import java.util.ArrayList;
 
 public class Hud implements Disposable {
+
+  private Store store;
+  private Router router;
+
   private final Skin skin;
   private final float gameWidth;
   private final float gameHeight;
   public Stage stage;
   public FitViewport viewport;
-  private GameBoardController controller;
   private HorizontalGroup topBar;
   private SelectBox optionsMenu;
   private ProgressBar fuelBar;
@@ -30,9 +34,9 @@ public class Hud implements Disposable {
   private Table table;
   private ArrayList<Label> labels;
 
-  public Hud(
-      SpriteBatch batch, Skin skin, int gameWidth, int gameHeight, GameBoardController controller) {
-    this.controller = controller;
+  public Hud(SpriteBatch batch, Skin skin, int gameWidth, int gameHeight, Store store, Router router) {
+    this.store = store;
+    this.router = router;
     this.skin = skin;
     this.gameWidth = gameWidth / 1.5f;
     this.gameHeight = gameHeight / 1.5f;
@@ -88,38 +92,41 @@ public class Hud implements Disposable {
     stage.addActor(topBar);
 
     // Add listeners for each option
-    optionsMenu.addListener(
-        new ChangeListener() {
-          @Override
-          public void changed(ChangeEvent event, Actor actor) {
-            int selected = optionsMenu.getSelectedIndex();
-            switch (selected) {
-              case 1:
-                controller.changeScreen(Client.View.PREFERENCES);
-                optionsMenu.setSelected(menuOptions[0]);
-                break;
-              case 2:
-                controller.changeScreen(Client.View.MAIN_MENU);
-                optionsMenu.setSelected(menuOptions[0]);
-                break;
-              case 3:
-                Gdx.app.exit();
-                optionsMenu.setSelected(menuOptions[0]);
-                break;
-            }
-          }
-        });
+    optionsMenu.addListener(new ChangeListener() {
+      @Override
+      public void changed(ChangeEvent event, Actor actor) {
+        int selected = optionsMenu.getSelectedIndex();
+        switch (selected) {
+          case 1:
+            optionsMenu.setSelected(menuOptions[0]);
+            router.call(Route.PREFERENCES);
+            break;
+          case 2:
+            optionsMenu.setSelected(menuOptions[0]);
+            router.call(Route.MAIN_MENU);
+            break;
+          case 3:
+            optionsMenu.setSelected(menuOptions[0]);
+            Gdx.app.exit();
+            break;
+        }
+      }
+    });
   }
 
   public void updateHud() {
-    fuelBar.setValue(controller.getMainPlayer().getFuel());
-    fuelString = "Fuel: " + controller.getMainPlayer().getFuel() + "/100.0";
+    ArrayList<Player> players = store.getPlayers();
+
+    if (players.size() != store.MAX_PLAYERS) return;
+
+    fuelBar.setValue(store.getMainPlayer().getFuel());
+    fuelString = "Fuel: " + store.getMainPlayer().getFuel() + "/100.0";
     fuelLabel.setText(fuelString);
 
-    ArrayList<Player> players = controller.getPlayers();
-    /*for (int i = 0; i < 4; i++) {
-        labels.get(i).setText(players.get(i).getUsername() + ": " + players.get(i).getPoints());
-    }*/
+    /*
+     * for (int i = 0; i < 4; i++) { labels.get(i).setText(players.get(i).getUsername() + ": " +
+     * players.get(i).getPoints()); }
+     */
 
     table.clearChildren();
     labels = new ArrayList<>();

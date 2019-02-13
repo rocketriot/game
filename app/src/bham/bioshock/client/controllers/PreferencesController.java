@@ -1,7 +1,9 @@
 package bham.bioshock.client.controllers;
 
-import bham.bioshock.client.Client;
+import com.google.inject.Inject;
+import bham.bioshock.client.Router;
 import bham.bioshock.client.XMLReader;
+import bham.bioshock.common.models.Store;
 
 public class PreferencesController extends Controller {
 
@@ -13,9 +15,9 @@ public class PreferencesController extends Controller {
   private String name;
   private int difficulty;
 
-  public PreferencesController(Client client) {
-    this.client = client;
-    this.model = client.getModel();
+  @Inject
+  public PreferencesController(Store store, Router router) {
+    super(store, router);
 
     reader = new XMLReader("app/assets/Preferences/Preferences.XML");
   }
