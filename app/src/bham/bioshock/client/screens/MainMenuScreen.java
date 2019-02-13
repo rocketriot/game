@@ -33,8 +33,6 @@ public class MainMenuScreen extends ScreenMaster {
     super.show();
     drawButtons();
     addListeners();
-
-    Gdx.input.setInputProcessor(stage);
   }
 
   @Override

@@ -115,11 +115,14 @@ public class Hud implements Disposable {
   }
 
   public void updateHud() {
+    ArrayList<Player> players = store.getPlayers();
+
+    if (players.size() != store.MAX_PLAYERS) return;
+
     fuelBar.setValue(store.getMainPlayer().getFuel());
     fuelString = "Fuel: " + store.getMainPlayer().getFuel() + "/100.0";
     fuelLabel.setText(fuelString);
 
-    ArrayList<Player> players = store.getPlayers();
     /*
      * for (int i = 0; i < 4; i++) { labels.get(i).setText(players.get(i).getUsername() + ": " +
      * players.get(i).getPoints()); }
