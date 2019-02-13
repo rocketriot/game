@@ -31,7 +31,7 @@ public abstract class ScreenMaster implements Screen {
   protected TextButton back_button;
 
   protected Skin skin = new Skin(Gdx.files.internal("app/assets/skins/neon/skin/neon-ui.json"));
-  private Texture background;
+  protected Texture background;
 
   public ScreenMaster() {
     screen_width = Gdx.graphics.getWidth();
