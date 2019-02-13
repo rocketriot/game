@@ -2,6 +2,8 @@ package bham.bioshock.common.pathfinding;
 
 import bham.bioshock.common.consts.GridPoint;
 import bham.bioshock.common.models.Coordinates;
+import bham.bioshock.common.models.Player;
+import bham.bioshock.common.models.Store;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -9,48 +11,62 @@ import java.util.Collections;
 // method to find a path between two points
 public class AStarPathfinding {
 
-    // the cost to go from one point to another
+    /**
+     * the cost to go from one point to another
+     */
     private final int TRANSITION_COST = 1;
 
-    // start position of the path
+    /**
+     * start position of the path
+     */
     private Coordinates startPosition;
 
-    // goal position of the path
+    /**
+     * goal position of the path
+     */
     private Coordinates goalPosition;
 
-    // the game grid at the time of the pathfinding search
+    /**
+     * the game grid at the time of the pathfinding search
+     */
     private GridPoint[][] gameGrid;
 
-    // the grid that will contain the pathfinding values for each point
+    /**
+     * the grid that will contain the pathfinding values for each point
+     */
     private PathfindingValues[][] aStarGrid;
 
-    // the maximum x value of the map
+    /**
+     * the maximum x value of the map
+     */
     private int maxX;
 
-    // the maximum y value of the map
+    /**
+     * the maximum y value of the map
+     */
     private int maxY;
 
-    /*
+    /**
      * Method to instantiate the AStarPathfinding object
      *
-     * @param   grid           The grid from the game board to pathfind on
-     * @param   startPosition  The position that the pathfinding needs to start from
-     * @param   maxX           The maximum x value of the grid, i.e. the x limit of the game map
-     * @param   maxY           The maximum y value of the grid, i.e. the y limit of the game map
+     * @param grid          The grid from the game board to pathfind on
+     * @param startPosition The position that the pathfinding needs to start from
+     * @param maxX          The maximum x value of the grid, i.e. the x limit of the game map
+     * @param maxY          The maximum y value of the grid, i.e. the y limit of the game map
      */
-    public AStarPathfinding(GridPoint[][] grid, Coordinates startPosition, int maxX, int maxY) {
+    public AStarPathfinding(GridPoint[][] grid, Coordinates startPosition, int maxX, int maxY, ArrayList<Player> players) {
         setStartPosition(startPosition);
         this.maxX = maxX;
         this.maxY = maxY;
 
-        setGameGrid(grid);
+        setGameGrid(grid, players);
     }
 
-    /*
+    /**
      * Method to find the path between the start position and the inputted goal position
      *
-     * @param   goalPosition    The position on the grid that the path needs to end at
-     * @return                  The path that the algorithm has found to be the shortest
+     * @param goalPosition The position on the grid that the path needs to end at
+     * @return The path that the algorithm has found to be the shortest
      */
     public ArrayList<Coordinates> pathfind(Coordinates goalPosition) {
         setGoalPosition(goalPosition);
@@ -118,34 +134,24 @@ public class AStarPathfinding {
         return new ArrayList<>();
     }
 
-    /*
-     * Method to set the start position of the pathfinding algorithm
+    /**
+     * Method to set the game grid that will be used for pathfinding. Needs to also get the positions of each player in
+     * the passed list so that they can be added to the grid.
      *
-     * @param startPosition The position that the pathfinding needs to start from
+     * @param grid    The grid that will be used
+     * @param players The list of players that are currently on the board
      */
-    public void setStartPosition(Coordinates startPosition) {
-        this.startPosition = startPosition;
-    }
-
-    /*
-     * Method to set the goal position of the pathfinding algorithm
-     *
-     * @param startPosition The position that the pathfinding needs to get to
-     */
-    public void setGoalPosition(Coordinates goalPosition) {
-        this.goalPosition = goalPosition;
-    }
-
-    /*
-     * Method to set the game grid that will be used for pathfinding
-     *
-     * @param grid The grid that will be used
-     */
-    public void setGameGrid(GridPoint[][] grid) {
+    public void setGameGrid(GridPoint[][] grid, ArrayList<Player> players) {
         gameGrid = grid;
+
+        // get the position of each player and add them into the grid
+        for (Player player : players){
+            Coordinates playerCoords = player.getCoordinates();
+            gameGrid[playerCoords.getX()][playerCoords.getY()] = new GridPoint(GridPoint.Type.PLAYER, 0);
+        }
     }
 
-    /*
+    /**
      * Method to set the aStarGrid to the current grid. This grid stores the heuristic values
      * that the pathfinding algorithm uses to determine which point to go to next, as well as
      * whether each point is passable and the parent of each point.
@@ -168,7 +174,7 @@ public class AStarPathfinding {
         return tempGrid;
     }
 
-    /*
+    /**
      * Method to insert a value into the required list - either the open or closed list
      *
      * @param list   The list to add to
@@ -178,11 +184,11 @@ public class AStarPathfinding {
         list.add(coords);
     }
 
-    /*
+    /**
      * Method to find the point in a list that has the smallest heuristic value for expansion
      *
      * @param list The list that contains the coordinates to be searched through
-     * @return     The Coordinate value of the point with the smallest heuristic value
+     * @return The Coordinate value of the point with the smallest heuristic value
      */
     private Coordinates findMinPoint(ArrayList<Coordinates> list) {
 
@@ -205,12 +211,12 @@ public class AStarPathfinding {
         return nextPoint;
     }
 
-    /*
+    /**
      * Method to find the heuristic value for a given point - uses the cross product of the distance from the start to
      * the goal and the current to the goal to prefer straight paths.
      *
      * @param position The coordinates of the point you want to calculate the heuristic value for
-     * @return         The heuristic value found
+     * @return The heuristic value found
      */
     private double findHeuristic(Coordinates position) {
         int h = 0;
@@ -223,13 +229,13 @@ public class AStarPathfinding {
         return h;
     }
 
-    /*
+    /**
      * Method to generate the successors of a given point in all 4 directions, checking if they are valid first
      *
      * @param currentPoint The coordinates of the current point to generate the successors for
      * @param closedList   The closed list, containing all the already closed nodes that you do not want to become
      *                     successors to another node
-     * @return             A list of the valid successors found
+     * @return A list of the valid successors found
      */
     private ArrayList<Coordinates> generateSuccessors(Coordinates currentPoint, ArrayList<Coordinates> closedList) {
 
@@ -262,11 +268,11 @@ public class AStarPathfinding {
         return successors;
     }
 
-    /*
+    /**
      * Method to check whether the point is valid - is within the board coordinates and is passable
      *
      * @param point The coordinates of the point to check
-     * @return             Whether the point is valid or not
+     * @return Whether the point is valid or not
      */
     private Boolean isValid(Coordinates point) {
         int x = point.getX();
@@ -278,12 +284,12 @@ public class AStarPathfinding {
         }
     }
 
-    /*
+    /**
      * Method to check whether a coordinate is in the open or closed list
      *
-     * @param coordinate    The coordinate to check
-     * @param list          The list to check
-     * @return              Whether the coordinate is in the list
+     * @param coordinate The coordinate to check
+     * @param list       The list to check
+     * @return Whether the coordinate is in the list
      */
     private Boolean checkList(Coordinates coordinate, ArrayList<Coordinates> list) {
         for (Coordinates listCoord : list) {
@@ -294,7 +300,7 @@ public class AStarPathfinding {
         return false;
     }
 
-    /*
+    /**
      * Method to update the values of a position in the A* Grid
      *
      * @param point         The point to update
@@ -309,7 +315,7 @@ public class AStarPathfinding {
         aStarGrid[point.getX()][point.getY()].setParent(parent);
     }
 
-    /*
+    /**
      * Method to get the found path, working backwards from the goal point using the parent point
      * stored in the aStarGrid for each point
      *
@@ -328,5 +334,23 @@ public class AStarPathfinding {
         path.add(startPosition);
         Collections.reverse(path);
         return path;
+    }
+
+    /**
+     * Method to set the start position of the pathfinding algorithm
+     *
+     * @param startPosition The position that the pathfinding needs to start from
+     */
+    public void setStartPosition(Coordinates startPosition) {
+        this.startPosition = startPosition;
+    }
+
+    /**
+     * Method to set the goal position of the pathfinding algorithm
+     *
+     * @param goalPosition The position that the pathfinding needs to get to
+     */
+    public void setGoalPosition(Coordinates goalPosition) {
+        this.goalPosition = goalPosition;
     }
 }

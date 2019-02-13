@@ -27,7 +27,7 @@ public class PathfindingTests {
                 emptyGrid[x][y] = point;
             }
         }
-        pathfinder = new AStarPathfinding(emptyGrid, startPosition, 36, 36);
+        pathfinder = new AStarPathfinding(emptyGrid, startPosition, 36, 36, new ArrayList<Player>());
     }
 
     @Test
@@ -172,7 +172,7 @@ public class PathfindingTests {
 
         // set up the obstacle
         emptyGrid[18][8].setType(GridPoint.Type.PLANET);
-        pathfinder.setGameGrid(emptyGrid);
+        pathfinder.setGameGrid(emptyGrid, new ArrayList<Player>());
 
         // set up the actual path that should be found
         ArrayList<Coordinates> truePath = new ArrayList<>();
@@ -194,7 +194,7 @@ public class PathfindingTests {
 
         // remove the obstacle
         emptyGrid[18][8].setType(GridPoint.Type.EMPTY);
-        pathfinder.setGameGrid(emptyGrid);
+        pathfinder.setGameGrid(emptyGrid, new ArrayList<Player>());
     }
 
     @Test
@@ -203,7 +203,7 @@ public class PathfindingTests {
 
         // set up the obstacle
         emptyGrid[9][18].setType(GridPoint.Type.PLANET);
-        pathfinder.setGameGrid(emptyGrid);
+        pathfinder.setGameGrid(emptyGrid, new ArrayList<Player>());
 
         // set up the actual path that should be found
         ArrayList<Coordinates> truePath = new ArrayList<>();
@@ -221,7 +221,7 @@ public class PathfindingTests {
 
         // remove the obstacle
         emptyGrid[9][18].setType(GridPoint.Type.EMPTY);
-        pathfinder.setGameGrid(emptyGrid);
+        pathfinder.setGameGrid(emptyGrid, new ArrayList<Player>());
 
         assertTrue(checkPaths(truePath, foundPath));
     }
@@ -234,7 +234,7 @@ public class PathfindingTests {
         for (int i = 0; i < 36; i++) {
             emptyGrid[9][i].setType(GridPoint.Type.PLANET);
         }
-        pathfinder.setGameGrid(emptyGrid);
+        pathfinder.setGameGrid(emptyGrid, new ArrayList<Player>());
 
         ArrayList<Coordinates> foundPath = pathfinder.pathfind(goalPosition);
 
@@ -242,7 +242,7 @@ public class PathfindingTests {
         for (int i = 0; i < 36; i++) {
             emptyGrid[9][i].setType(GridPoint.Type.EMPTY);
         }
-        pathfinder.setGameGrid(emptyGrid);
+        pathfinder.setGameGrid(emptyGrid, new ArrayList<Player>());
 
         assertTrue(foundPath.isEmpty());
     }
