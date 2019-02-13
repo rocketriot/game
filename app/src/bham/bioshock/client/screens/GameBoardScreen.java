@@ -460,6 +460,9 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
     for (Sprite s : outlinedPlayerSprites) {
       s.getTexture().dispose();
     }
+    for (ParticleEffect e : effects) {
+      e.dispose();
+    }
   }
 
   private Vector3 getWorldCoords(int screenX, int screenY) {
