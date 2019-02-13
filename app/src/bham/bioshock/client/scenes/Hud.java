@@ -21,7 +21,7 @@ public class Hud implements Disposable {
     private final float gameHeight;
     private GameBoardController controller;
     private HorizontalGroup topBar;
-    private SelectBox optionsMenu;
+    private SelectBox<String> optionsMenu;
     public Stage stage;
     public FitViewport viewport;
     private ProgressBar fuelBar;
@@ -29,8 +29,6 @@ public class Hud implements Disposable {
     private TextArea fuelLabel;
     private Table table;
     private ArrayList<Label> labels;
-    private HorizontalGroup bottomBar;
-    private TextButton endTurnButton;
 
     public Hud(SpriteBatch batch, Skin skin, int gameWidth, int gameHeight, GameBoardController controller) {
         this.controller = controller;
@@ -46,9 +44,9 @@ public class Hud implements Disposable {
     }
 
     private void setupBottomBar() {
-        bottomBar = new HorizontalGroup();
+        HorizontalGroup bottomBar = new HorizontalGroup();
         bottomBar.bottom();
-        endTurnButton = new TextButton("End Turn", skin);
+        TextButton endTurnButton = new TextButton("End Turn", skin);
         bottomBar.addActor(endTurnButton);
         stage.addActor(bottomBar);
         endTurnButton.addListener(new ChangeListener() {
@@ -95,7 +93,7 @@ public class Hud implements Disposable {
         topBar.top();
 
         // Adds widgets to the topBar
-        optionsMenu = new SelectBox(skin);
+        optionsMenu = new SelectBox<>(skin);
         String[] menuOptions = {"Options Menu", "Settings", "Quit to main menu", "Quit to Desktop"};
         optionsMenu.setItems(menuOptions);
         optionsMenu.setSelected(menuOptions[0]);

@@ -1,23 +1,29 @@
 package bham.bioshock.client.controllers;
 
+import static bham.bioshock.common.consts.GridPoint.Type.EMPTY;
+import static bham.bioshock.common.consts.GridPoint.Type.FUEL;
+import static bham.bioshock.common.consts.GridPoint.Type.PLANET;
+import static bham.bioshock.common.consts.GridPoint.Type.PLAYER;
+
 import bham.bioshock.client.Client;
 import bham.bioshock.client.Client.View;
 import bham.bioshock.client.screens.GameBoardScreen;
 import bham.bioshock.common.Direction;
 import bham.bioshock.common.consts.GridPoint;
-import bham.bioshock.common.models.*;
+import bham.bioshock.common.models.BoardMove;
+import bham.bioshock.common.models.Coordinates;
+import bham.bioshock.common.models.GameBoard;
+import bham.bioshock.common.models.Model;
+import bham.bioshock.common.models.Planet;
+import bham.bioshock.common.models.Player;
 import bham.bioshock.common.pathfinding.AStarPathfinding;
 import bham.bioshock.communication.Action;
 import bham.bioshock.communication.Command;
 import bham.bioshock.communication.client.ClientService;
-
 import com.badlogic.gdx.Screen;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Random;
-
-import static bham.bioshock.common.consts.GridPoint.Type.*;
 
 public class GameBoardController extends Controller {
     private Client client;
@@ -42,7 +48,7 @@ public class GameBoardController extends Controller {
         server = client.getServer();
         // If the grid is not yet loaded, go to loading screen and fetch the game board
         // from the server
-        if (receivedGrid == false) {
+        if (!receivedGrid) {
             server.send(new Action(Command.GET_GAME_BOARD));
             client.changeScreen(View.LOADING);
         }
