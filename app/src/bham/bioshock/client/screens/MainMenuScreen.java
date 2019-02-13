@@ -109,7 +109,7 @@ public class MainMenuScreen extends ScreenMaster {
     howto.addListener(new ChangeListener() {
       @Override
       public void changed(ChangeEvent event, Actor actor) {
-        router.call(Route.HOW_TO);
+        router.call(Route.START_MINIGAME);
       }
     });
 
