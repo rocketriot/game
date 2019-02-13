@@ -5,7 +5,7 @@ import bham.bioshock.common.models.Player;
 import bham.bioshock.communication.Action;
 import bham.bioshock.communication.Command;
 import bham.bioshock.communication.server.ServerHandler;
-
+import bham.bioshock.communication.server.ServerService;
 import java.io.Serializable;
 import java.util.ArrayList;
 
@@ -16,9 +16,11 @@ public class JoinScreenHandler {
    *
    * @throws Exception
    */
-  public static void addPlayer(Store model, Action action, ServerHandler hander) throws Exception {
+  public static void addPlayer(Store model, Action action, ServerHandler handler, ServerService service) throws Exception {
     Player player = (Player) action.getArgument(0);
-
+    
+    service.saveId(player.getId());
+    
     // Set the texture ID of the player
     int textureId = model.getPlayers().size();
     player.setTextureID(textureId);
@@ -26,12 +28,19 @@ public class JoinScreenHandler {
     // Add a player to the model
     model.addPlayer(player);
 
-    // Send add player action to all clients
-    hander.sendToAll(action);
+    // Send all connected clients the new player
+    handler.sendToAllExcept(action, service.Id());
+    
+    // Send  all connected players to the new player
+    ArrayList<Serializable> arguments = new ArrayList<>();
+    for(Player p : model.getPlayers()) {
+      arguments.add(p);
+    }
+    handler.sendTo(player.getId(), new Action(Command.ADD_PLAYER, arguments));
 
     // If there are the max number of players start the game
     if (model.getPlayers().size() == model.MAX_PLAYERS) {
-      hander.sendToAll(new Action(Command.START_GAME));
+      handler.sendToAll(new Action(Command.START_GAME));
     }
   }
 

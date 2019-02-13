@@ -1,10 +1,10 @@
 package bham.bioshock.communication.server;
 
 import bham.bioshock.communication.Action;
-import bham.bioshock.server.Server;
 
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.UUID;
 import java.util.concurrent.PriorityBlockingQueue;
 
 /** Executes the actions received by ServerReceiver. */
@@ -14,7 +14,7 @@ public class ServerService extends Thread {
   private ServerReceiver receiver;
   private PriorityBlockingQueue<Action> queue = new PriorityBlockingQueue<>();
   private ServerHandler handler;
-  private Server server;
+  private UUID id;
 
   public ServerService(
       ObjectInputStream fromClient, ObjectOutputStream toClient, ServerHandler handler) {
@@ -46,6 +46,14 @@ public class ServerService extends Thread {
     System.out.println("ServerService ending");
   }
 
+  public void saveId(UUID id) {
+    this.id = id;
+  }
+  
+  public UUID Id() {
+    return id;
+  }
+  
   public void store(Action action) {
     queue.add(action);
   }
@@ -61,6 +69,6 @@ public class ServerService extends Thread {
    */
   private void execute(Action action) {
 
-    handler.handleRequest(action);
+    handler.handleRequest(action, this);
   }
 }

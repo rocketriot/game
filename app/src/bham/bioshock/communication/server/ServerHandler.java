@@ -36,17 +36,30 @@ public class ServerHandler {
     }
   }
 
+  public void sendToAllExcept(Action action, UUID id) {
+    for(ServerService s : connections) {
+      if(s.Id() != id) {
+        s.send(action);        
+      }
+    }
+  }
+  
   public void sendTo(UUID clientId, Action action) {
-    // TODO
+    for(ServerService s : connections) {
+      if(s.Id() == clientId) {
+        s.send(action);
+        return;
+      }
+    }
   }
 
-  public void handleRequest(Action action) {
+  public void handleRequest(Action action, ServerService service) {
     logger.debug("Server received: " + action);
     
     try {
       switch (action.getCommand()) {
         case ADD_PLAYER:
-          JoinScreenHandler.addPlayer(model, action, this);
+          JoinScreenHandler.addPlayer(model, action, this, service);
           break;
         case START_GAME:
           JoinScreenHandler.startGame(model, action, this);
