@@ -22,9 +22,11 @@ public enum Route {
   REMOVE_PLAYER     (JoinScreenController.class,    "removePlayer"),
   DISCONNECT_PLAYER (JoinScreenController.class,    "disconnectPlayer"),
   
+  START_GAME        (JoinScreenController.class,     "start"),
+
   GAME_BOARD        (GameBoardController.class,     "show"),
-  START_GAME        (GameBoardController.class,     "start"),
-  GAME_BOARD_SAVE   (GameBoardController.class,     "saveGameBoard");
+  GAME_BOARD_SAVE   (GameBoardController.class,     "saveGameBoard"),
+  PLAYERS_SAVE   (GameBoardController.class,     "savePlayers");
   
   
 //@formatter:on

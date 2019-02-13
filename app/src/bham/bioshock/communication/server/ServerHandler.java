@@ -70,6 +70,9 @@ public class ServerHandler {
         case GET_GAME_BOARD:
           GameBoardHandler.getGameBoard(model, action, this);
           break;
+        case MOVE_PLAYER_ON_BOARD:
+          GameBoardHandler.movePlayer(model, action, this);
+          break;
         default:
           System.out.println("Received unhandled command: " + action.getCommand().toString());
           break;

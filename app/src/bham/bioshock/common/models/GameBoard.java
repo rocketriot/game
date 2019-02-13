@@ -3,7 +3,6 @@ package bham.bioshock.common.models;
 import bham.bioshock.common.consts.GridPoint;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Random;
 
 /** Stores the data required for the main game board */
@@ -17,26 +16,9 @@ public class GameBoard implements Serializable {
   private GridPoint[][] grid;
 
   /** Generates a grid with randomly positioned entities */
-  public GridPoint[][] generateGrid(ArrayList<Player> players) throws Exception {
-    // Make sure there are 4 players
-    if (players.size() != 4) {
-      throw new Exception("NotEnoughPlayers");
-    }
-
+  public GridPoint[][] generateGrid() {
     // initialize grid
     grid = new GridPoint[GRID_SIZE][GRID_SIZE];
-
-    // Updates coordinates in player
-    players.get(0).setCoordinates(new Coordinates(0, 0));
-    players.get(1).setCoordinates(new Coordinates(0, GRID_SIZE - 1));
-    players.get(2).setCoordinates(new Coordinates(GRID_SIZE - 1, GRID_SIZE - 1));
-    players.get(3).setCoordinates(new Coordinates(GRID_SIZE - 1, 0));
-
-    // Add the players to the board
-    grid[0][0] = new GridPoint(GridPoint.Type.PLAYER, players.get(0));
-    grid[0][GRID_SIZE - 1] = new GridPoint(GridPoint.Type.PLAYER, players.get(1));
-    grid[GRID_SIZE - 1][GRID_SIZE - 1] = new GridPoint(GridPoint.Type.PLAYER, players.get(2));
-    grid[GRID_SIZE - 1][0] = new GridPoint(GridPoint.Type.PLAYER, players.get(3));
 
     // Go through each point and generate it's type
     for (int i = 0; i < grid.length; i++) {
@@ -47,8 +29,6 @@ public class GameBoard implements Serializable {
         }
       }
     }
-
-    // players - exact pos on each corner
 
     return grid;
   }
@@ -106,5 +86,12 @@ public class GameBoard implements Serializable {
 
   public void setGrid(GridPoint[][] grid) {
     this.grid = grid;
+  }
+
+  public GridPoint getGridPoint(Coordinates coordinates) {
+    int x = coordinates.getX();
+    int y = coordinates.getY();
+
+    return grid[x][y];
   }
 }

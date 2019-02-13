@@ -19,6 +19,7 @@ public class JoinScreenHandler {
   public static void addPlayer(Store model, Action action, ServerHandler handler, ServerService service) throws Exception {
     Player player = (Player) action.getArgument(0);
     
+    // Save client's ID
     service.saveId(player.getId());
     
     // Set the texture ID of the player
@@ -31,7 +32,7 @@ public class JoinScreenHandler {
     // Send all connected clients the new player
     handler.sendToAllExcept(action, service.Id());
     
-    // Send  all connected players to the new player
+    // Send all connected players to the new player
     ArrayList<Serializable> arguments = new ArrayList<>();
     for(Player p : model.getPlayers()) {
       arguments.add(p);
@@ -50,20 +51,20 @@ public class JoinScreenHandler {
   }
 
   /** Creates CPU players and starts the game */
-  public static void startGame(Store model, Action action, ServerHandler hander) {
+  public static void startGame(Store store, Action action, ServerHandler hander) {
     ArrayList<Serializable> cpuPlayers = new ArrayList<>();
 
     // If there is not 4 players, create CPU players
-    while (model.getPlayers().size() != model.MAX_PLAYERS) {
-      int number = model.getPlayers().size();
+    while (store.getPlayers().size() != store.MAX_PLAYERS) {
+      int number = store.getPlayers().size();
 
       Player player = new Player("Player " + number, true);
 
       // Set the texture ID of the player
-      int textureId = model.getPlayers().size();
+      int textureId = store.getPlayers().size();
       player.setTextureID(textureId);
 
-      model.addPlayer(player);
+      store.addPlayer(player);
       cpuPlayers.add(player);
     }
 

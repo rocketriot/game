@@ -84,6 +84,14 @@ public class Player implements Serializable {
     this.fuel = fuel;
   }
 
+  public void increaseFuel(float fuel) {
+    this.fuel += fuel;
+  }
+
+  public void decreaseFuel(float fuel) {
+    this.fuel -= fuel;
+  }
+
   public int getPlanetsCaptured() {
     return planetsCaptured;
   }

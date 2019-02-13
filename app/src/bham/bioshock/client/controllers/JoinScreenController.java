@@ -81,15 +81,11 @@ public class JoinScreenController extends Controller {
     clientService.send(new Action(Command.ADD_PLAYER, player));
   }
 
-  /** Tells the server to start the game */
-  public void startGame() {
-    clientService.send(new Action(Command.START_GAME));
-  }
-
   /** Handle when the server tells the client to start the game */
-  public void onStartGame(Action action) {
+  public void start() {
+    commClient.getConnection().send(new Action(Command.START_GAME));
+
     logger.debug("Ready to start!");
     router.call(Route.GAME_BOARD);
   }
-
 }
