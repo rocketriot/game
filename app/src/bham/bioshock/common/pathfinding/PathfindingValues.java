@@ -9,10 +9,10 @@ public class PathfindingValues {
     private int pathCost;
 
     // the heuristic estimate of the cost to get to the goal point
-    private int heuristicCost;
+    private double heuristicCost;
 
     // the total cost (pathCost + heuristicCost) to go from this node to the goal node
-    private int totalCost;
+    private double totalCost;
 
     // the parent point to this point - the point that came before
     private Coordinates parent;
@@ -26,13 +26,12 @@ public class PathfindingValues {
             setPathCost(pathCost);
             setHeuristicCost(heuristicCost);
             updateTotalCost();
-            setPassable(true);
         } else {
             setPathCost(Integer.MAX_VALUE);
             setHeuristicCost(Integer.MAX_VALUE);
             setTotalCost(Integer.MAX_VALUE);
-            setPassable(false);
         }
+        this.passable = passable;
 
         if (parent != null){
             setParent(parent);
@@ -45,12 +44,12 @@ public class PathfindingValues {
     }
 
     // method to get the heuristicCost
-    public int getHeuristicCost() {
+    public double getHeuristicCost() {
         return heuristicCost;
     }
 
     // method to get the totalCost
-    public int getTotalCost() {
+    public double getTotalCost() {
         return totalCost;
     }
 
@@ -70,12 +69,12 @@ public class PathfindingValues {
     }
 
     // method to set the heuristicCost
-    public void setHeuristicCost(int heuristicCost){
+    public void setHeuristicCost(double heuristicCost){
         this.heuristicCost = heuristicCost;
     }
 
     // method to set the totalCost
-    public void setTotalCost(int totalCost){
+    public void setTotalCost(double totalCost){
         this.totalCost = totalCost;
     }
 
@@ -88,11 +87,4 @@ public class PathfindingValues {
     public void setParent(Coordinates parent) {
         this.parent = parent;
     }
-
-    // method to set whether a point is passable
-    public void setPassable(Boolean passable) {
-        this.passable = passable;
-    }
-
-
 }

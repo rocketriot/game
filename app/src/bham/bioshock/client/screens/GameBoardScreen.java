@@ -27,6 +27,8 @@ import java.util.ArrayList;
 public class GameBoardScreen extends ScreenMaster implements InputProcessor {
 
   private final InputMultiplexer inputMultiplexer;
+  private final int GAME_WORLD_WIDTH = Config.GAME_WORLD_WIDTH;
+  private final int GAME_WORLD_HEIGHT = Config.GAME_WORLD_HEIGHT;
   private GameBoardController controller;
   private SpriteBatch batch;
   private Sprite background;
@@ -35,10 +37,9 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
   private ShapeRenderer sh;
   private ArrayList<Sprite> planetSprites;
   private ArrayList<Sprite> asteroidSprites;
+  private Sprite sprite;
   private ArrayList<Sprite> playerSprites;
   private int PPS;
-  private final int GAME_WORLD_WIDTH = Config.GAME_WORLD_WIDTH;
-  private final int GAME_WORLD_HEIGHT = Config.GAME_WORLD_HEIGHT;
   private int gridSize;
   private Hud hud;
   private int mouseDownX, mouseDownY;
@@ -290,7 +291,6 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
       Texture outlinedTexture = new Texture(Gdx.files.internal(f.path()));
       outlinedPlayerSprites.add(new Sprite(outlinedTexture));
     }
-
     movingSprite = new Sprite();
   }
 
