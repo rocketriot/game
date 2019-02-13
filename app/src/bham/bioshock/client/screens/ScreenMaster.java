@@ -1,6 +1,7 @@
 package bham.bioshock.client.screens;
 
 import bham.bioshock.client.Router;
+import org.lwjgl.opengl.Display;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.files.FileHandle;
@@ -102,6 +103,12 @@ public abstract class ScreenMaster implements Screen {
     drawBackground();
     stage.act(Math.min(Gdx.graphics.getDeltaTime(), 1 / 30f));
     stage.draw();
+    
+    
+    if (Display.isCloseRequested()) {
+      System.err.println("CLOSE REQUESTED");
+    }
+    
   }
 
   @Override
@@ -127,18 +134,15 @@ public abstract class ScreenMaster implements Screen {
     batch.dispose();
   }
 
-  protected void Alert(String alert_text) {
+  public void alert(String alert_text) {
 
+    Dialog diag = new Dialog("", skin) {
 
-    Dialog diag = new Dialog("", skin){
+      protected void result(Object object) {
 
-      protected void result(Object object)
-      {
+        if (object.equals(true)) {
 
-        if(object.equals(true)) {
-
-        }
-        else {
+        } else {
 
         }
       }
@@ -147,7 +151,7 @@ public abstract class ScreenMaster implements Screen {
 
     diag.text(new Label(alert_text, skin));
     diag.button("OK", true);
-    //diag.button("Cancel", false);
+    // diag.button("Cancel", false);
 
     diag.show(stage);
   }

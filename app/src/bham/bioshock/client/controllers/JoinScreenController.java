@@ -29,7 +29,7 @@ public class JoinScreenController extends Controller {
   @Inject
   public JoinScreenController(Store store, Router router, BoardGame game,
       CommunicationClient commClient, ClientHandler clientHandler) {
-    super(store, router);
+    super(store, router, game);
     this.clientHandler = clientHandler;
     this.commClient = commClient;
     this.game = game;
@@ -45,14 +45,13 @@ public class JoinScreenController extends Controller {
     // Create connection to the server
     try {
       connectToServer(player);
-      game.setScreen(new JoinScreen(router, store));
+      setScreen(new JoinScreen(router, store));
       
     } catch(ConnectException e) {
       // No server started
       logger.error(e.getMessage());
-      router.call(Route.MAIN_MENU);
+      router.call(Route.ALERT, e.getMessage());
     }
-
   }
 
   /** Handle when the server tells us a new player was added to the game */

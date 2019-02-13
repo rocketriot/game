@@ -3,6 +3,7 @@ package bham.bioshock.common.models;
 import java.util.ArrayList;
 import com.google.inject.*;
 import bham.bioshock.client.AppPreferences;
+import bham.bioshock.client.screens.ScreenMaster;
 import java.util.UUID;
 
 /** Stores all of the models */
@@ -12,13 +13,15 @@ public class Store {
   
   private AppPreferences preferences;
   
+  private ScreenMaster currentScreen;
+  
   @Inject
   public Store() {
     this.preferences = new AppPreferences();
   }
 
   /** Max number of players in a game */
-  public final int MAX_PLAYERS = 4;
+  public final int MAX_PLAYERS = 1;
   /** Contains all of the information about the game board */
   private GameBoard gameBoard = new GameBoard();
   /** A list of players */
@@ -39,7 +42,15 @@ public class Store {
   public GameBoard getGameBoard() {
     return gameBoard;
   }
+  
+  public void setScreen(ScreenMaster screen) {
+    currentScreen = screen;
+  }
 
+  public ScreenMaster getScreen() {
+    return currentScreen;
+  }
+  
   public void setGameBoard(GameBoard gameBoard) {
     this.gameBoard = gameBoard;
   }

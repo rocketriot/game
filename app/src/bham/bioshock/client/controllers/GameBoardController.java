@@ -27,13 +27,13 @@ public class GameBoardController extends Controller {
 
   @Inject
   public GameBoardController(Router router, Store store, IClientService clientService, BoardGame game) {
-    super(store, router);
+    super(store, router, game);
     this.clientService = clientService;
     this.router = router;
     this.game = game;
     gameBoard = store.getGameBoard();
   }
-
+  
   public void start() {
     
   }

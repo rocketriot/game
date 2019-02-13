@@ -10,6 +10,7 @@ public enum Route {
   
   MAIN_MENU         (MainMenuController.class,      "show"),
   HOST_GAME         (MainMenuController.class,      "hostGame"),
+  ALERT             (MainMenuController.class,    "alert"),
   
   HOW_TO            (HowToController.class,         "show"),
   LOADING           (LoadingController.class,       "show"),
@@ -22,6 +23,7 @@ public enum Route {
   GAME_BOARD        (GameBoardController.class,     "show"),
   START_GAME        (GameBoardController.class,     "start"),
   GAME_BOARD_SAVE   (GameBoardController.class,     "saveGameBoard");
+  
   
 //@formatter:on
 
