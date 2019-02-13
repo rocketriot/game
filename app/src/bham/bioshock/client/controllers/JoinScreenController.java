@@ -83,7 +83,7 @@ public class JoinScreenController extends Controller {
 
   /** Handle when the server tells the client to start the game */
   public void start() {
-    commClient.getConnection().send(new Action(Command.GET_GAME_BOARD));
+    commClient.getConnection().send(new Action(Command.START_GAME));
     logger.debug("Ready to start! Waiting for the board");
   }
 }

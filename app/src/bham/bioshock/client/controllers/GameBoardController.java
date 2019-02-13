@@ -27,24 +27,24 @@ public class GameBoardController extends Controller {
     this.clientService = clientService;
     this.router = router;
   }
+  
+  /* Start the game */
+  public void show() {
+    setScreen(new GameBoardScreen(router, store, store.getGameBoard()));
+  }
 
   /** Handles when the server sends the game board to the client */
   public void saveGameBoard(GameBoard gameBoard) {
     store.setGameBoard(gameBoard);
-
-    setScreen(new GameBoardScreen(router, store, gameBoard));
   }
 
   public void savePlayers(ArrayList<Player> players) {
     // TODO: remove temporary solution to fix coordinates not being sent by the server
     int last = store.getGameBoard().GRID_SIZE - 1;
     players.get(0).setCoordinates(new Coordinates(0, 0));
-    if(players.size() > 1)
-      players.get(1).setCoordinates(new Coordinates(0, last));
-    if(players.size() > 2)
-      players.get(2).setCoordinates(new Coordinates(last, last));
-    if(players.size() > 3)
-      players.get(3).setCoordinates(new Coordinates(last, 0));
+    players.get(1).setCoordinates(new Coordinates(0, last));
+    players.get(2).setCoordinates(new Coordinates(last, last));
+    players.get(3).setCoordinates(new Coordinates(last, 0));
 
     store.setPlayers(players);
   }

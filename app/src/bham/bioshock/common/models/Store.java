@@ -10,11 +10,11 @@ import java.util.UUID;
 
 @Singleton
 public class Store {
-  
+
   private AppPreferences preferences;
-  
+
   private ScreenMaster currentScreen;
-  
+
   @Inject
   public Store() {
     this.preferences = new AppPreferences();
@@ -22,7 +22,7 @@ public class Store {
 
   /** Max number of players in a game */
   // FOR TESTING
-  public final int MAX_PLAYERS = 1;
+  public final int MAX_PLAYERS = 4;
 
   /** Contains all of the information about the game board */
   private GameBoard gameBoard = new GameBoard();
@@ -42,26 +42,23 @@ public class Store {
   public AppPreferences getPreferences() {
     return preferences;
   }
-  
+
   public void generateGrid() {
     // Set coordinates of the players
     int last = gameBoard.GRID_SIZE - 1;
     players.get(0).setCoordinates(new Coordinates(0, 0));
-    if(players.size() > 1)
-      players.get(1).setCoordinates(new Coordinates(0, last));
-    if(players.size() > 2)
-      players.get(2).setCoordinates(new Coordinates(last, last));
-    if(players.size() > 3)
-      players.get(3).setCoordinates(new Coordinates(last, 0));
+    players.get(1).setCoordinates(new Coordinates(0, last));
+    players.get(2).setCoordinates(new Coordinates(last, last));
+    players.get(3).setCoordinates(new Coordinates(last, 0));
 
     gameBoard.generateGrid();
-  
+
   }
 
   public GameBoard getGameBoard() {
     return gameBoard;
   }
-  
+
   public void setScreen(ScreenMaster screen) {
     currentScreen = screen;
   }
@@ -69,7 +66,7 @@ public class Store {
   public ScreenMaster getScreen() {
     return currentScreen;
   }
-  
+
   public void setGameBoard(GameBoard gameBoard) {
     this.gameBoard = gameBoard;
   }
@@ -89,21 +86,23 @@ public class Store {
   public void removePlayer(UUID id) {
     players.removeIf(p -> p.getId().equals(id));
   }
-  
+
   public void removeAllPlayers() {
     players.clear();
   }
-  
+
   public void updatePlayer(Player updatingPlayer) {
     for (Player player : players) {
-      if (player.getId() == updatingPlayer.getId()) player = updatingPlayer;
+      if (player.getId() == updatingPlayer.getId())
+        player = updatingPlayer;
     }
   }
 
   public Player getMainPlayer() {
     // Might be too slow
     for (Player player : players) {
-      if (player.getId().equals(mainPlayerId)) return player;
+      if (player.getId().equals(mainPlayerId))
+        return player;
     }
 
     return null;
