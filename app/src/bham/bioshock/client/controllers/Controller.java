@@ -2,6 +2,7 @@ package bham.bioshock.client.controllers;
 
 import bham.bioshock.client.BoardGame;
 import bham.bioshock.client.Router;
+import com.badlogic.gdx.Screen;
 import bham.bioshock.client.screens.ScreenMaster;
 import bham.bioshock.common.models.Store;
 
@@ -18,7 +19,7 @@ public abstract class Controller {
     this.game = game;
   }
   
-  public void setScreen(ScreenMaster screen) {
+  public void setScreen(Screen screen) {
     store.setScreen(screen);
     game.setScreen(screen);
   }
