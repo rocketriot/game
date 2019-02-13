@@ -1,18 +1,22 @@
 package bham.bioshock.client.controllers;
 
-import com.badlogic.gdx.Screen;
-
-import bham.bioshock.client.Client;
-import bham.bioshock.client.screens.LoadingScreen;
+import bham.bioshock.client.BoardGame;
+import bham.bioshock.client.Router;
+import bham.bioshock.common.models.Store;
+import bham.bioshock.communication.fake.MyClass;
+import com.google.inject.Inject;
 
 public class LoadingController extends Controller {
-    private Client client;
 
-    public LoadingController(Client client) {
-        this.client = client;
-    }
-
-    public void setScreen(Screen screen) {
-        this.screen = (LoadingScreen) screen;
-    }
+  
+  @Inject
+  public LoadingController(Store store, Router router, BoardGame game) {
+    super(store, router, game);
+   
+  }
+  
+  public void show() {
+    
+  }
+  
 }

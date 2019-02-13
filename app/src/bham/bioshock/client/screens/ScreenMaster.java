@@ -1,111 +1,155 @@
 package bham.bioshock.client.screens;
 
-import bham.bioshock.client.Client;
-import bham.bioshock.client.controllers.Controller;
+import bham.bioshock.client.Router;
+import org.lwjgl.opengl.Display;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.ui.Stack;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 
 public abstract class ScreenMaster implements Screen {
-    protected Controller controller;
-    protected Stage stage;
-    protected Batch batch;
-    protected Stack stack;
+  protected Stage stage;
+  protected Batch batch;
+  protected Stack stack;
+  protected Router router;
 
-    protected float screen_width;
-    protected float screen_height;
+  protected float screen_width;
+  protected float screen_height;
 
-    protected TextButton back_button;
+  protected Texture background;
 
-    protected Skin skin = new Skin(Gdx.files.internal("app/assets/skins/neon/skin/neon-ui.json"));
+  protected BitmapFont font12;
+  protected BitmapFont font18;
 
-    public ScreenMaster() {
-        screen_width = Gdx.graphics.getWidth();
-        screen_height = Gdx.graphics.getHeight();
-    }
+  protected TextButton backButton;
 
-    @Override
-    public void show() {
-        addBackButton();
-        //set the back button to take you to main menu - for now
-        setPrevious(Client.View.MAIN_MENU);
-        //drawBackground();
-    }
+  protected Skin skin = new Skin(Gdx.files.internal("app/assets/skins/neon/skin/neon-ui.json"));
 
+  public ScreenMaster(Router router) {
+    this.router = router;
+    this.screen_width = Gdx.graphics.getWidth();
+    this.screen_height = Gdx.graphics.getHeight();
+  }
 
-    protected void drawBackground() {
-        //render background
-        // clear the screen
-        Gdx.gl.glClearColor(0, 0, 0, 0);
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+  @Override
+  public void show() {
+    Gdx.input.setInputProcessor(stage);
+    
+    // Create background
+    background = new Texture(Gdx.files.internal("app/assets/backgrounds/menu.png"));
 
-        //Create background
-        Texture background = new Texture(Gdx.files.internal("app/assets/backgrounds/menu.png"));
+    setupFonts();
 
-        batch.begin();
-        batch.draw(background,0,0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        batch.end();
+    addBackButton();
+    // set the back button to take you to main menu - for now
+    setPrevious();
+    // drawBackground();
+  }
 
+  /** Set's up all the fonts needed for the screen */
+  private void setupFonts() {
+    FileHandle fontSource = Gdx.files.internal("app/assets/fonts/font.otf");
+    font12 = generateFont(fontSource, 12);
+    font18 = generateFont(fontSource, 18);
+  }
 
-        //Gdx.input.setInputProcessor(stage);
+  /** Generates a bitmap font from source */
+  private BitmapFont generateFont(FileHandle source, int size) {
+    // Specify font size
+    FreeTypeFontParameter parameter = new FreeTypeFontParameter();
+    parameter.size = size;
 
-        //stage.act();
-        //stage.draw();
-    }
+    // Generate font
+    FreeTypeFontGenerator generator = new FreeTypeFontGenerator(source);
+    BitmapFont font = generator.generateFont(parameter);
+    generator.dispose();
 
-    protected void addBackButton(){
-        //add a button that takes the user back to the previous screen
-        back_button = new TextButton("Back", skin);
-        stage.addActor(back_button);
-    }
+    return font;
+  }
 
-    protected void setPrevious(final Client.View previous) {
-        back_button.addListener(new ChangeListener() {
-            @Override
-            public void changed(ChangeEvent event, Actor actor) {
-                controller.changeScreen(previous);
-            }
-        });
-    }
+  protected void drawBackground() {
+    // render background
+    // clear the screen
+    Gdx.gl.glClearColor(0, 0, 0, 0);
+    Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-    @Override
-    public void render(float delta) {
-        drawBackground();
-        stage.act(Math.min(Gdx.graphics.getDeltaTime(), 1 / 30f));
-        stage.draw();
-    }
+    batch.begin();
+    batch.draw(background, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+    batch.end();
+  }
 
-    @Override
-    public void resize(int width, int height) {
-        stage.getViewport().update(width, height, true);
-    }
+  protected void addBackButton() {
+    // add a button that takes the user back to the previous screen
+    backButton = new TextButton("Back", skin);
+    stage.addActor(backButton);
+  }
 
-    @Override
-    public void pause() {
+  protected void setPrevious() {
+    backButton.addListener(new ChangeListener() {
+      @Override
+      public void changed(ChangeEvent event, Actor actor) {
+        router.back();
+      }
+    });
+  }
 
-    }
+  @Override
+  public void render(float delta) {
+    drawBackground();
+    stage.act(Math.min(Gdx.graphics.getDeltaTime(), 1 / 30f));
+    stage.draw();
+  }
 
-    @Override
-    public void resume() {
+  @Override
+  public void resize(int width, int height) {
+    stage.getViewport().update(width, height, true);
+    screen_width = Gdx.graphics.getWidth();
+    screen_height = Gdx.graphics.getHeight();
+  }
 
-    }
+  @Override
+  public void pause() {}
 
-    @Override
-    public void hide() {
+  @Override
+  public void resume() {}
 
-    }
+  @Override
+  public void hide() {}
 
-    @Override
-    public void dispose() {
-        stage.dispose();
-        batch.dispose();
-    }
+  @Override
+  public void dispose() {
+    stage.dispose();
+    batch.dispose();
+  }
+
+  public void alert(String alert_text) {
+
+    Dialog diag = new Dialog("", skin) {
+
+      protected void result(Object object) {
+
+        if (object.equals(true)) {
+
+        } else {
+
+        }
+      }
+
+    };
+
+    diag.text(new Label(alert_text, skin));
+    diag.button("OK", true);
+    // diag.button("Cancel", false);
+
+    diag.show(stage);
+  }
 }

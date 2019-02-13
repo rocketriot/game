@@ -1,7 +1,15 @@
 package bham.bioshock.minigame;
 
+
 import java.awt.*;
 import java.util.ArrayList;
+
+
+import bham.bioshock.common.consts.Config;
+import bham.bioshock.minigame.models.Entity;
+import bham.bioshock.minigame.models.Player;
+import bham.bioshock.minigame.models.Rocket;
+import bham.bioshock.minigame.physics.Gravity;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
@@ -24,11 +32,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
-import bham.bioshock.common.consts.Config;
-import bham.bioshock.minigame.models.Entity;
-import bham.bioshock.minigame.models.Player;
-import bham.bioshock.minigame.models.Rocket;
-import bham.bioshock.minigame.physics.Gravity;
+import java.util.ArrayList;
 
 public class Renderer {
 

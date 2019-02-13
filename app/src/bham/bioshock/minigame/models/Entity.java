@@ -1,12 +1,12 @@
 package bham.bioshock.minigame.models;
 
-import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
-
 import bham.bioshock.common.Position;
 import bham.bioshock.minigame.World;
 import bham.bioshock.minigame.physics.Gravity;
 import bham.bioshock.minigame.physics.SpeedVector;
+
+import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 
 import java.util.ArrayList;
@@ -133,8 +133,5 @@ public abstract class Entity {
 	public Rectangle getRectangle(){
 		return sprite.getBoundingRectangle();
 	}
-
-
-
 
 }

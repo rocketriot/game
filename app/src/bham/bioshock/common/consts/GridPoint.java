@@ -2,46 +2,46 @@ package bham.bioshock.common.consts;
 
 import java.io.Serializable;
 
-/**
- * Specifies what is at the location of a grid
- */
+/** Specifies what is at the location of a grid */
 public class GridPoint implements Serializable {
 
-    private static final long serialVersionUID = 5775730008817100527L;
+  private static final long serialVersionUID = 5775730008817100527L;
+  /** The type of the grid point */
+  private Type type;
+  /** The value of the grid point i.e. a Player or a Planet */
+  private Object value;
 
-    /** Types of the grid point */
-    public enum Type {
-        PLAYER, PLANET, ASTEROID, FUEL, EMPTY
-    }
+  public GridPoint(Type type, Object value) {
+    this.type = type;
+    this.value = value;
+  }
 
-    /** The type of the grid point */
-    private Type type;
+  public GridPoint(Type type) {
+    this.type = type;
+  }
 
-    /** The value of the grid point i.e. a Player or a Planet */
-    private Object value;
+  public GridPoint.Type getType() {
+    return type;
+  }
 
-    public GridPoint(Type type, Object value) {
-        this.type = type;
-        this.value = value;
-    }
+  public void setType(GridPoint.Type type) {
+    this.type = type;
+  }
 
-    public GridPoint(Type type) {
-        this.type = type;
-    }
+  public Object getValue() {
+    return value;
+  }
 
-    public GridPoint.Type getType() {
-        return type;
-    }
+  public void setValue(Object value) {
+    this.value = value;
+  }
 
-    public Object getValue() {
-        return value;
-    }
-
-    public void setType(GridPoint.Type type) {
-        this.type = type;
-    }
-
-    public void setValue(Object value) {
-        this.value = value;
-    }
+  /** Types of the grid point */
+  public enum Type {
+    PLAYER,
+    PLANET,
+    ASTEROID,
+    FUEL,
+    EMPTY
+  }
 }

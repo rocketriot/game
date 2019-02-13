@@ -1,12 +1,13 @@
 package bham.bioshock.minigame;
 
-import java.util.ArrayList;
-
 import bham.bioshock.common.Position;
 import bham.bioshock.minigame.models.Player;
 import bham.bioshock.minigame.models.Rocket;
 
+import java.util.ArrayList;
+
 public class World {
+
 
 	private Player mainPlayer;
 	private ArrayList<Player> players;
@@ -51,4 +52,5 @@ public class World {
 	public ArrayList<Rocket> getRockets() {
 		return rockets;
 	}
-}
+
+  }

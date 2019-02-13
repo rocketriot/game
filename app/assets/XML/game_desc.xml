@@ -1,15 +1,7 @@
 <?xml version="1.0"?>
 
 <howto>
-	<game_desc>
-		Rocket Riot is a multiplayer strategy game. The Aim is to gain as many points as possible by capturing planets.
-	</game_desc>
+	<game_desc>Rocket Riot is a multiplayer strategy game. The Aim is to gain as many points as possible by capturing planets.</game_desc>
 
-	<game_controls>
-		Move around the board by clicking where you would like to move
-	</game_controls>
-
-	<max_players>
-		4
-	</max_players>
+	<game_controls>Move around the board by clicking where you would like to move</game_controls>
 </howto>

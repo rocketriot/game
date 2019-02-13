@@ -1,89 +1,74 @@
 package bham.bioshock.communication.client;
 
-import java.io.IOException;
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
-import java.net.InetAddress;
-import java.net.InterfaceAddress;
-import java.net.NetworkInterface;
-import java.util.Enumeration;
-
 import bham.bioshock.communication.Command;
 import bham.bioshock.communication.Config;
 
+import java.io.IOException;
+import java.net.*;
+import java.util.Enumeration;
+
 public class ClientConnectThread implements Runnable {
 
-	private String name;
-	
-	public ClientConnectThread(String name) {
-		this.name = name;
-	}
-	
-	private void sendPacket(DatagramSocket c, byte[] data, InetAddress address) {
-		try {
-			DatagramPacket sendPacket = new DatagramPacket(
-				data, 
-				data.length,
-				address,
-				Config.PORT
-			);	
-			c.send(sendPacket);				
-		} catch (IOException e) {
-			System.err.println(e.getMessage());
-		}
-	}
-	
-	@Override
-	public void run() {
-		DatagramSocket c;
-		try {
-			// Open a random port to send the package
-			c = new DatagramSocket();
-			c.setBroadcast(true);
-			String broadcastMessage = Command.COMM_DISCOVER.toString() + ";" + this.name;
-			byte[] data = broadcastMessage.getBytes(); 
-			sendPacket(c, data, InetAddress.getByName("255.255.255.255"));
-		
-			// Broadcast the message over all the network interfaces
-			Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
-			while (interfaces.hasMoreElements()) {
-				NetworkInterface networkInterface = interfaces.nextElement();
+  private void sendPacket(DatagramSocket c, byte[] data, InetAddress address) {
+    try {
+      DatagramPacket sendPacket = new DatagramPacket(data, data.length, address, Config.PORT);
+      c.send(sendPacket);
+    } catch (IOException e) {
+      System.err.println(e.getMessage());
+    }
+  }
 
-				if (networkInterface.isLoopback() || !networkInterface.isUp())
-					continue;
+  @Override
+  public void run() {
+    DatagramSocket c;
+    try {
+      // Open a random port to send the package
+      c = new DatagramSocket();
+      c.setBroadcast(true);
+      String broadcastMessage = Command.COMM_DISCOVER.toString();
+      byte[] data = broadcastMessage.getBytes();
+      sendPacket(c, data, InetAddress.getByName("255.255.255.255"));
 
-				for (InterfaceAddress interfaceAddress : networkInterface.getInterfaceAddresses()) {
-					InetAddress broadcast = interfaceAddress.getBroadcast();
-					
-					if (broadcast == null)
-						continue;
+      // Broadcast the message over all the network interfaces
+      Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
+      while (interfaces.hasMoreElements()) {
+        NetworkInterface networkInterface = interfaces.nextElement();
 
-					// Send the broadcast package
-					sendPacket(c, data, broadcast);
+        if (networkInterface.isLoopback() || !networkInterface.isUp()) continue;
 
-					System.out.println(
-						"Request packet sent to: " + broadcast.getHostAddress() + ";"
-						+ "Interface: " + networkInterface.getDisplayName()
-					);
-				}
-			}
+        for (InterfaceAddress interfaceAddress : networkInterface.getInterfaceAddresses()) {
+          InetAddress broadcast = interfaceAddress.getBroadcast();
 
-			System.out.println("Waiting for a connection...");
+          if (broadcast == null) continue;
 
-			// Wait for a response
-			byte[] buffer = new byte[15000];
-			DatagramPacket receivePacket = new DatagramPacket(buffer, buffer.length);
-			c.receive(receivePacket);
+          // Send the broadcast package
+          sendPacket(c, data, broadcast);
 
-			// Check if the message is correct
-			String message = new String(receivePacket.getData()).trim();
-			if (message.equals(Command.COMM_DISCOVER_RESPONSE.toString())) {
-				CommunicationClient.setHostAddress(receivePacket.getAddress());
-			}
+          System.out.println(
+              "Request packet sent to: "
+                  + broadcast.getHostAddress()
+                  + ";"
+                  + "Interface: "
+                  + networkInterface.getDisplayName());
+        }
+      }
 
-			c.close();
-		} catch (IOException ex) {
-			System.err.println(ex.getMessage());
-		}
-	}
+      System.out.println("Waiting for a connection...");
+
+      // Wait for a response
+      byte[] buffer = new byte[15000];
+      DatagramPacket receivePacket = new DatagramPacket(buffer, buffer.length);
+      c.receive(receivePacket);
+
+      // Check if the message is correct
+      String message = new String(receivePacket.getData()).trim();
+      if (message.equals(Command.COMM_DISCOVER_RESPONSE.toString())) {
+        CommunicationClient.setHostAddress(receivePacket.getAddress().toString());
+      }
+
+      c.close();
+    } catch (IOException ex) {
+      System.err.println(ex.getMessage());
+    }
+  }
 }

@@ -1,167 +1,147 @@
 package bham.bioshock.client.controllers;
 
-import bham.bioshock.client.Client;
-import bham.bioshock.client.Client.View;
+import bham.bioshock.client.Router;
 import bham.bioshock.client.screens.GameBoardScreen;
+import bham.bioshock.client.BoardGame;
+import bham.bioshock.client.Route;
 import bham.bioshock.common.consts.GridPoint;
 import bham.bioshock.common.models.*;
 import bham.bioshock.common.pathfinding.AStarPathfinding;
 import bham.bioshock.communication.Action;
 import bham.bioshock.communication.Command;
-import bham.bioshock.communication.client.ClientService;
+import bham.bioshock.communication.client.IClientService;
 
-import com.badlogic.gdx.Screen;
+import com.google.inject.Inject;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Random;
 
-import static bham.bioshock.common.consts.GridPoint.Type.*;
-
 public class GameBoardController extends Controller {
-    private Client client;
-    private ClientService server;
+  private IClientService clientService;
 
-    private Model model;
-    private GameBoard gameBoard;
-    private Player mainPlayer;
-    private AStarPathfinding pathFinder;
-    private boolean receivedGrid = false;
+  @Inject
+  public GameBoardController(Router router, Store store, IClientService clientService,
+      BoardGame game) {
+    super(store, router, game);
+    this.clientService = clientService;
+    this.router = router;
+  }
 
-    public GameBoardController(Client client) {
-        this.client = client;
-        this.server = client.getServer();
-        this.model = client.getModel();
-        gameBoard = model.getGameBoard();
+  public void show() {
+    // If the grid is not yet loaded, go to loading screen and fetch the game board
+    // from the server
+    if (!hasReceivedGrid()) {
+      clientService.send(new Action(Command.GET_GAME_BOARD));
+      router.call(Route.LOADING);
+    }
+  }
+
+  /** Handles when the server sends the game board to the client */
+  public void saveGameBoard(GameBoard gameBoard) {
+    store.setGameBoard(gameBoard);
+
+    setScreen(new GameBoardScreen(router, store, gameBoard));
+    router.call(Route.GAME_BOARD);
+  }
+
+  public void savePlayers(ArrayList<Player> players) {
+    // TODO: remove temporary solution to fix coordinates not being sent by the server
+    int last = store.getGameBoard().GRID_SIZE - 1;
+    players.get(0).setCoordinates(new Coordinates(0, 0));
+    players.get(1).setCoordinates(new Coordinates(0, last));
+    players.get(2).setCoordinates(new Coordinates(last, last));
+    players.get(3).setCoordinates(new Coordinates(last, 0));
+
+    store.setPlayers(players);
+  }
+
+
+  public void move(Coordinates destination) {
+    GameBoard gameBoard = store.getGameBoard();
+    GridPoint[][] grid = gameBoard.getGrid();
+    Player mainPlayer = store.getMainPlayer();
+
+    // Initialize path finding
+    int gridSize = store.getGameBoard().GRID_SIZE;
+    AStarPathfinding pathFinder = new AStarPathfinding(grid, mainPlayer.getCoordinates(), gridSize, gridSize);
+    pathFinder.setStartPosition(mainPlayer.getCoordinates());
+
+    // pathsize - 1 since path includes start position
+    ArrayList<Coordinates> path = pathFinder.pathfind(destination);
+    float pathCost = (path.size() - 1) * 10;
+
+    // Handle if player doesn't have enough fuel
+    if (mainPlayer.getFuel() < pathCost) return;
+
+    // Update player coordinates and fuel
+    mainPlayer.setCoordinates(destination);
+    mainPlayer.decreaseFuel(pathCost);
+
+    // Get grid point the user landed on
+    GridPoint gridPoint = gameBoard.getGridPoint(destination);
+
+    // Check if the player landed on a fuel box
+    if (gridPoint.getType() == GridPoint.Type.FUEL) {
+      // Decrease players amount of fuel
+      Fuel fuel = (Fuel) gridPoint.getValue();
+      mainPlayer.decreaseFuel(fuel.getValue());
     }
 
-    /** When the game board is on the screen */
-    public void onShow() {
-        // Update server connection from null since we should be connected
-        server = client.getServer();
-        // If the grid is not yet loaded, go to loading screen and fetch the game board
-        // from the server
-        if (receivedGrid == false) {
-            server.send(new Action(Command.GET_GAME_BOARD));
-            client.changeScreen(View.LOADING);
-        }
+    // Send the updated grid to the server
+    ArrayList<Serializable> arguments = new ArrayList<>();
+    arguments.add(gameBoard);
+    arguments.add(mainPlayer);
+    clientService.send(new Action(Command.MOVE_PLAYER_ON_BOARD, arguments));
+  }
+
+  /** Player move received from the server */
+  public void moveReceived(Action action) {
+    // Get game board and player from arguments and update the model
+    GameBoard gameBoard = (GameBoard) action.getArgument(0);
+    Player movingPlayer = (Player) action.getArgument(1);
+    store.setGameBoard(gameBoard);
+    store.updatePlayer(movingPlayer);
+
+    store.nextTurn();
+  }
+
+  public void startMinigame() {}
+
+  public void miniGameWon(Player player, Planet planet) {
+    // winner gets the planet, previous owner loses it
+    if (planet.getPlayerCaptured() != null) {
+      Player loser = planet.getPlayerCaptured();
+      loser.setPlanetsCaptured(loser.getPlanetsCaptured() - 1);
     }
+    planet.setPlayerCaptured(player);
+    player.setPlanetsCaptured(player.getPlanetsCaptured() + 1);
+    player.setPoints(player.getPoints() + 100);
+  }
 
-    /** Handles when the server sends the game board to the client */
-    public void gameBoardReceived(Action action) {
-        // Update gameboard from arguments
-        ArrayList<Serializable> arguments = action.getArguments();
-        gameBoard = (GameBoard) arguments.get(0);
-        client.changeScreen(View.GAME_BOARD);
+  public void miniGameLost(Player player) {
+    GridPoint[][] grid = store.getGameBoard().getGrid();
 
-        receivedGrid = true;
+    // if player attacks planet and doesn't win gets moved in a random position
+    int x, y;
+    do {
+      x = new Random().nextInt();
+      y = new Random().nextInt();
+    } while (grid[x][y].getType() != GridPoint.Type.EMPTY);
 
-        //TODO change to client's player
-        setMainPlayer(model.getPlayers().get(0));
-        pathFinder = new AStarPathfinding(gameBoard.getGrid(), mainPlayer.getCoordinates(),36,36);
-    }
+    Coordinates newCoordinates = new Coordinates(x, y);
+    player.setCoordinates(newCoordinates);
+  }
 
-    public GridPoint[][] getGrid() {
-        return gameBoard.getGrid();
-    }
+  public boolean hasReceivedGrid() {
+    return store.getGameBoard().getGrid() != null;
+  }
 
-    public int getGridSize() {
-        return gameBoard.GRID_SIZE;
-    }
+  /** Check if it is the main player's turn */
+  public boolean isMainPlayersTurn() {
+    int turn = store.getTurn();
+    Player nextPlayer = store.getPlayers().get(turn);
 
-    public ArrayList<Player> getPlayers() {
-        return model.getPlayers();
-    }
-
-    public void changeScreen(Client.View screen) {
-        client.changeScreen(screen);
-    }
-
-    public Player getMainPlayer() {
-        return mainPlayer;
-    }
-
-    public void setMainPlayer(Player p) {
-        this.mainPlayer = p;
-    }
-
-    public AStarPathfinding getPathFinder() {
-        pathFinder.setStartPosition(mainPlayer.getCoordinates());
-        return pathFinder;
-    }
-
-    public boolean[] getPathColour(ArrayList<Coordinates> path) {
-        boolean[] allowedMove = new boolean[path.size()];
-        float fuel = mainPlayer.getFuel();
-        for (int i = 0; i < path.size(); i++) {
-            if (fuel < 10f) {
-                allowedMove[i] = false;
-            } else {
-                allowedMove[i] = true;
-                fuel -= 10;
-            }
-        }
-        return allowedMove;
-    }
-
-    public void move(Coordinates destination){
-        float fuel = mainPlayer.getFuel();
-        GridPoint[][] grid = gameBoard.getGrid();
-        ArrayList<Coordinates> path = pathFinder.pathfind(destination);
-
-        // pathsize - 1 since path includes start position
-        float pathCost = (path.size() - 1) * 10;
-
-        // check if the player has enough fuel
-        if(mainPlayer.getFuel() >= pathCost) {
-            mainPlayer.setCoordinates(destination);
-            fuel -= pathCost;
-            mainPlayer.setFuel(fuel);
-
-            int x = destination.getX();
-            int y = destination.getY();
-            if(grid[x][y].getType() == PLANET)
-                startMinigame();
-            else if(grid[x][y].getType() == FUEL)
-                mainPlayer.setFuel(fuel + 30);
-            pathFinder.setStartPosition(mainPlayer.getCoordinates());
-        }
-    }
-
-    public void startMinigame() {
-
-    }
-
-    public void miniGameWon(Player player, Planet planet) {
-        // winner gets the planet, previous owner loses it
-        if (planet.getPlayerCaptured() != null) {
-            Player loser = planet.getPlayerCaptured();
-            loser.setPlanetsCaptured(loser.getPlanetsCaptured() - 1);
-        }
-        planet.setPlayerCaptured(player);
-        player.setPlanetsCaptured(player.getPlanetsCaptured() + 1);
-        player.setPoints(player.getPoints() + 100);
-    }
-
-    public void miniGameLost(Player player) {
-        GridPoint[][] grid = gameBoard.getGrid();
-
-        // if player attacks planet and doesn't win gets moved in a random position
-        int x, y;
-        do {
-            x = new Random().nextInt();
-            y = new Random().nextInt();
-        } while (grid[x][y].getType() != EMPTY);
-
-        Coordinates newCoordinates = new Coordinates(x, y);
-        player.setCoordinates(newCoordinates);
-    }
-
-    public void setScreen(Screen screen) {
-        this.screen = (GameBoardScreen) screen;
-    }
-
-    public boolean hasReceivedGrid() {
-        return receivedGrid;
-    }
+    return store.getMainPlayer().getId().equals(nextPlayer.getId());
+  }
 }

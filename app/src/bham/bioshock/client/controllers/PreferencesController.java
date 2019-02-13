@@ -1,32 +1,27 @@
 package bham.bioshock.client.controllers;
 
-import com.badlogic.gdx.Screen;
-
-import bham.bioshock.client.Client;
+import com.google.inject.Inject;
+import bham.bioshock.client.BoardGame;
+import bham.bioshock.client.Router;
 import bham.bioshock.client.XMLReader;
-import bham.bioshock.client.screens.PreferencesScreen;
-import bham.bioshock.common.models.Model;
+import bham.bioshock.common.models.Store;
 
 public class PreferencesController extends Controller {
 
+  private XMLReader reader;
 
-    private XMLReader reader;
+  private float volume;
+  private boolean sound_on;
+  private boolean music_on;
+  private String name;
+  private int difficulty;
 
-    private float volume;
-    private boolean sound_on;
-    private boolean music_on;
-    private String name;
-    private int difficulty;
+  @Inject
+  public PreferencesController(Store store, Router router, BoardGame game) {
+    super(store, router, game);
 
-    public PreferencesController(Client client) {
-        this.client = client;
-        this.model = client.getModel();
+    reader = new XMLReader("app/assets/Preferences/Preferences.XML");
+  }
 
-        reader = new XMLReader("app/assets/Preferences/Preferences.XML");
-    }
-
-    private void readPreferences() {
-
-    }
-
+  private void readPreferences() {}
 }
