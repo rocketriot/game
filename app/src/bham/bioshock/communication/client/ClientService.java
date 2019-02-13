@@ -21,7 +21,7 @@ public class ClientService extends Thread implements IClientService {
   private ObjectOutputStream toServer;
 
   private PriorityBlockingQueue<Action> queue = new PriorityBlockingQueue<>();
-  private ClientHandler handler;
+  private IClientHandler handler;
   
   
   /**
@@ -68,7 +68,7 @@ public class ClientService extends Thread implements IClientService {
     close();
   }
   
-  public void registerHandler(ClientHandler handler) {
+  public void registerHandler(IClientHandler handler) {
     this.handler = handler;
   }
 

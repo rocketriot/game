@@ -4,28 +4,17 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import com.badlogic.gdx.Screen;
-import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Singleton;
 import bham.bioshock.client.controllers.Controller;
-import bham.bioshock.common.models.Store;
 
 @Singleton
 public class Router {
 
   private static final Logger logger = LogManager.getLogger(Router.class);
 
-  private Store store;
-  private BoardGame game;
   private Injector injector;
-
-  @Inject
-  public Router(Store store, BoardGame game) {
-    this.store = store;
-    this.game = game;
-  }
-
+ 
   public void setInjector(Injector injector) {
     this.injector = injector;
   }
@@ -34,7 +23,13 @@ public class Router {
     call(Route.MAIN_MENU);
   }
 
-  public void call(Route view) {
+  /** 
+   * Call controller method
+   * 
+   * @param view
+   * @param argument for controller method
+   */
+  public void call(Route view, Object arg) {
     Class<? extends Controller> c = view.getController();
     String method = view.getMethod();
     Controller controller = injector.getInstance(c);
@@ -45,8 +40,15 @@ public class Router {
       {
         String name = m.getName();
         if(name.startsWith(method)) {
-          logger.debug("Executing " + c.toString() + " : " + method);
-          m.invoke(controller, new Object[0]);
+          if(arg != null) {
+            Object[] args = new Object[1];
+            args[0] = arg;
+            logger.debug("Executing " + c.toString() + " : " + method + " : " + arg.toString());
+            m.invoke(controller, args);
+          } else {
+            logger.debug("Executing " + c.toString() + " : " + method);
+            m.invoke(controller, new Object[0]);
+          }
           return;
         }
       }
@@ -57,9 +59,9 @@ public class Router {
       e.printStackTrace();
     }
   }
-
-  public void changeScreen(Screen screen) {
-    game.setScreen(screen);
+  
+  public void call(Route view) {
+    call(view, null);
   }
 
 }

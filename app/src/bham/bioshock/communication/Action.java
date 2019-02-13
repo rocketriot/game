@@ -72,6 +72,14 @@ public class Action implements Serializable, Comparable<Action> {
     }
     return arguments.get(i);
   }
+  
+  public String toString() {
+    String arguments = "";
+    for(Serializable s : getArguments()) {
+      arguments += s.toString() + ", ";
+    }
+    return command.name() + " | " + arguments;
+  }
 
   @Override
   public int compareTo(Action o) {

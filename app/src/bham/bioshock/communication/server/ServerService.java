@@ -62,13 +62,5 @@ public class ServerService extends Thread {
   private void execute(Action action) {
 
     handler.handleRequest(action);
-
-    //		Command command = action.getCommand();
-    //		ArrayList<String> arguments = action.getArguments();
-    //		System.out.println(command);
-    //		for (String a : arguments) {
-    //			System.out.print(a + "; ");
-    //		}
-    //		System.out.print("\n");
   }
 }

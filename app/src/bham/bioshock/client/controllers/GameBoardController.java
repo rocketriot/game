@@ -10,7 +10,6 @@ import bham.bioshock.communication.Action;
 import bham.bioshock.communication.Command;
 import bham.bioshock.communication.client.IClientService;
 import com.google.inject.Inject;
-import com.google.inject.name.Named;
 import java.util.ArrayList;
 import java.util.Random;
 import static bham.bioshock.common.consts.GridPoint.Type.*;
@@ -35,6 +34,14 @@ public class GameBoardController extends Controller {
     gameBoard = store.getGameBoard();
   }
 
+  public void start() {
+    
+  }
+  
+  public void saveGameBoard(GameBoard gameBoard) {
+    store.setGameBoard(gameBoard);
+  }
+  
   public void show() {
     // If the grid is not yet loaded, go to loading screen and fetch the game board
     // from the server

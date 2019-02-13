@@ -103,7 +103,6 @@ public class MainMenuScreen extends ScreenMaster {
       public void changed(ChangeEvent event, Actor actor) {
         /** Bring up a dialogue to ask the user for a host name then start the new server */
         showHostDialogue();
-        // controller.createServer();
       }
     });
 
@@ -133,28 +132,23 @@ public class MainMenuScreen extends ScreenMaster {
 
   private void showHostDialogue() {
 
-
     TextField textField = new TextField("", skin);
 
     Dialog diag = new Dialog("Host Game", skin) {
 
       protected void result(Object object) {
-
         if (object.equals(true)) {
           String host_name = textField.getText();
           if (host_name.equals("")) {
             Alert("Please Enter a Host Name");
           } else {
-            // send the name to the connection
-            controller.createServer(host_name);
+            // show join screen
+            router.call(Route.HOST_GAME, host_name);
           }
-
-
         } else {
           System.out.println("Cancelled..");
         }
       }
-
     };
 
     diag.text(new Label("Please enter a host name", skin));
@@ -166,7 +160,6 @@ public class MainMenuScreen extends ScreenMaster {
   }
 
   private void showJoinDialogue() {
-
 
     TextField textField = new TextField("", skin);
 
@@ -180,8 +173,7 @@ public class MainMenuScreen extends ScreenMaster {
           if (username.equals("")) {
             Alert("Please Enter a Username");
           } else {
-            // send the name to the connection
-            controller.addPlayerToConnection(username);
+            router.call(Route.JOIN_SCREEN, username);
           }
 
         } else {

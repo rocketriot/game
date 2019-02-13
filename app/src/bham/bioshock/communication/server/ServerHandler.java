@@ -4,11 +4,15 @@ import bham.bioshock.common.models.Store;
 import bham.bioshock.communication.Action;
 import bham.bioshock.server.handlers.GameBoardHandler;
 import bham.bioshock.server.handlers.JoinScreenHandler;
-
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.UUID;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class ServerHandler {
+  
+  private static final Logger logger = LogManager.getLogger(ServerHandler.class);
 
   private Store model;
   private ArrayList<ServerService> connections;
@@ -37,6 +41,8 @@ public class ServerHandler {
   }
 
   public void handleRequest(Action action) {
+    logger.debug("Server received: " + action);
+    
     try {
       switch (action.getCommand()) {
         case ADD_PLAYER:
