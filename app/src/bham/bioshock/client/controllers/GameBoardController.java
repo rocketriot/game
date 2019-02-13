@@ -146,6 +146,8 @@ public class GameBoardController extends Controller {
     Player movingPlayer = (Player) arguments.get(1);
     model.setGameBoard(gameBoard);
     model.updatePlayer(movingPlayer);
+
+    model.nextTurn();
   }
 
   public void startMinigame() {}
@@ -181,5 +183,13 @@ public class GameBoardController extends Controller {
 
   public boolean hasReceivedGrid() {
     return gameBoard.getGrid() != null;
+  }
+
+  /** Check if it is the main player's turn */
+  public boolean isMainPlayersTurn() {
+    int turn = model.getTurn();
+    Player nextPlayer = model.getPlayers().get(turn);
+
+    return getMainPlayer().getId().equals(nextPlayer.getId());
   }
 }

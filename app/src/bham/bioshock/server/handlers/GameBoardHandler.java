@@ -50,5 +50,7 @@ public class GameBoardHandler {
       // TODO: randomly pick a minigame type
       handler.sendToAll(new Action(Command.START_MINIGAME));
     }
+
+    model.nextTurn();
   }
 }
