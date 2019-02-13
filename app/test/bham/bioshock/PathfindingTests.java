@@ -172,7 +172,7 @@ public class PathfindingTests {
 
         // set up the obstacle
         emptyGrid[18][8].setType(GridPoint.Type.PLANET);
-        pathfinder.setGameGrid(emptyGrid, new ArrayList<Player>());
+        pathfinder.setGameGrid(emptyGrid, new ArrayList<>());
 
         // set up the actual path that should be found
         ArrayList<Coordinates> truePath = new ArrayList<>();
@@ -194,7 +194,7 @@ public class PathfindingTests {
 
         // remove the obstacle
         emptyGrid[18][8].setType(GridPoint.Type.EMPTY);
-        pathfinder.setGameGrid(emptyGrid, new ArrayList<Player>());
+        pathfinder.setGameGrid(emptyGrid, new ArrayList<>());
     }
 
     @Test
@@ -203,7 +203,7 @@ public class PathfindingTests {
 
         // set up the obstacle
         emptyGrid[9][18].setType(GridPoint.Type.PLANET);
-        pathfinder.setGameGrid(emptyGrid, new ArrayList<Player>());
+        pathfinder.setGameGrid(emptyGrid, new ArrayList<>());
 
         // set up the actual path that should be found
         ArrayList<Coordinates> truePath = new ArrayList<>();
@@ -221,7 +221,7 @@ public class PathfindingTests {
 
         // remove the obstacle
         emptyGrid[9][18].setType(GridPoint.Type.EMPTY);
-        pathfinder.setGameGrid(emptyGrid, new ArrayList<Player>());
+        pathfinder.setGameGrid(emptyGrid, new ArrayList<>());
 
         assertTrue(checkPaths(truePath, foundPath));
     }
@@ -234,7 +234,7 @@ public class PathfindingTests {
         for (int i = 0; i < 36; i++) {
             emptyGrid[9][i].setType(GridPoint.Type.PLANET);
         }
-        pathfinder.setGameGrid(emptyGrid, new ArrayList<Player>());
+        pathfinder.setGameGrid(emptyGrid, new ArrayList<>());
 
         ArrayList<Coordinates> foundPath = pathfinder.pathfind(goalPosition);
 
@@ -242,7 +242,7 @@ public class PathfindingTests {
         for (int i = 0; i < 36; i++) {
             emptyGrid[9][i].setType(GridPoint.Type.EMPTY);
         }
-        pathfinder.setGameGrid(emptyGrid, new ArrayList<Player>());
+        pathfinder.setGameGrid(emptyGrid, new ArrayList<>());
 
         assertTrue(foundPath.isEmpty());
     }

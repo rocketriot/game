@@ -12,37 +12,37 @@ import java.util.Collections;
 public class AStarPathfinding {
 
     /**
-     * the cost to go from one point to another
+     * The cost to go from one point to another
      */
     private final int TRANSITION_COST = 1;
 
     /**
-     * start position of the path
+     * Start position of the path
      */
     private Coordinates startPosition;
 
     /**
-     * goal position of the path
+     * Goal position of the path
      */
     private Coordinates goalPosition;
 
     /**
-     * the game grid at the time of the pathfinding search
+     * The game grid at the time of the pathfinding search
      */
     private GridPoint[][] gameGrid;
 
     /**
-     * the grid that will contain the pathfinding values for each point
+     * The grid that will contain the pathfinding values for each point
      */
     private PathfindingValues[][] aStarGrid;
 
     /**
-     * the maximum x value of the map
+     * The maximum x value of the map
      */
     private int maxX;
 
     /**
-     * the maximum y value of the map
+     * The maximum y value of the map
      */
     private int maxY;
 
@@ -145,7 +145,7 @@ public class AStarPathfinding {
         gameGrid = grid;
 
         // get the position of each player and add them into the grid
-        for (Player player : players){
+        for (Player player : players) {
             Coordinates playerCoords = player.getCoordinates();
             gameGrid[playerCoords.getX()][playerCoords.getY()] = new GridPoint(GridPoint.Type.PLAYER, 0);
         }
