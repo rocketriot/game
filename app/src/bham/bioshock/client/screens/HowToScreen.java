@@ -1,7 +1,7 @@
 package bham.bioshock.client.screens;
 
+import bham.bioshock.client.Router;
 import bham.bioshock.client.XMLReader;
-import bham.bioshock.client.controllers.HowToController;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -15,8 +15,8 @@ public class HowToScreen extends ScreenMaster {
   private Table textTable;
   private XMLReader reader;
 
-  public HowToScreen(HowToController controller) {
-    this.controller = controller;
+  public HowToScreen(Router router) {
+    super(router);
 
     stage = new Stage(new ScreenViewport());
     batch = new SpriteBatch();

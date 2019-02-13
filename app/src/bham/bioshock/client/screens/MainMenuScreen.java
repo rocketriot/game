@@ -1,7 +1,7 @@
 package bham.bioshock.client.screens;
 
-import bham.bioshock.client.Client;
-import bham.bioshock.client.controllers.MainMenuController;
+import bham.bioshock.client.Route;
+import bham.bioshock.client.Router;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -11,7 +11,6 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
 public class MainMenuScreen extends ScreenMaster {
-  private MainMenuController controller;
 
   // buttons
   private TextButton host;
@@ -20,15 +19,13 @@ public class MainMenuScreen extends ScreenMaster {
   private TextButton exit;
   private TextButton join;
 
-  public MainMenuScreen(final MainMenuController controller) {
-    this.controller = controller;
-
+  public MainMenuScreen(Router router) {
+    super(router);
     // set the stage, which will react to user inputs
     stage = new Stage(new ScreenViewport());
     batch = new SpriteBatch();
 
     // calls act with Graphics.getDeltaTime()
-
   }
 
   @Override
@@ -59,8 +56,8 @@ public class MainMenuScreen extends ScreenMaster {
     float container_width = screen_width * 0.8f;
     float container_height = screen_height * 0.9f;
     tableContainer.setSize(container_width, container_height);
-    tableContainer.setPosition(
-        (screen_width - container_width) / 2.0f, (screen_height - container_height) / 2.0f);
+    tableContainer.setPosition((screen_width - container_width) / 2.0f,
+        (screen_height - container_height) / 2.0f);
 
     // Table to hold menu button, will change this to a better style
     Table table = new Table(skin);
@@ -91,116 +88,95 @@ public class MainMenuScreen extends ScreenMaster {
   }
 
   private void addListeners() {
+    Router router = this.router;
+
     // add change listeners for the buttons
-    exit.addListener(
-        new ChangeListener() {
-          @Override
-          public void changed(ChangeEvent event, Actor actor) {
-            Gdx.app.exit();
-          }
-        });
+    exit.addListener(new ChangeListener() {
+      @Override
+      public void changed(ChangeEvent event, Actor actor) {
+        Gdx.app.exit();
+      }
+    });
 
-    host.addListener(
-        new ChangeListener() {
-          @Override
-          public void changed(ChangeEvent event, Actor actor) {
-              /** Bring up a dialogue to ask the user for a host name then start the new server */
-              showHostDialogue();
-              //controller.createServer();
-          }
-        });
+    host.addListener(new ChangeListener() {
+      @Override
+      public void changed(ChangeEvent event, Actor actor) {
+        /** Bring up a dialogue to ask the user for a host name then start the new server */
+        showHostDialogue();
+      }
+    });
 
-    howto.addListener(
-        new ChangeListener() {
-          @Override
-          public void changed(ChangeEvent event, Actor actor) {
-            controller.changeScreen(Client.View.HOW_TO);
-          }
-        });
+    howto.addListener(new ChangeListener() {
+      @Override
+      public void changed(ChangeEvent event, Actor actor) {
+        router.call(Route.HOW_TO);
+      }
+    });
 
-    preferences.addListener(
-        new ChangeListener() {
-          @Override
-          public void changed(ChangeEvent event, Actor actor) {
-            controller.changeScreen(Client.View.PREFERENCES);
-          }
-        });
+    preferences.addListener(new ChangeListener() {
+      @Override
+      public void changed(ChangeEvent event, Actor actor) {
+        router.call(Route.PREFERENCES);
+      }
+    });
 
-    join.addListener(
-        new ChangeListener() {
-          @Override
-          public void changed(ChangeEvent event, Actor actor) {
-              //Do something to add a new player...
-            showJoinDialogue();
-          }
-        });
-
-
+    join.addListener(new ChangeListener() {
+      @Override
+      public void changed(ChangeEvent event, Actor actor) {
+        // Do something to add a new player...
+        showJoinDialogue();
+      }
+    });
 
   }
 
-    private void showHostDialogue() {
-
-
-        TextField textField = new TextField("", skin);
-
-        Dialog diag = new Dialog("Host Game", skin){
-
-            protected void result(Object object)
-            {
-
-                if(object.equals(true)) {
-                    String host_name = textField.getText();
-                    if (host_name.equals("")) {
-                        Alert("Please Enter a Host Name");
-                    }
-                    else {
-                        //send the name to the connection
-                        controller.createServer(host_name);
-                    }
-
-
-                }
-                else {
-                    System.out.println("Cancelled..");
-                }
-            }
-
-        };
-
-        diag.text(new Label("Please enter a host name", skin));
-        diag.getContentTable().add(textField);
-        diag.button("OK", true);
-        diag.button("Cancel", false);
-
-        diag.show(stage);
-    }
-
-    private void showJoinDialogue() {
-
+  private void showHostDialogue() {
 
     TextField textField = new TextField("", skin);
 
-    Dialog diag = new Dialog("Join Game", skin){
+    Dialog diag = new Dialog("Host Game", skin) {
 
-      protected void result(Object object)
-      {
+      protected void result(Object object) {
+        if (object.equals(true)) {
+          String host_name = textField.getText();
+          if (host_name.equals("")) {
+            alert("Please Enter a Host Name");
+          } else {
+            // show join screen
+            router.call(Route.HOST_GAME, host_name);
+          }
+        } else {
+          System.out.println("Cancelled..");
+        }
+      }
+    };
 
-        if(object.equals(true)) {
+    diag.text(new Label("Please enter a host name", skin));
+    diag.getContentTable().add(textField);
+    diag.button("OK", true);
+    diag.button("Cancel", false);
+
+    diag.show(stage);
+  }
+
+  private void showJoinDialogue() {
+
+    TextField textField = new TextField("", skin);
+
+    Dialog diag = new Dialog("Join Game", skin) {
+
+      protected void result(Object object) {
+
+        if (object.equals(true)) {
           String username = textField.getText();
 
-          if(username.equals("")) {
-              Alert("Please Enter a Username");
-          }
-          else {
-              //send the name to the connection
-              controller.addPlayerToConnection(username);
+          if (username.equals("")) {
+            alert("Please Enter a Username");
+          } else {
+            router.call(Route.JOIN_SCREEN, username);
           }
 
-
-
-        }
-        else {
+        } else {
           System.out.println("Cancelled..");
         }
       }
