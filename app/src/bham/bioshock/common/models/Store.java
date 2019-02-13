@@ -82,6 +82,14 @@ public class Store {
     players.add(player);
   }
 
+  public void removePlayer(UUID id) {
+    players.removeIf(p -> p.getId().equals(id));
+  }
+  
+  public void removeAllPlayers() {
+    players.clear();
+  }
+  
   public void updatePlayer(Player updatingPlayer) {
     for (Player player : players) {
       if (player.getId() == updatingPlayer.getId()) player = updatingPlayer;

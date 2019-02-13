@@ -10,6 +10,7 @@ public enum Command {
 
   // Creating a game
   ADD_PLAYER,
+  REMOVE_PLAYER,
   START_GAME,
 
   // Game board

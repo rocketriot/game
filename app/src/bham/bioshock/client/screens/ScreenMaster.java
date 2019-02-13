@@ -30,7 +30,7 @@ public abstract class ScreenMaster implements Screen {
   protected BitmapFont font12;
   protected BitmapFont font18;
 
-  protected TextButton back_button;
+  protected TextButton backButton;
 
   protected Skin skin = new Skin(Gdx.files.internal("app/assets/skins/neon/skin/neon-ui.json"));
 
@@ -42,6 +42,8 @@ public abstract class ScreenMaster implements Screen {
 
   @Override
   public void show() {
+    Gdx.input.setInputProcessor(stage);
+    
     // Create background
     background = new Texture(Gdx.files.internal("app/assets/backgrounds/menu.png"));
 
@@ -87,12 +89,12 @@ public abstract class ScreenMaster implements Screen {
 
   protected void addBackButton() {
     // add a button that takes the user back to the previous screen
-    back_button = new TextButton("Back", skin);
-    stage.addActor(back_button);
+    backButton = new TextButton("Back", skin);
+    stage.addActor(backButton);
   }
 
   protected void setPrevious() {
-    back_button.addListener(new ChangeListener() {
+    backButton.addListener(new ChangeListener() {
       @Override
       public void changed(ChangeEvent event, Actor actor) {
         router.back();

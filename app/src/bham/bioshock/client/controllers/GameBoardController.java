@@ -21,7 +21,8 @@ public class GameBoardController extends Controller {
   private IClientService clientService;
 
   @Inject
-  public GameBoardController(Router router, Store store, IClientService clientService, BoardGame game) {
+  public GameBoardController(Router router, Store store, IClientService clientService,
+      BoardGame game) {
     super(store, router, game);
     this.clientService = clientService;
     this.router = router;
