@@ -21,7 +21,8 @@ public class Store {
   }
 
   /** Max number of players in a game */
-  public final int MAX_PLAYERS = 4;
+  // FOR TESTING
+  public final int MAX_PLAYERS = 1;
 
   /** Contains all of the information about the game board */
   private GameBoard gameBoard = new GameBoard();
@@ -46,9 +47,12 @@ public class Store {
     // Set coordinates of the players
     int last = gameBoard.GRID_SIZE - 1;
     players.get(0).setCoordinates(new Coordinates(0, 0));
-    players.get(1).setCoordinates(new Coordinates(0, last));
-    players.get(2).setCoordinates(new Coordinates(last, last));
-    players.get(3).setCoordinates(new Coordinates(last, 0));
+    if(players.size() > 1)
+      players.get(1).setCoordinates(new Coordinates(0, last));
+    if(players.size() > 2)
+      players.get(2).setCoordinates(new Coordinates(last, last));
+    if(players.size() > 3)
+      players.get(3).setCoordinates(new Coordinates(last, 0));
 
     gameBoard.generateGrid();
   

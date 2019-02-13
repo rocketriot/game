@@ -24,9 +24,8 @@ public enum Route {
   
   START_GAME        (JoinScreenController.class,     "start"),
 
-  GAME_BOARD        (GameBoardController.class,     "show"),
   GAME_BOARD_SAVE   (GameBoardController.class,     "saveGameBoard"),
-  PLAYERS_SAVE   (GameBoardController.class,     "savePlayers");
+  PLAYERS_SAVE      (GameBoardController.class,     "savePlayers");
   
   
 //@formatter:on

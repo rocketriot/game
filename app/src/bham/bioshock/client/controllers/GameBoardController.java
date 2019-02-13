@@ -28,30 +28,23 @@ public class GameBoardController extends Controller {
     this.router = router;
   }
 
-  public void show() {
-    // If the grid is not yet loaded, go to loading screen and fetch the game board
-    // from the server
-    if (!hasReceivedGrid()) {
-      clientService.send(new Action(Command.GET_GAME_BOARD));
-      router.call(Route.LOADING);
-    }
-  }
-
   /** Handles when the server sends the game board to the client */
   public void saveGameBoard(GameBoard gameBoard) {
     store.setGameBoard(gameBoard);
 
     setScreen(new GameBoardScreen(router, store, gameBoard));
-    router.call(Route.GAME_BOARD);
   }
 
   public void savePlayers(ArrayList<Player> players) {
     // TODO: remove temporary solution to fix coordinates not being sent by the server
     int last = store.getGameBoard().GRID_SIZE - 1;
     players.get(0).setCoordinates(new Coordinates(0, 0));
-    players.get(1).setCoordinates(new Coordinates(0, last));
-    players.get(2).setCoordinates(new Coordinates(last, last));
-    players.get(3).setCoordinates(new Coordinates(last, 0));
+    if(players.size() > 1)
+      players.get(1).setCoordinates(new Coordinates(0, last));
+    if(players.size() > 2)
+      players.get(2).setCoordinates(new Coordinates(last, last));
+    if(players.size() > 3)
+      players.get(3).setCoordinates(new Coordinates(last, 0));
 
     store.setPlayers(players);
   }
