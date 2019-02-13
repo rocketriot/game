@@ -18,21 +18,15 @@ import java.util.ArrayList;
 import java.util.Random;
 
 public class GameBoardController extends Controller {
-
   private IClientService clientService;
-  private Router router;
-  private GameBoard gameBoard;
-  private Player mainPlayer;
-  private AStarPathfinding pathFinder;
 
   @Inject
   public GameBoardController(Router router, Store store, IClientService clientService, BoardGame game) {
     super(store, router, game);
     this.clientService = clientService;
     this.router = router;
-    gameBoard = store.getGameBoard();
-    mainPlayer = store.getMainPlayer();
   }
+
   public void show() {
     // If the grid is not yet loaded, go to loading screen and fetch the game board
     // from the server
@@ -46,15 +40,13 @@ public class GameBoardController extends Controller {
   public void saveGameBoard(GameBoard gameBoard) {
     store.setGameBoard(gameBoard);
 
-    pathFinder = new AStarPathfinding(gameBoard.getGrid(), mainPlayer.getCoordinates(), 36, 36);
-
     game.setScreen(new GameBoardScreen(router, store, gameBoard));
     router.call(Route.GAME_BOARD);
   }
 
   public void savePlayers(ArrayList<Player> players) {
     // TODO: remove temporary solution to fix coordinates not being sent by the server
-    int last = gameBoard.GRID_SIZE - 1;
+    int last = store.getGameBoard().GRID_SIZE - 1;
     players.get(0).setCoordinates(new Coordinates(0, 0));
     players.get(1).setCoordinates(new Coordinates(0, last));
     players.get(2).setCoordinates(new Coordinates(last, last));
@@ -64,42 +56,42 @@ public class GameBoardController extends Controller {
   }
 
 
-  public AStarPathfinding getPathFinder() {
-    pathFinder.setStartPosition(mainPlayer.getCoordinates());
-    return pathFinder;
-  }
-
   public void move(Coordinates destination) {
+    GameBoard gameBoard = store.getGameBoard();
     GridPoint[][] grid = gameBoard.getGrid();
+    Player mainPlayer = store.getMainPlayer();
 
+    // Initialize path finding
+    int gridSize = store.getGameBoard().GRID_SIZE;
+    AStarPathfinding pathFinder = new AStarPathfinding(grid, mainPlayer.getCoordinates(), gridSize, gridSize);
     pathFinder.setStartPosition(mainPlayer.getCoordinates());
 
     // pathsize - 1 since path includes start position
     ArrayList<Coordinates> path = pathFinder.pathfind(destination);
     float pathCost = (path.size() - 1) * 10;
 
-    // check if the player has enough fuel
-    if (mainPlayer.getFuel() >= pathCost) {
-      // Update player coordinates and fuel
-      mainPlayer.setCoordinates(destination);
-      mainPlayer.decreaseFuel(pathCost);
+    // Handle if player doesn't have enough fuel
+    if (mainPlayer.getFuel() < pathCost) return;
 
-      // Get grid point the user landed on
-      GridPoint gridPoint = gameBoard.getGridPoint(destination);
+    // Update player coordinates and fuel
+    mainPlayer.setCoordinates(destination);
+    mainPlayer.decreaseFuel(pathCost);
 
-      // Check if the player landed on a fuel box
-      if (gridPoint.getType() == GridPoint.Type.FUEL) {
-        // Decrease players amount of fuel
-        Fuel fuel = (Fuel) gridPoint.getValue();
-        mainPlayer.decreaseFuel(fuel.getValue());
-      }
+    // Get grid point the user landed on
+    GridPoint gridPoint = gameBoard.getGridPoint(destination);
 
-      // Send the updated grid to the server
-      ArrayList<Serializable> arguments = new ArrayList<>();
-      arguments.add(gameBoard);
-      arguments.add(mainPlayer);
-      clientService.send(new Action(Command.MOVE_PLAYER_ON_BOARD, arguments));
+    // Check if the player landed on a fuel box
+    if (gridPoint.getType() == GridPoint.Type.FUEL) {
+      // Decrease players amount of fuel
+      Fuel fuel = (Fuel) gridPoint.getValue();
+      mainPlayer.decreaseFuel(fuel.getValue());
     }
+
+    // Send the updated grid to the server
+    ArrayList<Serializable> arguments = new ArrayList<>();
+    arguments.add(gameBoard);
+    arguments.add(mainPlayer);
+    clientService.send(new Action(Command.MOVE_PLAYER_ON_BOARD, arguments));
   }
 
   /** Player move received from the server */
@@ -127,7 +119,7 @@ public class GameBoardController extends Controller {
   }
 
   public void miniGameLost(Player player) {
-    GridPoint[][] grid = gameBoard.getGrid();
+    GridPoint[][] grid = store.getGameBoard().getGrid();
 
     // if player attacks planet and doesn't win gets moved in a random position
     int x, y;
@@ -141,7 +133,7 @@ public class GameBoardController extends Controller {
   }
 
   public boolean hasReceivedGrid() {
-    return gameBoard.getGrid() != null;
+    return store.getGameBoard().getGrid() != null;
   }
 
   /** Check if it is the main player's turn */
