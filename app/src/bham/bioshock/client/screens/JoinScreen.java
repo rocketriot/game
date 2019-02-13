@@ -1,5 +1,6 @@
 package bham.bioshock.client.screens;
 
+import bham.bioshock.client.Route;
 import bham.bioshock.client.Router;
 import bham.bioshock.common.models.Player;
 import bham.bioshock.common.models.Store;
@@ -48,6 +49,8 @@ public class JoinScreen extends ScreenMaster {
     super.show();
 
     buildJoinScreen();
+
+    router.call(Route.START_GAME);
   }
 
   private void buildJoinScreen() {

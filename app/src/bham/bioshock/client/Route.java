@@ -19,10 +19,11 @@ public enum Route {
   JOIN_SCREEN       (JoinScreenController.class,    "show"),
   CLIENT_CONNECT    (JoinScreenController.class,    "connect"),
   ADD_PLAYER        (JoinScreenController.class,    "addPlayer"),
-  
+  START_GAME        (JoinScreenController.class,     "start"),
+
   GAME_BOARD        (GameBoardController.class,     "show"),
-  START_GAME        (GameBoardController.class,     "start"),
-  GAME_BOARD_SAVE   (GameBoardController.class,     "saveGameBoard");
+  GAME_BOARD_SAVE   (GameBoardController.class,     "saveGameBoard"),
+  PLAYERS_SAVE   (GameBoardController.class,     "savePlayers");
   
   
 //@formatter:on
