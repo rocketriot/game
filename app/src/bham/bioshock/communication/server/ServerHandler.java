@@ -4,7 +4,6 @@ import bham.bioshock.common.models.Store;
 import bham.bioshock.communication.Action;
 import bham.bioshock.server.handlers.GameBoardHandler;
 import bham.bioshock.server.handlers.JoinScreenHandler;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.UUID;
 import org.apache.logging.log4j.LogManager;
@@ -77,6 +76,10 @@ public class ServerHandler {
           System.out.println("Received unhandled command: " + action.getCommand().toString());
           break;
       }
+      
+      // Reset the cache
+      service.reset();
+    
     } catch (Exception e) {
       System.err.println(e.getMessage());
     }
