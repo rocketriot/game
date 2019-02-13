@@ -26,12 +26,12 @@ public class Router {
   /** 
    * Call controller method
    * 
-   * @param view
+   * @param route
    * @param argument for controller method
    */
-  public void call(Route view, Object arg) {
-    Class<? extends Controller> c = view.getController();
-    String method = view.getMethod();
+  public void call(Route route, Object arg) {
+    Class<? extends Controller> c = route.getController();
+    String method = route.getMethod();
     Controller controller = injector.getInstance(c);
 
     try {

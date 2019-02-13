@@ -10,7 +10,7 @@ public enum Route {
   
   MAIN_MENU         (MainMenuController.class,      "show"),
   HOST_GAME         (MainMenuController.class,      "hostGame"),
-  ALERT             (MainMenuController.class,    "alert"),
+  ALERT             (MainMenuController.class,      "alert"),
   
   HOW_TO            (HowToController.class,         "show"),
   LOADING           (LoadingController.class,       "show"),

@@ -18,7 +18,6 @@ public class GameBoardController extends Controller {
 
   private IClientService clientService;
   private Store store;
-  private BoardGame game;
   private Router router;
   private GameBoard gameBoard;
   private Player mainPlayer;
@@ -30,7 +29,6 @@ public class GameBoardController extends Controller {
     super(store, router, game);
     this.clientService = clientService;
     this.router = router;
-    this.game = game;
     gameBoard = store.getGameBoard();
   }
   

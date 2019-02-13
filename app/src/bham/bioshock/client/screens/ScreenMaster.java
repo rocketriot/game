@@ -25,6 +25,8 @@ public abstract class ScreenMaster implements Screen {
   protected float screen_width;
   protected float screen_height;
 
+  protected Texture background;
+
   protected BitmapFont font12;
   protected BitmapFont font18;
 
@@ -40,6 +42,9 @@ public abstract class ScreenMaster implements Screen {
 
   @Override
   public void show() {
+    // Create background
+    background = new Texture(Gdx.files.internal("app/assets/backgrounds/menu.png"));
+
     setupFonts();
 
     addBackButton();
@@ -75,9 +80,6 @@ public abstract class ScreenMaster implements Screen {
     Gdx.gl.glClearColor(0, 0, 0, 0);
     Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-    // Create background
-    Texture background = new Texture(Gdx.files.internal("app/assets/backgrounds/menu.png"));
-
     batch.begin();
     batch.draw(background, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
     batch.end();
@@ -103,12 +105,6 @@ public abstract class ScreenMaster implements Screen {
     drawBackground();
     stage.act(Math.min(Gdx.graphics.getDeltaTime(), 1 / 30f));
     stage.draw();
-    
-    
-    if (Display.isCloseRequested()) {
-      System.err.println("CLOSE REQUESTED");
-    }
-    
   }
 
   @Override
@@ -116,7 +112,6 @@ public abstract class ScreenMaster implements Screen {
     stage.getViewport().update(width, height, true);
     screen_width = Gdx.graphics.getWidth();
     screen_height = Gdx.graphics.getHeight();
-
   }
 
   @Override
