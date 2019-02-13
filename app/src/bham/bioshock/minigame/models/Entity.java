@@ -107,6 +107,7 @@ public abstract class Entity {
 		pos.y += speed.dY()*delta;
 		pos.x += speed.dX()*delta;
 
+
 		if(isFlying()) {
 			speed.apply(angle, World.GRAVITY*delta);			
 		} else {
@@ -114,7 +115,7 @@ public abstract class Entity {
 		}
 		
 		if(!isFlying()) {
-			speed.friction(GROUND_FRICTION);						
+			speed.friction(GROUND_FRICTION);
 		}
 		
 	}

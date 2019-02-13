@@ -3,6 +3,7 @@ package bham.bioshock.minigame.models;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 import java.util.HashMap;
 
@@ -15,8 +16,8 @@ public class Platform extends Entity {
         super(_x, _y);
     }
 
-    public Texture getTexture() {
-        return textures.get(color);
+    public TextureRegion getTexture() {
+       return null;
     }
 
 

@@ -1,5 +1,6 @@
 package bham.bioshock.minigame;
 
+import java.awt.*;
 import java.util.ArrayList;
 
 import com.badlogic.gdx.Gdx;
@@ -12,12 +13,13 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
-<<<<<<< HEAD
+
 import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Intersector;
-=======
+
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
->>>>>>> master
+
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
@@ -47,7 +49,8 @@ public class Renderer {
 	private final int GAME_WORLD_WIDTH = Config.GAME_WORLD_WIDTH;
 	private final int GAME_WORLD_HEIGHT = Config.GAME_WORLD_HEIGHT;
 	private Circle mainPlanet;
-	
+	//private Rectangle
+
 
 	public Renderer(World _w) {
 		w = _w;
@@ -104,6 +107,8 @@ public class Renderer {
 		batch.begin();
 		drawEntities();
 		drawMainPlayer();
+		Rectangle border= mainPlayer.getRectangle();
+		//drawBorder(border);
 		batch.end();
 	}
 	
@@ -113,8 +118,26 @@ public class Renderer {
 
 		renderer.circle(0, 0, (float) World.PLANET_RADIUS);
 		// bounding circle
-		mainPlanet = new Circle(0,0,(float)World.PLANET_RADIUS-10);
+		mainPlanet = new Circle(0,0,(float)World.PLANET_RADIUS-50);
+		renderer.setColor(Color.RED);
+		renderer.circle(0,0,(float)World.PLANET_RADIUS-50);
 
+		renderer.end();
+	}
+
+	public void drawBorder(Rectangle border){
+		renderer.begin(ShapeType.Filled);
+		renderer.setColor(Color.BLACK);
+		//float xcenter = (Gdx.graphics.getWidth() - mainPlayer.getSprite().getWidth()) / 2.0f;
+		//float ycenter = (Gdx.graphics.getHeight() - mainPlayer.getSprite().getHeight()) / 2.0f;
+		//center : ( (x1 +x2)/2 ,(y1 + y2)/2 ).
+		//oat xbr = mainPlayer.getX() + border.getWidth();
+		//float ybr = mainPlayer.getY() + border.getHeight();
+		//float xcenter = (mainPlayer.getX() + xbr)/2;
+		//float ycenter = (mainPlayer.getY() + ybr)/2;
+		//renderer.circle(xcenter,ycenter,100);
+
+		renderer.rect(border.getX(), border.getY(), border.getWidth(),border.getHeight());
 		renderer.end();
 	}
 	
@@ -131,27 +154,41 @@ public class Renderer {
 	public void updatePosition() {
 		float dt = Gdx.graphics.getDeltaTime();
 		mainPlayer.update(dt);
+		float xcenter = (Gdx.graphics.getWidth() - mainPlayer.getSprite().getWidth()) / 2.0f;
+		float ycenter = (Gdx.graphics.getHeight() - mainPlayer.getSprite().getHeight()) / 2.0f;
+
+		System.out.println(xcenter + "," +ycenter);
 
 		if(Gdx.input.isKeyPressed(Input.Keys.LEFT) || Gdx.input.isKeyPressed(Input.Keys.A)) {
 			mainPlayer.moveLeft(dt);
 
-			if(Intersector.overlaps(mainPlanet,mainPlayer.getRectangle()))
+			//if()
+			//if(Intersector.overlaps(mainPlanet,mainPlayer.getRectangle()))
 				//System.out.println(mainPlayer.getRectangle());
-				mainPlayer.col(dt);
+				//mainPlayer.col(dt);
 		}
 		if(Gdx.input.isKeyPressed(Input.Keys.RIGHT) || Gdx.input.isKeyPressed(Input.Keys.D)) {
+			//System.out.println(mainPlayer.getRectangle());
 			mainPlayer.moveRight(dt);
 
-			if(Intersector.overlaps(mainPlanet,mainPlayer.getRectangle()))
-				mainPlayer.col(dt);
+			//if(Intersector.overlaps(mainPlanet,mainPlayer.getRectangle())){
+				//System.out.println(mainPlayer.getRectangle());
+				//mainPlayer.col(dt);
+
+			//}
 		}
 		if(Gdx.input.isKeyPressed(Input.Keys.UP) || Gdx.input.isKeyPressed(Input.Keys.W)) {
 			mainPlayer.jump(dt);
 
-			if(Intersector.overlaps(mainPlanet,mainPlayer.getRectangle()))
-				mainPlayer.col(dt);
+			//if(Intersector.overlaps(mainPlanet,mainPlayer.getRectangle())){
+				//System.out.println(mainPlayer.getRectangle());
+				//mainPlayer.col(dt);
+			//}
+
 		}
-	}
+
+		}
+
 	
 	public void drawMainPlayer() {
 		Sprite sprite = mainPlayer.getSprite();

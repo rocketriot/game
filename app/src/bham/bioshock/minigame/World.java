@@ -18,7 +18,7 @@ public class World {
 	
 	
 	public World() {
-		mainPlayer = new Player(10, 2100);
+		mainPlayer = new Player(10, 2000);
 		players = new ArrayList<>();
 		rockets = new ArrayList<>();
 		
@@ -27,9 +27,9 @@ public class World {
 	
 	public void seed() {
 		// Seed players
-		players.add(new Player(-2140, 0));
-		players.add(new Player(2140, 2100));
-		players.add(new Player(220, -2100));
+		players.add(new Player(-2000, 0));
+		players.add(new Player(2000, 2000));
+		players.add(new Player(220, -2000));
 		
 		// Seed rockets
 		rockets.add(new Rocket(-300, 2000, 1));
