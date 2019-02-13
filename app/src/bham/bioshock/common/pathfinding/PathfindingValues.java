@@ -2,7 +2,6 @@ package bham.bioshock.common.pathfinding;
 
 import bham.bioshock.common.models.Coordinates;
 
-// values that will be used during pathfinding - heuristics etc
 public class PathfindingValues {
 
     // the actual value to take the path up to this point

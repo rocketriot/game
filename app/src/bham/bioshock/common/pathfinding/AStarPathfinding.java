@@ -73,6 +73,8 @@ public class AStarPathfinding {
         aStarGrid = setAStarGrid(); // set the A* Grid to be the current grid
         aStarGrid[startPosition.getX()][startPosition.getY()].setTotalCost(0);
 
+        checkGoal(goalPosition);
+
         // open list - list of all generated nodes
         ArrayList<Coordinates> openList = new ArrayList<>();
         // closed list - list of all expanded nodes
@@ -157,7 +159,6 @@ public class AStarPathfinding {
      * whether each point is passable and the parent of each point.
      */
     private PathfindingValues[][] setAStarGrid() {
-
         PathfindingValues[][] tempGrid = new PathfindingValues[maxX][maxY]; // temporary grid to return
 
         // go through the passed gameGrid and assign values accordingly to the temporary grid
@@ -172,6 +173,15 @@ public class AStarPathfinding {
             }
         }
         return tempGrid;
+    }
+
+    /**
+     * Method to check whether the goal position is a planet, if so, make that planet passable for this pathfind.
+     *
+     * @param goalPosition The position to check
+     */
+    private void checkGoal(Coordinates goalPosition){
+
     }
 
     /**
@@ -191,7 +201,6 @@ public class AStarPathfinding {
      * @return The Coordinate value of the point with the smallest heuristic value
      */
     private Coordinates findMinPoint(ArrayList<Coordinates> list) {
-
         double minimumCost = Integer.MAX_VALUE;
         Coordinates nextPoint = new Coordinates(Integer.MAX_VALUE, Integer.MAX_VALUE);
 
@@ -238,7 +247,6 @@ public class AStarPathfinding {
      * @return A list of the valid successors found
      */
     private ArrayList<Coordinates> generateSuccessors(Coordinates currentPoint, ArrayList<Coordinates> closedList) {
-
         ArrayList<Coordinates> successors = new ArrayList<>();
 
         // check point directly above current point
