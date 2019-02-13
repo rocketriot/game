@@ -1,15 +1,17 @@
-package bham.bioshock.minigame;
+package bham.bioshock.client.screens;
 
+import bham.bioshock.minigame.Renderer;
+import bham.bioshock.minigame.World;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Screen;
 
-public class MainScreen implements Screen {
+public class MinigameScreen implements Screen {
 
   private Game game;
   private Renderer renderer;
   private World world;
 
-  public MainScreen(Game game, World world) {
+  public MinigameScreen(Game game, World world) {
     this.game = game;
     this.world = world;
     this.renderer = new Renderer(world);
