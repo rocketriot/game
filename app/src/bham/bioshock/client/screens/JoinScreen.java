@@ -1,5 +1,6 @@
 package bham.bioshock.client.screens;
 
+import bham.bioshock.client.Route;
 import bham.bioshock.client.Router;
 import bham.bioshock.common.models.Player;
 import bham.bioshock.common.models.Store;
@@ -8,8 +9,11 @@ import java.util.ArrayList;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener.ChangeEvent;
 import com.badlogic.gdx.utils.Scaling;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
@@ -81,6 +85,18 @@ public class JoinScreen extends ScreenMaster {
   public void changePlayerName(Label label, String player) {
     label.setText(player);
   }
+  
+  @Override
+  protected void setPrevious() {
+    backButton.addListener(new ChangeListener() {
+      @Override
+      public void changed(ChangeEvent event, Actor actor) {
+        router.call(Route.DISCONNECT_PLAYER);
+        store.removeAllPlayers();
+        router.back();
+      }
+    });
+  }
 
   @Override
   public void render(float delta) {
@@ -91,6 +107,9 @@ public class JoinScreen extends ScreenMaster {
         Player p = players.get(i);        
         containers[i].waitingLabel.setText(WaitText.CONNECTED.text);
         containers[i].nameLabel.setText(p.getUsername());
+      } else {
+        containers[i].waitingLabel.setText(WaitText.WAITING.text);
+        containers[i].nameLabel.setText("Player" + (i+1));
       }
     }
     

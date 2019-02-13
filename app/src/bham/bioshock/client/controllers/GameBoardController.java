@@ -20,26 +20,25 @@ public class GameBoardController extends Controller {
   private Store store;
   private Router router;
   private GameBoard gameBoard;
-  private Player mainPlayer;
-  private AStarPathfinding pathFinder;
   private boolean receivedGrid = false;
 
   @Inject
-  public GameBoardController(Router router, Store store, IClientService clientService, BoardGame game) {
+  public GameBoardController(Router router, Store store, IClientService clientService,
+      BoardGame game) {
     super(store, router, game);
     this.clientService = clientService;
     this.router = router;
     gameBoard = store.getGameBoard();
   }
-  
+
   public void start() {
-    
+
   }
-  
+
   public void saveGameBoard(GameBoard gameBoard) {
     store.setGameBoard(gameBoard);
   }
-  
+
   public void show() {
     // If the grid is not yet loaded, go to loading screen and fetch the game board
     // from the server
@@ -57,20 +56,15 @@ public class GameBoardController extends Controller {
     gameBoard = (GameBoard) action.getArgument(0);
 
     receivedGrid = true;
-
-    // TODO change to client's player
-    // setMainPlayer(store.getPlayers().get(0));
-    pathFinder = new AStarPathfinding(gameBoard.getGrid(), mainPlayer.getCoordinates(), 36, 36);
-    // router.changeScreen(View.GAME_BOARD);
-  }
-
-
-  public AStarPathfinding getPathFinder() {
-    pathFinder.setStartPosition(mainPlayer.getCoordinates());
-    return pathFinder;
   }
 
   public void move(Coordinates destination) {
+    
+    int gridSize = store.getGameBoard().GRID_SIZE;
+    Player mainPlayer = store.getMainPlayer();
+    AStarPathfinding pathFinder = new AStarPathfinding(gameBoard.getGrid(), mainPlayer.getCoordinates(), gridSize, gridSize);
+    
+    pathFinder.setStartPosition(mainPlayer.getCoordinates());
     float fuel = mainPlayer.getFuel();
     GridPoint[][] grid = gameBoard.getGrid();
     ArrayList<Coordinates> path = pathFinder.pathfind(destination);

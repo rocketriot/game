@@ -43,6 +43,11 @@ public class JoinScreenHandler {
       handler.sendToAll(new Action(Command.START_GAME));
     }
   }
+  
+  public static void disconnectPlayer(Store store, ServerService service, ServerHandler handler) {
+    store.removePlayer(service.Id());
+    handler.sendToAll(new Action(Command.REMOVE_PLAYER, service.Id()));
+  }
 
   /** Creates CPU players and starts the game */
   public static void startGame(Store model, Action action, ServerHandler hander) {

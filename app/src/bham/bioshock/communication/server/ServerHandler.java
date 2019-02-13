@@ -58,6 +58,9 @@ public class ServerHandler {
     
     try {
       switch (action.getCommand()) {
+        case REMOVE_PLAYER:
+          JoinScreenHandler.disconnectPlayer(model, service, this);
+          break;
         case ADD_PLAYER:
           JoinScreenHandler.addPlayer(model, action, this, service);
           break;

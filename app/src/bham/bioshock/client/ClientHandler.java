@@ -2,6 +2,7 @@ package bham.bioshock.client;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.UUID;
 import com.google.inject.Inject;
 import bham.bioshock.common.models.GameBoard;
 import bham.bioshock.common.models.Player;
@@ -25,6 +26,11 @@ public class ClientHandler implements IClientHandler {
           players.add((Player) p);
         }
         router.call(Route.ADD_PLAYER, players);
+        break;
+      }
+      case REMOVE_PLAYER: {
+        UUID id = (UUID) action.getArgument(0);
+        router.call(Route.REMOVE_PLAYER, id);
         break;
       }
       case START_GAME: {

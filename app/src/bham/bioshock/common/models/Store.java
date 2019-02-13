@@ -63,6 +63,14 @@ public class Store {
     players.add(player);
   }
 
+  public void removePlayer(UUID id) {
+    players.removeIf(p -> p.getId().equals(id));
+  }
+  
+  public void removeAllPlayers() {
+    players.clear();
+  }
+  
   public Player getMainPlayer() {
     // Might be too slow
     for (Player player : players) {

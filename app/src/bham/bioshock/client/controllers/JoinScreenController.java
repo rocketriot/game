@@ -14,6 +14,7 @@ import bham.bioshock.communication.client.CommunicationClient;
 import com.google.inject.Inject;
 import java.net.ConnectException;
 import java.util.ArrayList;
+import java.util.UUID;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -54,6 +55,14 @@ public class JoinScreenController extends Controller {
     }
   }
 
+  public void disconnectPlayer() {
+    commClient.getConnection().send(new Action(Command.REMOVE_PLAYER));
+  }
+  
+  public void removePlayer(UUID id) {
+    store.removePlayer(id);
+  }
+  
   /** Handle when the server tells us a new player was added to the game */
   public void addPlayer(ArrayList<Player> players) {
     for(Player player : players) {
