@@ -130,7 +130,7 @@ public class MainMenuScreen extends ScreenMaster {
 
   private void showHostDialogue() {
 
-    TextField textField = new TextField("", skin);
+    TextField textField = new TextField("", skin, "login");
 
     Dialog diag = new Dialog("Host Game", skin) {
 
@@ -159,7 +159,7 @@ public class MainMenuScreen extends ScreenMaster {
 
   private void showJoinDialogue() {
 
-    TextField textField = new TextField("", skin);
+    TextField textField = new TextField("", skin, "login");
 
     Dialog diag = new Dialog("Join Game", skin) {
 
