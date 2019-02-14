@@ -1,5 +1,6 @@
 package bham.bioshock.client.screens;
 
+import bham.bioshock.client.Route;
 import bham.bioshock.client.Router;
 import bham.bioshock.client.controllers.GameBoardController;
 import bham.bioshock.client.scenes.Hud;
@@ -26,7 +27,6 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 import java.util.ArrayList;
 
 public class GameBoardScreen extends ScreenMaster implements InputProcessor {
-
   private final InputMultiplexer inputMultiplexer;
   private final int GAME_WORLD_WIDTH = Config.GAME_WORLD_WIDTH;
   private final int GAME_WORLD_HEIGHT = Config.GAME_WORLD_HEIGHT;
@@ -346,6 +346,7 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
     // Graphics.DisplayMode display = Gdx.graphics.getDisplayMode();
     // Gdx.graphics.setFullscreenMode(display);
     Gdx.input.setInputProcessor(inputMultiplexer);
+    pathFinder = new AStarPathfinding(store.getGameBoard().getGrid(), store.getMainPlayer().getCoordinates(), gridSize, gridSize);
   }
 
   @Override
@@ -564,7 +565,7 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
       Coordinates gridCoords = new Coordinates((int) clickCoords.x / PPS,
           (int) clickCoords.y / PPS);
       if (!store.getMainPlayer().getCoordinates().isEqual(gridCoords)) {
-        //controller.move(gridCoords);
+        router.call(Route.MOVE_PLAYER, gridCoords);
         return true;
       }
     }

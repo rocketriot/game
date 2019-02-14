@@ -26,8 +26,8 @@ public enum Route {
 
   GAME_BOARD        (GameBoardController.class,     "show"),
   GAME_BOARD_SAVE   (GameBoardController.class,     "saveGameBoard"),
-  PLAYERS_SAVE   (GameBoardController.class,     "savePlayers");
-  
+  PLAYERS_SAVE   (GameBoardController.class,     "savePlayers"),
+  MOVE_PLAYER   (GameBoardController.class,     "move");
   
 //@formatter:on
 
