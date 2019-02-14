@@ -349,7 +349,9 @@ public class AStarPathfinding {
 
         // iterate through the path, finding the next node by getting the parent of the current node
         while (currentPoint != startPosition) {
-            path.add(currentPoint);
+            if (gameGrid[currentPoint.getX()][currentPoint.getY()].getType() != GridPoint.Type.PLANET){
+                path.add(currentPoint);
+            }
             currentPoint = aStarGrid[currentPoint.getX()][currentPoint.getY()].getParent();
         }
         path.add(startPosition);
