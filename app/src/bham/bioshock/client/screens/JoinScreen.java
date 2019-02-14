@@ -53,7 +53,7 @@ public class JoinScreen extends ScreenMaster {
 
     buildJoinScreen();
 
-    router.call(Route.START_GAME);
+    //router.call(Route.START_GAME);
   }
 
   private void buildJoinScreen() {
