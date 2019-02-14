@@ -1,16 +1,10 @@
 package bham.bioshock.client.screens;
 
 import bham.bioshock.client.Router;
-import bham.bioshock.client.controllers.GameBoardController;
 import bham.bioshock.client.scenes.Hud;
 import bham.bioshock.common.consts.Config;
 import bham.bioshock.common.consts.GridPoint;
-import bham.bioshock.common.models.Asteroid;
-import bham.bioshock.common.models.Coordinates;
-import bham.bioshock.common.models.GameBoard;
-import bham.bioshock.common.models.Planet;
-import bham.bioshock.common.models.Player;
-import bham.bioshock.common.models.Store;
+import bham.bioshock.common.models.*;
 import bham.bioshock.common.pathfinding.AStarPathfinding;
 import com.badlogic.gdx.*;
 import com.badlogic.gdx.files.FileHandle;
@@ -34,7 +28,7 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
   private GameBoard gameBoard;
   private Store store;
   private AStarPathfinding pathFinder;
-  
+
   private SpriteBatch batch;
   private Sprite background;
   private OrthographicCamera camera;
@@ -44,6 +38,7 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
   private ArrayList<Sprite> asteroidSprites;
   private Sprite sprite;
   private ArrayList<Sprite> playerSprites;
+  private Sprite fuelSprite;
   private int PPS;
   private int gridSize;
   private Hud hud;
@@ -55,10 +50,10 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
 
   public GameBoardScreen(Router router, Store store, GameBoard gameBoard) {
     super(router);
-    
+
     this.gameBoard = gameBoard;
     this.store = store;
-    
+
     batch = new SpriteBatch();
     // Pixels Per Square (on the grid)
     PPS = 50;
@@ -68,10 +63,12 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
     viewport = new FitViewport(GAME_WORLD_WIDTH, GAME_WORLD_HEIGHT, camera);
     viewport.apply();
 
-    // Generate the arraylists of sprites
-    genAsteroidSprites();
-    genPlanetSprites();
-    genPlayerSprites();
+    // Generate the sprites
+    planetSprites = generateSprites("app/assets/entities/planets");
+    playerSprites = generateSprites("app/assets/entities/players");
+    outlinedPlayerSprites = generateSprites("app/assets/entities/players");
+    asteroidSprites = generateSprites("app/assets/entities/asteroids");
+    fuelSprite = generateSprite("app/assets/entities/fuel.png");
 
     setupUI();
 
@@ -91,44 +88,52 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
   public void drawBoardObjects() {
     GridPoint[][] grid = gameBoard.getGrid();
 
+    // Draw Grid items
     for (int x = 0; x < grid.length; x++) {
       for (int y = 0; y < grid[x].length; y++) {
-        GridPoint.Type pType = grid[x][y].getType();
+        // Get grid point type
+        GridPoint.Type type = grid[x][y].getType();
 
-        if (pType == GridPoint.Type.PLANET) {
-          Planet p = (Planet) grid[x][y].getValue();
-          if (p.isDrawn() == false) {
-            p.setDrawn(true);
-            sprite = planetSprites.get(p.getTextureID());
-            sprite.setX(x * PPS);
-            sprite.setY(y * PPS);
-            sprite.draw(batch);
-          }
-        } else if (pType == GridPoint.Type.ASTEROID) {
-          Asteroid a = (Asteroid) grid[x][y].getValue();
-          if (a.isDrawn() == false) {
-            a.setDrawn(true);
-            sprite = asteroidSprites.get(a.getTextureID());
-            sprite.setX(x * PPS);
-            sprite.setY(y * PPS);
-            sprite.draw(batch);
-          }
+        switch (type) {
+          case PLANET:
+            Planet planet = (Planet) grid[x][y].getValue();
+
+            // Check if planet has already been drawn
+            if (!planet.getCoordinates().isEqual(new Coordinates(x, y)))
+              continue;
+            
+            sprite = planetSprites.get(planet.getTextureID());
+            break;
+
+          case ASTEROID:
+            Asteroid asteroid = (Asteroid) grid[x][y].getValue();
+
+            // Check if asteroid has already been drawn
+            if (!asteroid.getCoordinates().isEqual(new Coordinates(x, y)))
+              continue;
+  
+            sprite = asteroidSprites.get(asteroid.getTextureID());
+            break;
+
+          case FUEL:
+            sprite = fuelSprite;
+            break;
+          
+          case EMPTY:
+            continue;
+
+          default:
+            break;
         }
+
+        // Draw Sprite
+        sprite.setX(x * PPS);
+        sprite.setY(y * PPS);
+        sprite.draw(batch);
       }
     }
-    for (int x = 0; x < grid.length; x++) {
-      for (int y = 0; y < grid[x].length; y++) {
-        GridPoint.Type pType = grid[x][y].getType();
-        if (pType == GridPoint.Type.PLANET) {
-          Planet p = (Planet) grid[x][y].getValue();
-          p.setDrawn(false);
-        } else if (pType == GridPoint.Type.ASTEROID) {
-          Asteroid a = (Asteroid) grid[x][y].getValue();
-          a.setDrawn(false);
-        }
-      }
-    }
 
+    // Draw players
     for (Player player : store.getPlayers()) {
       sprite = playerSprites.get(player.getTextureID());
 
@@ -141,38 +146,24 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
     }
   }
 
-  public void genPlanetSprites() {
-    planetSprites = new ArrayList<>();
-    FileHandle[] fh = Gdx.files.internal("app/assets/entities/planets").list();
-    for (FileHandle f : fh) {
-      Texture planetTexture = new Texture(Gdx.files.internal(f.path()));
-      planetSprites.add(new Sprite(planetTexture));
+  /** Generates an array of sprites from a folder */
+  public ArrayList<Sprite> generateSprites(String path) {
+    ArrayList<Sprite> sprites = new ArrayList<>();
+    FileHandle[] fileHandle = Gdx.files.internal(path).list();
+
+    for (FileHandle file : fileHandle) {
+      sprite = generateSprite(file.path());
+      sprites.add(sprite);
     }
+
+    return sprites;
   }
 
-  public void genAsteroidSprites() {
-    asteroidSprites = new ArrayList<>();
-    FileHandle[] fh = Gdx.files.internal("app/assets/entities/asteroids").list();
-    for (FileHandle f : fh) {
-      Texture asteroidTexture = new Texture(Gdx.files.internal(f.path()));
-      asteroidSprites.add(new Sprite(asteroidTexture));
-    }
-  }
-
-  public void genPlayerSprites() {
-    playerSprites = new ArrayList<>();
-    FileHandle[] fh = Gdx.files.internal("app/assets/entities/rockets").list();
-    for (FileHandle f : fh) {
-      Texture playerTexture = new Texture(Gdx.files.internal(f.path()));
-      playerSprites.add(new Sprite(playerTexture));
-    }
-
-    outlinedPlayerSprites = new ArrayList<>();
-    fh = Gdx.files.internal("app/assets/entities/outlinedRockets").list();
-    for (FileHandle f : fh) {
-      Texture outlinedTexture = new Texture(Gdx.files.internal(f.path()));
-      outlinedPlayerSprites.add(new Sprite(outlinedTexture));
-    }
+  /** Generates a sprite from a file */
+  public Sprite generateSprite(String path) {
+    FileHandle file = Gdx.files.internal(path);
+    Texture texture = new Texture(file);
+    return new Sprite(texture);
   }
 
   public void drawGridLines() {
@@ -237,6 +228,8 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
     for (Sprite s : outlinedPlayerSprites) {
       s.setSize(PPS * 1, PPS * 1);
     }
+    
+    fuelSprite.setSize(PPS * 1, PPS * 1);
   }
 
   @Override
@@ -276,16 +269,16 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
     }
     return allowedMove;
   }
-  
+
   private void drawPath() {
     if (playerSelected == true) {
       sh.setProjectionMatrix(camera.combined);
       sh.begin(ShapeRenderer.ShapeType.Filled);
       Gdx.gl.glEnable(GL30.GL_BLEND);
       Gdx.gl.glBlendFunc(GL30.GL_SRC_ALPHA, GL30.GL_ONE_MINUS_SRC_ALPHA);
-      
+
       boolean[] allowedPath = getPathColour(path);
-      
+
       // Draw white box at player position
       sh.setColor(255, 255, 255, 0.4f);
       Coordinates playerCoords = store.getMainPlayer().getCoordinates();
