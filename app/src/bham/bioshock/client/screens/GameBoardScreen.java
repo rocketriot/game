@@ -2,14 +2,22 @@ package bham.bioshock.client.screens;
 
 import bham.bioshock.client.Route;
 import bham.bioshock.client.Router;
-import bham.bioshock.client.controllers.GameBoardController;
 import bham.bioshock.client.scenes.Hud;
 import bham.bioshock.common.Direction;
 import bham.bioshock.common.consts.Config;
 import bham.bioshock.common.consts.GridPoint;
-import bham.bioshock.common.models.*;
+import bham.bioshock.common.models.Asteroid;
+import bham.bioshock.common.models.BoardMove;
+import bham.bioshock.common.models.Coordinates;
+import bham.bioshock.common.models.GameBoard;
+import bham.bioshock.common.models.Planet;
+import bham.bioshock.common.models.Player;
+import bham.bioshock.common.models.Store;
 import bham.bioshock.common.pathfinding.AStarPathfinding;
-import com.badlogic.gdx.*;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
+import com.badlogic.gdx.InputMultiplexer;
+import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.GL30;
@@ -23,7 +31,6 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.FitViewport;
-
 import java.util.ArrayList;
 
 public class GameBoardScreen extends ScreenMaster implements InputProcessor {
@@ -214,25 +221,7 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
     for (int x = 0; x < grid.length; x++) {
       for (int y = 0; y < grid[x].length; y++) {
         GridPoint.Type pType = grid[x][y].getType();
-        if (pType == GridPoint.Type.PLAYER) {
-          Player player = (Player) grid[x][y].getValue();
-
-          //TODO remove code once player is sent/received by server
-          player.setCoordinates(new Coordinates(x, y));
-          if (player.getBoardMove() != null && !drawnMove) {
-            drawPlayerMove(player);
-            drawnMove = true;
-          } else if (player.getBoardMove() == null) {
-            if (playerSelected && player.equals(store.getMainPlayer())) {
-              sprite = outlinedPlayerSprites.get(player.getTextureID());
-            } else {
-              sprite = playerSprites.get(player.getTextureID());
-            }
-            sprite.setX(x * PPS);
-            sprite.setY(y * PPS);
-            sprite.draw(batch);
-          }
-        } else if (pType == GridPoint.Type.PLANET) {
+       if (pType == GridPoint.Type.PLANET) {
           Planet planet = (Planet) grid[x][y].getValue();
           if (!planet.isDrawn()) {
             planet.setDrawn(true);
@@ -548,15 +537,14 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
       mouseDownY = screenY;
 
       // Selecting your ship
-      ArrayList<Player> players = store.getPlayers();
-      Player player = players.get(0);
+      Player player = store.getMainPlayer();
 
       if (clickCoords.x >= player.getCoordinates().getX() * PPS
           && clickCoords.x <= (player.getCoordinates().getX() + 1) * PPS) {
         if (clickCoords.y >= player.getCoordinates().getY() * PPS
             && clickCoords.y <= (player.getCoordinates().getY() + 1) * PPS) {
           playerSelected = true;
-          path = new ArrayList<>();
+          path = null;
         }
       }
       return true;
@@ -566,6 +554,7 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
           (int) clickCoords.y / PPS);
       if (!store.getMainPlayer().getCoordinates().isEqual(gridCoords)) {
         router.call(Route.MOVE_PLAYER, gridCoords);
+        pathFinder.setStartPosition(gridCoords);
         return true;
       }
     }

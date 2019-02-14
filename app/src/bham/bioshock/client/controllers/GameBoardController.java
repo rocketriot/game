@@ -94,6 +94,9 @@ public class GameBoardController extends Controller {
       mainPlayer.decreaseFuel(fuel.getValue());
     }
 
+    // Generate and add the BoardMove object and add it to the mainPlayer
+    generateMove(path, destination, playerCoords);
+
     // Send the updated grid to the server
     ArrayList<Serializable> arguments = new ArrayList<>();
     arguments.add(gameBoard);
