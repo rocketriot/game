@@ -1,7 +1,7 @@
 package bham.bioshock.client.screens;
 
-import bham.bioshock.client.Client;
-import bham.bioshock.client.controllers.Controller;
+import bham.bioshock.client.Router;
+import org.lwjgl.opengl.Display;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.files.FileHandle;
@@ -17,38 +17,42 @@ import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 
 public abstract class ScreenMaster implements Screen {
-  protected Controller controller;
   protected Stage stage;
   protected Batch batch;
   protected Stack stack;
+  protected Router router;
 
   protected float screen_width;
   protected float screen_height;
 
+  protected Texture background;
+
   protected BitmapFont font12;
   protected BitmapFont font18;
 
-  protected Texture background;
-
-  protected TextButton back_button;
+  protected TextButton backButton;
 
   protected Skin skin = new Skin(Gdx.files.internal("app/assets/skins/neon/skin/neon-ui.json"));
 
-  public ScreenMaster() {
-    screen_width = Gdx.graphics.getWidth();
-    screen_height = Gdx.graphics.getHeight();
+  public ScreenMaster(Router router) {
+    this.router = router;
+    this.screen_width = Gdx.graphics.getWidth();
+    this.screen_height = Gdx.graphics.getHeight();
   }
 
   @Override
   public void show() {
+    Gdx.input.setInputProcessor(stage);
+    
+    // Create background
+    background = new Texture(Gdx.files.internal("app/assets/backgrounds/menu.png"));
+
     setupFonts();
 
     addBackButton();
     // set the back button to take you to main menu - for now
-    setPrevious(Client.View.MAIN_MENU);
+    setPrevious();
     // drawBackground();
-    // Create background
-    background = new Texture(Gdx.files.internal("app/assets/backgrounds/menu.png"));
   }
 
   /** Set's up all the fonts needed for the screen */
@@ -78,7 +82,6 @@ public abstract class ScreenMaster implements Screen {
     Gdx.gl.glClearColor(0, 0, 0, 0);
     Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-
     batch.begin();
     batch.draw(background, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
     batch.end();
@@ -86,18 +89,17 @@ public abstract class ScreenMaster implements Screen {
 
   protected void addBackButton() {
     // add a button that takes the user back to the previous screen
-    back_button = new TextButton("Back", skin);
-    stage.addActor(back_button);
+    backButton = new TextButton("Back", skin);
+    stage.addActor(backButton);
   }
 
-  protected void setPrevious(final Client.View previous) {
-    back_button.addListener(
-        new ChangeListener() {
-          @Override
-          public void changed(ChangeEvent event, Actor actor) {
-            controller.changeScreen(previous);
-          }
-        });
+  protected void setPrevious() {
+    backButton.addListener(new ChangeListener() {
+      @Override
+      public void changed(ChangeEvent event, Actor actor) {
+        router.back();
+      }
+    });
   }
 
   @Override
@@ -112,7 +114,6 @@ public abstract class ScreenMaster implements Screen {
     stage.getViewport().update(width, height, true);
     screen_width = Gdx.graphics.getWidth();
     screen_height = Gdx.graphics.getHeight();
-
   }
 
   @Override
@@ -128,21 +129,17 @@ public abstract class ScreenMaster implements Screen {
   public void dispose() {
     stage.dispose();
     batch.dispose();
-    background.dispose();
   }
 
-  protected void Alert(String alert_text) {
+  public void alert(String alert_text) {
 
+    Dialog diag = new Dialog("", skin) {
 
-    Dialog diag = new Dialog("", skin){
+      protected void result(Object object) {
 
-      protected void result(Object object)
-      {
+        if (object.equals(true)) {
 
-        if(object.equals(true)) {
-
-        }
-        else {
+        } else {
 
         }
       }
@@ -151,7 +148,7 @@ public abstract class ScreenMaster implements Screen {
 
     diag.text(new Label(alert_text, skin));
     diag.button("OK", true);
-    //diag.button("Cancel", false);
+    // diag.button("Cancel", false);
 
     diag.show(stage);
   }

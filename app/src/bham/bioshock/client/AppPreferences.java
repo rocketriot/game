@@ -12,8 +12,6 @@ public class AppPreferences {
   private static final String PREFS_NAME = "rocket_riot";
   private static final String PREF_NUM_PLAYERS = "players.num";
 
-  public AppPreferences() {}
-
   protected Preferences getPreferences() {
     return Gdx.app.getPreferences(PREFS_NAME);
   }

@@ -2,11 +2,8 @@ package bham.bioshock.common.models;
 
 import java.io.Serializable;
 
-/**
- * Stores x and y coordinates
- */
+/** Stores x and y coordinates */
 public class Coordinates implements Serializable {
-
   private static final long serialVersionUID = 5775730008817100527L;
 
   private int x;
@@ -34,11 +31,7 @@ public class Coordinates implements Serializable {
   }
 
   public Boolean isEqual(Coordinates toCheck) {
-    if (x == toCheck.getX() && y == toCheck.getY()) {
-      return true;
-    } else {
-      return false;
-    }
+    return x == toCheck.getX() && y == toCheck.getY();
   }
 
   public Coordinates sub(Coordinates toSub) {

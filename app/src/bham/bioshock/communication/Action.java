@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * Used to communication between client an server is sent by ClientSender or ServerSender must
@@ -12,6 +14,7 @@ import java.util.ArrayList;
 public class Action implements Serializable, Comparable<Action> {
 
   private static final long serialVersionUID = 4181711659883987367L;
+  private static final Logger logger = LogManager.getLogger(Action.class);
 
   /** Type of action */
   private Command command;
@@ -63,11 +66,19 @@ public class Action implements Serializable, Comparable<Action> {
     return arguments;
   }
 
-  public Serializable getArgument(int i) throws Exception {
+  public Serializable getArgument(int i) {
     if (arguments.size() < i) {
-      throw new Exception("No argument " + Integer.toString(i) + " Command: " + command);
+      logger.error("No argument " + Integer.toString(i) + " Command: " + command);
     }
     return arguments.get(i);
+  }
+  
+  public String toString() {
+    String arguments = "";
+    for(Serializable s : getArguments()) {
+      arguments += s.toString() + ", ";
+    }
+    return command.name() + " | " + arguments;
   }
 
   @Override

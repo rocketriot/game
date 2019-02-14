@@ -1,8 +1,10 @@
 package bham.bioshock.client.scenes;
 
-import bham.bioshock.client.Client;
+import bham.bioshock.client.Route;
+import bham.bioshock.client.Router;
 import bham.bioshock.client.controllers.GameBoardController;
 import bham.bioshock.common.models.Player;
+import bham.bioshock.common.models.Store;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -12,29 +14,32 @@ import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.viewport.FitViewport;
-
 import java.util.ArrayList;
 
 public class Hud implements Disposable {
+
+  private Store store;
+  private Router router;
+
   private final Skin skin;
   private final float gameWidth;
   private final float gameHeight;
-  private GameBoardController controller;
-  private HorizontalGroup topBar;
-  private SelectBox<String> optionsMenu;
   public Stage stage;
   public FitViewport viewport;
+  private HorizontalGroup topBar;
+  private SelectBox optionsMenu;
   private ProgressBar fuelBar;
   private String fuelString;
   private TextArea fuelLabel;
   private Table table;
   private ArrayList<Label> labels;
 
-  public Hud(SpriteBatch batch, Skin skin, int gameWidth, int gameHeight, GameBoardController controller) {
-    this.controller = controller;
+  public Hud(SpriteBatch batch, Skin skin, int gameWidth, int gameHeight, Store store, Router router) {
+    this.store = store;
+    this.router = router;
     this.skin = skin;
     this.gameWidth = gameWidth / 1.5f;
-    this.gameHeight = gameHeight /1.5f;
+    this.gameHeight = gameHeight / 1.5f;
     viewport = new FitViewport(this.gameWidth, this.gameHeight, new OrthographicCamera());
     stage = new Stage(viewport, batch);
     setupTopBar();
@@ -69,7 +74,7 @@ public class Hud implements Disposable {
   private void setupScoreList() {
     table = new Table();
     table.top();
-    table.setPosition(0 , 0);
+    table.setPosition(0, 0);
     table.setFillParent(true);
     stage.addActor(table);
 
@@ -93,7 +98,7 @@ public class Hud implements Disposable {
     topBar.top();
 
     // Adds widgets to the topBar
-    optionsMenu = new SelectBox<>(skin);
+    optionsMenu = new SelectBox(skin);
     String[] menuOptions = {"Options Menu", "Settings", "Quit to main menu", "Quit to Desktop"};
     optionsMenu.setItems(menuOptions);
     optionsMenu.setSelected(menuOptions[0]);
@@ -108,16 +113,16 @@ public class Hud implements Disposable {
         int selected = optionsMenu.getSelectedIndex();
         switch (selected) {
           case 1:
-            controller.changeScreen(Client.View.PREFERENCES);
             optionsMenu.setSelected(menuOptions[0]);
+            router.call(Route.PREFERENCES);
             break;
           case 2:
-            controller.changeScreen(Client.View.MAIN_MENU);
             optionsMenu.setSelected(menuOptions[0]);
+            router.call(Route.MAIN_MENU);
             break;
           case 3:
-            Gdx.app.exit();
             optionsMenu.setSelected(menuOptions[0]);
+            Gdx.app.exit();
             break;
         }
 
@@ -126,11 +131,13 @@ public class Hud implements Disposable {
   }
 
   public void updateHud() {
-    fuelBar.setValue(controller.getMainPlayer().getFuel());
-    fuelString = "Fuel: " + controller.getMainPlayer().getFuel() + "/100.0";
-    fuelLabel.setText(fuelString);
+    ArrayList<Player> players = store.getPlayers();
 
-    ArrayList<Player> players = controller.getPlayers();
+    if (players.size() != store.MAX_PLAYERS) return;
+
+    fuelBar.setValue(store.getMainPlayer().getFuel());
+    fuelString = "Fuel: " + store.getMainPlayer().getFuel() + "/100.0";
+    fuelLabel.setText(fuelString);
 
     table.clearChildren();
     labels = new ArrayList<>();

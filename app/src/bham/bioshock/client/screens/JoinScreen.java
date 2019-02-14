@@ -1,10 +1,11 @@
 package bham.bioshock.client.screens;
 
-import java.net.ConnectException;
+import bham.bioshock.client.Route;
+import bham.bioshock.client.Router;
+import bham.bioshock.common.models.Player;
+import bham.bioshock.common.models.Store;
 import java.util.ArrayList;
-import java.util.HashMap;
 
-import bham.bioshock.client.Client;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -12,48 +13,38 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener.ChangeEvent;
 import com.badlogic.gdx.utils.Scaling;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
-import bham.bioshock.client.controllers.JoinScreenController;
 
 public class JoinScreen extends ScreenMaster {
-  JoinScreenController controller;
-
+  
+  private Store store;
+  
   private final int CELL_PADDING = 100;
   private final int IMAGE_WIDTH = 20;
 
   public enum WaitText {
-    WAITING, CONNECTED
+    WAITING("Waiting..."), CONNECTED("Connected");
+    
+    final String text;
+    
+    WaitText(String text) {
+      this.text = text;
+    }
   }
 
-  private HashMap<WaitText, String> wait_text;
-
   //players
-  private PlayerContainer c1;
-  private PlayerContainer c2;
-  private PlayerContainer c3;
-  private PlayerContainer c4;
-
+  private PlayerContainer[] containers;
   private Table table;
-
-  //Arrays to hold the labels
-  private ArrayList<Label> player_names;
-  private ArrayList<Label> waiting_labels;
-
-  public JoinScreen(JoinScreenController controller) {
-    this.controller = controller;
-
+  
+  public JoinScreen(Router router, Store store) {
+    super(router);
+    this.store = store;
     stage = new Stage(new ScreenViewport());
+    containers = new PlayerContainer[4];
     batch = new SpriteBatch();
-
-    wait_text = new HashMap<>();
-    wait_text.put(WaitText.WAITING, "Waiting...");
-    wait_text.put(WaitText.CONNECTED, "Connected");
-
-    player_names = new ArrayList<>();
-    waiting_labels = new ArrayList<>();
-
   }
 
   @Override
@@ -61,6 +52,8 @@ public class JoinScreen extends ScreenMaster {
     super.show();
 
     buildJoinScreen();
+
+    router.call(Route.START_GAME);
   }
 
   private void buildJoinScreen() {
@@ -70,32 +63,70 @@ public class JoinScreen extends ScreenMaster {
     //table.setWidth(screen_width * 0.7f);
     table.pad(CELL_PADDING);
     stage.addActor(table);
-
-
-    addPlayers();
-
+    
+    loadPlayers();
   }
-  private void addPlayers() {
-    c1 = new PlayerContainer(new Texture(Gdx.files.internal("app/assets/entities/rockets/1.png")), "Player1", WaitText.WAITING);
-    c2 = new PlayerContainer(new Texture(Gdx.files.internal("app/assets/entities/rockets/2.png")), "Player2", WaitText.WAITING);
-    c3 = new PlayerContainer(new Texture(Gdx.files.internal("app/assets/entities/rockets/3.png")), "Player3", WaitText.WAITING);
-    c4 = new PlayerContainer(new Texture(Gdx.files.internal("app/assets/entities/rockets/4.png")), "Player4", WaitText.WAITING);
+  
+  private void loadPlayers() {
+    for(int i=0; i<4; i++) {
+      Texture t = new Texture(Gdx.files.internal("app/assets/entities/rockets/"+(i+1)+".png"));
+      containers[i] = new PlayerContainer(t, "Player"+(i+1), WaitText.WAITING);      
+    }
 
-    table.add(c1);
-    table.add(c2);
+    table.add(containers[0]);
+    table.add(containers[1]);
     table.row();
-    table.add(c3);
-    table.add(c4);
+    table.add(containers[2]);
+    table.add(containers[3]);
   }
 
+  public void changeWaitLabel(Label label, WaitText text) {
+    label.setText(text.text);
+  }
+
+  public void changePlayerName(Label label, String player) {
+    label.setText(player);
+  }
+  
+  @Override
+  protected void setPrevious() {
+    backButton.addListener(new ChangeListener() {
+      @Override
+      public void changed(ChangeEvent event, Actor actor) {
+        router.call(Route.DISCONNECT_PLAYER);
+        store.removeAllPlayers();
+        router.back();
+      }
+    });
+  }
+
+  @Override
+  public void render(float delta) {
+    ArrayList<Player> players = store.getPlayers();
+    
+    for(int i=0; i<4; i++) {
+      if(players.size() > i) {
+        Player p = players.get(i);        
+        containers[i].waitingLabel.setText(WaitText.CONNECTED.text);
+        containers[i].nameLabel.setText(p.getUsername());
+      } else {
+        containers[i].waitingLabel.setText(WaitText.WAITING.text);
+        containers[i].nameLabel.setText("Player" + (i+1));
+      }
+    }
+    
+    super.render(delta);
+  }
+
+  
   private class PlayerContainer extends Container<Table> {
 
     String waitText;
-    Label waiting_label;
-    Label name_label;
+    Label waitingLabel;
+    Label nameLabel;
 
     PlayerContainer(Texture img, String name, WaitText text) {
-      this.waitText = wait_text.get(text);
+      this.waitText = text.text;
       Image image = new Image(img);
       image.setScaling(Scaling.fit);
 
@@ -103,50 +134,17 @@ public class JoinScreen extends ScreenMaster {
       t.setFillParent(true);
       t.pad(15);
 
-      name_label = new Label(name, skin);
-      player_names.add(name_label);
+      nameLabel = new Label(name, skin);
+      waitingLabel = new Label(waitText, skin);
 
-      waiting_label = new Label(waitText, skin);
-      waiting_labels.add(waiting_label);
-
-      t.add(name_label).pad(0,0,10,0);
+      t.add(nameLabel).pad(0,0,10,0);
       t.row();
       t.add(image).expand();
       t.row();
-      t.add(waiting_label).pad(10,0,0,0);
+      t.add(waitingLabel).pad(10,0,0,0);
       this.setActor(t);
     }
-
-
   }
-
-  public void changeWaitLabel(Label label, WaitText text) {
-    label.setText(wait_text.get(text));
-
-  }
-
-  public void changePlayerName(Label label, String player) {
-    label.setText(player);
-  }
-
-  public ArrayList<Label> getPlayer_names() {
-    return player_names;
-  }
-
-  public ArrayList<Label> getWaiting_labels() {
-    return waiting_labels;
-  }
-
-
-  @Override
-  public void render(float delta) {
-    super.render(delta);
-
-  }
-
-
-
-
 
 
 }
