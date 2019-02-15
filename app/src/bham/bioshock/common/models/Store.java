@@ -127,6 +127,10 @@ public class Store {
     if (++turn == MAX_PLAYERS) {
       round++;
       turn = 0;
+
+      // Increase player's fuel after each round
+      for (Player player : players)
+        player.increaseFuel(5.0f);
     }
   }
 }
