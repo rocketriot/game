@@ -3,15 +3,15 @@ package bham.bioshock.client.controllers;
 import bham.bioshock.client.Router;
 import bham.bioshock.client.screens.GameBoardScreen;
 import bham.bioshock.client.BoardGame;
+import bham.bioshock.client.Route;
+import bham.bioshock.common.Direction;
 import bham.bioshock.common.consts.GridPoint;
 import bham.bioshock.common.models.*;
 import bham.bioshock.common.pathfinding.AStarPathfinding;
 import bham.bioshock.communication.Action;
 import bham.bioshock.communication.Command;
 import bham.bioshock.communication.client.IClientService;
-
 import com.google.inject.Inject;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Random;
@@ -26,7 +26,7 @@ public class GameBoardController extends Controller {
     this.clientService = clientService;
     this.router = router;
   }
-  
+
   /* Start the game */
   public void show() {
     setScreen(new GameBoardScreen(router, store, store.getGameBoard()));
@@ -49,8 +49,10 @@ public class GameBoardController extends Controller {
 
     // Initialize path finding
     int gridSize = store.getGameBoard().GRID_SIZE;
-    AStarPathfinding pathFinder = new AStarPathfinding(grid, mainPlayer.getCoordinates(), gridSize, gridSize, store.getPlayers());
+    AStarPathfinding pathFinder = new AStarPathfinding(grid, mainPlayer.getCoordinates(), gridSize,
+        gridSize, store.getPlayers());
     pathFinder.setStartPosition(mainPlayer.getCoordinates());
+    Coordinates startCoords = mainPlayer.getCoordinates();
 
     // pathsize - 1 since path includes start position
     ArrayList<Coordinates> path = pathFinder.pathfind(destination);
@@ -73,6 +75,9 @@ public class GameBoardController extends Controller {
       mainPlayer.decreaseFuel(fuel.getValue());
     }
 
+    // Generate and add the BoardMove object and add it to the mainPlayer
+    generateMove(path, destination, startCoords);
+
     // Send the updated grid to the server
     ArrayList<Serializable> arguments = new ArrayList<>();
     arguments.add(gameBoard);
@@ -89,6 +94,63 @@ public class GameBoardController extends Controller {
     store.updatePlayer(movingPlayer);
 
     store.nextTurn();
+  }
+
+  private void generateMove(ArrayList<Coordinates> path, Coordinates destination,
+      Coordinates startPosition) {
+    ArrayList<Direction> directions = new ArrayList<>();
+    ArrayList<Coordinates> position = new ArrayList<>();
+    Coordinates lastPosition = startPosition;
+    Direction currentDir = Direction.NONE;
+
+    for (Coordinates c : path) {
+      Coordinates moveDir = c.sub(lastPosition);
+      lastPosition = c;
+      if (moveDir.getX() == 0) {
+        if (moveDir.getY() > 0) {
+          if (currentDir.equals(Direction.NONE)) {
+            currentDir = Direction.UP;
+          } else if (!currentDir.equals(Direction.UP)) {
+            directions.add(currentDir);
+            position.add(lastPosition);
+            currentDir = Direction.UP;
+          }
+        } else if (moveDir.getY() < 0) {
+          if (currentDir.equals(Direction.NONE)) {
+            currentDir = Direction.DOWN;
+          } else if (!currentDir.equals(Direction.DOWN)) {
+            directions.add(currentDir);
+            position.add(lastPosition);
+            currentDir = Direction.DOWN;
+          }
+        } else {
+          directions.add(Direction.NONE);
+          position.add(lastPosition);
+        }
+      } else {
+        if (moveDir.getX() > 0) {
+          if (currentDir.equals(Direction.NONE)) {
+            currentDir = Direction.RIGHT;
+          } else if (!currentDir.equals(Direction.RIGHT)) {
+            directions.add(currentDir);
+            position.add(lastPosition);
+            currentDir = Direction.RIGHT;
+          }
+        } else if (moveDir.getX() < 0) {
+          if (currentDir.equals(Direction.NONE)) {
+            currentDir = Direction.LEFT;
+          } else if (!currentDir.equals(Direction.LEFT)) {
+            directions.add(currentDir);
+            position.add(lastPosition);
+            currentDir = Direction.LEFT;
+          }
+        }
+      }
+    }
+    directions.add(currentDir);
+    position.add(lastPosition);
+    BoardMove boardMove = new BoardMove(directions, position, startPosition, destination);
+    store.getMainPlayer().setBoardMove(boardMove);
   }
 
   public void startMinigame() {}

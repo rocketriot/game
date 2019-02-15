@@ -33,4 +33,8 @@ public class Coordinates implements Serializable {
   public Boolean isEqual(Coordinates toCheck) {
     return x == toCheck.getX() && y == toCheck.getY();
   }
+
+  public Coordinates sub(Coordinates toSub) {
+    return (new Coordinates(this.x - toSub.getX(), this.y - toSub.getY()));
+  }
 }
