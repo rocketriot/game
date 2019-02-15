@@ -131,7 +131,7 @@ public class Hud implements Disposable {
     table.clearChildren();
     labels = new ArrayList<>();
 
-    for (int i = 0; i < 4; i++) {
+    for (int i = 0; i < players.size(); i++) {
       String pointsString = (players.get(i).getUsername() + ": " + players.get(i).getPoints());
       labels.add(new Label(pointsString, skin));
     }
