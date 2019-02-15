@@ -59,8 +59,7 @@ public class GameBoardController extends Controller {
     float pathCost = (path.size() - 1) * 10;
 
     // Handle if player doesn't have enough fuel
-    if (mainPlayer.getFuel() < pathCost)
-      return;
+    if (mainPlayer.getFuel() < pathCost) return;
 
     // Update player coordinates and fuel
     mainPlayer.setCoordinates(destination);
@@ -86,9 +85,7 @@ public class GameBoardController extends Controller {
     clientService.send(new Action(Command.MOVE_PLAYER_ON_BOARD, arguments));
   }
 
-  /**
-   * Player move received from the server
-   */
+  /** Player move received from the server */
   public void moveReceived(Action action) {
     // Get game board and player from arguments and update the model
     GameBoard gameBoard = (GameBoard) action.getArgument(0);
@@ -187,9 +184,7 @@ public class GameBoardController extends Controller {
     return store.getGameBoard().getGrid() != null;
   }
 
-  /**
-   * Check if it is the main player's turn
-   */
+  /** Check if it is the main player's turn */
   public boolean isMainPlayersTurn() {
     int turn = store.getTurn();
     Player nextPlayer = store.getPlayers().get(turn);

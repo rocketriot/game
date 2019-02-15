@@ -4,7 +4,6 @@ import bham.bioshock.common.models.Store;
 import bham.bioshock.communication.Action;
 import bham.bioshock.server.handlers.GameBoardHandler;
 import bham.bioshock.server.handlers.JoinScreenHandler;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.UUID;
 import org.apache.logging.log4j.LogManager;

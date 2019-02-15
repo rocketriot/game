@@ -112,8 +112,11 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
     BoardMove boardMove = player.getBoardMove();
     if (boardMove.getDirections().size() == 0) {
       this.drawRocketTrail = false;
-      playerSelected = true;
       player.setBoardMove(null);
+      if (player.equals(store.getMainPlayer())) {
+        playerSelected = true;
+        pathFinder.setStartPosition(player.getCoordinates());
+      }
     } else {
       // Calculate distance to travel
       float distanceToMove = 3 * Gdx.graphics.getDeltaTime();
@@ -546,7 +549,6 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
           (int) clickCoords.y / PPS);
       if (!store.getMainPlayer().getCoordinates().isEqual(gridCoords)) {
         router.call(Route.MOVE_PLAYER, gridCoords);
-        pathFinder.setStartPosition(gridCoords);
         return true;
       }
     }

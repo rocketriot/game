@@ -45,21 +45,6 @@ public class Hud implements Disposable {
     setupTopBar();
     setupFuelBar();
     setupScoreList();
-    setupBottomBar();
-  }
-
-  private void setupBottomBar() {
-    HorizontalGroup bottomBar = new HorizontalGroup();
-    bottomBar.bottom();
-    TextButton endTurnButton = new TextButton("End Turn", skin);
-    bottomBar.addActor(endTurnButton);
-    stage.addActor(bottomBar);
-    endTurnButton.addListener(new ChangeListener() {
-      @Override
-      public void changed(ChangeEvent event, Actor actor) {
-        //TODO Add end turn code
-      }
-    });
   }
 
   private void setupFuelBar() {
@@ -125,7 +110,6 @@ public class Hud implements Disposable {
             Gdx.app.exit();
             break;
         }
-
       }
     });
   }
@@ -142,7 +126,7 @@ public class Hud implements Disposable {
     table.clearChildren();
     labels = new ArrayList<>();
 
-    for (int i = 0; i < 4; i++) {
+    for (int i = 0; i < players.size(); i++) {
       String pointsString = (players.get(i).getUsername() + ": " + players.get(i).getPoints());
       labels.add(new Label(pointsString, skin));
     }

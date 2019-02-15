@@ -22,6 +22,7 @@ public class Store {
   }
 
   /** Max number of players in a game */
+  // FOR TESTING
   public final int MAX_PLAYERS = 4;
 
   /** Contains all of the information about the game board */
@@ -42,6 +43,7 @@ public class Store {
   public AppPreferences getPreferences() {
     return preferences;
   }
+
   public void generateGrid() {
     // Set coordinates of the players
     int last = gameBoard.GRID_SIZE - 1;
