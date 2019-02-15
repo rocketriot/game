@@ -57,7 +57,7 @@ public class GameBoardController extends Controller {
 
     // Initialize path finding
     int gridSize = store.getGameBoard().GRID_SIZE;
-    AStarPathfinding pathFinder = new AStarPathfinding(grid, mainPlayer.getCoordinates(), gridSize, gridSize);
+    AStarPathfinding pathFinder = new AStarPathfinding(grid, mainPlayer.getCoordinates(), gridSize, gridSize, store.getPlayers());
     pathFinder.setStartPosition(mainPlayer.getCoordinates());
 
     // pathsize - 1 since path includes start position
