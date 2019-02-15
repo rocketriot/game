@@ -58,6 +58,7 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
     
     this.gameBoard = gameBoard;
     this.store = store;
+    this.pathFinder = pathFinder;
     
     batch = new SpriteBatch();
     // Pixels Per Square (on the grid)
