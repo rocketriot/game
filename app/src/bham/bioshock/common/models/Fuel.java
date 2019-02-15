@@ -16,9 +16,6 @@ public class Fuel implements Serializable {
   /** The amount of fuel that the fuel box holds */
   private float value = 20.0f;
 
-  /** Stores whether the object has been drawn this cycle */
-  private boolean drawn = false;
-
   public Fuel(Coordinates coordinates) {
     this.id = UUID.randomUUID();
     this.coordinates = coordinates;
@@ -43,13 +40,4 @@ public class Fuel implements Serializable {
   public void setValue(float value) {
     this.value = value;
   }
-
-  public boolean isDrawn() {
-    return drawn;
-  }
-
-  public void setDrawn(boolean drawn) {
-    this.drawn = drawn;
-  }
-
 }
