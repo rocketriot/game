@@ -57,7 +57,7 @@ public abstract class ScreenMaster implements Screen {
 
   /** Set's up all the fonts needed for the screen */
   private void setupFonts() {
-    FileHandle fontSource = Gdx.files.internal("app/assets/fonts/font.otf");
+    FileHandle fontSource = Gdx.files.internal("app/assets/fonts/BebasNeueThin.otf");
     font12 = generateFont(fontSource, 12);
     font18 = generateFont(fontSource, 18);
   }
