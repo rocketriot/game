@@ -12,9 +12,11 @@ import bham.bioshock.communication.Command;
 import bham.bioshock.communication.client.ClientService;
 import bham.bioshock.communication.client.CommunicationClient;
 import com.google.inject.Inject;
+
 import java.net.ConnectException;
 import java.util.ArrayList;
 import java.util.UUID;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -48,7 +50,7 @@ public class JoinScreenController extends Controller {
             connectToServer(player);
             setScreen(new JoinScreen(router, store));
 
-        } catch(ConnectException e) {
+        } catch (ConnectException e) {
             // No server started
             logger.error(e.getMessage());
             router.call(Route.ALERT, e.getMessage());
@@ -63,15 +65,19 @@ public class JoinScreenController extends Controller {
         store.removePlayer(id);
     }
 
-    /** Handle when the server tells us a new player was added to the game */
+    /**
+     * Handle when the server tells us a new player was added to the game
+     */
     public void addPlayer(ArrayList<Player> players) {
-        for(Player player : players) {
+        for (Player player : players) {
             logger.debug("Player: " + player.getUsername() + " connected");
             store.addPlayer(player);
         }
     }
 
-    /** Create a connection with the server and wait in lobby when a username is entered */
+    /**
+     * Create a connection with the server and wait in lobby when a username is entered
+     */
     public void connectToServer(Player player) throws ConnectException {
         // Create server connection
         clientService = commClient.connect(player.getUsername());
@@ -81,9 +87,11 @@ public class JoinScreenController extends Controller {
         clientService.send(new Action(Command.ADD_PLAYER, player));
     }
 
-  /** Handle when the server tells the client to start the game */
-  public void start() {
-    commClient.getConnection().send(new Action(Command.START_GAME));
-    logger.debug("Ready to start! Waiting for the board");
-  }
+    /**
+     * Handle when the server tells the client to start the game
+     */
+    public void start() {
+        commClient.getConnection().send(new Action(Command.START_GAME));
+        logger.debug("Ready to start! Waiting for the board");
+    }
 }
