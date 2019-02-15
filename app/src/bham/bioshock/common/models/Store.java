@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import com.badlogic.gdx.Screen;
 import com.google.inject.*;
 import bham.bioshock.client.AppPreferences;
-import bham.bioshock.client.screens.ScreenMaster;
 import java.util.UUID;
 
 /** Stores all of the models */
@@ -54,7 +53,6 @@ public class Store {
     players.get(3).setCoordinates(new Coordinates(last, 0));
 
     gameBoard.generateGrid();
-
   }
 
   public GameBoard getGameBoard() {
@@ -78,6 +76,7 @@ public class Store {
   }
 
   public void setPlayers(ArrayList<Player> players) {
+    this.players.clear();
     this.players = players;
   }
 

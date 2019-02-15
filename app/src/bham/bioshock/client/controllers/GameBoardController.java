@@ -3,7 +3,6 @@ package bham.bioshock.client.controllers;
 import bham.bioshock.client.Router;
 import bham.bioshock.client.screens.GameBoardScreen;
 import bham.bioshock.client.BoardGame;
-import bham.bioshock.client.Route;
 import bham.bioshock.common.consts.GridPoint;
 import bham.bioshock.common.models.*;
 import bham.bioshock.common.pathfinding.AStarPathfinding;
@@ -39,13 +38,6 @@ public class GameBoardController extends Controller {
   }
 
   public void savePlayers(ArrayList<Player> players) {
-    // TODO: remove temporary solution to fix coordinates not being sent by the server
-    int last = store.getGameBoard().GRID_SIZE - 1;
-    players.get(0).setCoordinates(new Coordinates(0, 0));
-    players.get(1).setCoordinates(new Coordinates(0, last));
-    players.get(2).setCoordinates(new Coordinates(last, last));
-    players.get(3).setCoordinates(new Coordinates(last, 0));
-
     store.setPlayers(players);
   }
 
