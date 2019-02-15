@@ -41,7 +41,7 @@ public class GameBoardController extends Controller {
   public void saveGameBoard(GameBoard gameBoard) {
     store.setGameBoard(gameBoard);
 
-    setScreen(new GameBoardScreen(router, store, gameBoard));
+    setScreen(new GameBoardScreen(router, store));
     router.call(Route.GAME_BOARD);
   }
 

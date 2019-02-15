@@ -21,63 +21,68 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 import java.util.ArrayList;
 
 public class GameBoardScreen extends ScreenMaster implements InputProcessor {
+  /** The game data */
+  private Store store;
+
+  /** Pathfinding for player movement */
+  private AStarPathfinding pathFinder;
+  private ArrayList<Coordinates> path = new ArrayList<>();
+  
   private final InputMultiplexer inputMultiplexer;
   private final int GAME_WORLD_WIDTH = Config.GAME_WORLD_WIDTH;
   private final int GAME_WORLD_HEIGHT = Config.GAME_WORLD_HEIGHT;
 
-  private GameBoard gameBoard;
-  private Store store;
-  private AStarPathfinding pathFinder;
 
   private SpriteBatch batch;
   private Sprite background;
   private OrthographicCamera camera;
   private FitViewport viewport;
   private ShapeRenderer sh;
+  private Sprite sprite;
   private ArrayList<Sprite> planetSprites;
   private ArrayList<Sprite> asteroidSprites;
-  private Sprite sprite;
   private ArrayList<Sprite> playerSprites;
+  private ArrayList<Sprite> outlinedPlayerSprites;
   private Sprite fuelSprite;
-  private int PPS;
+
+  /** Pixels Per Square (on the grid) */
+  private int PPS = 50;
+
+  /** Size of the board */
   private int gridSize;
+
   private Hud hud;
   private int mouseDownX, mouseDownY;
   private boolean playerSelected = false;
-  private ArrayList<Sprite> outlinedPlayerSprites;
-  private ArrayList<Coordinates> path = new ArrayList<>();
   private Coordinates oldGridCoords = new Coordinates(-1, -1);
 
-  public GameBoardScreen(Router router, Store store, GameBoard gameBoard) {
+  public GameBoardScreen(Router router, Store store) {
     super(router);
 
-    this.gameBoard = gameBoard;
     this.store = store;
 
-    batch = new SpriteBatch();
-    // Pixels Per Square (on the grid)
-    PPS = 50;
+    this.batch = new SpriteBatch();
 
     this.gridSize = store.getGameBoard().GRID_SIZE;
-    camera = new OrthographicCamera();
-    viewport = new FitViewport(GAME_WORLD_WIDTH, GAME_WORLD_HEIGHT, camera);
-    viewport.apply();
+    this.camera = new OrthographicCamera();
+    this.viewport = new FitViewport(GAME_WORLD_WIDTH, GAME_WORLD_HEIGHT, camera);
+    this.viewport.apply();
 
     // Generate the sprites
-    planetSprites = generateSprites("app/assets/entities/planets");
-    playerSprites = generateSprites("app/assets/entities/players");
-    outlinedPlayerSprites = generateSprites("app/assets/entities/players");
-    asteroidSprites = generateSprites("app/assets/entities/asteroids");
-    fuelSprite = generateSprite("app/assets/entities/fuel.png");
-
+    this.planetSprites = generateSprites("app/assets/entities/planets");
+    this.playerSprites = generateSprites("app/assets/entities/players");
+    this.outlinedPlayerSprites = generateSprites("app/assets/entities/players");
+    this.asteroidSprites = generateSprites("app/assets/entities/asteroids");
+    this.fuelSprite = generateSprite("app/assets/entities/fuel.png");
+    
     setupUI();
-
+    
     // Setup the input processing
-    inputMultiplexer = new InputMultiplexer();
-    inputMultiplexer.addProcessor(hud.getStage());
-    inputMultiplexer.addProcessor(this);
-
-    sh = new ShapeRenderer();
+    this.inputMultiplexer = new InputMultiplexer();
+    this.inputMultiplexer.addProcessor(hud.getStage());
+    this.inputMultiplexer.addProcessor(this);
+    
+    this.sh = new ShapeRenderer();
   }
 
   private void setupUI() {
@@ -86,7 +91,7 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
   }
 
   public void drawBoardObjects() {
-    GridPoint[][] grid = gameBoard.getGrid();
+    GridPoint[][] grid = store.getGameBoard().getGrid();
 
     // Draw Grid items
     for (int x = 0; x < grid.length; x++) {
@@ -191,20 +196,11 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
 
   @Override
   public void show() {
-    // Graphics.DisplayMode display = Gdx.graphics.getDisplayMode();
-    // Gdx.graphics.setFullscreenMode(display);
     Gdx.input.setInputProcessor(inputMultiplexer);
   }
 
   @Override
-  public void pause() {}
-
-  @Override
-  public void resume() {}
-
-  @Override
   public void hide() {
-    Graphics.DisplayMode display = Gdx.graphics.getDisplayMode();
     Gdx.graphics.setWindowedMode(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
   }
 
@@ -228,7 +224,7 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
     for (Sprite s : outlinedPlayerSprites) {
       s.setSize(PPS * 1, PPS * 1);
     }
-    
+
     fuelSprite.setSize(PPS * 1, PPS * 1);
   }
 
@@ -239,15 +235,17 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
     handleInput();
     camera.update();
 
+    
     batch.begin();
-
+    
     drawBackground();
     drawBoardObjects();
     drawPath();
-
+    
     batch.end();
 
     drawGridLines();
+    
 
     // Draw the ui
     this.batch.setProjectionMatrix(hud.stage.getCamera().combined);
@@ -300,7 +298,6 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
   }
 
   protected void drawBackground() {
-
     for (int i = -1; i <= 1; i++) {
       for (int j = -1; j <= 1; j++) {
         background.setPosition(i * GAME_WORLD_WIDTH, j * GAME_WORLD_HEIGHT);
