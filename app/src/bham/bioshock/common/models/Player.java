@@ -34,7 +34,7 @@ public class Player implements Serializable {
 
   /**
    * Object containing infomation about a players move
-   */
+  */
   private BoardMove boardMove;
 
   public Player() {
@@ -109,16 +109,16 @@ public class Player implements Serializable {
     return points;
   }
 
-  public void setPoints(int points) {
-    this.points = points;
+  public void setBoardMove(BoardMove boardMove) {
+    this.boardMove = boardMove;
   }
 
   public BoardMove getBoardMove() {
     return boardMove;
   }
 
-  public void setBoardMove(BoardMove boardMove) {
-    this.boardMove = boardMove;
+  public void setPoints(int points) {
+    this.points = points;
   }
 
   public int getTextureID() {

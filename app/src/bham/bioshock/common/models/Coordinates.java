@@ -37,5 +37,4 @@ public class Coordinates implements Serializable {
   public Coordinates sub(Coordinates toSub) {
     return (new Coordinates(this.x - toSub.getX(), this.y - toSub.getY()));
   }
-
 }

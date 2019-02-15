@@ -14,17 +14,14 @@ import bham.bioshock.common.models.Planet;
 import bham.bioshock.common.models.Player;
 import bham.bioshock.common.models.Store;
 import bham.bioshock.common.pathfinding.AStarPathfinding;
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
-import com.badlogic.gdx.InputMultiplexer;
-import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.*;
 import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.graphics.g2d.ParticleEffect;
+import com.badlogic.gdx.graphics.g2d.ParticleEmitter;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.GL30;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.ParticleEffect;
-import com.badlogic.gdx.graphics.g2d.ParticleEmitter;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -71,7 +68,6 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
     this.store = store;
 
     batch = new SpriteBatch();
-
     // Pixels Per Square (on the grid)
     PPS = 50;
 
@@ -335,18 +331,15 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
     // Graphics.DisplayMode display = Gdx.graphics.getDisplayMode();
     // Gdx.graphics.setFullscreenMode(display);
     Gdx.input.setInputProcessor(inputMultiplexer);
-    pathFinder = new AStarPathfinding(store.getGameBoard().getGrid(), store.getMainPlayer().getCoordinates(), gridSize, gridSize);
+    pathFinder = new AStarPathfinding(store.getGameBoard().getGrid(),
+        store.getMainPlayer().getCoordinates(), gridSize, gridSize, store.getPlayers());
   }
 
   @Override
-  public void pause() {
-
-  }
+  public void pause() {}
 
   @Override
-  public void resume() {
-
-  }
+  public void resume() {}
 
   @Override
   public void hide() {
@@ -355,7 +348,7 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
 
   @Override
   public void resize(int width, int height) {
-    viewport.update(width, height);
+    viewport.update(width, height, true);
     hud.viewport.update(width, height, true);
     resizeSprites();
   }
@@ -460,7 +453,6 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
         background.draw(batch);
       }
     }
-
   }
 
   @Override
@@ -583,8 +575,8 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
     // Pathfind to mouse coordinates
     if (playerSelected) {
       Vector3 mouseCoords = getWorldCoords(screenX, screenY);
-      Coordinates gridCoords = new Coordinates((int) mouseCoords.x / PPS,
-          (int) mouseCoords.y / PPS);
+      Coordinates gridCoords =
+          new Coordinates((int) mouseCoords.x / PPS, (int) mouseCoords.y / PPS);
       if (!oldGridCoords.isEqual(gridCoords)) {
         if (gridCoords.getX() < gridSize - 1 && gridCoords.getX() >= 0) {
           if (gridCoords.getY() < gridSize - 1 && gridCoords.getY() >= 0) {

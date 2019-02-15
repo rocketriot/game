@@ -39,16 +39,16 @@ public class JoinScreenController extends Controller {
   public void show(String username) {
     // Create a new player
     Player player = new Player(username);
-    
+
     // Save player to the store
     store.setMainPlayer(player);
-    
+
     // Create connection to the server
     try {
       connectToServer(player);
       setScreen(new JoinScreen(router, store));
-      
-    } catch(ConnectException e) {
+
+    } catch (ConnectException e) {
       // No server started
       logger.error(e.getMessage());
       router.call(Route.ALERT, e.getMessage());
@@ -58,20 +58,22 @@ public class JoinScreenController extends Controller {
   public void disconnectPlayer() {
     commClient.getConnection().send(new Action(Command.REMOVE_PLAYER));
   }
-  
+
   public void removePlayer(UUID id) {
     store.removePlayer(id);
   }
-  
+
   /** Handle when the server tells us a new player was added to the game */
   public void addPlayer(ArrayList<Player> players) {
-    for(Player player : players) {
+    for (Player player : players) {
       logger.debug("Player: " + player.getUsername() + " connected");
-      store.addPlayer(player);      
+      store.addPlayer(player);
     }
   }
 
-  /** Create a connection with the server and wait in lobby when a username is entered */
+  /**
+   * Create a connection with the server and wait in lobby when a username is entered
+   */
   public void connectToServer(Player player) throws ConnectException {
     // Create server connection
     clientService = commClient.connect(player.getUsername());
@@ -81,11 +83,11 @@ public class JoinScreenController extends Controller {
     clientService.send(new Action(Command.ADD_PLAYER, player));
   }
 
-  /** Handle when the server tells the client to start the game */
+  /**
+   * Handle when the server tells the client to start the game
+   */
   public void start() {
     commClient.getConnection().send(new Action(Command.START_GAME));
-
-    logger.debug("Ready to start!");
-    router.call(Route.GAME_BOARD);
+    logger.debug("Ready to start! Waiting for the board");
   }
 }

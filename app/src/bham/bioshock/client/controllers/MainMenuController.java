@@ -1,5 +1,6 @@
 package bham.bioshock.client.controllers;
 
+import bham.bioshock.client.screens.ScreenMaster;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.core.Logger;
 import com.google.inject.Inject;
@@ -41,6 +42,6 @@ public class MainMenuController extends Controller {
   }
   
   public void alert(String message) {
-    store.getScreen().alert(message);
+    ((ScreenMaster)store.getScreen()).alert(message);
   }
 }

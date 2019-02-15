@@ -53,7 +53,6 @@ public class JoinScreen extends ScreenMaster {
 
     buildJoinScreen();
 
-    router.call(Route.START_GAME);
   }
 
   private void buildJoinScreen() {
@@ -64,6 +63,7 @@ public class JoinScreen extends ScreenMaster {
     table.pad(CELL_PADDING);
     stage.addActor(table);
     
+    addStartGameButton();
     loadPlayers();
   }
   
@@ -86,6 +86,29 @@ public class JoinScreen extends ScreenMaster {
 
   public void changePlayerName(Label label, String player) {
     label.setText(player);
+  }
+  
+  public void addStartGameButton() {
+    TextButton startButton = new TextButton("Start Game", skin);
+    TextButton miniGameButton = new TextButton("TEST Mini Game", skin);
+    startButton.setPosition(screen_width - 150, 40);
+    miniGameButton.setPosition(screen_width - 150, 0);
+    stage.addActor(startButton);
+    stage.addActor(miniGameButton);
+    
+    startButton.addListener(new ChangeListener() {
+      @Override
+      public void changed(ChangeEvent event, Actor actor) {
+        router.call(Route.START_GAME);
+      }
+    });
+    
+    miniGameButton.addListener(new ChangeListener() {
+      @Override
+      public void changed(ChangeEvent event, Actor actor) {
+        router.call(Route.START_MINIGAME);
+      }
+    });
   }
   
   @Override

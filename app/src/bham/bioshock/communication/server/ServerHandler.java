@@ -77,6 +77,10 @@ public class ServerHandler {
           System.out.println("Received unhandled command: " + action.getCommand().toString());
           break;
       }
+      
+      // Reset the cache
+      service.reset();
+    
     } catch (Exception e) {
       System.err.println(e.getMessage());
     }

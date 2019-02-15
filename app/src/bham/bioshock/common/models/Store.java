@@ -1,19 +1,20 @@
 package bham.bioshock.common.models;
 
 import java.util.ArrayList;
+
+import com.badlogic.gdx.Screen;
 import com.google.inject.*;
 import bham.bioshock.client.AppPreferences;
-import bham.bioshock.client.screens.ScreenMaster;
 import java.util.UUID;
 
 /** Stores all of the models */
 
 @Singleton
 public class Store {
-  
+
   private AppPreferences preferences;
   
-  private ScreenMaster currentScreen;
+  private Screen currentScreen;
   
   @Inject
   public Store() {
@@ -41,7 +42,6 @@ public class Store {
   public AppPreferences getPreferences() {
     return preferences;
   }
-  
   public void generateGrid() {
     // Set coordinates of the players
     int last = gameBoard.GRID_SIZE - 1;
@@ -51,21 +51,20 @@ public class Store {
     players.get(3).setCoordinates(new Coordinates(last, 0));
 
     gameBoard.generateGrid();
-  
   }
 
   public GameBoard getGameBoard() {
     return gameBoard;
   }
   
-  public void setScreen(ScreenMaster screen) {
+  public void setScreen(Screen screen) {
     currentScreen = screen;
   }
 
-  public ScreenMaster getScreen() {
+  public Screen getScreen() {
     return currentScreen;
   }
-  
+
   public void setGameBoard(GameBoard gameBoard) {
     this.gameBoard = gameBoard;
   }
@@ -75,6 +74,7 @@ public class Store {
   }
 
   public void setPlayers(ArrayList<Player> players) {
+    this.players.clear();
     this.players = players;
   }
 
@@ -85,21 +85,23 @@ public class Store {
   public void removePlayer(UUID id) {
     players.removeIf(p -> p.getId().equals(id));
   }
-  
+
   public void removeAllPlayers() {
     players.clear();
   }
-  
+
   public void updatePlayer(Player updatingPlayer) {
     for (Player player : players) {
-      if (player.getId() == updatingPlayer.getId()) player = updatingPlayer;
+      if (player.getId() == updatingPlayer.getId())
+        player = updatingPlayer;
     }
   }
 
   public Player getMainPlayer() {
     // Might be too slow
     for (Player player : players) {
-      if (player.getId().equals(mainPlayerId)) return player;
+      if (player.getId().equals(mainPlayerId))
+        return player;
     }
 
     return null;
