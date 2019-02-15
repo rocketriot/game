@@ -53,6 +53,7 @@ public class AStarPathfinding {
      * @param startPosition The position that the pathfinding needs to start from
      * @param maxX          The maximum x value of the grid, i.e. the x limit of the game map
      * @param maxY          The maximum y value of the grid, i.e. the y limit of the game map
+     * @param players       The list of players that are playing
      */
     public AStarPathfinding(GridPoint[][] grid, Coordinates startPosition, int maxX, int maxY, ArrayList<Player> players) {
         setStartPosition(startPosition);
@@ -76,7 +77,6 @@ public class AStarPathfinding {
 
         ArrayList<Coordinates> openList = new ArrayList<>();// list of all generated points
         ArrayList<Coordinates> closedList = new ArrayList<>(); // list of all expanded points
-
         insertIntoList(openList, startPosition);// add the start position to the open list
 
         // while there are points to check
@@ -129,7 +129,7 @@ public class AStarPathfinding {
      * the passed list so that they can be added to the grid.
      *
      * @param grid    The grid that will be used
-     * @param players The list of players that are currently on the board
+     * @param players The list of players that are currently playing
      */
     public void setGameGrid(GridPoint[][] grid, ArrayList<Player> players) {
         gameGrid = grid;
@@ -188,7 +188,7 @@ public class AStarPathfinding {
                 currentX += 1;
             }
 
-            // now make all of the points of the planet passable
+            // now make all of the points of the planet passable - go to top left of the planet
             currentX -= 1;
             currentY += 1;
             for (int x = currentX; x < currentX + 3; x++) {
