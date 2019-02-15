@@ -1,7 +1,7 @@
 package bham.bioshock.communication.server;
 
 import bham.bioshock.communication.Action;
-
+import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.UUID;
@@ -62,6 +62,10 @@ public class ServerService extends Thread {
     sender.send(action);
   }
 
+  public void reset() throws IOException {
+    sender.reset();
+  }
+  
   /**
    * Delegates the execution to the appropriate method
    *

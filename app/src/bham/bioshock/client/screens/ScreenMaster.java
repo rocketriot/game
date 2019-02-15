@@ -1,7 +1,6 @@
 package bham.bioshock.client.screens;
 
 import bham.bioshock.client.Router;
-import org.lwjgl.opengl.Display;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.files.FileHandle;
@@ -57,7 +56,7 @@ public abstract class ScreenMaster implements Screen {
 
   /** Set's up all the fonts needed for the screen */
   private void setupFonts() {
-    FileHandle fontSource = Gdx.files.internal("app/assets/fonts/font.otf");
+    FileHandle fontSource = Gdx.files.internal("app/assets/fonts/BebasNeueThin.otf");
     font12 = generateFont(fontSource, 12);
     font18 = generateFont(fontSource, 18);
   }

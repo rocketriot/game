@@ -58,6 +58,13 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
 
   public GameBoardScreen(Router router, Store store) {
     super(router);
+    
+    this.store = store;
+    
+    batch = new SpriteBatch();
+
+    // Pixels Per Square (on the grid)
+    PPS = 50;
 
     this.store = store;
 

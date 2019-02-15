@@ -2,7 +2,6 @@ package bham.bioshock.common.pathfinding;
 
 import bham.bioshock.common.models.Coordinates;
 
-// values that will be used during pathfinding - heuristics etc
 public class PathfindingValues {
 
     // the actual value to take the path up to this point
@@ -21,21 +20,8 @@ public class PathfindingValues {
     private boolean passable;
 
     // initialise the values
-    public PathfindingValues(int pathCost, int heuristicCost, Coordinates parent, boolean passable) {
-        if (passable) {
-            setPathCost(pathCost);
-            setHeuristicCost(heuristicCost);
-            updateTotalCost();
-        } else {
-            setPathCost(Integer.MAX_VALUE);
-            setHeuristicCost(Integer.MAX_VALUE);
-            setTotalCost(Integer.MAX_VALUE);
-        }
+    public PathfindingValues(boolean passable) {
         this.passable = passable;
-
-        if (parent != null){
-            setParent(parent);
-        }
     }
 
     // method to get the pathCost
@@ -64,27 +50,32 @@ public class PathfindingValues {
     }
 
     // method to set the pathCost
-    public void setPathCost(int pathCost){
+    public void setPathCost(int pathCost) {
         this.pathCost = pathCost;
     }
 
     // method to set the heuristicCost
-    public void setHeuristicCost(double heuristicCost){
+    public void setHeuristicCost(double heuristicCost) {
         this.heuristicCost = heuristicCost;
     }
 
     // method to set the totalCost
-    public void setTotalCost(double totalCost){
+    public void setTotalCost(double totalCost) {
         this.totalCost = totalCost;
     }
 
     // method to automatically set the total cost according to the path and heuristic costs
-    public void updateTotalCost(){
+    public void updateTotalCost() {
         setTotalCost(pathCost + heuristicCost);
     }
 
     // method to set the parent
     public void setParent(Coordinates parent) {
         this.parent = parent;
+    }
+
+    // method to set the passability of a point
+    public void setPassable(Boolean passable) {
+        this.passable = passable;
     }
 }

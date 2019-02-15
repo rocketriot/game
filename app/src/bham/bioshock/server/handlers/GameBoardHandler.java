@@ -7,7 +7,6 @@ import bham.bioshock.common.models.Store;
 import bham.bioshock.communication.Action;
 import bham.bioshock.communication.Command;
 import bham.bioshock.communication.server.ServerHandler;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 
@@ -21,7 +20,10 @@ public class GameBoardHandler {
 
     ArrayList<Serializable> response = new ArrayList<>();
     response.add(gameBoard);
-    response.add(store.getPlayers());
+    for(Player p : store.getPlayers()) {
+      response.add(p);
+    }
+    
     handler.sendToAll(new Action(Command.GET_GAME_BOARD, response));
   }
 
