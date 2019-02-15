@@ -41,7 +41,7 @@ public class ClientHandler implements IClientHandler {
             break;
           }
           case START_GAME: {
-            router.call(Route.START_GAME);
+            router.call(Route.GAME_BOARD_SHOW);
             break;
           }
           case GET_GAME_BOARD: {

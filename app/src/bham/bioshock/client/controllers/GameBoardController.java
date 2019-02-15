@@ -27,22 +27,15 @@ public class GameBoardController extends Controller {
     this.clientService = clientService;
     this.router = router;
   }
-
+  
+  /* Start the game */
   public void show() {
-    // If the grid is not yet loaded, go to loading screen and fetch the game board
-    // from the server
-    if (!hasReceivedGrid()) {
-      clientService.send(new Action(Command.GET_GAME_BOARD));
-      router.call(Route.LOADING);
-    }
+    setScreen(new GameBoardScreen(router, store, store.getGameBoard()));
   }
 
   /** Handles when the server sends the game board to the client */
   public void saveGameBoard(GameBoard gameBoard) {
     store.setGameBoard(gameBoard);
-
-    setScreen(new GameBoardScreen(router, store, gameBoard));
-    router.call(Route.GAME_BOARD);
   }
 
   public void savePlayers(ArrayList<Player> players) {

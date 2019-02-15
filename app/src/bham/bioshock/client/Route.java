@@ -23,10 +23,10 @@ public enum Route {
   DISCONNECT_PLAYER (JoinScreenController.class,    "disconnectPlayer"),
   
   START_GAME        (JoinScreenController.class,     "start"),
-
-  GAME_BOARD        (GameBoardController.class,     "show"),
+  
+  GAME_BOARD_SHOW   (GameBoardController.class,     "show"),
   GAME_BOARD_SAVE   (GameBoardController.class,     "saveGameBoard"),
-  PLAYERS_SAVE   (GameBoardController.class,     "savePlayers");
+  PLAYERS_SAVE      (GameBoardController.class,     "savePlayers"),
   
   START_MINIGAME    (MinigameController.class,      "show");
   
