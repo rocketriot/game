@@ -1,7 +1,6 @@
 package bham.bioshock.client.screens;
 
 import bham.bioshock.client.Router;
-import org.lwjgl.opengl.Display;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.files.FileHandle;
