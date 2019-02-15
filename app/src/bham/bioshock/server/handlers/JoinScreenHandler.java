@@ -39,11 +39,13 @@ public class JoinScreenHandler {
     }
     handler.sendTo(player.getId(), new Action(Command.ADD_PLAYER, arguments));
 
+
     // If there are the max number of players start the game
     if (model.getPlayers().size() == model.MAX_PLAYERS) {
       System.out.println("starting game...");
       handler.sendToAll(new Action(Command.START_GAME));
     }
+
   }
   
   public static void disconnectPlayer(Store store, ServerService service, ServerHandler handler) {
@@ -52,10 +54,11 @@ public class JoinScreenHandler {
   }
 
   /** Creates CPU players and starts the game */
-  public static void startGame(Store store, Action action, ServerHandler hander) {
+  public static void startGame(Store store, Action action, ServerHandler handler) {
     ArrayList<Serializable> cpuPlayers = new ArrayList<>();
 
     // If there is not 4 players, create CPU players
+    System.out.println("PLAYERS IN THE STORE: "+store.getPlayers());
     while (store.getPlayers().size() != store.MAX_PLAYERS) {
       int number = store.getPlayers().size();
 
@@ -70,9 +73,12 @@ public class JoinScreenHandler {
     }
 
     // Send new CPU players to all clients
-    hander.sendToAll(new Action(Command.ADD_PLAYER, cpuPlayers));
-
+    handler.sendToAll(new Action(Command.ADD_PLAYER, cpuPlayers));
+    
+    // Send the board and the players
+    GameBoardHandler.getGameBoard(store, action, handler);
+    
     // Tell the clients to start the game
-    hander.sendToAll(new Action(Command.START_GAME));
+    handler.sendToAll(new Action(Command.START_GAME));
   }
 }
