@@ -6,6 +6,7 @@ import bham.bioshock.common.models.Player;
 import bham.bioshock.common.models.Store;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 
 // method to find a path between two points
@@ -132,7 +133,7 @@ public class AStarPathfinding {
      * @param players The list of players that are currently playing
      */
     public void setGameGrid(GridPoint[][] grid, ArrayList<Player> players) {
-        gameGrid = grid;
+        gameGrid = Arrays.stream(grid).map(r -> r.clone()).toArray(GridPoint[][]::new);
 
         // get the position of each player and add them into the grid
         for (Player player : players) {
