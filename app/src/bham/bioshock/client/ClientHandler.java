@@ -61,6 +61,9 @@ public class ClientHandler implements IClientHandler {
             router.call(Route.PLAYERS_SAVE, players);     
             break;
           }
+          case MINIGAME_START: {
+            router.call(Route.START_MINIGAME);
+          }
           default: {
             System.out.println("Received unhandled command: " + action.getCommand().toString());
           }}

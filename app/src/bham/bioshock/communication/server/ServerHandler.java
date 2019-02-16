@@ -4,6 +4,7 @@ import bham.bioshock.common.models.store.Store;
 import bham.bioshock.communication.Action;
 import bham.bioshock.server.handlers.GameBoardHandler;
 import bham.bioshock.server.handlers.JoinScreenHandler;
+import bham.bioshock.server.handlers.MinigameHandler;
 import java.util.ArrayList;
 import java.util.UUID;
 import org.apache.logging.log4j.LogManager;
@@ -17,12 +18,14 @@ public class ServerHandler {
   private Store store;
   private JoinScreenHandler joinHandler;
   private GameBoardHandler gameBoardHandler;
+  private MinigameHandler minigameHandler;
   
   public ServerHandler() {
     connections = new ArrayList<>();
     store = new Store();
     joinHandler = new JoinScreenHandler(store, this);
     gameBoardHandler = new GameBoardHandler(store, this);
+    minigameHandler = new MinigameHandler(store, this);
   }
 
   public void register(ServerService service) {
@@ -76,6 +79,10 @@ public class ServerHandler {
         case MOVE_PLAYER_ON_BOARD:
           gameBoardHandler.movePlayer(action);
           break;
+        case MINIGAME_START:
+          minigameHandler.startMinigame(action);
+        case MINIGAME_PLAYER_MOVE:
+          minigameHandler.playerMove(action, service.Id());
         default:
           System.out.println("Received unhandled command: " + action.getCommand().toString());
           break;
@@ -85,7 +92,7 @@ public class ServerHandler {
       service.reset();
     
     } catch (Exception e) {
-      System.err.println(e.getMessage());
+      e.printStackTrace();
     }
   }
 }

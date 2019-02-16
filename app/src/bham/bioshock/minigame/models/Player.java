@@ -1,6 +1,9 @@
 package bham.bioshock.minigame.models;
 
+import bham.bioshock.common.Position;
 import bham.bioshock.minigame.PlayerTexture;
+import bham.bioshock.minigame.physics.SpeedVector;
+import bham.bioshock.minigame.worlds.World;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
@@ -16,16 +19,20 @@ public class Player extends Entity {
   private PlayerTexture dir;
   private float v = 700f;
 
-  public Player(float x, float y) {
-    super(x, y);
+  public Player(World w, float x, float y) {
+    super(w, x, y);
     SIZE = 100;
     animationTime = 0;
     fromGround = -25;
     update(0);
   }
+  
+  public Player(World w, Position p) {
+    super(w, p.x, p.y);
+  }
 
-  public Player() {
-    this(0f, 0f);
+  public Player(World w) {
+    this(w, 0f, 0f);
   }
 
   public static void loadTextures() {
@@ -68,6 +75,14 @@ public class Player extends Entity {
     super.update(delta);
     animationTime += delta;
     dir = PlayerTexture.FRONT;
+  }
+  
+  public void setSpeedVector(SpeedVector s) {
+    speed = s;
+  }
+  
+  public void setPosition(Position p) {
+    pos = p;
   }
 
   public TextureRegion getTexture() {

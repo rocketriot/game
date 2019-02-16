@@ -59,7 +59,7 @@ public class GameBoardHandler {
     // If the player landed on a planet, start a minigame
     if (gridPoint.getType() == GridPoint.Type.PLANET) {
       // TODO: randomly pick a minigame type
-      handler.sendToAll(new Action(Command.START_MINIGAME));
+    //  handler.sendToAll(new Action(Command.START_MINIGAME));
     }
 
     store.nextTurn();

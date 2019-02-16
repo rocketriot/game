@@ -1,7 +1,11 @@
 package bham.bioshock.minigame.physics;
 
-public class SpeedVector {
+import java.io.Serializable;
 
+public class SpeedVector implements Serializable {
+
+  private static final long serialVersionUID = -3502614783745888619L;
+  
   private double mass = 1;
   private double dx = 0;
   private double dy = 0;

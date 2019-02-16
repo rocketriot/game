@@ -142,7 +142,7 @@ public class Store {
   public void setMinigameStore(MinigameStore store) {
     this.minigameStore = store;
   }
-  public MinigameStore getWorld() {
+  public MinigameStore getMinigameStore() {
     return this.minigameStore;
   }
 }
