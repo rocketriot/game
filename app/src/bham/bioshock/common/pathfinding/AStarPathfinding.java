@@ -152,7 +152,7 @@ public class AStarPathfinding {
         // go through the passed gameGrid and assign values accordingly to the temporary grid
         for (int x = 0; x < maxX; x++) {
             for (int y = 0; y < maxY; y++) {
-                if (gameGrid[x][y].getType() == GridPoint.Type.EMPTY || gameGrid[x][y].getType() == GridPoint.Type.FUEL) {
+                if (gameGrid[x][y].isType(GridPoint.Type.EMPTY) || gameGrid[x][y].isType(GridPoint.Type.FUEL)) {
                     tempGrid[x][y] = new PathfindingValues(true);
                 } else {
                     tempGrid[x][y] = new PathfindingValues(false);
@@ -168,23 +168,23 @@ public class AStarPathfinding {
      * @param goalPosition The position to check
      */
     private void checkGoal(Coordinates goalPosition) {
-        if (gameGrid[goalPosition.getX()][goalPosition.getY()].getType() == GridPoint.Type.PLANET) {
+        if (gameGrid[goalPosition.getX()][goalPosition.getY()].isType(GridPoint.Type.PLANET)) {
             int currentX = goalPosition.getX();
             int currentY = goalPosition.getY();
 
             // go to the centre of the planet
             if (isValid(new Coordinates(currentX, currentY + 1), false) &&
-                    gameGrid[currentX][currentY + 1].getType() != GridPoint.Type.PLANET) { // check if in top row
+                    !gameGrid[currentX][currentY + 1].isType(GridPoint.Type.PLANET)) { // check if in top row
                 currentY -= 1;
             } else if (isValid(new Coordinates(currentX, currentY - 1), false) &&
-                    gameGrid[currentX][currentY - 1].getType() != GridPoint.Type.PLANET) { // check if in bottom row
+                    !gameGrid[currentX][currentY - 1].isType(GridPoint.Type.PLANET)) { // check if in bottom row
                 currentY += 1;
             }
             if (isValid(new Coordinates(currentX + 1, currentY), false) &&
-                    gameGrid[currentX + 1][currentY].getType() != GridPoint.Type.PLANET) { // check if in right column
+                    !gameGrid[currentX + 1][currentY].isType(GridPoint.Type.PLANET)) { // check if in right column
                 currentX -= 1;
             } else if (isValid(new Coordinates(currentX - 1, currentY), false) &&
-                    gameGrid[currentX - 1][currentY].getType() != GridPoint.Type.PLANET) { // check if in left column
+                    !gameGrid[currentX - 1][currentY].isType(GridPoint.Type.PLANET)) { // check if in left column
                 currentX += 1;
             }
 
@@ -193,7 +193,10 @@ public class AStarPathfinding {
             currentY += 1;
             for (int x = currentX; x < currentX + 3; x++) {
                 for (int y = currentY; y > currentY - 3; y--) {
-                    aStarGrid[x][y].setPassable(true);
+                    if (isValid(new Coordinates(x, y), false)){
+                        aStarGrid[x][y].setPassable(true);
+                    }
+
                 }
             }
         }
@@ -349,7 +352,7 @@ public class AStarPathfinding {
 
         // iterate through the path, finding the next node by getting the parent of the current node
         while (currentPoint != startPosition) {
-            if (gameGrid[currentPoint.getX()][currentPoint.getY()].getType() != GridPoint.Type.PLANET){
+            if (!gameGrid[currentPoint.getX()][currentPoint.getY()].isType(GridPoint.Type.PLANET)){
                 path.add(currentPoint);
             }
             currentPoint = aStarGrid[currentPoint.getX()][currentPoint.getY()].getParent();
