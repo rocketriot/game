@@ -19,10 +19,10 @@ public class Rocket extends Entity {
   }
 
   public static void loadTextures() {
-    textures.put(1, new Texture(Gdx.files.internal("app/assets/entities/rockets/1.png")));
-    textures.put(2, new Texture(Gdx.files.internal("app/assets/entities/rockets/2.png")));
-    textures.put(3, new Texture(Gdx.files.internal("app/assets/entities/rockets/3.png")));
-    textures.put(4, new Texture(Gdx.files.internal("app/assets/entities/rockets/4.png")));
+    textures.put(1, new Texture(Gdx.files.internal("app/assets/entities/players/1.png")));
+    textures.put(2, new Texture(Gdx.files.internal("app/assets/entities/players/2.png")));
+    textures.put(3, new Texture(Gdx.files.internal("app/assets/entities/players/3.png")));
+    textures.put(4, new Texture(Gdx.files.internal("app/assets/entities/players/4.png")));
   }
 
   public TextureRegion getTexture() {
