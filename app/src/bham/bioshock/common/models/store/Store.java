@@ -1,10 +1,13 @@
-package bham.bioshock.common.models;
+package bham.bioshock.common.models.store;
 
 import java.util.ArrayList;
 
 import com.badlogic.gdx.Screen;
 import com.google.inject.*;
 import bham.bioshock.client.AppPreferences;
+import bham.bioshock.common.models.Coordinates;
+import bham.bioshock.common.models.GameBoard;
+import bham.bioshock.common.models.Player;
 import java.util.UUID;
 
 /** Stores all of the models */
@@ -39,6 +42,9 @@ public class Store {
 
   /** The next player's turn */
   private int turn = 0;
+  
+  /** Minigame World */
+  private MinigameStore minigameStore;
 
   public AppPreferences getPreferences() {
     return preferences;
@@ -128,5 +134,15 @@ public class Store {
       round++;
       turn = 0;
     }
+  }
+  
+  /*
+   * MINIGAME
+   */
+  public void setMinigameStore(MinigameStore store) {
+    this.minigameStore = store;
+  }
+  public MinigameStore getWorld() {
+    return this.minigameStore;
   }
 }

@@ -3,7 +3,7 @@ package bham.bioshock.client.screens;
 import bham.bioshock.client.Route;
 import bham.bioshock.client.Router;
 import bham.bioshock.common.models.Player;
-import bham.bioshock.common.models.Store;
+import bham.bioshock.common.models.store.Store;
 import java.util.ArrayList;
 
 import com.badlogic.gdx.Gdx;

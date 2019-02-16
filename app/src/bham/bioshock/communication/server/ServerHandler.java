@@ -1,6 +1,6 @@
 package bham.bioshock.communication.server;
 
-import bham.bioshock.common.models.Store;
+import bham.bioshock.common.models.store.Store;
 import bham.bioshock.communication.Action;
 import bham.bioshock.server.handlers.GameBoardHandler;
 import bham.bioshock.server.handlers.JoinScreenHandler;
@@ -13,12 +13,16 @@ public class ServerHandler {
   
   private static final Logger logger = LogManager.getLogger(ServerHandler.class);
 
-  private Store model;
   private ArrayList<ServerService> connections;
-
-  public ServerHandler(Store _model) {
+  private Store store;
+  private JoinScreenHandler joinHandler;
+  private GameBoardHandler gameBoardHandler;
+  
+  public ServerHandler() {
     connections = new ArrayList<>();
-    model = _model;
+    store = new Store();
+    joinHandler = new JoinScreenHandler(store, this);
+    gameBoardHandler = new GameBoardHandler(store, this);
   }
 
   public void register(ServerService service) {
@@ -58,19 +62,19 @@ public class ServerHandler {
     try {
       switch (action.getCommand()) {
         case REMOVE_PLAYER:
-          JoinScreenHandler.disconnectPlayer(model, service, this);
+          joinHandler.disconnectPlayer(service);
           break;
         case ADD_PLAYER:
-          JoinScreenHandler.addPlayer(model, action, this, service);
+          joinHandler.addPlayer(action, service);
           break;
         case START_GAME:
-          JoinScreenHandler.startGame(model, action, this);
+          joinHandler.startGame(action, gameBoardHandler);
           break;
         case GET_GAME_BOARD:
-          GameBoardHandler.getGameBoard(model, action, this);
+          gameBoardHandler.getGameBoard(action);
           break;
         case MOVE_PLAYER_ON_BOARD:
-          GameBoardHandler.movePlayer(model, action, this);
+          gameBoardHandler.movePlayer(action);
           break;
         default:
           System.out.println("Received unhandled command: " + action.getCommand().toString());
