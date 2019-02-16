@@ -4,6 +4,7 @@ import bham.bioshock.client.Router;
 import bham.bioshock.client.screens.GameBoardScreen;
 import bham.bioshock.client.BoardGame;
 import bham.bioshock.client.Route;
+import bham.bioshock.client.screens.ScreenMaster;
 import bham.bioshock.common.Direction;
 import bham.bioshock.common.consts.GridPoint;
 import bham.bioshock.common.models.*;
@@ -83,6 +84,13 @@ public class GameBoardController extends Controller {
     arguments.add(gameBoard);
     arguments.add(mainPlayer);
     clientService.send(new Action(Command.MOVE_PLAYER_ON_BOARD, arguments));
+
+    // Check if the player is at a planet
+    if (mainPlayer.getCoordinates().equals(destination)){
+      if (grid[destination.getX()][destination.getY()].getType() == GridPoint.Type.PLANET){
+        startMinigame();
+      }
+    }
   }
 
   /** Player move received from the server */
@@ -153,7 +161,10 @@ public class GameBoardController extends Controller {
     store.getMainPlayer().setBoardMove(boardMove);
   }
 
-  public void startMinigame() {}
+  public void startMinigame() {
+    //router.call(Route.GAME_BOARD_ALERT);
+    router.call(Route.START_MINIGAME);
+  }
 
   public void miniGameWon(Player player, Planet planet) {
     // winner gets the planet, previous owner loses it
@@ -178,6 +189,10 @@ public class GameBoardController extends Controller {
 
     Coordinates newCoordinates = new Coordinates(x, y);
     player.setCoordinates(newCoordinates);
+  }
+
+  public void alert(String message){
+    ((ScreenMaster)store.getScreen()).alert(message);
   }
 
   public boolean hasReceivedGrid() {
