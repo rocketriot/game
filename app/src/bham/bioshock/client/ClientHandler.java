@@ -61,6 +61,15 @@ public class ClientHandler implements IClientHandler {
             router.call(Route.PLAYERS_SAVE, players);     
             break;
           }
+          case MOVE_PLAYER_ON_BOARD: {
+            ArrayList<Serializable> arguments = action.getArguments();
+            GameBoard gameBoard = (GameBoard) arguments.get(0);
+            Player movingPlayer = (Player) arguments.get(1);
+
+            router.call(Route.MOVE_RECEIVED, movingPlayer);
+            router.call(Route.GAME_BOARD_SAVE, gameBoard);
+            break;
+          }
           default: {
             System.out.println("Received unhandled command: " + action.getCommand().toString());
           }}

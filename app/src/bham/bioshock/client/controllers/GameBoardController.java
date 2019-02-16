@@ -87,13 +87,9 @@ public class GameBoardController extends Controller {
   }
 
   /** Player move received from the server */
-  public void moveReceived(Action action) {
-    // Get game board and player from arguments and update the model
-    GameBoard gameBoard = (GameBoard) action.getArgument(0);
-    Player movingPlayer = (Player) action.getArgument(1);
-    store.setGameBoard(gameBoard);
+  public void moveReceived(Player movingPlayer) {
+    // Update the model
     store.updatePlayer(movingPlayer);
-
     store.nextTurn();
   }
 
