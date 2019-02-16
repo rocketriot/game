@@ -27,7 +27,7 @@ public class Router {
    * Call controller method
    * 
    * @param route
-   * @param argument for controller method
+   * @param arg for controller method
    */
   public void call(Route route, Object arg) {
     Class<? extends Controller> c = route.getController();

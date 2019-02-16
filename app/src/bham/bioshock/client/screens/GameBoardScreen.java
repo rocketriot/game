@@ -1,11 +1,13 @@
 package bham.bioshock.client.screens;
 
+import bham.bioshock.client.Route;
 import bham.bioshock.client.Router;
-import bham.bioshock.client.controllers.GameBoardController;
 import bham.bioshock.client.scenes.Hud;
+import bham.bioshock.common.Direction;
 import bham.bioshock.common.consts.Config;
 import bham.bioshock.common.consts.GridPoint;
 import bham.bioshock.common.models.Asteroid;
+import bham.bioshock.common.models.BoardMove;
 import bham.bioshock.common.models.Coordinates;
 import bham.bioshock.common.models.GameBoard;
 import bham.bioshock.common.models.Planet;
@@ -14,6 +16,8 @@ import bham.bioshock.common.models.Store;
 import bham.bioshock.common.pathfinding.AStarPathfinding;
 import com.badlogic.gdx.*;
 import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.graphics.g2d.ParticleEffect;
+import com.badlogic.gdx.graphics.g2d.ParticleEmitter;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.GL30;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -22,7 +26,13 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.TextField;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
 import java.util.ArrayList;
 
@@ -34,7 +44,7 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
   private GameBoard gameBoard;
   private Store store;
   private AStarPathfinding pathFinder;
-  
+
   private SpriteBatch batch;
   private Sprite background;
   private OrthographicCamera camera;
@@ -42,7 +52,6 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
   private ShapeRenderer sh;
   private ArrayList<Sprite> planetSprites;
   private ArrayList<Sprite> asteroidSprites;
-  private Sprite sprite;
   private ArrayList<Sprite> playerSprites;
   private int PPS;
   private int gridSize;
@@ -52,14 +61,19 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
   private ArrayList<Sprite> outlinedPlayerSprites;
   private ArrayList<Coordinates> path = new ArrayList<>();
   private Coordinates oldGridCoords = new Coordinates(-1, -1);
+  private Sprite movingSprite;
+  private Array<ParticleEffect> effects = new Array<>();
+  private ParticleEffect rocketTrail;
+  private boolean drawRocketTrail;
+  private boolean minigamePromptShown = false;
+  private float msXCoords, msYCoords, rtXCoords, rtYCoords;
 
   public GameBoardScreen(Router router, Store store, GameBoard gameBoard) {
     super(router);
-    
+
     this.gameBoard = gameBoard;
     this.store = store;
-    this.pathFinder = pathFinder;
-    
+
     batch = new SpriteBatch();
     // Pixels Per Square (on the grid)
     PPS = 50;
@@ -73,6 +87,7 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
     genAsteroidSprites();
     genPlanetSprites();
     genPlayerSprites();
+    genEffects();
 
     setupUI();
 
@@ -84,32 +99,154 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
     sh = new ShapeRenderer();
   }
 
+  private void genEffects() {
+    rocketTrail = new ParticleEffect();
+    rocketTrail.load(Gdx.files.internal("app/assets/particle-effects/rocket-trail.p"),
+        Gdx.files.internal("app/assets/particle-effects"));
+    rocketTrail.start();
+    effects.add(rocketTrail);
+  }
+
   private void setupUI() {
     hud = new Hud(batch, skin, GAME_WORLD_WIDTH, GAME_WORLD_HEIGHT, store, router);
     background = new Sprite(new Texture(Gdx.files.internal("app/assets/backgrounds/game.png")));
   }
+  
+  /**
+   * Draws the player move
+   */
+  private void drawPlayerMove(Player player) {
+    BoardMove boardMove = player.getBoardMove();
+    if (boardMove.getDirections().size() == 0) {
+      
+      if(gameBoard.isNextToThePlanet(player.getCoordinates()) && !minigamePromptShown) {
+        this.minigamePromptShown = true;
+        showMinigamePrompt();        
+      }
+      
+      this.drawRocketTrail = false;
+      player.setBoardMove(null);
+      if (player.equals(store.getMainPlayer())) {
+        playerSelected = true;
+        pathFinder.setStartPosition(player.getCoordinates());
+      }
+    } else {
+      // Calculate distance to travel
+      float distanceToMove = 3 * Gdx.graphics.getDeltaTime();
 
-  public void drawBoardObjects() {
+      movingSprite = playerSprites.get(player.getTextureID());
+      movingSprite.setOriginCenter();
+
+      // Only true for first call of each move
+      if (boardMove.getDirections().get(0).equals(Direction.NONE)) {
+        // Flag for renderer to draw rocket trail particle effects
+        this.drawRocketTrail = true;
+
+        // Stops the renderer drawing the old path
+        playerSelected = false;
+        path = null;
+
+        msXCoords = boardMove.getStartCoords().getX();
+        msYCoords = boardMove.getStartCoords().getY();
+
+        boardMove.getPosition().remove(0);
+        boardMove.getDirections().remove(0);
+      }
+      switch (boardMove.getDirections().get(0)) {
+        case UP:
+          movingSprite.setRotation(0);
+          msYCoords += distanceToMove;
+
+          rtXCoords = msXCoords + 0.5f;
+          rtYCoords = msYCoords;
+          setEmmiterAngle(rocketTrail, 0);
+          if (movingSprite.getY() >= boardMove.getPosition().get(0).getY() * PPS) {
+            movingSprite.setY(boardMove.getPosition().get(0).getY() * PPS);
+            boardMove.getPosition().remove(0);
+            boardMove.getDirections().remove(0);
+          }
+          break;
+        case DOWN:
+          movingSprite.setRotation(180);
+          msYCoords -= distanceToMove;
+
+          rtXCoords = msXCoords + 0.5f;
+          rtYCoords = msYCoords + 1;
+          setEmmiterAngle(rocketTrail, 180);
+          if (movingSprite.getY() <= boardMove.getPosition().get(0).getY() * PPS) {
+            movingSprite.setY(boardMove.getPosition().get(0).getY() * PPS);
+            boardMove.getPosition().remove(0);
+            boardMove.getDirections().remove(0);
+          }
+          break;
+        case RIGHT:
+          movingSprite.setRotation(270);
+          msXCoords += distanceToMove;
+
+          rtXCoords = msXCoords;
+          rtYCoords = msYCoords + 0.5f;
+          setEmmiterAngle(rocketTrail, 270);
+          if (movingSprite.getX() >= boardMove.getPosition().get(0).getX() * PPS) {
+            movingSprite.setX(boardMove.getPosition().get(0).getX() * PPS);
+            boardMove.getPosition().remove(0);
+            boardMove.getDirections().remove(0);
+          }
+          break;
+        case LEFT:
+          movingSprite.setRotation(90);
+          msXCoords -= distanceToMove;
+
+          rtXCoords = msXCoords + 1;
+          rtYCoords = msYCoords + 0.5f;
+          setEmmiterAngle(rocketTrail, 90);
+          if (movingSprite.getX() <= boardMove.getPosition().get(0).getX() * PPS) {
+            movingSprite.setX(boardMove.getPosition().get(0).getX() * PPS);
+            boardMove.getPosition().remove(0);
+            boardMove.getDirections().remove(0);
+          }
+          break;
+      }
+      rocketTrail.setPosition(rtXCoords * PPS, rtYCoords * PPS);
+      movingSprite.setX(msXCoords * PPS);
+      movingSprite.setY(msYCoords * PPS);
+      movingSprite.draw(batch);
+    }
+  }
+
+  private void setEmmiterAngle(ParticleEffect particleEffect, float angle) {
+    // Align particle effect angle with world
+    angle -= 90;
+    for (ParticleEmitter pe : particleEffect.getEmitters()) {
+      ParticleEmitter.ScaledNumericValue val = pe.getAngle();
+      float amplitude = (val.getHighMax() - val.getHighMin()) / 2f;
+      float h1 = angle + amplitude;
+      float h2 = angle - amplitude;
+      val.setHigh(h1, h2);
+      val.setLow(angle);
+    }
+  }
+
+  private void drawBoardObjects() {
     GridPoint[][] grid = gameBoard.getGrid();
-
+    boolean drawnMove = false;
+    Sprite sprite;
     for (int x = 0; x < grid.length; x++) {
       for (int y = 0; y < grid[x].length; y++) {
         GridPoint.Type pType = grid[x][y].getType();
-
-        if (pType == GridPoint.Type.PLANET) {
-          Planet p = (Planet) grid[x][y].getValue();
-          if (p.isDrawn() == false) {
-            p.setDrawn(true);
-            sprite = planetSprites.get(p.getTextureID());
+       if (pType == GridPoint.Type.PLANET) {
+          Planet planet = (Planet) grid[x][y].getValue();
+          if (!planet.isDrawn()) {
+            planet.setDrawn(true);
+            sprite = planetSprites.get(planet.getTextureID());
             sprite.setX(x * PPS);
             sprite.setY(y * PPS);
             sprite.draw(batch);
           }
         } else if (pType == GridPoint.Type.ASTEROID) {
-          Asteroid a = (Asteroid) grid[x][y].getValue();
-          if (a.isDrawn() == false) {
-            a.setDrawn(true);
-            sprite = asteroidSprites.get(a.getTextureID());
+          Asteroid asteroid = (Asteroid) grid[x][y].getValue();
+          if (!asteroid.isDrawn()) {
+            asteroid.setDrawn(true);
+            sprite = asteroidSprites.get(asteroid.getTextureID());
             sprite.setX(x * PPS);
             sprite.setY(y * PPS);
             sprite.draw(batch);
@@ -117,32 +254,37 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
         }
       }
     }
-    for (int x = 0; x < grid.length; x++) {
-      for (int y = 0; y < grid[x].length; y++) {
-        GridPoint.Type pType = grid[x][y].getType();
+    for (GridPoint[] gridPoints : grid) {
+      for (GridPoint gridPoint : gridPoints) {
+        GridPoint.Type pType = gridPoint.getType();
         if (pType == GridPoint.Type.PLANET) {
-          Planet p = (Planet) grid[x][y].getValue();
-          p.setDrawn(false);
+          Planet asteroid = (Planet) gridPoint.getValue();
+          asteroid.setDrawn(false);
         } else if (pType == GridPoint.Type.ASTEROID) {
-          Asteroid a = (Asteroid) grid[x][y].getValue();
-          a.setDrawn(false);
+          Asteroid asteroid = (Asteroid) gridPoint.getValue();
+          asteroid.setDrawn(false);
         }
       }
     }
 
     for (Player player : store.getPlayers()) {
-      sprite = playerSprites.get(player.getTextureID());
-
-      if (playerSelected == true && player.equals(store.getMainPlayer()))
-        sprite = outlinedPlayerSprites.get(player.getTextureID());
-
-      sprite.setX(player.getCoordinates().getX() * PPS);
-      sprite.setY(player.getCoordinates().getY() * PPS);
-      sprite.draw(batch);
+      if (player.getBoardMove() != null && !drawnMove) {
+        drawPlayerMove(player);
+        drawnMove = true;
+      } else if (player.getBoardMove() == null) {
+        if (playerSelected && player.equals(store.getMainPlayer())) {
+          sprite = outlinedPlayerSprites.get(player.getTextureID());
+        } else {
+          sprite = playerSprites.get(player.getTextureID());
+        }
+        sprite.setX(player.getCoordinates().getX() * PPS);
+        sprite.setY(player.getCoordinates().getY() * PPS);
+        sprite.draw(batch);
+      }
     }
   }
 
-  public void genPlanetSprites() {
+  private void genPlanetSprites() {
     planetSprites = new ArrayList<>();
     FileHandle[] fh = Gdx.files.internal("app/assets/entities/planets").list();
     for (FileHandle f : fh) {
@@ -151,7 +293,7 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
     }
   }
 
-  public void genAsteroidSprites() {
+  private void genAsteroidSprites() {
     asteroidSprites = new ArrayList<>();
     FileHandle[] fh = Gdx.files.internal("app/assets/entities/asteroids").list();
     for (FileHandle f : fh) {
@@ -160,7 +302,7 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
     }
   }
 
-  public void genPlayerSprites() {
+  private void genPlayerSprites() {
     playerSprites = new ArrayList<>();
     FileHandle[] fh = Gdx.files.internal("app/assets/entities/rockets").list();
     for (FileHandle f : fh) {
@@ -174,9 +316,10 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
       Texture outlinedTexture = new Texture(Gdx.files.internal(f.path()));
       outlinedPlayerSprites.add(new Sprite(outlinedTexture));
     }
+    movingSprite = new Sprite();
   }
 
-  public void drawGridLines() {
+  private void drawGridLines() {
     sh.setProjectionMatrix(camera.combined);
     sh.begin(ShapeRenderer.ShapeType.Line);
     Gdx.gl.glEnable(GL30.GL_BLEND);
@@ -204,6 +347,8 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
     // Graphics.DisplayMode display = Gdx.graphics.getDisplayMode();
     // Gdx.graphics.setFullscreenMode(display);
     Gdx.input.setInputProcessor(inputMultiplexer);
+    pathFinder = new AStarPathfinding(store.getGameBoard().getGrid(),
+        store.getMainPlayer().getCoordinates(), gridSize, gridSize, store.getPlayers());
   }
 
   @Override
@@ -214,7 +359,6 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
 
   @Override
   public void hide() {
-    Graphics.DisplayMode display = Gdx.graphics.getDisplayMode();
     Gdx.graphics.setWindowedMode(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
   }
 
@@ -233,11 +377,13 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
       s.setSize(PPS * 3, PPS * 4);
     }
     for (Sprite s : playerSprites) {
-      s.setSize(PPS * 1, PPS * 1);
+      s.setSize(PPS, PPS);
     }
     for (Sprite s : outlinedPlayerSprites) {
-      s.setSize(PPS * 1, PPS * 1);
+      s.setSize(PPS, PPS);
     }
+    movingSprite.setSize(PPS, PPS);
+    background.setSize(PPS * 38.4f, PPS * 21.6f);
   }
 
   @Override
@@ -252,6 +398,7 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
     drawBackground();
     drawBoardObjects();
     drawPath();
+    drawEffects(delta);
 
     batch.end();
 
@@ -262,6 +409,15 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
     hud.getStage().act(Gdx.graphics.getDeltaTime());
     hud.updateHud();
     hud.getStage().draw();
+  }
+
+  private void drawEffects(float delta) {
+    if (drawRocketTrail) {
+      for (ParticleEffect e : effects) {
+        e.draw(batch);
+        e.update(delta);
+      }
+    }
   }
 
   public boolean[] getPathColour(ArrayList<Coordinates> path) {
@@ -277,26 +433,24 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
     }
     return allowedMove;
   }
-  
+
   private void drawPath() {
-    if (playerSelected == true) {
+    if (playerSelected && path != null) {
       sh.setProjectionMatrix(camera.combined);
       sh.begin(ShapeRenderer.ShapeType.Filled);
       Gdx.gl.glEnable(GL30.GL_BLEND);
       Gdx.gl.glBlendFunc(GL30.GL_SRC_ALPHA, GL30.GL_ONE_MINUS_SRC_ALPHA);
-      
       boolean[] allowedPath = getPathColour(path);
-      
       // Draw white box at player position
       sh.setColor(255, 255, 255, 0.4f);
       Coordinates playerCoords = store.getMainPlayer().getCoordinates();
       sh.rect(PPS * playerCoords.getX(), PPS * playerCoords.getY(), PPS, PPS);
       // Draw Path
       for (int i = 1; i < path.size(); i++) {
-        if (allowedPath[i - 1] == false) {
+        if (!allowedPath[i - 1]) {
           // Red
           sh.setColor(255, 0, 0, 0.5f);
-        } else if (allowedPath[i - 1] == true) {
+        } else if (allowedPath[i - 1]) {
           // Green
           sh.setColor(124, 252, 0, 0.4f);
         }
@@ -307,11 +461,11 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
     }
   }
 
-  protected void drawBackground() {
 
+  protected void drawBackground() {
     for (int i = -1; i <= 1; i++) {
       for (int j = -1; j <= 1; j++) {
-        background.setPosition(i * GAME_WORLD_WIDTH, j * GAME_WORLD_HEIGHT);
+        background.setPosition(i * background.getWidth(), j * background.getHeight());
         background.draw(batch);
       }
     }
@@ -319,7 +473,6 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
 
   @Override
   public void dispose() {
-    stage.dispose();
     batch.dispose();
     hud.dispose();
     background.getTexture().dispose();
@@ -339,6 +492,9 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
     for (Sprite s : outlinedPlayerSprites) {
       s.getTexture().dispose();
     }
+    for (ParticleEffect e : effects) {
+      e.dispose();
+    }
   }
 
   private Vector3 getWorldCoords(int screenX, int screenY) {
@@ -347,7 +503,7 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
     return coords;
   }
 
-  public void handleInput() {
+  private void handleInput() {
     if (Gdx.input.isKeyPressed(Input.Keys.A)) {
       camera.translate(-5f, 0f);
     }
@@ -389,23 +545,25 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
       mouseDownY = screenY;
 
       // Selecting your ship
-      ArrayList<Player> players = store.getPlayers();
-      Player player = players.get(0);
+      Player player = store.getMainPlayer();
 
       if (clickCoords.x >= player.getCoordinates().getX() * PPS
           && clickCoords.x <= (player.getCoordinates().getX() + 1) * PPS) {
         if (clickCoords.y >= player.getCoordinates().getY() * PPS
             && clickCoords.y <= (player.getCoordinates().getY() + 1) * PPS) {
           playerSelected = true;
-          path = new ArrayList<>();
+          path = null;
         }
       }
       return true;
     } else if (Gdx.input.isButtonPressed(Input.Buttons.RIGHT)) {
-      Coordinates gridCoords =
-          new Coordinates((int) clickCoords.x / PPS, (int) clickCoords.y / PPS);
+      this.minigamePromptShown = false;
+      // Move ship to click position
+      Coordinates gridCoords = new Coordinates((int) clickCoords.x / PPS,
+          (int) clickCoords.y / PPS);
       if (!store.getMainPlayer().getCoordinates().isEqual(gridCoords)) {
-        // controller.move(gridCoords);
+        router.call(Route.MOVE_PLAYER, gridCoords);
+        return true;
       }
     }
     return false;
@@ -431,7 +589,7 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
   @Override
   public boolean mouseMoved(int screenX, int screenY) {
     // Pathfind to mouse coordinates
-    if (playerSelected == true) {
+    if (playerSelected) {
       Vector3 mouseCoords = getWorldCoords(screenX, screenY);
       Coordinates gridCoords =
           new Coordinates((int) mouseCoords.x / PPS, (int) mouseCoords.y / PPS);
@@ -441,6 +599,7 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
             if (!gridCoords.isEqual(store.getMainPlayer().getCoordinates())) {
               path = pathFinder.pathfind(gridCoords);
               oldGridCoords = gridCoords;
+              return true;
             }
           }
         }
@@ -452,15 +611,15 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
   @Override
   public boolean scrolled(int amount) {
     // Zoom code
-    if ((PPS -= amount * 1) <= ((GAME_WORLD_HEIGHT / gridSize) - 4)) {
+    if ((PPS -= amount) <= ((GAME_WORLD_HEIGHT / gridSize) - 4)) {
       PPS = (GAME_WORLD_HEIGHT / gridSize) - 3;
     } else if (PPS < 30) {
-      PPS -= amount * 1;
+      PPS -= amount;
     } else if (PPS < 50) {
       PPS -= amount * 2;
     } else if (PPS < 70) {
       PPS -= amount * 3;
-    } else if (PPS >= 70) {
+    } else {
       if ((PPS -= amount * 4) >= 150) {
         PPS = 149;
       } else {
@@ -469,5 +628,30 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
     }
     resizeSprites();
     return false;
+  }
+
+  /**
+   * Method to ask the user whether they want to start the minigame or not
+   */
+  private void showMinigamePrompt() {
+    Dialog diag = new Dialog("Start Minigame", skin) {
+
+      protected void result(Object object) {
+
+        if (object.equals(true)) {
+          System.out.println("Starting minigame");
+          router.call(Route.START_MINIGAME);
+        } else {
+          System.out.println("Minigame not started");
+        }
+      }
+
+    };
+
+    diag.text(new Label("Would you like to start a minigame to take over the planet?", skin));
+    diag.button("Yes", true);
+    diag.button("No", false);
+
+    diag.show(hud.getStage());
   }
 }
