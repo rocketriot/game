@@ -86,10 +86,8 @@ public class GameBoardController extends Controller {
     clientService.send(new Action(Command.MOVE_PLAYER_ON_BOARD, arguments));
 
     // Check if the player is at a planet
-    if (mainPlayer.getCoordinates().equals(destination)){
-      if (grid[destination.getX()][destination.getY()].getType() == GridPoint.Type.PLANET){
+    if (grid[destination.getX()][destination.getY()].getType() == GridPoint.Type.PLANET){
         startMinigame();
-      }
     }
   }
 

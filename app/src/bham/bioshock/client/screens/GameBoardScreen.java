@@ -26,6 +26,9 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import java.util.ArrayList;
@@ -614,5 +617,12 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
     }
     resizeSprites();
     return false;
+  }
+
+  /**
+   * Method to ask the user whether they want to start the minigame or not
+   */
+  private void showMinigamePrompt() {
+    TextField textField = new TextField("", skin);
   }
 }
