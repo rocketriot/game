@@ -43,7 +43,7 @@ public class Clock {
       every = second;
     }
     
-    public abstract boolean handle(TimeUpdateEvent event); 
+    public abstract void handle(TimeUpdateEvent event); 
   }
   
   

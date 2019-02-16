@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.UUID;
 import bham.bioshock.common.Position;
+import bham.bioshock.minigame.PlayerTexture;
 import bham.bioshock.minigame.models.Player;
 import bham.bioshock.minigame.models.Rocket;
 import bham.bioshock.minigame.physics.SpeedVector;
@@ -22,11 +23,11 @@ public class MinigameStore {
     rockets = new ArrayList<>();
   }
 
-
-  public void updatePlayer(UUID playerId, SpeedVector speed, Position pos) {
+  public void updatePlayer(UUID playerId, SpeedVector speed, Position pos, PlayerTexture dir) {
     Player p = getPlayer(playerId);
     p.setSpeedVector(speed);
     p.setPosition(pos);
+    p.setDirection(dir);
   }
 
   // Create world from the seeder
@@ -42,6 +43,8 @@ public class MinigameStore {
       Player p = new Player(world, playerPos[i]);
       this.players.put(players.get(i).getId(), p);
     }
+    
+    this.rockets = world.getRockets();
   }
   
 

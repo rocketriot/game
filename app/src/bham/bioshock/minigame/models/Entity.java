@@ -11,7 +11,7 @@ public abstract class Entity {
 
   protected final double GROUND_FRICTION = 0.2;
   private final double AIR_FRICTION = 0.001;
-  protected int SIZE = 50;
+  protected int size = 50;
   protected Position pos;
   protected boolean loaded = false;
   protected Sprite sprite;
@@ -34,7 +34,7 @@ public abstract class Entity {
   }
 
   public int getSize() {
-    return SIZE;
+    return size;
   }
 
   public Position getPos() {

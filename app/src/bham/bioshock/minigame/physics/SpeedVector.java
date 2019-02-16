@@ -1,10 +1,10 @@
 package bham.bioshock.minigame.physics;
 
-import java.io.Serializable;
+import bham.bioshock.communication.Sendable;
 
-public class SpeedVector implements Serializable {
-
-  private static final long serialVersionUID = -3502614783745888619L;
+public class SpeedVector extends Sendable {
+  
+  private static final long serialVersionUID = -149485768919020676L;
   
   private double mass = 1;
   private double dx = 0;

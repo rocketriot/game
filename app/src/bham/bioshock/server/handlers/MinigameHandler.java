@@ -12,13 +12,11 @@ import bham.bioshock.minigame.worlds.FirstWorld;
 public class MinigameHandler {
 
   Store store;
-  MinigameStore localStore;
   ServerHandler handler;
   
   public MinigameHandler (Store store, ServerHandler handler) {
     this.store = store;
     this.handler = handler;
-    this.localStore = store.getMinigameStore();
   }
   
   /*
@@ -36,8 +34,12 @@ public class MinigameHandler {
    * Sync player movement and position
    */
   public void playerMove(Action action, UUID playerId) {
-    SpeedVector speed = (SpeedVector) action.getArgument(0);
-    Position pos = (Position) action.getArgument(1);
-    localStore.updatePlayer(playerId, speed, pos);
+    MinigameStore localStore = store.getMinigameStore();
+    SpeedVector speed = (SpeedVector) action.getArgument(1);
+    Position pos = (Position) action.getArgument(2);
+    
+    localStore.updatePlayer(playerId, speed, pos, null);
+    
+    handler.sendToAllExcept(action, playerId);
   }
 }

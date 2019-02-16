@@ -1,5 +1,7 @@
 package bham.bioshock.minigame;
 
+import bham.bioshock.client.Route;
+import bham.bioshock.client.Router;
 import bham.bioshock.common.consts.Config;
 import bham.bioshock.common.models.store.MinigameStore;
 import bham.bioshock.minigame.Clock.TimeUpdateEvent;
@@ -42,9 +44,11 @@ public class Renderer {
   private double camRotation;
   private MinigameStore store;
   private Gravity gravity;
+  private Router router;
 
-  public Renderer(MinigameStore store) {
+  public Renderer(MinigameStore store, Router router) {
     this.store = store;
+    this.router = router;
     mainPlayer = store.getMainPlayer();
     renderer = new ShapeRenderer();
     clock = new Clock();
@@ -62,7 +66,7 @@ public class Renderer {
     cam.update();
 
     loadSprites();
-    startClock();
+//    startClock();
   }
 
   public void loadSprites() {
@@ -77,19 +81,17 @@ public class Renderer {
     }
   }
   
-  public void startClock() {
-    clock.every(0.5f, clock.new TimeListener() {
-      @Override
-      public boolean handle(TimeUpdateEvent event) {
-        System.out.println(event.time);
-        return false;
-      }
-      
-    });
-  }
+//  public void startClock() {
+//    clock.every(0.01f, clock.new TimeListener() {
+//      @Override
+//      public void handle(TimeUpdateEvent event) {
+//        router.call(Route.MINIGAME_MOVE);
+//      }
+//    });
+//  }
  
   public void render(float delta) {
-    clock.update(delta);
+//    clock.update(delta);
   
     batch.setProjectionMatrix(cam.combined);
     renderer.setProjectionMatrix(cam.combined);
@@ -124,7 +126,7 @@ public class Renderer {
   public void drawEntities() {
     for (Entity e : entities) {
       Sprite sprite = e.getSprite();
-      sprite.setRegion(mainPlayer.getTexture());
+      sprite.setRegion(e.getTexture());
       sprite.setPosition(e.getX(), e.getY());
       sprite.setRotation((float) e.getRotation());
       sprite.draw(batch);
@@ -134,15 +136,23 @@ public class Renderer {
 
   public void updatePosition() {
     float dt = Gdx.graphics.getDeltaTime();
+    boolean moveMade = false;
 
     if (Gdx.input.isKeyPressed(Input.Keys.LEFT) || Gdx.input.isKeyPressed(Input.Keys.A)) {
+      moveMade = true;
       mainPlayer.moveLeft(dt);
     }
     if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) || Gdx.input.isKeyPressed(Input.Keys.D)) {
+      moveMade = true;
       mainPlayer.moveRight(dt);
     }
     if (Gdx.input.isKeyPressed(Input.Keys.UP) || Gdx.input.isKeyPressed(Input.Keys.W)) {
+      moveMade = true;
       mainPlayer.jump(dt);
+    }
+    
+    if(moveMade) {
+      router.call(Route.MINIGAME_MOVE);
     }
   }
 

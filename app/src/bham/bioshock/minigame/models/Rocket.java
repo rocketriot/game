@@ -15,7 +15,7 @@ public class Rocket extends Entity {
   public Rocket(World w, float _x, float _y, int _color) {
     super(w, _x, _y);
     color = _color;
-    SIZE = 500;
+    size = 300;
   }
 
   public static void loadTextures() {

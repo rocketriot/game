@@ -21,14 +21,14 @@ public class Player extends Entity {
 
   public Player(World w, float x, float y) {
     super(w, x, y);
-    SIZE = 100;
+    size = 150;
     animationTime = 0;
     fromGround = -25;
     update(0);
   }
   
   public Player(World w, Position p) {
-    super(w, p.x, p.y);
+    this(w, p.x, p.y);
   }
 
   public Player(World w) {
@@ -77,10 +77,23 @@ public class Player extends Entity {
     dir = PlayerTexture.FRONT;
   }
   
+  public SpeedVector getSpeedVector() {
+    return speed;
+  }
   public void setSpeedVector(SpeedVector s) {
     speed = s;
   }
   
+  public PlayerTexture getDirection() {
+    return dir;
+  }
+  public void setDirection(PlayerTexture t) {
+    dir = t;
+  }
+  
+  public Position getPosition() {
+    return pos;
+  }
   public void setPosition(Position p) {
     pos = p;
   }
@@ -98,4 +111,5 @@ public class Player extends Entity {
     }
     return region;
   }
+  
 }

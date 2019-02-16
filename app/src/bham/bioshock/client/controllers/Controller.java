@@ -3,7 +3,6 @@ package bham.bioshock.client.controllers;
 import bham.bioshock.client.BoardGame;
 import bham.bioshock.client.Router;
 import com.badlogic.gdx.Screen;
-import bham.bioshock.client.screens.ScreenMaster;
 import bham.bioshock.common.models.store.Store;
 
 /** Root controller used by all other controllers */

@@ -81,15 +81,14 @@ public class ServerHandler {
           break;
         case MINIGAME_START:
           minigameHandler.startMinigame(action);
+          break;
         case MINIGAME_PLAYER_MOVE:
           minigameHandler.playerMove(action, service.Id());
+          break;
         default:
           System.out.println("Received unhandled command: " + action.getCommand().toString());
           break;
       }
-      
-      // Reset the cache
-      service.reset();
     
     } catch (Exception e) {
       e.printStackTrace();
