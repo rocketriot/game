@@ -7,6 +7,7 @@ import java.util.ArrayList;
 
 import bham.bioshock.common.consts.Config;
 import bham.bioshock.minigame.models.Entity;
+import bham.bioshock.minigame.models.Map;
 import bham.bioshock.minigame.models.Player;
 import bham.bioshock.minigame.models.Rocket;
 import bham.bioshock.minigame.physics.Gravity;
@@ -49,6 +50,7 @@ public class Renderer {
 	private SpriteBatch backgroundBatch;
 	private Viewport viewport;
 	private double camRotation;
+	private Map map;
 	
 	private final int GAME_WORLD_WIDTH = Config.GAME_WORLD_WIDTH;
 	private final int GAME_WORLD_HEIGHT = Config.GAME_WORLD_HEIGHT;
@@ -59,12 +61,12 @@ public class Renderer {
 	public Renderer(World _w) {
 		w = _w;
 		mainPlayer = w.getMainPlayer();
+		map = new Map(w);
 		renderer = new ShapeRenderer();
 		
 		entities = new ArrayList<Entity>();
 		entities.addAll(w.getPlayers());
 		entities.addAll(w.getRockets());
-
 		cam = new OrthographicCamera();
 		
 		batch = new SpriteBatch();
@@ -72,7 +74,6 @@ public class Renderer {
 		camRotation = 0;
 		
 		cam.update();
-
 		loadSprites();
 	}
 
@@ -82,17 +83,26 @@ public class Renderer {
 		Rocket.loadTextures();
 		stage = new Stage(viewport);
 		background = new Sprite(new Texture(Gdx.files.internal("app/assets/backgrounds/game.png")));
-		
 		mainPlayer.load();
-		for(Entity e : entities) {
-			e.load();
-		}
+
+
+        for (Rocket rocket : w.getRockets()) {
+            rocket.load();
+            //System.out.println(rocket.getRectangle());
+        }
+        for (Player p: w.getPlayers()) {
+            p.load();
+            //System.out.println(rocket.getRectangle());
+        }
+
+
 	}
 
 	public void render(float delta) {
 		batch.setProjectionMatrix(cam.combined);
 		renderer.setProjectionMatrix(cam.combined);
-		
+
+
 		updatePosition();
 		cam.position.lerp(lerpTarget.set(mainPlayer.getX(), mainPlayer.getY(), 0), 3f*delta);
 		
@@ -110,6 +120,7 @@ public class Renderer {
 		drawPlanet();
 		batch.begin();
 		drawEntities();
+
 		drawMainPlayer();
 		Rectangle border= mainPlayer.getRectangle();
 		//drawBorder(border);
@@ -123,8 +134,8 @@ public class Renderer {
 		renderer.circle(0, 0, (float) World.PLANET_RADIUS);
 		// bounding circle
 		mainPlanet = new Circle(0,0,(float)World.PLANET_RADIUS-50);
-		renderer.setColor(Color.RED);
-		renderer.circle(0,0,(float)World.PLANET_RADIUS-50);
+		//renderer.setColor(Color.RED);
+		//renderer.circle(0,0,(float)World.PLANET_RADIUS-50);
 
 		renderer.end();
 	}
@@ -132,66 +143,65 @@ public class Renderer {
 	public void drawBorder(Rectangle border){
 		renderer.begin(ShapeType.Filled);
 		renderer.setColor(Color.BLACK);
-		//float xcenter = (Gdx.graphics.getWidth() - mainPlayer.getSprite().getWidth()) / 2.0f;
-		//float ycenter = (Gdx.graphics.getHeight() - mainPlayer.getSprite().getHeight()) / 2.0f;
-		//center : ( (x1 +x2)/2 ,(y1 + y2)/2 ).
-		//oat xbr = mainPlayer.getX() + border.getWidth();
-		//float ybr = mainPlayer.getY() + border.getHeight();
-		//float xcenter = (mainPlayer.getX() + xbr)/2;
-		//float ycenter = (mainPlayer.getY() + ybr)/2;
-		//renderer.circle(xcenter,ycenter,100);
-
 		renderer.rect(border.getX(), border.getY(), border.getWidth(),border.getHeight());
 		renderer.end();
 	}
 	
 	public void drawEntities() {
-		for(Entity e : entities) {
-			Sprite sprite = e.getSprite();
-			sprite.setPosition(e.getX(), e.getY());
-			sprite.setRotation((float) e.getRotation());
-			sprite.draw(batch);
-			e.update(Gdx.graphics.getDeltaTime());
-		}
-	}
+		for(Player p : w.getPlayers()) {
+            Sprite sprite = p.getSprite();
+            Rectangle border = p.getRectangle();
+            sprite.setPosition(p.getX(), p.getY());
+            sprite.setRotation((float) p.getRotation());
+            sprite.draw(batch);
+            p.update(Gdx.graphics.getDeltaTime());
+            //drawBorder(border);
+        }
+        for(int i=0; i< w.getRockets().size();i++) {
+        	Rocket p= w.getRockets().get(i);
+            Sprite sprite = p.getSprite();
+            Rectangle border = p.getRectangle();
+
+
+            sprite.setPosition(p.getX(), p.getY());
+            sprite.setRotation((float) p.getRotation());
+            sprite.draw(batch);
+
+
+            p.update(Gdx.graphics.getDeltaTime());
+
+            map.addRocket(border);
+            //drawBorder(border);
+
+
+
+        }
+
+    }
 	
 	public void updatePosition() {
 		float dt = Gdx.graphics.getDeltaTime();
 		mainPlayer.update(dt);
-		float xcenter = (Gdx.graphics.getWidth() - mainPlayer.getSprite().getWidth()) / 2.0f;
-		float ycenter = (Gdx.graphics.getHeight() - mainPlayer.getSprite().getHeight()) / 2.0f;
 
-		System.out.println(xcenter + "," +ycenter);
 
+
+       // System.out.println(mainPlayer.getRectangle());
 		if(Gdx.input.isKeyPressed(Input.Keys.LEFT) || Gdx.input.isKeyPressed(Input.Keys.A)) {
 			mainPlayer.moveLeft(dt);
-
-			//if()
-			//if(Intersector.overlaps(mainPlanet,mainPlayer.getRectangle()))
-				//System.out.println(mainPlayer.getRectangle());
-				//mainPlayer.col(dt);
 		}
 		if(Gdx.input.isKeyPressed(Input.Keys.RIGHT) || Gdx.input.isKeyPressed(Input.Keys.D)) {
-			//System.out.println(mainPlayer.getRectangle());
 			mainPlayer.moveRight(dt);
-
-			//if(Intersector.overlaps(mainPlanet,mainPlayer.getRectangle())){
-				//System.out.println(mainPlayer.getRectangle());
-				//mainPlayer.col(dt);
-
-			//}
 		}
 		if(Gdx.input.isKeyPressed(Input.Keys.UP) || Gdx.input.isKeyPressed(Input.Keys.W)) {
 			mainPlayer.jump(dt);
-
-			//if(Intersector.overlaps(mainPlanet,mainPlayer.getRectangle())){
-				//System.out.println(mainPlayer.getRectangle());
-				//mainPlayer.col(dt);
-			//}
-
 		}
 
-		}
+		// provisional collision handler
+		if(collidesWithFreeRocket(mainPlayer.getRectangle()))
+			mainPlayer.col(dt);
+
+
+	}
 
 	
 	public void drawMainPlayer() {
@@ -205,5 +215,15 @@ public class Renderer {
 
 	public void resize(int width, int height) {
 		stage.getViewport().update(width, height, true);
+	}
+
+	public boolean collidesWithFreeRocket(Rectangle r){
+		ArrayList<Rectangle> rockets = map.getRockets();
+
+		for(int i=0 ; i<rockets.size();i++){
+			if(Intersector.overlaps(r,rockets.get(i)))
+				return true;
+		}
+		return false;
 	}
 }

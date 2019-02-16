@@ -124,14 +124,19 @@ public abstract class Entity {
 	public void col(float delta) {
 		double angle = angleToCenterOfGravity();
 		double angleFromCenter = angleFromCenter();
-
-
-			speed.stop(angleFromCenter);
+		speed.stop(angleFromCenter);
 
 	}
 	// returns rectangle of the sprite
 	public Rectangle getRectangle(){
-		return sprite.getBoundingRectangle();
+		//Rectangle r = new Rectangle(sprite.getBoundingRectangle().getX(), sprite.getBoundingRectangle().getY(), sprite.getBoundingRectangle().getWidth()/2.0f, sprite.getBoundingRectangle().getHeight(),)
+		Rectangle border =sprite.getBoundingRectangle();
+		//System.out.println(border);
+		float new_width = border.getWidth() * 0.5f;
+		float x = border.getX() +(border.width -new_width)/2f;
+		Rectangle r = new Rectangle(x, border.getY(), new_width, border.height);
+		//System.out.println(r);
+		return r;
 	}
 
 }

@@ -19,7 +19,7 @@ public class World {
 	
 	
 	public World() {
-		mainPlayer = new Player(10, 2000);
+		mainPlayer = new Player(-525, 2000);
 		players = new ArrayList<>();
 		rockets = new ArrayList<>();
 		
@@ -35,10 +35,10 @@ public class World {
 		// Seed rockets
 		rockets.add(new Rocket(-300, 2000, 1));
 		rockets.add(new Rocket(300, 2000, 2));
-		Rocket flying = new Rocket(-2500, 2550, 3);
-		flying.setSpeed(90, 1200.0f);
-		flying.setRotation(270);
-		rockets.add(flying);
+		//Rocket flying = new Rocket(-2500, 2550, 3);
+		//flying.setSpeed(90, 1200.0f);
+		//flying.setRotation(270);
+		//rockets.add(flying);
 	}
 	
 	public Player getMainPlayer() {

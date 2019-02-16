@@ -2,6 +2,7 @@ package bham.bioshock.minigame.models;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 import java.util.HashMap;
@@ -31,7 +32,9 @@ public class Rocket extends Entity {
 
   public void load() {
     texture = new TextureRegion(textures.get(color));
-    super.load();
+    sprite = new Sprite(getTexture());
+    sprite.setSize(getSize(), getSize());
+    sprite.setOrigin(0, 0);
     sprite.setOrigin(sprite.getWidth() / 2, 0);
   }
 }

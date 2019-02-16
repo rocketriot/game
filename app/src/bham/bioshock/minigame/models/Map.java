@@ -17,9 +17,22 @@ public class Map {
     /** Platforms */
     private ArrayList<Rectangle> platforms;
 
+    /** Free Rockets */
+    private ArrayList<Rectangle> freeRockets;
+
     public Map(World world){
         this.world = world;
         Circle mainPlanet = new Circle(0,0,(float)world.PLANET_RADIUS-10);
+        freeRockets =  new ArrayList<Rectangle>();
+    }
+    public void addRocket(Rectangle r) {
+        if (!freeRockets.contains(r)) {
+           // System.out.println(r.x + " " + r.y + " " + r);
+            freeRockets.add(r);
+        }
+    }
+    public ArrayList<Rectangle> getRockets(){
+        return freeRockets;
     }
 
     public void addPlatform(Rectangle platform){
