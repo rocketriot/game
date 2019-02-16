@@ -537,17 +537,12 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
   @Override
   public boolean touchDown(int screenX, int screenY, int pointer, int button) {
     Vector3 clickCoords = getWorldCoords(screenX, screenY);
+    Player player = store.getMainPlayer();
+    Player movingPlayer = store.getMovingPlayer();
     if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
       // Used for mouse panning
       mouseDownX = screenX;
       mouseDownY = screenY;
-
-      Player player = store.getMainPlayer();
-      Player movingPlayer = store.getMovingPlayer();
-
-      // Do nothing if it's not the client's turn to move
-      if (!movingPlayer.getId().equals(player.getId()))
-        return false;
 
       if (clickCoords.x >= player.getCoordinates().getX() * PPS
           && clickCoords.x <= (player.getCoordinates().getX() + 1) * PPS) {
@@ -559,6 +554,11 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
       }
       return true;
     } else if (Gdx.input.isButtonPressed(Input.Buttons.RIGHT)) {
+
+      // Do nothing if it's not the client's turn to move
+      if (!movingPlayer.getId().equals(player.getId()))
+        return true;
+
       this.minigamePromptShown = false;
       // Move ship to click position
       Coordinates gridCoords = new Coordinates((int) clickCoords.x / PPS,
