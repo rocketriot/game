@@ -73,7 +73,7 @@ public class GameBoardController extends Controller {
     if (gridPoint.isType(GridPoint.Type.FUEL)) {
       // Decrease players amount of fuel
       Fuel fuel = (Fuel) gridPoint.getValue();
-      mainPlayer.decreaseFuel(fuel.getValue());
+      mainPlayer.increaseFuel(fuel.getValue());
     }
 
     // Generate and add the BoardMove object and add it to the mainPlayer
