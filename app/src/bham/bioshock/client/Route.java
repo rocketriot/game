@@ -21,13 +21,14 @@ public enum Route {
   ADD_PLAYER        (JoinScreenController.class,    "addPlayer"),
   REMOVE_PLAYER     (JoinScreenController.class,    "removePlayer"),
   DISCONNECT_PLAYER (JoinScreenController.class,    "disconnectPlayer"),
-  
-  START_GAME        (JoinScreenController.class,     "start"),
+  START_GAME        (JoinScreenController.class,    "start"),
 
-  GAME_BOARD        (GameBoardController.class,     "show"),
+  MOVE_PLAYER       (GameBoardController.class,     "move"),
   GAME_BOARD_SAVE   (GameBoardController.class,     "saveGameBoard"),
-  PLAYERS_SAVE   (GameBoardController.class,     "savePlayers");
-  
+  PLAYERS_SAVE      (GameBoardController.class,     "savePlayers"),
+  GAME_BOARD_SHOW   (GameBoardController.class,     "show"),
+
+  START_MINIGAME    (MinigameController.class,      "show");
   
 //@formatter:on
 

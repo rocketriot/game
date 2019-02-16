@@ -32,6 +32,11 @@ public class Player implements Serializable {
   /** The number of points the player has */
   private int points = 0;
 
+  /**
+   * Object containing infomation about a players move
+  */
+  private BoardMove boardMove;
+
   public Player() {
     this.id = UUID.randomUUID();
     this.textureID = 0;
@@ -102,6 +107,14 @@ public class Player implements Serializable {
 
   public int getPoints() {
     return points;
+  }
+
+  public void setBoardMove(BoardMove boardMove) {
+    this.boardMove = boardMove;
+  }
+
+  public BoardMove getBoardMove() {
+    return boardMove;
   }
 
   public void setPoints(int points) {

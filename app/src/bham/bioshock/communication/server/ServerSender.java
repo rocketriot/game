@@ -29,4 +29,8 @@ public class ServerSender {
       System.err.println("Can't send a message " + e.getMessage());
     }
   }
+  
+  public void reset() throws IOException {
+    client.reset();
+  }
 }

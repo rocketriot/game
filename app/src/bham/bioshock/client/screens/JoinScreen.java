@@ -8,6 +8,7 @@ import java.util.ArrayList;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -53,7 +54,6 @@ public class JoinScreen extends ScreenMaster {
 
     buildJoinScreen();
 
-    router.call(Route.START_GAME);
   }
 
   private void buildJoinScreen() {
@@ -64,12 +64,14 @@ public class JoinScreen extends ScreenMaster {
     table.pad(CELL_PADDING);
     stage.addActor(table);
     
+    addStartGameButton();
     loadPlayers();
   }
   
   private void loadPlayers() {
     for(int i=0; i<4; i++) {
-      Texture t = new Texture(Gdx.files.internal("app/assets/entities/rockets/"+(i+1)+".png"));
+      Texture t = new Texture(Gdx.files.internal("app/assets/entities/players/"+(i+1)+".png"));
+      t.setFilter(TextureFilter.Linear, TextureFilter.Linear);
       containers[i] = new PlayerContainer(t, "Player"+(i+1), WaitText.WAITING);      
     }
 
@@ -86,6 +88,29 @@ public class JoinScreen extends ScreenMaster {
 
   public void changePlayerName(Label label, String player) {
     label.setText(player);
+  }
+  
+  public void addStartGameButton() {
+    TextButton startButton = new TextButton("Start Game", skin);
+    TextButton miniGameButton = new TextButton("TEST Mini Game", skin);
+    startButton.setPosition(screen_width - 150, 40);
+    miniGameButton.setPosition(screen_width - 150, 0);
+    stage.addActor(startButton);
+    stage.addActor(miniGameButton);
+    
+    startButton.addListener(new ChangeListener() {
+      @Override
+      public void changed(ChangeEvent event, Actor actor) {
+        router.call(Route.START_GAME);
+      }
+    });
+    
+    miniGameButton.addListener(new ChangeListener() {
+      @Override
+      public void changed(ChangeEvent event, Actor actor) {
+        router.call(Route.START_MINIGAME);
+      }
+    });
   }
   
   @Override
