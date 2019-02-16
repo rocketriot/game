@@ -26,11 +26,14 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.badlogic.gdx.utils.viewport.ScreenViewport;
+
 import java.util.ArrayList;
 
 public class GameBoardScreen extends ScreenMaster implements InputProcessor {
@@ -631,6 +634,24 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
    * Method to ask the user whether they want to start the minigame or not
    */
   private void showMinigamePrompt() {
-    TextField textField = new TextField("", skin);
+    Dialog diag = new Dialog("Start Minigame", skin) {
+
+      protected void result(Object object) {
+
+        if (object.equals(true)) {
+          System.out.println("Starting minigame");
+          router.call(Route.START_MINIGAME);
+        } else {
+          System.out.println("Minigame not started");
+        }
+      }
+
+    };
+
+    diag.text(new Label("Would you like to start a minigame to take over the planet?", skin));
+    diag.button("Yes", true);
+    diag.button("No", false);
+
+    diag.show(hud.getStage());
   }
 }

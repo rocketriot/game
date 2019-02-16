@@ -154,11 +154,6 @@ public class GameBoardController extends Controller {
     store.getMainPlayer().setBoardMove(boardMove);
   }
 
-  public void startMinigame() {
-    //router.call(Route.GAME_BOARD_ALERT);
-    router.call(Route.START_MINIGAME);
-  }
-
   public void miniGameWon(Player player, Planet planet) {
     // winner gets the planet, previous owner loses it
     if (planet.getPlayerCaptured() != null) {
@@ -182,10 +177,6 @@ public class GameBoardController extends Controller {
 
     Coordinates newCoordinates = new Coordinates(x, y);
     player.setCoordinates(newCoordinates);
-  }
-
-  public void alert(String message){
-    ((ScreenMaster)store.getScreen()).alert(message);
   }
 
   public boolean hasReceivedGrid() {
