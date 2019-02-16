@@ -112,7 +112,7 @@ public class GameBoard implements Serializable {
   public GridPoint getGridPoint(Coordinates coordinates) {
     int x = coordinates.getX();
     int y = coordinates.getY();
-    if(x > 0 && grid.length > x && y > 0 && grid[x].length > y) {
+    if(x >= 0 && grid.length > x && y >= 0 && grid[x].length > y) {
       return grid[x][y];
     }
     logger.error("No coordinates " + coordinates + " in the grid!");
