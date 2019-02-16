@@ -30,7 +30,7 @@ public class GameBoardController extends Controller {
 
   /* Start the game */
   public void show() {
-    setScreen(new GameBoardScreen(router, store, store.getGameBoard()));
+    setScreen(new GameBoardScreen(router, store));
   }
 
   /** Handles when the server sends the game board to the client */

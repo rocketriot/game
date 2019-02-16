@@ -69,7 +69,7 @@ public class JoinScreen extends ScreenMaster {
   
   private void loadPlayers() {
     for(int i=0; i<4; i++) {
-      Texture t = new Texture(Gdx.files.internal("app/assets/entities/rockets/"+(i+1)+".png"));
+      Texture t = new Texture(Gdx.files.internal("app/assets/entities/players/"+(i+1)+".png"));
       containers[i] = new PlayerContainer(t, "Player"+(i+1), WaitText.WAITING);      
     }
 
