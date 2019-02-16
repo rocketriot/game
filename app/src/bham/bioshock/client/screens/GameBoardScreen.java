@@ -62,6 +62,7 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
   private Array<ParticleEffect> effects = new Array<>();
   private ParticleEffect rocketTrail;
   private boolean drawRocketTrail;
+  private boolean minigamePromptShown = false;
   private float msXCoords, msYCoords, rtXCoords, rtYCoords;
 
   public GameBoardScreen(Router router, Store store, GameBoard gameBoard) {
@@ -107,13 +108,19 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
     hud = new Hud(batch, skin, GAME_WORLD_WIDTH, GAME_WORLD_HEIGHT, store, router);
     background = new Sprite(new Texture(Gdx.files.internal("app/assets/backgrounds/game.png")));
   }
-
+  
   /**
    * Draws the player move
    */
   private void drawPlayerMove(Player player) {
     BoardMove boardMove = player.getBoardMove();
     if (boardMove.getDirections().size() == 0) {
+      
+      if(gameBoard.isNextToThePlanet(player.getCoordinates()) && !minigamePromptShown) {
+        this.minigamePromptShown = true;
+        showMinigamePrompt();        
+      }
+      
       this.drawRocketTrail = false;
       player.setBoardMove(null);
       if (player.equals(store.getMainPlayer())) {
@@ -547,6 +554,7 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
       }
       return true;
     } else if (Gdx.input.isButtonPressed(Input.Buttons.RIGHT)) {
+      this.minigamePromptShown = false;
       // Move ship to click position
       Coordinates gridCoords = new Coordinates((int) clickCoords.x / PPS,
           (int) clickCoords.y / PPS);

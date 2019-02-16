@@ -70,7 +70,7 @@ public class GameBoardController extends Controller {
     GridPoint gridPoint = gameBoard.getGridPoint(destination);
 
     // Check if the player landed on a fuel box
-    if (gridPoint.getType() == GridPoint.Type.FUEL) {
+    if (gridPoint.isType(GridPoint.Type.FUEL)) {
       // Decrease players amount of fuel
       Fuel fuel = (Fuel) gridPoint.getValue();
       mainPlayer.decreaseFuel(fuel.getValue());
@@ -84,11 +84,6 @@ public class GameBoardController extends Controller {
     arguments.add(gameBoard);
     arguments.add(mainPlayer);
     clientService.send(new Action(Command.MOVE_PLAYER_ON_BOARD, arguments));
-
-    // Check if the player is at a planet
-    if (grid[destination.getX()][destination.getY()].getType() == GridPoint.Type.PLANET){
-        startMinigame();
-    }
   }
 
   /** Player move received from the server */
