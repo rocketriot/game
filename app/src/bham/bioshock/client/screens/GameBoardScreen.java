@@ -27,13 +27,10 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.FitViewport;
-import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
 import java.util.ArrayList;
 
@@ -545,8 +542,12 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
       mouseDownX = screenX;
       mouseDownY = screenY;
 
-      // Selecting your ship
       Player player = store.getMainPlayer();
+      Player movingPlayer = store.getMovingPlayer();
+
+      // Do nothing if it's not the client's turn to move
+      if (!movingPlayer.getId().equals(player.getId()))
+        return false;
 
       if (clickCoords.x >= player.getCoordinates().getX() * PPS
           && clickCoords.x <= (player.getCoordinates().getX() + 1) * PPS) {
@@ -562,6 +563,7 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
       // Move ship to click position
       Coordinates gridCoords = new Coordinates((int) clickCoords.x / PPS,
           (int) clickCoords.y / PPS);
+
       if (!store.getMainPlayer().getCoordinates().isEqual(gridCoords)) {
         router.call(Route.MOVE_PLAYER, gridCoords);
         return true;

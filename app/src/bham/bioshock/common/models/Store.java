@@ -121,6 +121,11 @@ public class Store {
     return turn;
   }
 
+  /** Get's the player who's turn it is */
+  public Player getMovingPlayer() {
+    return players.get(turn);
+  }
+
   /** After a player has finished their turn, set the next turn */
   public void nextTurn() {
     // If all players have had their turn, go to next round
