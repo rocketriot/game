@@ -4,6 +4,7 @@ import bham.bioshock.client.Router;
 import bham.bioshock.client.screens.GameBoardScreen;
 import bham.bioshock.client.BoardGame;
 import bham.bioshock.client.Route;
+import bham.bioshock.client.screens.ScreenMaster;
 import bham.bioshock.common.Direction;
 import bham.bioshock.common.consts.GridPoint;
 import bham.bioshock.common.models.*;
@@ -69,7 +70,7 @@ public class GameBoardController extends Controller {
     GridPoint gridPoint = gameBoard.getGridPoint(destination);
 
     // Check if the player landed on a fuel box
-    if (gridPoint.getType() == GridPoint.Type.FUEL) {
+    if (gridPoint.isType(GridPoint.Type.FUEL)) {
       // Decrease players amount of fuel
       Fuel fuel = (Fuel) gridPoint.getValue();
       mainPlayer.decreaseFuel(fuel.getValue());
@@ -152,8 +153,6 @@ public class GameBoardController extends Controller {
     BoardMove boardMove = new BoardMove(directions, position, startPosition, destination);
     store.getMainPlayer().setBoardMove(boardMove);
   }
-
-  public void startMinigame() {}
 
   public void miniGameWon(Player player, Planet planet) {
     // winner gets the planet, previous owner loses it
