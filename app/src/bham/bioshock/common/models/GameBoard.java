@@ -1,6 +1,5 @@
 package bham.bioshock.common.models;
 
-import bham.bioshock.client.Router;
 import bham.bioshock.common.consts.GridPoint;
 
 import java.io.Serializable;
@@ -26,16 +25,34 @@ public class GameBoard implements Serializable {
     grid = new GridPoint[GRID_SIZE][GRID_SIZE];
 
     // Go through each point and generate it's type
-    for (int i = 0; i < grid.length; i++) {
-      for (int j = 0; j < grid[i].length; j++) {
-        // Check if point was already generated
-        if (grid[i][j] == null) {
-          generateGridPoint(i, j);
-        }
+    for (int x = 0; x < grid.length; x++) {
+      for (int y = 0; y < grid[x].length; y++) {
+        generateGridPoint(x, y);
       }
     }
 
     return grid;
+  }
+
+  /** Checks is a set of coordinates are a set number of spaces away from a player */
+  private boolean isGridPointNearPlayer(int x, int y) {
+    // Setup bounds
+    int min = 4;
+    int max = (GRID_SIZE - min) - 1;
+    
+    // Check top left
+    if (x < min && y < min) return true;
+    
+    // Check top right
+    if (x < min && y > max) return true;
+    
+    // Check bottom left
+    if (x > max && y < min) return true;
+    
+    // Check bottom right
+    if (x > max && y > max) return true;
+
+    return false;
   }
   
   public boolean isNextToThePlanet(Coordinates pos) {
@@ -56,10 +73,16 @@ public class GameBoard implements Serializable {
 
   /** Sets a point to a random entity */
   private void generateGridPoint(int x, int y) {
-    float randomFloat = (new Random()).nextFloat();
+    // Do nothing if point was already generated
+    if (grid[x][y] != null) return;
 
     // Generate empty tile as the default value
     grid[x][y] = new GridPoint(GridPoint.Type.EMPTY);
+
+    // Don't generate anything if point is near player
+    if (isGridPointNearPlayer(x, y)) return;
+
+    float randomFloat = (new Random()).nextFloat();
 
     // Generate a fuel box
     if (randomFloat <= 0.015) {
