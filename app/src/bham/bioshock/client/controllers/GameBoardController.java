@@ -60,7 +60,7 @@ public class GameBoardController extends Controller {
     float pathCost = (path.size() - 1) * 10;
 
     // Handle if player doesn't have enough fuel
-    if (mainPlayer.getFuel() < pathCost) return;
+    if (mainPlayer.getFuel() < pathCost || pathCost == -10) return;
 
     // Update player coordinates and fuel
     mainPlayer.setCoordinates(destination);
