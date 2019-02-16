@@ -22,6 +22,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.GL30;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -321,6 +322,7 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
   public Sprite generateSprite(String path) {
     FileHandle file = Gdx.files.internal(path);
     Texture texture = new Texture(file);
+    texture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
     return new Sprite(texture);
   }
 
