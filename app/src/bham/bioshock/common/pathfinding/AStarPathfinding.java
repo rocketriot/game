@@ -174,17 +174,17 @@ public class AStarPathfinding {
 
             // go to the centre of the planet
             if (isValid(new Coordinates(currentX, currentY + 1), false) &&
-                    gameGrid[currentX][currentY + 1].getType() != GridPoint.Type.PLANET) { // check if in top row
+                    !gameGrid[currentX][currentY + 1].isType(GridPoint.Type.PLANET)) { // check if in top row
                 currentY -= 1;
             } else if (isValid(new Coordinates(currentX, currentY - 1), false) &&
-                    gameGrid[currentX][currentY - 1].getType() != GridPoint.Type.PLANET) { // check if in bottom row
+                    !gameGrid[currentX][currentY - 1].isType(GridPoint.Type.PLANET)) { // check if in bottom row
                 currentY += 1;
             }
             if (isValid(new Coordinates(currentX + 1, currentY), false) &&
-                    gameGrid[currentX + 1][currentY].getType() != GridPoint.Type.PLANET) { // check if in right column
+                    !gameGrid[currentX + 1][currentY].isType(GridPoint.Type.PLANET)) { // check if in right column
                 currentX -= 1;
             } else if (isValid(new Coordinates(currentX - 1, currentY), false) &&
-                    gameGrid[currentX - 1][currentY].getType() != GridPoint.Type.PLANET) { // check if in left column
+                    !gameGrid[currentX - 1][currentY].isType(GridPoint.Type.PLANET)) { // check if in left column
                 currentX += 1;
             }
 
@@ -193,7 +193,10 @@ public class AStarPathfinding {
             currentY += 1;
             for (int x = currentX; x < currentX + 3; x++) {
                 for (int y = currentY; y > currentY - 3; y--) {
-                    aStarGrid[x][y].setPassable(true);
+                    if (isValid(new Coordinates(x, y), false)){
+                        aStarGrid[x][y].setPassable(true);
+                    }
+
                 }
             }
         }
