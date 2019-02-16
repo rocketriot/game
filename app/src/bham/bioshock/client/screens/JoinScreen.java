@@ -8,6 +8,7 @@ import java.util.ArrayList;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -70,6 +71,7 @@ public class JoinScreen extends ScreenMaster {
   private void loadPlayers() {
     for(int i=0; i<4; i++) {
       Texture t = new Texture(Gdx.files.internal("app/assets/entities/players/"+(i+1)+".png"));
+      t.setFilter(TextureFilter.Linear, TextureFilter.Linear);
       containers[i] = new PlayerContainer(t, "Player"+(i+1), WaitText.WAITING);      
     }
 
