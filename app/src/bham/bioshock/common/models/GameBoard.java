@@ -1,13 +1,18 @@
 package bham.bioshock.common.models;
 
+import bham.bioshock.client.Router;
 import bham.bioshock.common.consts.GridPoint;
 
 import java.io.Serializable;
 import java.util.Random;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /** Stores the data required for the main game board */
 public class GameBoard implements Serializable {
 
+  private static final Logger logger = LogManager.getLogger(GameBoard.class);
+  
   private static final long serialVersionUID = 5775730008817100527L;
 
   public final int GRID_SIZE = 36;
@@ -31,6 +36,24 @@ public class GameBoard implements Serializable {
     }
 
     return grid;
+  }
+  
+  public boolean isNextToThePlanet(Coordinates pos) {
+    // Currently on the planet
+    if(getGridPoint(pos).isType(GridPoint.Type.PLANET)) {
+      return true;
+    }
+    
+    // Next to the planet
+    for(Coordinates p : pos.getNearby()) {
+      if (pos.getX() > 0 && pos.getX() < GRID_SIZE && pos.getY() > 0 && pos.getY() < GRID_SIZE) {
+        if (getGridPoint(p).isType(GridPoint.Type.PLANET)) {
+          return true;
+        }
+      }
+    }
+    
+    return false;
   }
 
   /** Sets a point to a random entity */
@@ -91,7 +114,10 @@ public class GameBoard implements Serializable {
   public GridPoint getGridPoint(Coordinates coordinates) {
     int x = coordinates.getX();
     int y = coordinates.getY();
-
-    return grid[x][y];
+    if(x >= 0 && grid.length > x && y >= 0 && grid[x].length > y) {
+      return grid[x][y];
+    }
+    logger.error("No coordinates " + coordinates + " in the grid!");
+    return null;
   }
 }
