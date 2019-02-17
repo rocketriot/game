@@ -183,11 +183,17 @@ public class Renderer {
 		float dt = Gdx.graphics.getDeltaTime();
 		mainPlayer.update(dt);
 
-
-
        // System.out.println(mainPlayer.getRectangle());
-		if(Gdx.input.isKeyPressed(Input.Keys.LEFT) || Gdx.input.isKeyPressed(Input.Keys.A)) {
+		if((Gdx.input.isKeyPressed(Input.Keys.LEFT) || Gdx.input.isKeyPressed(Input.Keys.A)) &&  !mainPlayer.colLeft) {
 			mainPlayer.moveLeft(dt);
+
+			if(collidesWithFreeRocket(mainPlayer.getRectangle())) {
+				mainPlayer.col(dt);
+				mainPlayer.colLeft = true;
+			}
+
+
+
 		}
 		if(Gdx.input.isKeyPressed(Input.Keys.RIGHT) || Gdx.input.isKeyPressed(Input.Keys.D)) {
 			mainPlayer.moveRight(dt);

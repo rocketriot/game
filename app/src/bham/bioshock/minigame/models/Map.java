@@ -27,7 +27,6 @@ public class Map {
     }
     public void addRocket(Rectangle r) {
         if (!freeRockets.contains(r)) {
-           // System.out.println(r.x + " " + r.y + " " + r);
             freeRockets.add(r);
         }
     }

@@ -32,9 +32,8 @@ public class Rocket extends Entity {
 
   public void load() {
     texture = new TextureRegion(textures.get(color));
-    sprite = new Sprite(getTexture());
-    sprite.setSize(getSize(), getSize());
-    sprite.setOrigin(0, 0);
+    super.load();
     sprite.setOrigin(sprite.getWidth() / 2, 0);
+
   }
 }
