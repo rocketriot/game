@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -59,6 +60,12 @@ public abstract class ScreenMaster implements Screen {
     FileHandle fontSource = Gdx.files.internal("app/assets/fonts/BebasNeueThin.otf");
     font12 = generateFont(fontSource, 12);
     font18 = generateFont(fontSource, 18);
+
+
+    skin.addRegions(new TextureAtlas(Gdx.files.internal("app/assets/skins/neon/skin/neon-ui.atlas")));
+    skin.add("bebas_neue", font12);
+
+    skin.load(Gdx.files.internal("data/uiskin.json"));
   }
 
   /** Generates a bitmap font from source */
