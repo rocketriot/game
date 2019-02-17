@@ -3,54 +3,53 @@ package bham.bioshock.minigame;
 import bham.bioshock.common.Position;
 import bham.bioshock.minigame.models.Player;
 import bham.bioshock.minigame.models.Rocket;
-
 import java.util.ArrayList;
 
 public class World {
 
 
-	private Player mainPlayer;
-	private ArrayList<Player> players;
-	private ArrayList<Rocket> rockets;
-	
-	public static final Position GRAVITY_POS = new Position(0f, 0f);
-	public static final double PLANET_RADIUS = 2000;
-	public static final double GRAVITY = 1500;
-	
-	
-	public World() {
-		mainPlayer = new Player(-525, 2000);
-		players = new ArrayList<>();
-		rockets = new ArrayList<>();
-		
-		seed();
-	}
-	
-	public void seed() {
-		// Seed players
-		players.add(new Player(-2000, 0));
-		players.add(new Player(2000, 2000));
-		players.add(new Player(220, -2000));
-		
-		// Seed rockets
-		rockets.add(new Rocket(-300, 2000, 1));
-		rockets.add(new Rocket(300, 2000, 2));
-		//Rocket flying = new Rocket(-2500, 2550, 3);
-		//flying.setSpeed(90, 1200.0f);
-		//flying.setRotation(270);
-		//rockets.add(flying);
-	}
-	
-	public Player getMainPlayer() {
-		return mainPlayer;
-	}
-	
-	public ArrayList<Player> getPlayers() {
-		return players;
-	}
-	
-	public ArrayList<Rocket> getRockets() {
-		return rockets;
-	}
+  private Player mainPlayer;
+  private ArrayList<Player> players;
+  private ArrayList<Rocket> rockets;
 
+  public static final Position GRAVITY_POS = new Position(0f, 0f);
+  public static final double PLANET_RADIUS = 2000;
+  public static final double GRAVITY = 1500;
+
+
+  public World() {
+    mainPlayer = new Player(-525, 2000);
+    players = new ArrayList<>();
+    rockets = new ArrayList<>();
+
+    seed();
   }
+
+  public void seed() {
+    // Seed players
+    players.add(new Player(-2000, 0));
+    players.add(new Player(2000, 2000));
+    players.add(new Player(220, -2000));
+
+    // Seed rockets
+    rockets.add(new Rocket(-300, 2000, 1));
+    rockets.add(new Rocket(300, 2000, 2));
+    // Rocket flying = new Rocket(-2500, 2550, 3);
+    // flying.setSpeed(90, 1200.0f);
+    // flying.setRotation(270);
+    // rockets.add(flying);
+  }
+
+  public Player getMainPlayer() {
+    return mainPlayer;
+  }
+
+  public ArrayList<Player> getPlayers() {
+    return players;
+  }
+
+  public ArrayList<Rocket> getRockets() {
+    return rockets;
+  }
+
+}
