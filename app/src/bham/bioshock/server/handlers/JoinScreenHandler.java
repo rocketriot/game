@@ -71,9 +71,6 @@ public class JoinScreenHandler {
       store.addPlayer(player);
       cpuPlayers.add(player);
     }
-
-    // Send new CPU players to all clients
-    handler.sendToAll(new Action(Command.ADD_PLAYER, cpuPlayers));
     
     // Send the board and the players
     GameBoardHandler.getGameBoard(store, action, handler);

@@ -4,15 +4,15 @@ import bham.bioshock.client.Router;
 import bham.bioshock.client.screens.GameBoardScreen;
 import bham.bioshock.client.BoardGame;
 import bham.bioshock.client.Route;
+import bham.bioshock.client.screens.ScreenMaster;
+import bham.bioshock.common.Direction;
 import bham.bioshock.common.consts.GridPoint;
 import bham.bioshock.common.models.*;
 import bham.bioshock.common.pathfinding.AStarPathfinding;
 import bham.bioshock.communication.Action;
 import bham.bioshock.communication.Command;
 import bham.bioshock.communication.client.IClientService;
-
 import com.google.inject.Inject;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Random;
@@ -27,10 +27,10 @@ public class GameBoardController extends Controller {
     this.clientService = clientService;
     this.router = router;
   }
-  
+
   /* Start the game */
   public void show() {
-    setScreen(new GameBoardScreen(router, store, store.getGameBoard()));
+    setScreen(new GameBoardScreen(router, store));
   }
 
   /** Handles when the server sends the game board to the client */
@@ -39,13 +39,6 @@ public class GameBoardController extends Controller {
   }
 
   public void savePlayers(ArrayList<Player> players) {
-    // TODO: remove temporary solution to fix coordinates not being sent by the server
-    int last = store.getGameBoard().GRID_SIZE - 1;
-    players.get(0).setCoordinates(new Coordinates(0, 0));
-    players.get(1).setCoordinates(new Coordinates(0, last));
-    players.get(2).setCoordinates(new Coordinates(last, last));
-    players.get(3).setCoordinates(new Coordinates(last, 0));
-
     store.setPlayers(players);
   }
 
@@ -57,15 +50,17 @@ public class GameBoardController extends Controller {
 
     // Initialize path finding
     int gridSize = store.getGameBoard().GRID_SIZE;
-    AStarPathfinding pathFinder = new AStarPathfinding(grid, mainPlayer.getCoordinates(), gridSize, gridSize, store.getPlayers());
+    AStarPathfinding pathFinder = new AStarPathfinding(grid, mainPlayer.getCoordinates(), gridSize,
+        gridSize, store.getPlayers());
     pathFinder.setStartPosition(mainPlayer.getCoordinates());
+    Coordinates startCoords = mainPlayer.getCoordinates();
 
     // pathsize - 1 since path includes start position
     ArrayList<Coordinates> path = pathFinder.pathfind(destination);
     float pathCost = (path.size() - 1) * 10;
 
     // Handle if player doesn't have enough fuel
-    if (mainPlayer.getFuel() < pathCost) return;
+    if (mainPlayer.getFuel() < pathCost || pathCost == -10) return;
 
     // Update player coordinates and fuel
     mainPlayer.setCoordinates(destination);
@@ -75,11 +70,14 @@ public class GameBoardController extends Controller {
     GridPoint gridPoint = gameBoard.getGridPoint(destination);
 
     // Check if the player landed on a fuel box
-    if (gridPoint.getType() == GridPoint.Type.FUEL) {
+    if (gridPoint.isType(GridPoint.Type.FUEL)) {
       // Decrease players amount of fuel
       Fuel fuel = (Fuel) gridPoint.getValue();
-      mainPlayer.decreaseFuel(fuel.getValue());
+      mainPlayer.increaseFuel(fuel.getValue());
     }
+
+    // Generate and add the BoardMove object and add it to the mainPlayer
+    generateMove(path, destination, startCoords);
 
     // Send the updated grid to the server
     ArrayList<Serializable> arguments = new ArrayList<>();
@@ -99,7 +97,62 @@ public class GameBoardController extends Controller {
     store.nextTurn();
   }
 
-  public void startMinigame() {}
+  private void generateMove(ArrayList<Coordinates> path, Coordinates destination,
+      Coordinates startPosition) {
+    ArrayList<Direction> directions = new ArrayList<>();
+    ArrayList<Coordinates> position = new ArrayList<>();
+    Coordinates lastPosition = startPosition;
+    Direction currentDir = Direction.NONE;
+
+    for (Coordinates c : path) {
+      Coordinates moveDir = c.sub(lastPosition);
+      lastPosition = c;
+      if (moveDir.getX() == 0) {
+        if (moveDir.getY() > 0) {
+          if (currentDir.equals(Direction.NONE)) {
+            currentDir = Direction.UP;
+          } else if (!currentDir.equals(Direction.UP)) {
+            directions.add(currentDir);
+            position.add(lastPosition);
+            currentDir = Direction.UP;
+          }
+        } else if (moveDir.getY() < 0) {
+          if (currentDir.equals(Direction.NONE)) {
+            currentDir = Direction.DOWN;
+          } else if (!currentDir.equals(Direction.DOWN)) {
+            directions.add(currentDir);
+            position.add(lastPosition);
+            currentDir = Direction.DOWN;
+          }
+        } else {
+          directions.add(Direction.NONE);
+          position.add(lastPosition);
+        }
+      } else {
+        if (moveDir.getX() > 0) {
+          if (currentDir.equals(Direction.NONE)) {
+            currentDir = Direction.RIGHT;
+          } else if (!currentDir.equals(Direction.RIGHT)) {
+            directions.add(currentDir);
+            position.add(lastPosition);
+            currentDir = Direction.RIGHT;
+          }
+        } else if (moveDir.getX() < 0) {
+          if (currentDir.equals(Direction.NONE)) {
+            currentDir = Direction.LEFT;
+          } else if (!currentDir.equals(Direction.LEFT)) {
+            directions.add(currentDir);
+            position.add(lastPosition);
+            currentDir = Direction.LEFT;
+          }
+        }
+      }
+    }
+    directions.add(currentDir);
+    position.add(lastPosition);
+    BoardMove boardMove = new BoardMove(directions, position, startPosition, destination);
+    store.getMainPlayer().setBoardMove(boardMove);
+  }
 
   public void miniGameWon(Player player, Planet planet) {
     // winner gets the planet, previous owner loses it

@@ -123,11 +123,6 @@ public class Hud implements Disposable {
     fuelString = "Fuel: " + store.getMainPlayer().getFuel() + "/100.0";
     fuelLabel.setText(fuelString);
 
-    /*
-     * for (int i = 0; i < 4; i++) { labels.get(i).setText(players.get(i).getUsername() + ": " +
-     * players.get(i).getPoints()); }
-     */
-
     table.clearChildren();
     labels = new ArrayList<>();
 
