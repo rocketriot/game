@@ -180,18 +180,52 @@ public class Renderer {
 
         // System.out.println(mainPlayer.getRectangle());
         if ((Gdx.input.isKeyPressed(Input.Keys.LEFT) || Gdx.input.isKeyPressed(Input.Keys.A)) && !mainPlayer.colLeft) {
+
             mainPlayer.moveLeft(dt);
 
             if (collidesWithFreeRocket(mainPlayer.getRectangle())) {
-                mainPlayer.col(dt);
-                mainPlayer.colLeft = true;
-            }
+                System.out.println("l");
+
+                if(mainPlayer.colRight) {
+
+                        mainPlayer.moveLeft(dt);
+                    } else
+                        mainPlayer.colLeft = true;
+
+                } else {
+                    mainPlayer.colRight = false;
+                    mainPlayer.col(dt);
+                }
 
 
         }
-        if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) || Gdx.input.isKeyPressed(Input.Keys.D)) {
+
+
+        if ((Gdx.input.isKeyPressed(Input.Keys.RIGHT) || Gdx.input.isKeyPressed(Input.Keys.D)) && !mainPlayer.colRight) {
+            //mainPlayer.colLeft = false;
             mainPlayer.moveRight(dt);
+
+            if (collidesWithFreeRocket(mainPlayer.getRectangle())) {
+                System.out.println("r");
+
+                if (mainPlayer.colLeft) {
+                    System.out.println("stop left");
+
+                    mainPlayer.moveRight(dt);
+                } else
+                    mainPlayer.colRight = true;
+
+                } else {
+
+                    mainPlayer.colLeft = false;
+                    mainPlayer.col(dt);
+
+                }
+
+
         }
+
+
         if (Gdx.input.isKeyPressed(Input.Keys.UP) || Gdx.input.isKeyPressed(Input.Keys.W)) {
             mainPlayer.jump(dt);
         }
@@ -221,9 +255,11 @@ public class Renderer {
 
         ArrayList<Rectangle> rockets = map.getRockets();
 
+
         for (int i = 0; i < rockets.size(); i++) {
-            if (Intersector.overlaps(r, rockets.get(i)))
+            if (Intersector.overlaps(r, rockets.get(i))) {
                 return true;
+            }
         }
         return false;
     }

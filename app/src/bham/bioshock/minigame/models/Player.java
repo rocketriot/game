@@ -16,7 +16,7 @@ public class Player extends Entity {
   private PlayerTexture dir;
   private float v = 700f;
   public boolean colLeft = false;
-  public boolean colRight = false;
+  public boolean colRight =  false;
 
   public Player(float x, float y) {
     super(x, y);
