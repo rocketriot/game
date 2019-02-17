@@ -8,6 +8,7 @@ import bham.bioshock.client.screens.ScreenMaster;
 import bham.bioshock.common.Direction;
 import bham.bioshock.common.consts.GridPoint;
 import bham.bioshock.common.models.*;
+import bham.bioshock.common.models.store.Store;
 import bham.bioshock.common.pathfinding.AStarPathfinding;
 import bham.bioshock.communication.Action;
 import bham.bioshock.communication.Command;
