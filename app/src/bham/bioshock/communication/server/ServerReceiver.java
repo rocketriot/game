@@ -36,6 +36,7 @@ public class ServerReceiver extends Thread {
         service.store(userAction);
       }
     } catch (IOException e) {
+      e.printStackTrace();
       System.err.println("Something went wrong with the client " + e.getMessage());
       // No point in trying to close sockets. Just give up.
     }

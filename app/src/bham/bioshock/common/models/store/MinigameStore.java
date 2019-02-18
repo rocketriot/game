@@ -44,7 +44,11 @@ public class MinigameStore {
 
     for (int i = 0; i < players.size(); i++) {
       Player p = new Player(world, playerPos[i]);
-      this.players.put(players.get(i).getId(), p);
+      UUID playerId = players.get(i).getId();
+      if(store.isMainPlayer(playerId)) {
+        p.setMain();
+      }
+      this.players.put(playerId, p);
     }
     
     this.rockets = world.getRockets();

@@ -26,6 +26,7 @@ public class ServerSender {
     try {
       client.writeObject(action);
     } catch (IOException e) {
+      e.printStackTrace();
       System.err.println("Can't send a message " + e.getMessage());
     }
   }

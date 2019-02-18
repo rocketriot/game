@@ -73,6 +73,13 @@ public class Store {
     return currentScreen;
   }
 
+  public boolean isMainPlayer(UUID id) {
+    if(mainPlayerId == null) {
+      return false;
+    }
+    return mainPlayerId.equals(id);
+  }
+  
   public void setGameBoard(GameBoard gameBoard) {
     this.gameBoard = gameBoard;
   }
