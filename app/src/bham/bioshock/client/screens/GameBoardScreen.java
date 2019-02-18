@@ -641,7 +641,7 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
 
         if (object.equals(true)) {
           System.out.println("Starting minigame");
-          router.call(Route.START_MINIGAME);
+          router.call(Route.SEND_MINIGAME_START);
         } else {
           System.out.println("Minigame not started");
         }
