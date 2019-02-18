@@ -5,7 +5,6 @@ import bham.bioshock.common.models.Coordinates;
 import bham.bioshock.common.models.GameBoard;
 import bham.bioshock.common.models.Player;
 import com.badlogic.gdx.Screen;
-import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
 import java.util.ArrayList;
@@ -18,6 +17,7 @@ public class Store {
   /** Max number of players in a game */
   // FOR TESTING
   public final int MAX_PLAYERS = 4;
+
   private AppPreferences preferences;
   private Screen currentScreen;
   /** Contains all of the information about the game board */
@@ -30,7 +30,7 @@ public class Store {
   private int round = 0;
   /** The next player's turn */
   private int turn = 0;
-  
+
   /** Minigame World */
   private MinigameStore minigameStore;
 
@@ -129,15 +129,15 @@ public class Store {
       for (Player player : players) player.increaseFuel(5.0f);
     }
   }
-  
+
+  public MinigameStore getMinigameStore() {
+    return this.minigameStore;
+  }
+
   /*
    * MINIGAME
    */
   public void setMinigameStore(MinigameStore store) {
     this.minigameStore = store;
-  }
-
-  public MinigameStore getMinigameStore() {
-    return this.minigameStore;
   }
 }

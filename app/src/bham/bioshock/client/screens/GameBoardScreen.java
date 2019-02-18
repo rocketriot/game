@@ -6,12 +6,7 @@ import bham.bioshock.client.scenes.Hud;
 import bham.bioshock.common.Direction;
 import bham.bioshock.common.consts.Config;
 import bham.bioshock.common.consts.GridPoint;
-import bham.bioshock.common.models.Asteroid;
-import bham.bioshock.common.models.BoardMove;
-import bham.bioshock.common.models.Coordinates;
-import bham.bioshock.common.models.GameBoard;
-import bham.bioshock.common.models.Planet;
-import bham.bioshock.common.models.Player;
+import bham.bioshock.common.models.*;
 import bham.bioshock.common.models.store.Store;
 import bham.bioshock.common.pathfinding.AStarPathfinding;
 import com.badlogic.gdx.Gdx;
@@ -45,6 +40,7 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
   private Store store;
   /** Pathfinding for player movement */
   private AStarPathfinding pathFinder;
+
   private ArrayList<Coordinates> path = new ArrayList<>();
   private SpriteBatch batch;
   private Sprite background;

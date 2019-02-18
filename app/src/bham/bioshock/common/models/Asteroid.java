@@ -14,6 +14,7 @@ public class Asteroid implements Serializable {
   public static final int WIDTH = 3;
   /** Height of the asteroid */
   public static final int HEIGHT = 4;
+
   private static final long serialVersionUID = 5775730008817100527L;
   /** ID of the planet */
   private UUID id;
