@@ -1,5 +1,7 @@
 package bham.bioshock.minigame.models;
 
+import bham.bioshock.common.models.store.MinigameStore;
+import bham.bioshock.minigame.worlds.FirstWorld;
 import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Rectangle;
 
@@ -8,7 +10,8 @@ import java.util.ArrayList;
 public class Map {
 
     /** The world */
-    private World world;
+    private MinigameStore world;
+
 
     /** Platforms */
     private ArrayList<Rectangle> platforms;
@@ -16,9 +19,9 @@ public class Map {
     /** Free Rockets */
     private ArrayList<Rectangle> freeRockets;
 
-    public Map(World world){
+    public Map(MinigameStore world){
         this.world = world;
-        Circle mainPlanet = new Circle(0,0,(float)world.PLANET_RADIUS-10);
+        Circle mainPlanet = new Circle(0,0,(float)world.getPlanetRadius()-10);
         freeRockets =  new ArrayList<Rectangle>();
     }
     public void addRocket(Rectangle r) {

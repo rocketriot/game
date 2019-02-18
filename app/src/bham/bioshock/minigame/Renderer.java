@@ -37,7 +37,6 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import java.util.ArrayList;
 
 public class Renderer {
-    private FirstWorld World;
     private Player mainPlayer;
     private ArrayList<Entity> entities;
 
@@ -72,7 +71,7 @@ public class Renderer {
         gravity = new Gravity(store.getWorld());
 
         cam = new OrthographicCamera();
-
+        map = new Map(store);
         batch = new SpriteBatch();
         backgroundBatch = new SpriteBatch();
         camRotation = 0;
@@ -106,7 +105,7 @@ public class Renderer {
         updatePosition();
         cam.position.lerp(lerpTarget.set(mainPlayer.getX(), mainPlayer.getY(), 0), 3f * delta);
 
-        double rotation = -Gravity.getAngleTo(cam.position.x, cam.position.y);
+        double rotation = -gravity.getAngleTo(cam.position.x, cam.position.y);
         cam.rotate((float) (camRotation - rotation));
         camRotation = rotation;
         cam.update();
@@ -122,7 +121,7 @@ public class Renderer {
         drawEntities();
 
         Rectangle border = mainPlayer.getRectangle();
-        // drawBorder(border);
+        drawBorder(border);
         batch.end();
     }
 
@@ -131,9 +130,9 @@ public class Renderer {
         renderer.begin(ShapeType.Filled);
         renderer.setColor(Color.SALMON);
 
-        renderer.circle(0, 0, (float) World.getPlanetRadius());
+        renderer.circle(0, 0, (float) store.getPlanetRadius());
         // bounding circle
-        mainPlanet = new Circle(0, 0, (float) World.getPlanetRadius() - 50);
+        mainPlanet = new Circle(0, 0, (float) store.getPlanetRadius() - 50);
         // renderer.setColor(Color.RED);
         // renderer.circle(0,0,(float)World.PLANET_RADIUS-50);
 
@@ -157,7 +156,7 @@ public class Renderer {
             sprite.setRotation((float) p.getRotation());
             sprite.draw(batch);
             p.update(Gdx.graphics.getDeltaTime());
-            // drawBorder(border);
+             //drawBorder(border);
         }
         for (Rocket p : store.getRockets()) {
             Sprite sprite = p.getSprite();
@@ -172,7 +171,7 @@ public class Renderer {
             p.update(Gdx.graphics.getDeltaTime());
 
             map.addRocket(border);
-            // drawBorder(border);
+            //drawBorder(border);
 
         }
     }
