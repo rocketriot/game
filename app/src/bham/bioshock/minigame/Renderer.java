@@ -32,8 +32,8 @@ public class Renderer {
   private static boolean DEBUG_MODE = false;
   private final int GAME_WORLD_WIDTH = Config.GAME_WORLD_WIDTH;
   private final int GAME_WORLD_HEIGHT = Config.GAME_WORLD_HEIGHT;
-
   private Player mainPlayer;
+  private Clock clock;
   private ArrayList<Entity> entities;
 
   ShapeRenderer shapeRenderer;
@@ -48,7 +48,6 @@ public class Renderer {
   private MinigameStore store;
   private Gravity gravity;
   private Router router;
-
 
   public Renderer(MinigameStore store, Router router) {
     this.store = store;
@@ -68,6 +67,7 @@ public class Renderer {
     cam.update();
 
     loadSprites();
+//    startClock();
   }
 
 
@@ -82,8 +82,19 @@ public class Renderer {
       e.load();
     }
   }
-
+  
+//  public void startClock() {
+//    clock.every(0.01f, clock.new TimeListener() {
+//      @Override
+//      public void handle(TimeUpdateEvent event) {
+//        router.call(Route.MINIGAME_MOVE);
+//      }
+//    });
+//  }
+ 
   public void render(float delta) {
+//    clock.update(delta);
+  
     batch.setProjectionMatrix(cam.combined);
     shapeRenderer.setProjectionMatrix(cam.combined);
 

@@ -24,6 +24,7 @@ public enum Route {
   START_GAME        (JoinScreenController.class,    "start"),
 
   MOVE_PLAYER       (GameBoardController.class,     "move"),
+  MOVE_RECEIVED     (GameBoardController.class,     "moveReceived"),
   GAME_BOARD_SAVE   (GameBoardController.class,     "saveGameBoard"),
   PLAYERS_SAVE      (GameBoardController.class,     "savePlayers"),
   GAME_BOARD_SHOW   (GameBoardController.class,     "show"),
