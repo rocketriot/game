@@ -63,7 +63,7 @@ public class GameBoard implements Serializable {
 
     // Next to the planet
     for (Coordinates p : pos.getNearby()) {
-      if (pos.getX() > 0 && pos.getX() < GRID_SIZE && pos.getY() > 0 && pos.getY() < GRID_SIZE) {
+      if (pos.getX() > 0 && pos.getX() < GRID_SIZE - 1 && pos.getY() > 0 && pos.getY() < GRID_SIZE - 1) {
         if (getGridPoint(p).isType(GridPoint.Type.PLANET)) {
           return true;
         }

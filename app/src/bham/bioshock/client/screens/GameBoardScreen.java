@@ -70,6 +70,7 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
   private boolean drawRocketTrail;
   private boolean minigamePromptShown = false;
   private float msXCoords, msYCoords, rtXCoords, rtYCoords;
+  private int boardMovePointer = 0;
 
   public GameBoardScreen(Router router, Store store) {
     super(router);
@@ -120,7 +121,7 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
   private void drawPlayerMove(Player player) {
     GameBoard gameBoard = store.getGameBoard();
     BoardMove boardMove = player.getBoardMove();
-    if (boardMove.getDirections().size() == 0) {
+    if (boardMove.getDirections().size() == boardMovePointer) {
 
       if (gameBoard.isNextToThePlanet(player.getCoordinates()) && !minigamePromptShown) {
         this.minigamePromptShown = true;
@@ -129,6 +130,7 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
 
       this.drawRocketTrail = false;
       player.setBoardMove(null);
+      boardMovePointer = 0;
       if (player.equals(store.getMainPlayer())) {
         playerSelected = true;
         pathFinder.setStartPosition(player.getCoordinates());
@@ -141,21 +143,22 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
       movingSprite.setOriginCenter();
 
       // Only true for first call of each move
-      if (boardMove.getDirections().get(0).equals(Direction.NONE)) {
+      if (boardMovePointer == 0) {
         // Flag for renderer to draw rocket trail particle effects
         this.drawRocketTrail = true;
 
-        // Stops the renderer drawing the old path
-        playerSelected = false;
-        path = null;
+        if (player.equals(store.getMainPlayer())) {
+          // Stops the renderer drawing the old path
+          playerSelected = false;
+          path = null;
+        }
 
         msXCoords = boardMove.getStartCoords().getX();
         msYCoords = boardMove.getStartCoords().getY();
 
-        boardMove.getPosition().remove(0);
-        boardMove.getDirections().remove(0);
+        boardMovePointer += 1;
       }
-      switch (boardMove.getDirections().get(0)) {
+      switch (boardMove.getDirections().get(boardMovePointer)) {
         case UP:
           movingSprite.setRotation(0);
           msYCoords += distanceToMove;
@@ -163,10 +166,9 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
           rtXCoords = msXCoords + 0.5f;
           rtYCoords = msYCoords;
           setEmmiterAngle(rocketTrail, 0);
-          if (movingSprite.getY() >= boardMove.getPosition().get(0).getY() * PPS) {
-            movingSprite.setY(boardMove.getPosition().get(0).getY() * PPS);
-            boardMove.getPosition().remove(0);
-            boardMove.getDirections().remove(0);
+          if (movingSprite.getY() >= boardMove.getPosition().get(boardMovePointer).getY() * PPS) {
+            movingSprite.setY(boardMove.getPosition().get(boardMovePointer).getY() * PPS);
+            boardMovePointer += 1;
           }
           break;
         case DOWN:
@@ -176,10 +178,9 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
           rtXCoords = msXCoords + 0.5f;
           rtYCoords = msYCoords + 1;
           setEmmiterAngle(rocketTrail, 180);
-          if (movingSprite.getY() <= boardMove.getPosition().get(0).getY() * PPS) {
-            movingSprite.setY(boardMove.getPosition().get(0).getY() * PPS);
-            boardMove.getPosition().remove(0);
-            boardMove.getDirections().remove(0);
+          if (movingSprite.getY() <= boardMove.getPosition().get(boardMovePointer).getY() * PPS) {
+            movingSprite.setY(boardMove.getPosition().get(boardMovePointer).getY() * PPS);
+            boardMovePointer += 1;
           }
           break;
         case RIGHT:
@@ -189,10 +190,9 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
           rtXCoords = msXCoords;
           rtYCoords = msYCoords + 0.5f;
           setEmmiterAngle(rocketTrail, 270);
-          if (movingSprite.getX() >= boardMove.getPosition().get(0).getX() * PPS) {
-            movingSprite.setX(boardMove.getPosition().get(0).getX() * PPS);
-            boardMove.getPosition().remove(0);
-            boardMove.getDirections().remove(0);
+          if (movingSprite.getX() >= boardMove.getPosition().get(boardMovePointer).getX() * PPS) {
+            movingSprite.setX(boardMove.getPosition().get(boardMovePointer).getX() * PPS);
+            boardMovePointer += 1;
           }
           break;
         case LEFT:
@@ -202,10 +202,9 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
           rtXCoords = msXCoords + 1;
           rtYCoords = msYCoords + 0.5f;
           setEmmiterAngle(rocketTrail, 90);
-          if (movingSprite.getX() <= boardMove.getPosition().get(0).getX() * PPS) {
-            movingSprite.setX(boardMove.getPosition().get(0).getX() * PPS);
-            boardMove.getPosition().remove(0);
-            boardMove.getDirections().remove(0);
+          if (movingSprite.getX() <= boardMove.getPosition().get(boardMovePointer).getX() * PPS) {
+            movingSprite.setX(boardMove.getPosition().get(boardMovePointer).getX() * PPS);
+            boardMovePointer += 1;
           }
           break;
       }

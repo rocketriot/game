@@ -137,7 +137,7 @@ public class Hud implements Disposable {
     if (players.size() != store.MAX_PLAYERS) return;
 
     fuelBar.setValue(store.getMainPlayer().getFuel());
-    fuelString = "Fuel: " + store.getMainPlayer().getFuel() + "/100.0";
+    fuelString = "Fuel: " + store.getMainPlayer().getFuel();
     fuelLabel.setText(fuelString);
 
     table.clearChildren();
