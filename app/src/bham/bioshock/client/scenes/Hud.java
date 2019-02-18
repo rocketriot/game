@@ -2,7 +2,6 @@ package bham.bioshock.client.scenes;
 
 import bham.bioshock.client.Route;
 import bham.bioshock.client.Router;
-import bham.bioshock.client.controllers.GameBoardController;
 import bham.bioshock.common.models.Player;
 import bham.bioshock.common.models.store.Store;
 import com.badlogic.gdx.Gdx;
@@ -45,6 +44,7 @@ public class Hud implements Disposable {
     setupTopBar();
     setupFuelBar();
     setupScoreList();
+    setupBottomBar();
   }
 
   private void setupFuelBar() {
@@ -113,6 +113,21 @@ public class Hud implements Disposable {
       }
     });
   }
+
+  private void setupBottomBar() {
+    HorizontalGroup bottomBar = new HorizontalGroup();
+    bottomBar.bottom();
+    TextButton endTurnButton = new TextButton("End Turn", skin);
+    bottomBar.addActor(endTurnButton);
+    stage.addActor(bottomBar);
+    endTurnButton.addListener(new ChangeListener() {
+      @Override
+      public void changed(ChangeEvent event, Actor actor) {
+        router.call(Route.END_TURN);
+      }
+    });
+  }
+
 
   public void updateHud() {
     ArrayList<Player> players = store.getPlayers();

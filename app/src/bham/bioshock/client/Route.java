@@ -27,6 +27,7 @@ public enum Route {
   GAME_BOARD_SAVE   (GameBoardController.class,     "saveGameBoard"),
   PLAYERS_SAVE      (GameBoardController.class,     "savePlayers"),
   GAME_BOARD_SHOW   (GameBoardController.class,     "show"),
+  END_TURN          (GameBoardController.class,     "endTurn"),
 
   SEND_MINIGAME_START(MinigameController.class,     "sendStart"),
   START_MINIGAME    (MinigameController.class,      "show"),
