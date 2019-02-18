@@ -126,7 +126,7 @@ public class Store {
       turn = 0;
 
       // Increase player's fuel after each round
-      for (Player player : players) player.increaseFuel(5.0f);
+      for (Player player : players) player.increaseFuel(30.0f);
     }
   }
 
