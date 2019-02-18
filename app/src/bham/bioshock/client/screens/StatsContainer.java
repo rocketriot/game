@@ -1,7 +1,7 @@
 package bham.bioshock.client.screens;
 
 import bham.bioshock.common.models.Player;
-import bham.bioshock.common.models.Store;
+import bham.bioshock.common.models.store.Store;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.ui.Container;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;

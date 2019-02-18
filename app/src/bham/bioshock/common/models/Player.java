@@ -1,10 +1,11 @@
 package bham.bioshock.common.models;
 
-import java.io.Serializable;
 import java.util.UUID;
 
+import bham.bioshock.communication.Sendable;
+
 /** Stores the data of a player on the game board */
-public class Player implements Serializable {
+public class Player extends Sendable {
 
   private static final long serialVersionUID = 5775730008817100527L;
 

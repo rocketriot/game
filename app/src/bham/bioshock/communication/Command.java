@@ -19,7 +19,8 @@ public enum Command {
   MOVE_PLAYER_ON_BOARD,
 
   // Minigame
-  START_MINIGAME;
+  MINIGAME_START,
+  MINIGAME_PLAYER_MOVE;
 
   // @formatter:on
 

@@ -5,7 +5,7 @@ import com.google.inject.Inject;
 import bham.bioshock.client.BoardGame;
 import bham.bioshock.client.Router;
 import bham.bioshock.client.XMLReader;
-import bham.bioshock.common.models.Store;
+import bham.bioshock.common.models.store.Store;
 
 public class PreferencesController extends Controller {
 
