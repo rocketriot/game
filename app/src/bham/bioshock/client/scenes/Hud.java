@@ -45,6 +45,7 @@ public class Hud implements Disposable {
     setupTopBar();
     setupFuelBar();
     setupScoreList();
+    setupBottomBar();
   }
 
   private void setupFuelBar() {
@@ -111,6 +112,21 @@ public class Hud implements Disposable {
                 Gdx.app.exit();
                 break;
             }
+          }
+        });
+  }
+
+  private void setupBottomBar() {
+    HorizontalGroup bottomBar = new HorizontalGroup();
+    bottomBar.bottom();
+    TextButton endTurnButton = new TextButton("Skip Turn", skin);
+    bottomBar.addActor(endTurnButton);
+    stage.addActor(bottomBar);
+    endTurnButton.addListener(
+        new ChangeListener() {
+          @Override
+          public void changed(ChangeEvent event, Actor actor) {
+            router.call(Route.SKIP_TURN);
           }
         });
   }

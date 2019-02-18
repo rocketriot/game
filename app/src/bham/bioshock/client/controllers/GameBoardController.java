@@ -86,6 +86,11 @@ public class GameBoardController extends Controller {
     clientService.send(new Action(Command.MOVE_PLAYER_ON_BOARD, arguments));
   }
 
+  /** Skips a players turn by sending a move with the same coordinates */
+  public void skipTurn() {
+    move(store.getMainPlayer().getCoordinates());
+  }
+
   /** Player move received from the server */
   public void moveReceived(Player movingPlayer) {
     // Update the model
