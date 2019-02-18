@@ -38,11 +38,11 @@ public class MinigameHandler {
    * Sync player movement and position
    */
   public void playerMove(Action action, UUID playerId) {
-    MinigameStore localStore = store.getMinigameStore();
-    SpeedVector speed = (SpeedVector) action.getArgument(1);
-    Position pos = (Position) action.getArgument(2);
+//    MinigameStore localStore = store.getMinigameStore();
+//    SpeedVector speed = (SpeedVector) action.getArgument(1);
+//    Position pos = (Position) action.getArgument(2);
     
-    localStore.updatePlayer(playerId, speed, pos, null);
+    // localStore.updatePlayer(playerId, speed, pos, null);
     
     handler.sendToAllExcept(action, playerId);
   }
@@ -59,7 +59,7 @@ public class MinigameHandler {
     args.add(playerId);
     args.add(player.getPoints());
 
-    handler.sendToAll(new Action(Command.BACK_TO_BOARD, args));
+    handler.sendToAll(new Action(Command.MINIGAME_END, args));
 
   }
 }

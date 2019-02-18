@@ -82,7 +82,7 @@ public class Renderer {
   }
   
   public void startClock() {
-    clock.every(15, clock.new TimeListener() {
+    clock.at(15, clock.new TimeListener() {
       @Override
       public void handle(TimeUpdateEvent event) {
         router.call(Route.SERVER_MINIGAME_END);

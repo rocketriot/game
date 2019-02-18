@@ -17,8 +17,7 @@ public enum Command {
   GET_GAME_BOARD,
   UPDATE_GAME_BOARD,
   MOVE_PLAYER_ON_BOARD,
-  BACK_TO_BOARD,
-
+  
   // Minigame
   MINIGAME_START,
   MINIGAME_PLAYER_MOVE,
