@@ -1,7 +1,6 @@
 package bham.bioshock.minigame;
 
 
-import java.awt.*;
 import java.util.ArrayList;
 
 import bham.bioshock.client.Route;
@@ -9,13 +8,10 @@ import bham.bioshock.client.Router;
 
 import bham.bioshock.common.consts.Config;
 import bham.bioshock.common.models.store.MinigameStore;
-import bham.bioshock.minigame.Clock.TimeUpdateEvent;
 import bham.bioshock.minigame.models.Entity;
-import bham.bioshock.minigame.models.Map;
 import bham.bioshock.minigame.models.Player;
 import bham.bioshock.minigame.models.Rocket;
 import bham.bioshock.minigame.physics.Gravity;
-import bham.bioshock.minigame.worlds.FirstWorld;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
@@ -33,8 +29,6 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
-
-import java.util.ArrayList;
 
 public class Renderer {
     private Player mainPlayer;
