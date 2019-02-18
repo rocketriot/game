@@ -122,14 +122,14 @@ public class Hud implements Disposable {
     TextButton endTurnButton = new TextButton("Skip Turn", skin);
     bottomBar.addActor(endTurnButton);
     stage.addActor(bottomBar);
-    endTurnButton.addListener(new ChangeListener() {
-      @Override
-      public void changed(ChangeEvent event, Actor actor) {
-        router.call(Route.SKIP_TURN);
-      }
-    });
+    endTurnButton.addListener(
+        new ChangeListener() {
+          @Override
+          public void changed(ChangeEvent event, Actor actor) {
+            router.call(Route.SKIP_TURN);
+          }
+        });
   }
-
 
   public void updateHud() {
     ArrayList<Player> players = store.getPlayers();
