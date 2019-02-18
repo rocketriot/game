@@ -153,8 +153,10 @@ public class GameBoardController extends Controller {
         }
       }
     }
-    directions.add(currentDir);
-    position.add(lastPosition);
+    if (!currentDir.equals(Direction.NONE)) {
+      directions.add(currentDir);
+      position.add(lastPosition);
+    }
     BoardMove boardMove = new BoardMove(directions, position, startPosition, destination);
     store.getMainPlayer().setBoardMove(boardMove);
   }
