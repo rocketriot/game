@@ -17,7 +17,7 @@ import com.google.inject.Singleton;
 public class CommunicationClient {
 
   private static final Logger logger = LogManager.getLogger(CommunicationClient.class);
-  
+
   public static String hostAddress;
   public static int port = Config.PORT;
   private ClientService service = null;
@@ -54,20 +54,37 @@ public class CommunicationClient {
 
 
   public ClientService connect(String userName) throws ConnectException {
-    if(Config.SERVER_ADDRESS.length() == 0) {
+    if (Config.SERVER_ADDRESS.length() == 0) {
       ClientConnectThread c = new ClientConnectThread();
-      c.run();
+      long waiting = 0;
+      c.start();
+
+      // Wait for 5 seconds for the ClientConnectThread
+      try {
+        while (c.isAlive()) {
+          Thread.sleep(200);
+          waiting += 200;
+          
+          if(waiting > 5000) {
+            c.interrupt();
+            throw new ConnectException("IP address not configured and no server has been found");
+          }
+        }
+      } catch (InterruptedException e) {
+        e.printStackTrace();
+      }
+
     } else {
       CommunicationClient.hostAddress = Config.SERVER_ADDRESS;
     }
-    
+
     try {
       return createConnection();
     } catch (ConnectException e) {
     }
     throw new ConnectException("Connection unsuccessful");
   }
-  
+
   public static void setHostAddress(String address) {
     hostAddress = address;
   }

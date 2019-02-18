@@ -1,9 +1,9 @@
 package bham.bioshock.minigame.models;
 
 import bham.bioshock.common.Position;
-import bham.bioshock.minigame.World;
 import bham.bioshock.minigame.physics.Gravity;
 import bham.bioshock.minigame.physics.SpeedVector;
+import bham.bioshock.minigame.worlds.World;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
@@ -11,26 +11,30 @@ public abstract class Entity {
 
   protected final double GROUND_FRICTION = 0.2;
   private final double AIR_FRICTION = 0.001;
-  protected int SIZE = 50;
+  protected int size = 50;
   protected Position pos;
   protected boolean loaded = false;
   protected Sprite sprite;
   protected float fromGround;
   protected SpeedVector speed;
   private float rotation;
+  private World world;
+  private Gravity gravity;
 
-  public Entity(float x, float y) {
+  public Entity(World w, float x, float y) {
     pos = new Position(x, y);
+    gravity = new Gravity(w);
     speed = new SpeedVector();
     fromGround = 0;
+    world = w;
   }
 
-  public Entity() {
-    this(0f, 0f);
+  public Entity(World w) {
+    this(w, 0f, 0f);
   }
 
   public int getSize() {
-    return SIZE;
+    return size;
   }
 
   public Position getPos() {
@@ -50,11 +54,11 @@ public abstract class Entity {
   }
 
   public double distanceFromGround() {
-    double dx = getX() - World.GRAVITY_POS.x;
-    double dy = getY() - World.GRAVITY_POS.y;
+    double dx = getX() - world.gravityCenter().x;
+    double dy = getY() - world.gravityCenter().y;
 
     double toCenter = Math.sqrt(dx * dx + dy * dy);
-    return toCenter - (World.PLANET_RADIUS + fromGround);
+    return toCenter - (world.getPlanetRadius() + fromGround);
   }
 
   public double angleToCenterOfGravity() {
@@ -70,7 +74,7 @@ public abstract class Entity {
   }
 
   public double angleFromCenter() {
-    return Gravity.getAngleTo(getX(), getY());
+    return gravity.getAngleTo(getX(), getY());
   }
 
   public abstract TextureRegion getTexture();
@@ -97,7 +101,7 @@ public abstract class Entity {
     pos.x += speed.dX() * delta;
 
     if (isFlying()) {
-      speed.apply(angle, World.GRAVITY * delta);
+      speed.apply(angle, world.getGravity() * delta);
     } else {
       speed.stop(angleFromCenter);
     }

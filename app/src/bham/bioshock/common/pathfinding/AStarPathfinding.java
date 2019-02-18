@@ -3,8 +3,7 @@ package bham.bioshock.common.pathfinding;
 import bham.bioshock.common.consts.GridPoint;
 import bham.bioshock.common.models.Coordinates;
 import bham.bioshock.common.models.Player;
-import bham.bioshock.common.models.Store;
-
+import bham.bioshock.common.models.store.Store;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;

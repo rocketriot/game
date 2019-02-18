@@ -32,19 +32,37 @@ public class Action implements Serializable, Comparable<Action> {
    */
   public Action(Command _command, ArrayList<Serializable> _arguments) {
     command = _command;
-    arguments = _arguments;
     created = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC);
+    if(_arguments == null) return;
+    ArrayList<Serializable> args = new ArrayList<>();
+    Class<Sendable> sendable = Sendable.class;
+    
+    for(Serializable s : _arguments) {
+      if(sendable.isInstance(s)) {
+        args.add( (Serializable) (((Sendable) s).clone()) );
+      } else {
+        args.add(s);
+      }
+    }
+    
+    arguments = args;
   }
 
   public Action(Command _command) {
-    this(_command, null);
+    this(_command, new ArrayList<>());
   }
-
+  
   public Action(Command _command, Serializable _message) {
     this(_command, new ArrayList<>());
     arguments.add(_message);
   }
-
+  
+  public Action(Command _command, Sendable _message) {
+    this(_command, new ArrayList<>());
+    arguments.add(_message.clone());
+  }
+  
+  
   /**
    * Gets the name of the command
    *

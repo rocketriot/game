@@ -98,7 +98,6 @@ public class GameBoard implements Serializable {
     if (randomFloat <= 0.035) {
       // Check if there's enough space to generate the planet
       if (isEnoughSpace(x, y, Planet.WIDTH, Planet.HEIGHT)) {
-          System.out.println("Planet");
           // Create a new planet
           Planet planet = new Planet("test", new Coordinates(x, y));
 

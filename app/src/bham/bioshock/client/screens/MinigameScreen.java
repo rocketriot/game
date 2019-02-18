@@ -1,20 +1,16 @@
 package bham.bioshock.client.screens;
 
+import bham.bioshock.client.Router;
+import bham.bioshock.common.models.store.MinigameStore;
 import bham.bioshock.minigame.Renderer;
-import bham.bioshock.minigame.World;
-import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Screen;
 
 public class MinigameScreen implements Screen {
 
-  private Game game;
   private Renderer renderer;
-  private World world;
 
-  public MinigameScreen(Game game, World world) {
-    this.game = game;
-    this.world = world;
-    this.renderer = new Renderer(world);
+  public MinigameScreen(MinigameStore store, Router router) {
+    this.renderer = new Renderer(store, router);
   }
 
   @Override

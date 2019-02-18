@@ -12,7 +12,7 @@ import bham.bioshock.common.models.Coordinates;
 import bham.bioshock.common.models.GameBoard;
 import bham.bioshock.common.models.Planet;
 import bham.bioshock.common.models.Player;
-import bham.bioshock.common.models.Store;
+import bham.bioshock.common.models.store.Store;
 import bham.bioshock.common.pathfinding.AStarPathfinding;
 import com.badlogic.gdx.*;
 import com.badlogic.gdx.files.FileHandle;
@@ -597,8 +597,8 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
       Coordinates gridCoords =
           new Coordinates((int) mouseCoords.x / PPS, (int) mouseCoords.y / PPS);
       if (!oldGridCoords.isEqual(gridCoords)) {
-        if (gridCoords.getX() < gridSize - 1 && gridCoords.getX() >= 0) {
-          if (gridCoords.getY() < gridSize - 1 && gridCoords.getY() >= 0) {
+        if (gridCoords.getX() < gridSize && gridCoords.getX() >= 0) {
+          if (gridCoords.getY() < gridSize && gridCoords.getY() >= 0) {
             if (!gridCoords.isEqual(store.getMainPlayer().getCoordinates())) {
               path = pathFinder.pathfind(gridCoords);
               oldGridCoords = gridCoords;
