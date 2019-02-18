@@ -53,15 +53,6 @@ public class GameBoardHandler {
     response.add(movingPlayer);
     handler.sendToAll(new Action(Command.MOVE_PLAYER_ON_BOARD, response));
 
-    // Get grid point the user landed on
-    GridPoint gridPoint = gameBoard.getGridPoint(movingPlayer.getCoordinates());
-
-    // If the player landed on a planet, start a minigame
-    if (gridPoint.getType() == GridPoint.Type.PLANET) {
-      // TODO: randomly pick a minigame type
-    //  handler.sendToAll(new Action(Command.START_MINIGAME));
-    }
-
     store.nextTurn();
   }
 }
