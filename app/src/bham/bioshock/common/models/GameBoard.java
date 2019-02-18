@@ -93,28 +93,28 @@ public class GameBoard implements Serializable {
 
       return;
     }
-
+    
     // Generate a planet
-    // Check if able to fit a planet in the grid
-    if (randomFloat <= 0.030 && x < GRID_SIZE - 2 && y < GRID_SIZE - 2) {
-      // Check if the planet will overwrite an asteroid
-      if (grid[x + 2][y] == null && grid[x][y + 2] == null && grid[x + 2][y + 2] == null) {
-        // Create a new planet
-        Planet planet = new Planet("test", new Coordinates(x, y));
+    if (randomFloat <= 0.035) {
+      // Check if there's enough space to generate the planet
+      if (isEnoughSpace(x, y, Planet.WIDTH, Planet.HEIGHT)) {
+          System.out.println("Planet");
+          // Create a new planet
+          Planet planet = new Planet("test", new Coordinates(x, y));
 
-        // Add the planet to the 3x3 space it takes up on the grid
-        for (int i = x; i < x + 3; i++)
-          for (int j = y; j < y + 3; j++) grid[i][j] = new GridPoint(GridPoint.Type.PLANET, planet);
+          // Add the planet to the 3x3 space it takes up on the grid
+          for (int i = x; i < x + 3; i++)
+            for (int j = y; j < y + 3; j++)
+              grid[i][j] = new GridPoint(GridPoint.Type.PLANET, planet);
       }
 
       return;
     }
 
     // Generate an asteroid
-    // Check if able to fit an asteroid in the grid
-    if (randomFloat <= 0.04 && x < GRID_SIZE - 3 && y < GRID_SIZE - 4) {
-      // Check if the asteroid will overwrite an planet
-      if (grid[x + 3][y] == null && grid[x][y + 2] == null && grid[x + 2][y + 3] == null) {
+    if (randomFloat <= 0.05) {
+      // Check if there's enough space to generate the asteroid
+      if (isEnoughSpace(x, y, Asteroid.WIDTH, Asteroid.HEIGHT)) {
         // Create a new asteroid
         Asteroid asteroid = new Asteroid("test", new Coordinates(x, y));
 
@@ -124,6 +124,22 @@ public class GameBoard implements Serializable {
             grid[i][j] = new GridPoint(GridPoint.Type.ASTEROID, asteroid);
       }
     }
+  }
+
+  /** Checks if there is enough space to generated an entity */
+  private boolean isEnoughSpace(int x, int y, int width, int height) {
+    // Check if within grid bounds
+    if (x + width >= GRID_SIZE || y + height >= GRID_SIZE) return false;
+
+    // Go through spaces around entity and check if it's empty
+    for (int i = x; i <= x + width; i++) {
+      for (int j = y; j <= y + height; j++) {
+        // If space is rendered and not EMPTY, there's not space
+        if (grid[i][j] != null && !grid[i][j].isType(GridPoint.Type.EMPTY)) return false;
+      }
+    }
+
+    return true;
   }
 
   public GridPoint[][] getGrid() {

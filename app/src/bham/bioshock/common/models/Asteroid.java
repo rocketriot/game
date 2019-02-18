@@ -30,6 +30,13 @@ public class Asteroid implements Serializable {
   /** The texture ID for the object */
   private int textureID;
 
+  /** Width of the asteroid */
+  public final static int WIDTH = 3;
+
+  /** Height of the asteroid */
+  public final static int HEIGHT = 4;
+  
+
   public Asteroid(String name, Coordinates coordinates) {
     this.id = UUID.randomUUID();
     this.name = name;

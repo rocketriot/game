@@ -30,6 +30,12 @@ public class Planet implements Serializable {
   /** The texture ID for the object */
   private int textureID;
 
+  /** Width of the planet */
+  public final static int WIDTH = 3;
+  
+  /** Height of the planet */
+  public final static int HEIGHT = 4;
+
   public Planet(String name, Coordinates coordinates) {
     this.id = UUID.randomUUID();
     this.name = name;
