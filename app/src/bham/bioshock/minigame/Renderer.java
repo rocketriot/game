@@ -7,7 +7,6 @@ import bham.bioshock.client.Router;
 import bham.bioshock.common.consts.Config;
 import bham.bioshock.common.models.store.MinigameStore;
 import bham.bioshock.minigame.models.Entity;
-import bham.bioshock.minigame.models.Map;
 import bham.bioshock.minigame.models.Player;
 import bham.bioshock.minigame.models.Rocket;
 import bham.bioshock.minigame.physics.Gravity;
@@ -22,7 +21,6 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Circle;
-import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -30,6 +28,11 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
 public class Renderer {
+
+  private static boolean DEBUG_MODE = false;
+  private final int GAME_WORLD_WIDTH = Config.GAME_WORLD_WIDTH;
+  private final int GAME_WORLD_HEIGHT = Config.GAME_WORLD_HEIGHT;
+
   private Player mainPlayer;
   private ArrayList<Entity> entities;
 
@@ -42,14 +45,9 @@ public class Renderer {
   private SpriteBatch backgroundBatch;
   private Viewport viewport;
   private double camRotation;
-  private Map map;
-  private final int GAME_WORLD_WIDTH = Config.GAME_WORLD_WIDTH;
-  private final int GAME_WORLD_HEIGHT = Config.GAME_WORLD_HEIGHT;
-  private Circle mainPlanet;
   private MinigameStore store;
   private Gravity gravity;
   private Router router;
-  private static boolean DEBUG_MODE = false;
 
 
   public Renderer(MinigameStore store, Router router) {
@@ -63,7 +61,6 @@ public class Renderer {
     gravity = new Gravity(store.getWorld());
 
     cam = new OrthographicCamera();
-    map = new Map(store);
     batch = new SpriteBatch();
     backgroundBatch = new SpriteBatch();
     camRotation = 0;
@@ -122,31 +119,27 @@ public class Renderer {
 
     shapeRenderer.circle(0, 0, (float) store.getPlanetRadius());
     // bounding circle
-    mainPlanet = new Circle(0, 0, (float) store.getPlanetRadius() - 50);
-
+    new Circle(0, 0, (float) store.getPlanetRadius() - 50);
+    
     shapeRenderer.end();
   }
 
   public void drawCollisionBorders() {
     for (Entity e : entities) {
-      drawBorder(e.getRectangle());
+      Rectangle border = e.getRectangle();
+      shapeRenderer.begin(ShapeType.Filled);
+      shapeRenderer.setColor(Color.BLACK);
+      shapeRenderer.rect(border.getX(), border.getY(), border.getWidth(), border.getHeight());
+      shapeRenderer.end();
     }
-  }
-
-
-  public void drawBorder(Rectangle border) {
-    shapeRenderer.begin(ShapeType.Filled);
-    shapeRenderer.setColor(Color.BLACK);
-    shapeRenderer.rect(border.getX(), border.getY(), border.getWidth(), border.getHeight());
-    shapeRenderer.end();
   }
 
   public void handleCollisions() {
     // Check collisions between any two entities
     for (Entity e1 : entities) {
       for (Entity e2 : entities) {
-        if(!e1.equals(e2)) {
-          e1.checkCollision(e2);          
+        if (!e1.equals(e2)) {
+          e1.checkCollision(e2);
         }
       }
     }
