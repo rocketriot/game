@@ -12,6 +12,7 @@ import bham.bioshock.communication.Action;
 import bham.bioshock.communication.Command;
 import bham.bioshock.communication.client.IClientService;
 import com.google.inject.Inject;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Random;
@@ -20,8 +21,8 @@ public class GameBoardController extends Controller {
   private IClientService clientService;
 
   @Inject
-  public GameBoardController(Router router, Store store, IClientService clientService,
-      BoardGame game) {
+  public GameBoardController(
+      Router router, Store store, IClientService clientService, BoardGame game) {
     super(store, router, game);
     this.clientService = clientService;
     this.router = router;
@@ -41,7 +42,6 @@ public class GameBoardController extends Controller {
     store.setPlayers(players);
   }
 
-
   public void move(Coordinates destination) {
     GameBoard gameBoard = store.getGameBoard();
     GridPoint[][] grid = gameBoard.getGrid();
@@ -49,8 +49,9 @@ public class GameBoardController extends Controller {
 
     // Initialize path finding
     int gridSize = store.getGameBoard().GRID_SIZE;
-    AStarPathfinding pathFinder = new AStarPathfinding(grid, mainPlayer.getCoordinates(), gridSize,
-        gridSize, store.getPlayers());
+    AStarPathfinding pathFinder =
+        new AStarPathfinding(
+            grid, mainPlayer.getCoordinates(), gridSize, gridSize, store.getPlayers());
     pathFinder.setStartPosition(mainPlayer.getCoordinates());
     Coordinates startCoords = mainPlayer.getCoordinates();
 
@@ -91,18 +92,14 @@ public class GameBoardController extends Controller {
   }
 
   /** Player move received from the server */
-  public void moveReceived(Action action) {
-    // Get game board and player from arguments and update the model
-    GameBoard gameBoard = (GameBoard) action.getArgument(0);
-    Player movingPlayer = (Player) action.getArgument(1);
-    store.setGameBoard(gameBoard);
+  public void moveReceived(Player movingPlayer) {
+    // Update the model
     store.updatePlayer(movingPlayer);
-
     store.nextTurn();
   }
 
-  private void generateMove(ArrayList<Coordinates> path, Coordinates destination,
-      Coordinates startPosition) {
+  private void generateMove(
+      ArrayList<Coordinates> path, Coordinates destination, Coordinates startPosition) {
     ArrayList<Direction> directions = new ArrayList<>();
     ArrayList<Coordinates> position = new ArrayList<>();
     Coordinates lastPosition = startPosition;

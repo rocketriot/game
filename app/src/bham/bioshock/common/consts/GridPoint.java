@@ -24,12 +24,12 @@ public class GridPoint implements Serializable {
     return type;
   }
 
-  public boolean isType(GridPoint.Type t) {
-    return type.equals(t);
-  }
-  
   public void setType(GridPoint.Type type) {
     this.type = type;
+  }
+
+  public boolean isType(GridPoint.Type t) {
+    return type.equals(t);
   }
 
   public Object getValue() {

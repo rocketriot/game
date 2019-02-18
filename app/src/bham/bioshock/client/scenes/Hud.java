@@ -13,18 +13,18 @@ import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.viewport.FitViewport;
+
 import java.util.ArrayList;
 
 public class Hud implements Disposable {
-
-  private Store store;
-  private Router router;
 
   private final Skin skin;
   private final float gameWidth;
   private final float gameHeight;
   public Stage stage;
   public FitViewport viewport;
+  private Store store;
+  private Router router;
   private HorizontalGroup topBar;
   private SelectBox optionsMenu;
   private ProgressBar fuelBar;
@@ -33,7 +33,8 @@ public class Hud implements Disposable {
   private Table table;
   private ArrayList<Label> labels;
 
-  public Hud(SpriteBatch batch, Skin skin, int gameWidth, int gameHeight, Store store, Router router) {
+  public Hud(
+      SpriteBatch batch, Skin skin, int gameWidth, int gameHeight, Store store, Router router) {
     this.store = store;
     this.router = router;
     this.skin = skin;
@@ -92,26 +93,27 @@ public class Hud implements Disposable {
     stage.addActor(topBar);
 
     // Add listeners for each option
-    optionsMenu.addListener(new ChangeListener() {
-      @Override
-      public void changed(ChangeEvent event, Actor actor) {
-        int selected = optionsMenu.getSelectedIndex();
-        switch (selected) {
-          case 1:
-            optionsMenu.setSelected(menuOptions[0]);
-            router.call(Route.PREFERENCES);
-            break;
-          case 2:
-            optionsMenu.setSelected(menuOptions[0]);
-            router.call(Route.MAIN_MENU);
-            break;
-          case 3:
-            optionsMenu.setSelected(menuOptions[0]);
-            Gdx.app.exit();
-            break;
-        }
-      }
-    });
+    optionsMenu.addListener(
+        new ChangeListener() {
+          @Override
+          public void changed(ChangeEvent event, Actor actor) {
+            int selected = optionsMenu.getSelectedIndex();
+            switch (selected) {
+              case 1:
+                optionsMenu.setSelected(menuOptions[0]);
+                router.call(Route.PREFERENCES);
+                break;
+              case 2:
+                optionsMenu.setSelected(menuOptions[0]);
+                router.call(Route.MAIN_MENU);
+                break;
+              case 3:
+                optionsMenu.setSelected(menuOptions[0]);
+                Gdx.app.exit();
+                break;
+            }
+          }
+        });
   }
 
   private void setupBottomBar() {

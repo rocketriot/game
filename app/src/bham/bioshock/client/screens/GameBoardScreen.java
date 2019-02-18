@@ -32,17 +32,15 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 import java.util.ArrayList;
 
 public class GameBoardScreen extends ScreenMaster implements InputProcessor {
-  /** The game data */
-  private Store store;
-
-  /** Pathfinding for player movement */
-  private AStarPathfinding pathFinder;
-  private ArrayList<Coordinates> path = new ArrayList<>();
-  
   private final InputMultiplexer inputMultiplexer;
   private final int GAME_WORLD_WIDTH = Config.GAME_WORLD_WIDTH;
   private final int GAME_WORLD_HEIGHT = Config.GAME_WORLD_HEIGHT;
+  /** The game data */
+  private Store store;
+  /** Pathfinding for player movement */
+  private AStarPathfinding pathFinder;
 
+  private ArrayList<Coordinates> path = new ArrayList<>();
   private SpriteBatch batch;
   private Sprite background;
   private OrthographicCamera camera;
@@ -74,9 +72,9 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
 
   public GameBoardScreen(Router router, Store store) {
     super(router);
-    
+
     this.store = store;
-    
+
     this.batch = new SpriteBatch();
     this.sh = new ShapeRenderer();
 
@@ -94,9 +92,9 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
     this.movingSprite = new Sprite();
 
     generateEffects();
-    
+
     setupUI();
-    
+
     // Setup the input processing
     this.inputMultiplexer = new InputMultiplexer();
     this.inputMultiplexer.addProcessor(hud.getStage());
@@ -105,7 +103,8 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
 
   private void generateEffects() {
     rocketTrail = new ParticleEffect();
-    rocketTrail.load(Gdx.files.internal("app/assets/particle-effects/rocket-trail.p"),
+    rocketTrail.load(
+        Gdx.files.internal("app/assets/particle-effects/rocket-trail.p"),
         Gdx.files.internal("app/assets/particle-effects"));
     rocketTrail.start();
     effects.add(rocketTrail);
@@ -115,20 +114,18 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
     hud = new Hud(batch, skin, GAME_WORLD_WIDTH, GAME_WORLD_HEIGHT, store, router);
     background = new Sprite(new Texture(Gdx.files.internal("app/assets/backgrounds/game.png")));
   }
-  
-  /**
-   * Draws the player move
-   */
+
+  /** Draws the player move */
   private void drawPlayerMove(Player player) {
     GameBoard gameBoard = store.getGameBoard();
     BoardMove boardMove = player.getBoardMove();
     if (boardMove.getDirections().size() == 0) {
-      
-      if(gameBoard.isNextToThePlanet(player.getCoordinates()) && !minigamePromptShown) {
+
+      if (gameBoard.isNextToThePlanet(player.getCoordinates()) && !minigamePromptShown) {
         this.minigamePromptShown = true;
-        showMinigamePrompt();        
+        showMinigamePrompt();
       }
-      
+
       this.drawRocketTrail = false;
       player.setBoardMove(null);
       if (player.equals(store.getMainPlayer())) {
@@ -245,9 +242,8 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
             Planet planet = (Planet) grid[x][y].getValue();
 
             // Check if planet has already been drawn
-            if (!planet.getCoordinates().isEqual(new Coordinates(x, y)))
-              continue;
-            
+            if (!planet.getCoordinates().isEqual(new Coordinates(x, y))) continue;
+
             sprite = planetSprites.get(planet.getTextureID());
             break;
 
@@ -255,32 +251,32 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
             Asteroid asteroid = (Asteroid) grid[x][y].getValue();
 
             // Check if asteroid has already been drawn
-            if (!asteroid.getCoordinates().isEqual(new Coordinates(x, y)))
-              continue;
-  
+            if (!asteroid.getCoordinates().isEqual(new Coordinates(x, y))) continue;
+
             sprite = asteroidSprites.get(asteroid.getTextureID());
             break;
 
           case FUEL:
             sprite = fuelSprite;
             break;
-          
+
           case EMPTY:
             continue;
 
           default:
             break;
         }
-          
+
         // Draw Sprite
         sprite.setX(x * PPS);
         sprite.setY(y * PPS);
         sprite.draw(batch);
       }
     }
+  }
 
+  private void drawPlayers() {
     boolean drawnMove = false;
-
     // Draw players
     for (Player player : store.getPlayers()) {
       if (player.getBoardMove() != null && !drawnMove) {
@@ -346,8 +342,13 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
   @Override
   public void show() {
     Gdx.input.setInputProcessor(inputMultiplexer);
-    pathFinder = new AStarPathfinding(store.getGameBoard().getGrid(),
-        store.getMainPlayer().getCoordinates(), gridSize, gridSize, store.getPlayers());
+    pathFinder =
+        new AStarPathfinding(
+            store.getGameBoard().getGrid(),
+            store.getMainPlayer().getCoordinates(),
+            gridSize,
+            gridSize,
+            store.getPlayers());
   }
 
   @Override
@@ -387,18 +388,17 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
     handleInput();
     camera.update();
 
-    
     batch.begin();
-    
+
     drawBackground();
     drawBoardObjects();
-    drawPath();
+    drawPlayers();
     drawEffects(delta);
 
     batch.end();
 
+    drawPath();
     drawGridLines();
-    
 
     // Draw the ui
     this.batch.setProjectionMatrix(hud.stage.getCamera().combined);
@@ -534,13 +534,12 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
   @Override
   public boolean touchDown(int screenX, int screenY, int pointer, int button) {
     Vector3 clickCoords = getWorldCoords(screenX, screenY);
+    Player player = store.getMainPlayer();
+    Player movingPlayer = store.getMovingPlayer();
     if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
       // Used for mouse panning
       mouseDownX = screenX;
       mouseDownY = screenY;
-
-      // Selecting your ship
-      Player player = store.getMainPlayer();
 
       if (clickCoords.x >= player.getCoordinates().getX() * PPS
           && clickCoords.x <= (player.getCoordinates().getX() + 1) * PPS) {
@@ -552,10 +551,15 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
       }
       return true;
     } else if (Gdx.input.isButtonPressed(Input.Buttons.RIGHT)) {
+
+      // Do nothing if it's not the client's turn to move
+      if (!movingPlayer.getId().equals(player.getId())) return true;
+
       this.minigamePromptShown = false;
       // Move ship to click position
-      Coordinates gridCoords = new Coordinates((int) clickCoords.x / PPS,
-          (int) clickCoords.y / PPS);
+      Coordinates gridCoords =
+          new Coordinates((int) clickCoords.x / PPS, (int) clickCoords.y / PPS);
+
       if (!store.getMainPlayer().getCoordinates().isEqual(gridCoords)) {
         router.call(Route.MOVE_PLAYER, gridCoords);
         return true;
@@ -625,23 +629,21 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
     return false;
   }
 
-  /**
-   * Method to ask the user whether they want to start the minigame or not
-   */
+  /** Method to ask the user whether they want to start the minigame or not */
   private void showMinigamePrompt() {
-    Dialog diag = new Dialog("Start Minigame", skin) {
+    Dialog diag =
+        new Dialog("Start Minigame", skin) {
 
-      protected void result(Object object) {
+          protected void result(Object object) {
 
-        if (object.equals(true)) {
-          System.out.println("Starting minigame");
-          router.call(Route.START_MINIGAME);
-        } else {
-          System.out.println("Minigame not started");
-        }
-      }
-
-    };
+            if (object.equals(true)) {
+              System.out.println("Starting minigame");
+              router.call(Route.START_MINIGAME);
+            } else {
+              System.out.println("Minigame not started");
+            }
+          }
+        };
 
     diag.text(new Label("Would you like to start a minigame to take over the planet?", skin));
     diag.button("Yes", true);
