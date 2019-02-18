@@ -1,14 +1,9 @@
 package bham.bioshock.minigame.physics;
 
-import com.badlogic.gdx.math.Rectangle;
+
+import bham.bioshock.minigame.models.Entity;
 
 public class Collision {
-
-  private Rectangle rect1;
-
-
-  public Collision() {
-
-  }
+  
 
 }

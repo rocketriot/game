@@ -85,14 +85,49 @@ public class SpeedVectorTests {
 		v.stop(225);
 		assertEquals(-50, v.dX());
 		assertEquals(50, v.dY());
+		
+		SpeedVector v2 = new SpeedVector();
+		v2.apply(0, 200);
+		v2.stop(180);
+		assertEquals(200, v2.dY());
 	}
 	
 	@Test
-	public void testFriction() {
-		SpeedVector v = new SpeedVector();
-		
-		v.apply(90, 100);
-		v.friction(0.5);
+	public void testBasicCollisions() {
+	  SpeedVector v1 = new SpeedVector();
+	  SpeedVector v2 = new SpeedVector();
+	  
+	  // opposite directions
+	  v1.apply(90, 100);
+	  assertEquals(100, v1.dX());
+	  
+	  v2.apply(90, -100);
+	  assertEquals(-100, v2.dX());
+	  
+	  // elastic collision = should swap directions
+	  v1.collide(v2, 1);
+	  assertEquals(-100, v1.dX());
+	  assertEquals(100, v2.dX());
+	  
+	  v1.stop(270);
+	  assertEquals(0, v1.dX());
+	  
+	  // elastic collision - one speed is 0
+	  v1.collide(v2, 1);
+	  assertEquals(100, v1.dX());
+	  assertEquals(0, v2.dX());
+	  
+	  v1.stop(v1.getSpeedAngle());
+	  assertEquals(0, v1.dX());
 	}
+	
+	@Test
+	public void testCollisionsDirections() {
+	   SpeedVector v1 = new SpeedVector();
+	   SpeedVector v2 = new SpeedVector();
+	   
+
+	}
+	
 	
 }

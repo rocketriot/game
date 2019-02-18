@@ -25,6 +25,8 @@ public class Player extends Entity {
     animationTime = 0;
     fromGround = -25;
     update(0);
+    collisionWidth = 75;
+    collisionHeight = 150;
   }
   
   public Player(World w, Position p) {
@@ -110,6 +112,12 @@ public class Player extends Entity {
       region.flip(true, false);
     }
     return region;
+  }
+  
+  /** Collisions **/
+  @Override
+  public void handleCollision(Entity e) {
+
   }
   
 }

@@ -16,7 +16,9 @@ public class Rocket extends Entity {
   public Rocket(World w, float _x, float _y, int _color) {
     super(w, _x, _y);
     color = _color;
-    size = 300;
+    size = 400;
+    collisionHeight = 400;
+    collisionWidth = 200;
   }
 
   public static void loadTextures() {
@@ -34,6 +36,10 @@ public class Rocket extends Entity {
     texture = new TextureRegion(textures.get(color));
     super.load();
     sprite.setOrigin(sprite.getWidth() / 2, 0);
+  }
+  
+  @Override
+  public void handleCollision(Entity e) {
 
   }
 }
