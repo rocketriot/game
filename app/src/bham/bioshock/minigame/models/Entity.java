@@ -6,6 +6,7 @@ import bham.bioshock.minigame.physics.SpeedVector;
 import bham.bioshock.minigame.worlds.World;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.Rectangle;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -120,25 +121,30 @@ public abstract class Entity {
 
   }
 
-
-  public void col(float delta) {
-    double angle = angleToCenterOfGravity();
-    double angleFromCenter = angleFromCenter();
-    speed.stop(angleFromCenter);
-
+  public void checkCollision(Entity e) {
+    if( Intersector.overlaps(getRectangle(), e.getRectangle()) ) {
+      handleCollision(e);
+    }
+  }
+  
+  /*
+   * Default behaviour for the collision.
+   * Can be overwritten by the subclass
+   */
+  public void handleCollision(Entity e) {
+    double speedAngle = speed.getSpeedAngle();
+    speed.stop(speedAngle);
+    speed.apply(-speedAngle, 20);
   }
 
   // returns rectangle of the sprite
   public Rectangle getRectangle() {
-    // Rectangle r = new Rectangle(sprite.getBoundingRectangle().getX(),
-    // sprite.getBoundingRectangle().getY(), sprite.getBoundingRectangle().getWidth()/2.0f,
-    // sprite.getBoundingRectangle().getHeight(),)
     Rectangle border = sprite.getBoundingRectangle();
-    // System.out.println(border);
+
     float new_width = border.getWidth() * 0.5f;
     float x = border.getX() + (border.width - new_width) / 2f;
     Rectangle r = new Rectangle(x, border.getY(), new_width, border.height);
-    // System.out.println(r);
+
     return r;
   }
 
