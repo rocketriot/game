@@ -149,4 +149,7 @@ public class Store {
   public MinigameStore getMinigameStore() {
     return this.minigameStore;
   }
+  public void resetMinigameStore(){
+    minigameStore = null;
+  }
 }

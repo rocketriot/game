@@ -1,5 +1,6 @@
 package bham.bioshock.server.handlers;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.UUID;
 import bham.bioshock.common.Position;
@@ -7,6 +8,7 @@ import bham.bioshock.common.models.Player;
 import bham.bioshock.common.models.store.MinigameStore;
 import bham.bioshock.common.models.store.Store;
 import bham.bioshock.communication.Action;
+import bham.bioshock.communication.Command;
 import bham.bioshock.communication.server.ServerHandler;
 import bham.bioshock.minigame.physics.SpeedVector;
 import bham.bioshock.minigame.worlds.FirstWorld;
@@ -51,5 +53,13 @@ public class MinigameHandler {
   public void endMinigame(Action action, UUID playerId){
     Player player = store.getPlayer(playerId);
     player.addPoints(100);
+    store.resetMinigameStore();
+
+    ArrayList<Serializable> args = new ArrayList<>();
+    args.add(playerId);
+    args.add(player.getPoints());
+
+    handler.sendToAll(new Action(Command.BACK_TO_BOARD, args));
+
   }
 }
