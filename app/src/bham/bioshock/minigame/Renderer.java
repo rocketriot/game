@@ -66,7 +66,7 @@ public class Renderer {
     cam.update();
 
     loadSprites();
-//    startClock();
+    startClock();
   }
 
   public void loadSprites() {
@@ -81,17 +81,17 @@ public class Renderer {
     }
   }
   
-//  public void startClock() {
-//    clock.every(0.01f, clock.new TimeListener() {
-//      @Override
-//      public void handle(TimeUpdateEvent event) {
-//        router.call(Route.MINIGAME_MOVE);
-//      }
-//    });
-//  }
+  public void startClock() {
+    clock.every(15, clock.new TimeListener() {
+      @Override
+      public void handle(TimeUpdateEvent event) {
+        router.call(Route.SERVER_MINIGAME_END);
+      }
+    });
+  }
  
   public void render(float delta) {
-//    clock.update(delta);
+    clock.update(delta);
   
     batch.setProjectionMatrix(cam.combined);
     renderer.setProjectionMatrix(cam.combined);

@@ -63,6 +63,10 @@ public class MinigameController extends Controller {
     setScreen(new MinigameScreen(localStore, router));
   }
 
+  public void sendEnd(){
+    clientService.send(new Action(Command.MINIGAME_END));
+  }
+
   public void end(ArrayList<Serializable> arguments){
     // end the minigame and send players back to the board
     UUID playerId = (UUID) arguments.get(0);
