@@ -25,7 +25,7 @@ public abstract class Entity {
   private float rotation;
   protected float fromGround;
   protected SpeedVector speed;
-  private World world;
+  public World world;
   private Gravity gravity;
 
   public Entity(World w, float x, float y) {

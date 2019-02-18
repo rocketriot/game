@@ -6,10 +6,7 @@ import bham.bioshock.client.Route;
 import bham.bioshock.client.Router;
 import bham.bioshock.common.consts.Config;
 import bham.bioshock.common.models.store.MinigameStore;
-import bham.bioshock.minigame.models.Entity;
-import bham.bioshock.minigame.models.Map;
-import bham.bioshock.minigame.models.Player;
-import bham.bioshock.minigame.models.Rocket;
+import bham.bioshock.minigame.models.*;
 import bham.bioshock.minigame.physics.Gravity;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
@@ -96,6 +93,8 @@ public class Renderer {
 
         handleCollisions();
         updatePosition();
+        shoot();
+
         cam.position.lerp(lerpTarget.set(mainPlayer.getX(), mainPlayer.getY(), 0), 3f * delta);
 
         double rotation = -gravity.getAngleTo(cam.position.x, cam.position.y);
@@ -112,6 +111,7 @@ public class Renderer {
         drawPlanet();
         batch.begin();
         drawEntities();
+
         batch.end();
     }
 
@@ -140,6 +140,15 @@ public class Renderer {
         shapeRenderer.rect(border.getX(), border.getY(), border.getWidth(), border.getHeight());
         shapeRenderer.end();
     }
+
+
+    public void drawBullet(float x, float y) {
+        shapeRenderer.begin(ShapeType.Filled);
+        shapeRenderer.setColor(Color.BLACK);
+        shapeRenderer.circle(x, y, 10);
+        shapeRenderer.end();
+    }
+
 
     public void handleCollisions() {
         // Check collisions between any two entities
@@ -193,6 +202,23 @@ public class Renderer {
 
     public void resize(int width, int height) {
         stage.getViewport().update(width, height, true);
+    }
+
+    public void shoot(){
+        if(Gdx.input.isButtonPressed(Input.Buttons.LEFT)){
+            float xBullet;
+            if(mainPlayer.getX() >0)
+                xBullet = mainPlayer.getX() + mainPlayer.getSprite().getHeight()/2;
+            else
+                xBullet = mainPlayer.getX() - mainPlayer.getSprite().getHeight()/2;
+
+            Bullet b = new Bullet (store.getWorld(),xBullet,mainPlayer.getY());
+            b.load();
+            entities.add(b);
+            float dt = Gdx.graphics.getDeltaTime();
+            b.update(dt);
+        }
+
     }
 
 }
