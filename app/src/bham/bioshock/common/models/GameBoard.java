@@ -140,6 +140,14 @@ public class GameBoard implements Serializable {
     return true;
   }
 
+  /** Changes a grid point to empty */
+  public void removeGridPoint(Coordinates coordinates) {
+    int x = coordinates.getX();
+    int y = coordinates.getY();
+    
+    grid[x][y] = new GridPoint(GridPoint.Type.EMPTY);
+  }
+
   public GridPoint[][] getGrid() {
     return grid;
   }
