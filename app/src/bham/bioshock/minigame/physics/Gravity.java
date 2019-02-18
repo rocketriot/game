@@ -1,12 +1,18 @@
 package bham.bioshock.minigame.physics;
 
-import bham.bioshock.minigame.World;
+import bham.bioshock.minigame.worlds.World;
 
 public class Gravity {
 
-  public static double getAngleTo(double x, double y) {
-    double dx = x - World.GRAVITY_POS.x;
-    double dy = y - World.GRAVITY_POS.y;
+  private World world;
+  
+  public Gravity(World w) {
+    this.world = w;
+  }
+  
+  public double getAngleTo(double x, double y) {
+    double dx = x - world.gravityCenter().x;
+    double dy = y - world.gravityCenter().y;
     double length = Math.sqrt(dx * dx + dy * dy);
 
     if (dy > 0) {

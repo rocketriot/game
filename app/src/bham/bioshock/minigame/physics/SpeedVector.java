@@ -1,7 +1,11 @@
 package bham.bioshock.minigame.physics;
 
-public class SpeedVector {
+import bham.bioshock.communication.Sendable;
 
+public class SpeedVector extends Sendable {
+  
+  private static final long serialVersionUID = -149485768919020676L;
+  
   private double mass = 1;
   private double dx = 0;
   private double dy = 0;

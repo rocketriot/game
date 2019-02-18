@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.net.*;
 import java.util.Enumeration;
 
-public class ClientConnectThread implements Runnable {
+public class ClientConnectThread extends Thread {
 
   private void sendPacket(DatagramSocket c, byte[] data, InetAddress address) {
     try {
@@ -63,7 +63,7 @@ public class ClientConnectThread implements Runnable {
       // Check if the message is correct
       String message = new String(receivePacket.getData()).trim();
       if (message.equals(Command.COMM_DISCOVER_RESPONSE.toString())) {
-        CommunicationClient.setHostAddress(receivePacket.getAddress().toString());
+        CommunicationClient.setHostAddress(receivePacket.getAddress().getHostAddress());
       }
 
       c.close();

@@ -4,7 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-
+import bham.bioshock.minigame.worlds.World;
 import java.util.HashMap;
 
 public class Rocket extends Entity {
@@ -13,10 +13,10 @@ public class Rocket extends Entity {
   private Integer color;
   private TextureRegion texture;
 
-  public Rocket(float _x, float _y, int _color) {
-    super(_x, _y);
+  public Rocket(World w, float _x, float _y, int _color) {
+    super(w, _x, _y);
     color = _color;
-    SIZE = 500;
+    size = 300;
   }
 
   public static void loadTextures() {

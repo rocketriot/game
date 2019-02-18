@@ -4,12 +4,18 @@ package bham.bioshock.minigame;
 import java.awt.*;
 import java.util.ArrayList;
 
+import bham.bioshock.client.Route;
+import bham.bioshock.client.Router;
+
 import bham.bioshock.common.consts.Config;
+import bham.bioshock.common.models.store.MinigameStore;
+import bham.bioshock.minigame.Clock.TimeUpdateEvent;
 import bham.bioshock.minigame.models.Entity;
 import bham.bioshock.minigame.models.Map;
 import bham.bioshock.minigame.models.Player;
 import bham.bioshock.minigame.models.Rocket;
 import bham.bioshock.minigame.physics.Gravity;
+import bham.bioshock.minigame.worlds.FirstWorld;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
@@ -31,8 +37,7 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import java.util.ArrayList;
 
 public class Renderer {
-
-    private World w;
+    private FirstWorld World;
     private Player mainPlayer;
     private ArrayList<Entity> entities;
 
@@ -46,22 +51,26 @@ public class Renderer {
     private Viewport viewport;
     private double camRotation;
     private Map map;
-
     private final int GAME_WORLD_WIDTH = Config.GAME_WORLD_WIDTH;
     private final int GAME_WORLD_HEIGHT = Config.GAME_WORLD_HEIGHT;
     private Circle mainPlanet;
-    // private Rectangle
+    private Clock clock;
+    private MinigameStore store;
+    private Gravity gravity;
+    private Router router;
 
 
-    public Renderer(World _w) {
-        w = _w;
-        mainPlayer = w.getMainPlayer();
-        map = new Map(w);
+    public Renderer(MinigameStore store, Router router) {
+        this.store = store;
+        this.router = router;
+        mainPlayer = store.getMainPlayer();
         renderer = new ShapeRenderer();
-
+        clock = new Clock();
         entities = new ArrayList<Entity>();
-        entities.addAll(w.getPlayers());
-        entities.addAll(w.getRockets());
+        entities.addAll(store.getPlayers());
+        entities.addAll(store.getRockets());
+        gravity = new Gravity(store.getWorld());
+
         cam = new OrthographicCamera();
 
         batch = new SpriteBatch();
@@ -69,8 +78,11 @@ public class Renderer {
         camRotation = 0;
 
         cam.update();
+
         loadSprites();
+//    startClock();
     }
+
 
     public void loadSprites() {
         viewport = new FitViewport(GAME_WORLD_WIDTH, GAME_WORLD_HEIGHT, cam);
@@ -78,22 +90,15 @@ public class Renderer {
         Rocket.loadTextures();
         stage = new Stage(viewport);
         background = new Sprite(new Texture(Gdx.files.internal("app/assets/backgrounds/game.png")));
-        mainPlayer.load();
 
-
-        for (Rocket rocket : w.getRockets()) {
-            rocket.load();
-            // System.out.println(rocket.getRectangle());
+        for (Entity e : entities) {
+            e.load();
         }
-        for (Player p : w.getPlayers()) {
-            p.load();
-            // System.out.println(rocket.getRectangle());
-        }
-
-
     }
 
     public void render(float delta) {
+
+        //    clock.update(delta);
         batch.setProjectionMatrix(cam.combined);
         renderer.setProjectionMatrix(cam.combined);
 
@@ -116,24 +121,25 @@ public class Renderer {
         batch.begin();
         drawEntities();
 
-        drawMainPlayer();
         Rectangle border = mainPlayer.getRectangle();
         // drawBorder(border);
         batch.end();
     }
 
+
     public void drawPlanet() {
         renderer.begin(ShapeType.Filled);
         renderer.setColor(Color.SALMON);
 
-        renderer.circle(0, 0, (float) World.PLANET_RADIUS);
+        renderer.circle(0, 0, (float) World.getPlanetRadius());
         // bounding circle
-        mainPlanet = new Circle(0, 0, (float) World.PLANET_RADIUS - 50);
+        mainPlanet = new Circle(0, 0, (float) World.getPlanetRadius() - 50);
         // renderer.setColor(Color.RED);
         // renderer.circle(0,0,(float)World.PLANET_RADIUS-50);
 
         renderer.end();
     }
+
 
     public void drawBorder(Rectangle border) {
         renderer.begin(ShapeType.Filled);
@@ -143,8 +149,9 @@ public class Renderer {
     }
 
     public void drawEntities() {
-        for (Player p : w.getPlayers()) {
+        for (Player p : store.getPlayers()) {
             Sprite sprite = p.getSprite();
+            sprite.setRegion(p.getTexture());
             Rectangle border = p.getRectangle();
             sprite.setPosition(p.getX(), p.getY());
             sprite.setRotation((float) p.getRotation());
@@ -152,11 +159,10 @@ public class Renderer {
             p.update(Gdx.graphics.getDeltaTime());
             // drawBorder(border);
         }
-        for (int i = 0; i < w.getRockets().size(); i++) {
-            Rocket p = w.getRockets().get(i);
+        for (Rocket p : store.getRockets()) {
             Sprite sprite = p.getSprite();
             Rectangle border = p.getRectangle();
-
+            sprite.setRegion(p.getTexture());
 
             sprite.setPosition(p.getX(), p.getY());
             sprite.setRotation((float) p.getRotation());
@@ -168,40 +174,50 @@ public class Renderer {
             map.addRocket(border);
             // drawBorder(border);
 
-
         }
-
     }
+
+
+//  public void startClock() {
+//    clock.every(0.01f, clock.new TimeListener() {
+//      @Override
+//      public void handle(TimeUpdateEvent event) {
+//        router.call(Route.MINIGAME_MOVE);
+//      }
+//    });
+//  }
 
 
     public void updatePosition() {
         float dt = Gdx.graphics.getDeltaTime();
         mainPlayer.update(dt);
+        boolean moveMade = false;
 
         // System.out.println(mainPlayer.getRectangle());
         if ((Gdx.input.isKeyPressed(Input.Keys.LEFT) || Gdx.input.isKeyPressed(Input.Keys.A)) && !mainPlayer.colLeft) {
+            moveMade = true;
 
             mainPlayer.moveLeft(dt);
 
             if (collidesWithFreeRocket(mainPlayer.getRectangle())) {
 
-                if(mainPlayer.colRight) {
+                if (mainPlayer.colRight) {
 
-                        mainPlayer.moveLeft(dt);
-                    } else
-                        mainPlayer.colLeft = true;
+                    mainPlayer.moveLeft(dt);
+                } else
+                    mainPlayer.colLeft = true;
 
-                } else {
-                    mainPlayer.colRight = false;
-                    mainPlayer.col(dt);
-                }
+            } else {
+                mainPlayer.colRight = false;
+                mainPlayer.col(dt);
+            }
 
 
         }
 
 
         if ((Gdx.input.isKeyPressed(Input.Keys.RIGHT) || Gdx.input.isKeyPressed(Input.Keys.D)) && !mainPlayer.colRight) {
-            //mainPlayer.colLeft = false;
+            moveMade = true;
             mainPlayer.moveRight(dt);
 
             if (collidesWithFreeRocket(mainPlayer.getRectangle())) {
@@ -213,24 +229,24 @@ public class Renderer {
                 } else
                     mainPlayer.colRight = true;
 
-                } else {
+            } else {
 
-                    mainPlayer.colLeft = false;
-                    mainPlayer.col(dt);
+                mainPlayer.colLeft = false;
+                mainPlayer.col(dt);
 
-                }
-
+            }
 
         }
 
 
         if (Gdx.input.isKeyPressed(Input.Keys.UP) || Gdx.input.isKeyPressed(Input.Keys.W)) {
+            moveMade = true;
             mainPlayer.jump(dt);
         }
 
-        // provisional collision handler
-        if (collidesWithFreeRocket(mainPlayer.getRectangle()))
-            mainPlayer.col(dt);
+        if (moveMade) {
+            router.call(Route.MINIGAME_MOVE);
+        }
 
 
     }
@@ -262,3 +278,5 @@ public class Renderer {
         return false;
     }
 }
+
+
