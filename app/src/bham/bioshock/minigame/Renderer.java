@@ -2,10 +2,8 @@ package bham.bioshock.minigame;
 
 
 import java.util.ArrayList;
-
 import bham.bioshock.client.Route;
 import bham.bioshock.client.Router;
-
 import bham.bioshock.common.consts.Config;
 import bham.bioshock.common.models.store.MinigameStore;
 import bham.bioshock.minigame.models.Entity;
@@ -47,10 +45,10 @@ public class Renderer {
     private final int GAME_WORLD_WIDTH = Config.GAME_WORLD_WIDTH;
     private final int GAME_WORLD_HEIGHT = Config.GAME_WORLD_HEIGHT;
     private Circle mainPlanet;
-    private Clock clock;
     private MinigameStore store;
     private Gravity gravity;
     private Router router;
+    private static boolean DEBUG_MODE = false;
 
 
     public Renderer(MinigameStore store, Router router) {
@@ -58,14 +56,12 @@ public class Renderer {
         this.router = router;
         mainPlayer = store.getMainPlayer();
         renderer = new ShapeRenderer();
-        clock = new Clock();
         entities = new ArrayList<Entity>();
         entities.addAll(store.getPlayers());
         entities.addAll(store.getRockets());
         gravity = new Gravity(store.getWorld());
 
         cam = new OrthographicCamera();
-        map = new Map(store);
         batch = new SpriteBatch();
         backgroundBatch = new SpriteBatch();
         camRotation = 0;
@@ -73,7 +69,6 @@ public class Renderer {
         cam.update();
 
         loadSprites();
-//    startClock();
     }
 
 
@@ -90,12 +85,14 @@ public class Renderer {
     }
 
     public void render(float delta) {
-
-        //    clock.update(delta);
         batch.setProjectionMatrix(cam.combined);
         renderer.setProjectionMatrix(cam.combined);
 
+        if(DEBUG_MODE) {
+            drawCollisionBorders();
+        }
 
+        handleCollisions();
         updatePosition();
         cam.position.lerp(lerpTarget.set(mainPlayer.getX(), mainPlayer.getY(), 0), 3f * delta);
 
@@ -113,9 +110,6 @@ public class Renderer {
         drawPlanet();
         batch.begin();
         drawEntities();
-
-        Rectangle border = mainPlayer.getRectangle();
-        drawBorder(border);
         batch.end();
     }
 
@@ -127,10 +121,14 @@ public class Renderer {
         renderer.circle(0, 0, (float) store.getPlanetRadius());
         // bounding circle
         mainPlanet = new Circle(0, 0, (float) store.getPlanetRadius() - 50);
-        // renderer.setColor(Color.RED);
-        // renderer.circle(0,0,(float)World.PLANET_RADIUS-50);
 
         renderer.end();
+    }
+
+    public void drawCollisionBorders() {
+        for(Entity e : entities) {
+            drawBorder(e.getRectangle());
+        }
     }
 
 
@@ -141,94 +139,40 @@ public class Renderer {
         renderer.end();
     }
 
-    public void drawEntities() {
-        for (Player p : store.getPlayers()) {
-            Sprite sprite = p.getSprite();
-            sprite.setRegion(p.getTexture());
-            Rectangle border = p.getRectangle();
-            sprite.setPosition(p.getX(), p.getY());
-            sprite.setRotation((float) p.getRotation());
-            sprite.draw(batch);
-            p.update(Gdx.graphics.getDeltaTime());
-             //drawBorder(border);
+    public void handleCollisions() {
+        // Check collisions between any two entities
+        for(Entity e1 : entities) {
+            for(Entity e2 : entities) {
+
+            }
         }
-        for (Rocket p : store.getRockets()) {
-            Sprite sprite = p.getSprite();
-            Rectangle border = p.getRectangle();
-            sprite.setRegion(p.getTexture());
+    }
 
-            sprite.setPosition(p.getX(), p.getY());
-            sprite.setRotation((float) p.getRotation());
+    public void drawEntities() {
+        for(Entity e : entities) {
+            Sprite sprite = e.getSprite();
+            sprite.setRegion(e.getTexture());
+            sprite.setPosition(e.getX(), e.getY());
+            sprite.setRotation((float) e.getRotation());
             sprite.draw(batch);
-
-
-            p.update(Gdx.graphics.getDeltaTime());
-
-            map.addRocket(border);
-            //drawBorder(border);
-
+            e.update(Gdx.graphics.getDeltaTime());
         }
     }
 
 
-//  public void startClock() {
-//    clock.every(0.01f, clock.new TimeListener() {
-//      @Override
-//      public void handle(TimeUpdateEvent event) {
-//        router.call(Route.MINIGAME_MOVE);
-//      }
-//    });
-//  }
-
-
     public void updatePosition() {
         float dt = Gdx.graphics.getDeltaTime();
-        mainPlayer.update(dt);
         boolean moveMade = false;
 
-        // System.out.println(mainPlayer.getRectangle());
-        if ((Gdx.input.isKeyPressed(Input.Keys.LEFT) || Gdx.input.isKeyPressed(Input.Keys.A)) && !mainPlayer.colLeft) {
+        if (Gdx.input.isKeyPressed(Input.Keys.LEFT) || Gdx.input.isKeyPressed(Input.Keys.A)) {
             moveMade = true;
-
             mainPlayer.moveLeft(dt);
-
-            if (collidesWithFreeRocket(mainPlayer.getRectangle())) {
-
-                if (mainPlayer.colRight) {
-
-                    mainPlayer.moveLeft(dt);
-                } else
-                    mainPlayer.colLeft = true;
-
-            } else {
-                mainPlayer.colRight = false;
-                mainPlayer.col(dt);
-            }
-
-
         }
 
 
-        if ((Gdx.input.isKeyPressed(Input.Keys.RIGHT) || Gdx.input.isKeyPressed(Input.Keys.D)) && !mainPlayer.colRight) {
+        if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) || Gdx.input.isKeyPressed(Input.Keys.D)) {
             moveMade = true;
             mainPlayer.moveRight(dt);
-
-            if (collidesWithFreeRocket(mainPlayer.getRectangle())) {
-
-                if (mainPlayer.colLeft) {
-                    System.out.println("stop left");
-
-                    mainPlayer.moveRight(dt);
-                } else
-                    mainPlayer.colRight = true;
-
-            } else {
-
-                mainPlayer.colLeft = false;
-                mainPlayer.col(dt);
-
-            }
-
         }
 
 
@@ -241,27 +185,15 @@ public class Renderer {
             router.call(Route.MINIGAME_MOVE);
         }
 
-
     }
 
-
-    public void drawMainPlayer() {
-        Sprite sprite = mainPlayer.getSprite();
-        sprite.setRegion(mainPlayer.getTexture());
-        sprite.setPosition(mainPlayer.getX(), mainPlayer.getY());
-        sprite.setRotation((float) -mainPlayer.angleFromCenter());
-
-        sprite.draw(batch);
-    }
 
     public void resize(int width, int height) {
         stage.getViewport().update(width, height, true);
     }
 
     public boolean collidesWithFreeRocket(Rectangle r) {
-
         ArrayList<Rectangle> rockets = map.getRockets();
-
 
         for (int i = 0; i < rockets.size(); i++) {
             if (Intersector.overlaps(r, rockets.get(i))) {
@@ -271,5 +203,4 @@ public class Renderer {
         return false;
     }
 }
-
 
