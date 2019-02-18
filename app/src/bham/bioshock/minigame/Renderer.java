@@ -1,11 +1,10 @@
 package bham.bioshock.minigame;
 
-<<<<<<< HEAD
 import bham.bioshock.client.screens.StatsContainer;
-=======
+
 import bham.bioshock.client.Route;
 import bham.bioshock.client.Router;
->>>>>>> master
+
 import bham.bioshock.common.consts.Config;
 import bham.bioshock.common.models.store.MinigameStore;
 import bham.bioshock.minigame.Clock.TimeUpdateEvent;
@@ -13,6 +12,7 @@ import bham.bioshock.minigame.models.Entity;
 import bham.bioshock.minigame.models.Player;
 import bham.bioshock.minigame.models.Rocket;
 import bham.bioshock.minigame.physics.Gravity;
+import bham.bioshock.minigame.worlds.World;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
@@ -46,13 +46,11 @@ public class Renderer {
   private SpriteBatch backgroundBatch;
   private Viewport viewport;
   private double camRotation;
-<<<<<<< HEAD
-  private StatsContainer statsContainer;
 
-  public Renderer(World _w) {
-    w = _w;
-    mainPlayer = w.getMainPlayer();
-=======
+  private StatsContainer statsContainer;
+  private World world;
+
+
   private MinigameStore store;
   private Gravity gravity;
   private Router router;
@@ -61,7 +59,9 @@ public class Renderer {
     this.store = store;
     this.router = router;
     mainPlayer = store.getMainPlayer();
->>>>>>> master
+
+    world = store.getWorld();
+
     renderer = new ShapeRenderer();
     clock = new Clock();
     entities = new ArrayList<Entity>();
@@ -87,12 +87,10 @@ public class Renderer {
     Rocket.loadTextures();
     stage = new Stage(viewport);
     background = new Sprite(new Texture(Gdx.files.internal("app/assets/backgrounds/game.png")));
-<<<<<<< HEAD
-    statsContainer = new StatsContainer(w.getStore());
-    mainPlayer.load();
-=======
 
->>>>>>> master
+    statsContainer = new StatsContainer(store);
+    mainPlayer.load();
+
     for (Entity e : entities) {
       e.load();
     }
@@ -133,11 +131,10 @@ public class Renderer {
     drawPlanet();
     batch.begin();
     drawEntities();
-<<<<<<< HEAD
-    drawMainPlayer();
+
+    //drawMainPlayer();
     updateStats();
-=======
->>>>>>> master
+
     batch.end();
   }
 

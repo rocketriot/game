@@ -5,14 +5,13 @@ import java.util.ArrayList;
 import com.badlogic.gdx.Screen;
 import com.google.inject.*;
 import bham.bioshock.client.AppPreferences;
-<<<<<<< HEAD:app/src/bham/bioshock/common/models/Store.java
 
 import java.util.HashMap;
-=======
+
 import bham.bioshock.common.models.Coordinates;
 import bham.bioshock.common.models.GameBoard;
 import bham.bioshock.common.models.Player;
->>>>>>> master:app/src/bham/bioshock/common/models/store/Store.java
+
 import java.util.UUID;
 
 /** Stores all of the models */

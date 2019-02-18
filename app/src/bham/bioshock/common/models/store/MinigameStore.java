@@ -63,6 +63,7 @@ public class MinigameStore {
   public Collection<Player> getPlayers() {
     return players.values();
   }
+  public HashMap
 
   public Collection<Rocket> getRockets() {
     return rockets;

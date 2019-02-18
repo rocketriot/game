@@ -1,6 +1,7 @@
 package bham.bioshock.client.screens;
 
 import bham.bioshock.common.models.Player;
+import bham.bioshock.common.models.store.MinigameStore;
 import bham.bioshock.common.models.store.Store;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.ui.Container;
@@ -10,13 +11,14 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.UUID;
 
 
 public class StatsContainer extends Container {
 
-    private Store store;
+    private MinigameStore store;
     private Skin skin;
 
 
@@ -24,7 +26,7 @@ public class StatsContainer extends Container {
 
 
 
-    public StatsContainer(Store store) {
+    public StatsContainer(MinigameStore store) {
 
         this.store = store;
 
@@ -65,7 +67,7 @@ public class StatsContainer extends Container {
     }
 
     private void update(PlayerContainer player_container) {
-        HashMap<UUID, Player> map = store.getPlayersMap();
+        Collection<bham.bioshock.minigame.models.Player> map = store.getPlayers();
         UUID id = player_container.getId();
         float fuel = map.get(id).getFuel();
         int planets = map.get(id).getPlanetsCaptured();
