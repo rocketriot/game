@@ -10,15 +10,13 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.UUID;
+import java.util.*;
 
 
 public class StatsContainer extends Container {
 
-    private MinigameStore store;
+    private MinigameStore minigame_store;
+
     private Skin skin;
 
 
@@ -26,9 +24,9 @@ public class StatsContainer extends Container {
 
 
 
-    public StatsContainer(MinigameStore store) {
+    public StatsContainer(MinigameStore minigame_store) {
 
-        this.store = store;
+        this.minigame_store = minigame_store;
 
         /*nb: change the skin*/
         this.skin = new Skin(Gdx.files.internal("app/assets/skins/neon/skin/neon-ui.json"));
@@ -37,6 +35,7 @@ public class StatsContainer extends Container {
     }
 
     private void setUp() {
+        this.fill();
         this.setSize(Gdx.graphics.getWidth()*0.2f, Gdx.graphics.getHeight()*0.2f);
         this.setPosition(10,10);
     }
@@ -47,14 +46,19 @@ public class StatsContainer extends Container {
         Label l = new Label("STATS", skin);
         table.add(l);
         table.row();
-        ArrayList<Player> players = store.getPlayers();
-        for (int i = 0; i < players.size(); i++) {
-            playerTables.add(new PlayerContainer(players.get(i).getId(), players.get(i).getUsername()));
+        HashMap<bham.bioshock.minigame.models.Player, Player> minigames_players_map = minigame_store.getPlayerMap();
+        Iterator<Player> iterator = minigames_players_map.values().iterator();
+        int i = 0;
+        while(iterator.hasNext()) {
+            Player p = iterator.next();
+            playerTables.add(new PlayerContainer(p.getId(), p.getUsername()));
             update(playerTables.get(i));
             table.add(playerTables.get(i));
             if(i%2 == 0){
                 table.row();
             }
+            i++;
+
         }
 
         this.setActor(table);
@@ -67,11 +71,15 @@ public class StatsContainer extends Container {
     }
 
     private void update(PlayerContainer player_container) {
-        Collection<bham.bioshock.minigame.models.Player> map = store.getPlayers();
+        HashMap<bham.bioshock.minigame.models.Player, Player> minigames_players_map = minigame_store.getPlayerMap();
+
         UUID id = player_container.getId();
-        float fuel = map.get(id).getFuel();
-        int planets = map.get(id).getPlanetsCaptured();
-        int points = map.get(id).getPoints();
+        bham.bioshock.minigame.models.Player minigame_player = minigame_store.getPlayer(id);
+        Player player = minigames_players_map.get(minigame_player);
+
+        float fuel = player.getFuel();
+        int planets = player.getPlanetsCaptured();
+        int points = player.getPoints();
         player_container.setFuel(fuel);
         player_container.setPlanets(planets);
         player_container.setPoints(points);

@@ -49,7 +49,7 @@ public class JoinScreenHandler {
 
 
     // If there are the max number of players start the game
-    if (model.getPlayers().size() == model.MAX_PLAYERS) {
+    if (store.getPlayers().size() == store.MAX_PLAYERS) {
       System.out.println("starting game...");
       handler.sendToAll(new Action(Command.START_GAME));
     }

@@ -1,5 +1,6 @@
 package bham.bioshock.minigame;
 
+import bham.bioshock.client.scenes.MinigameHud;
 import bham.bioshock.client.screens.StatsContainer;
 
 import bham.bioshock.client.Route;
@@ -15,6 +16,7 @@ import bham.bioshock.minigame.physics.Gravity;
 import bham.bioshock.minigame.worlds.World;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -25,9 +27,12 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
+import java.awt.*;
 import java.util.ArrayList;
 
 public class Renderer {
@@ -51,12 +56,15 @@ public class Renderer {
   private World world;
 
 
-  private MinigameStore store;
+  private MinigameStore minigame_store;
   private Gravity gravity;
   private Router router;
 
+  private MinigameHud hud;
+  private final InputMultiplexer inputMultiplexer;
+
   public Renderer(MinigameStore store, Router router) {
-    this.store = store;
+    this.minigame_store = store;
     this.router = router;
     mainPlayer = store.getMainPlayer();
 
@@ -77,18 +85,36 @@ public class Renderer {
 
     cam.update();
 
+    setupUI();
     loadSprites();
+
+    // Setup the input processing
+    this.inputMultiplexer = new InputMultiplexer();
+    this.inputMultiplexer.addProcessor(hud.getStage());
+    this.inputMultiplexer.addProcessor(stage);
+
+
 //    startClock();
   }
+
+  private void setupUI() {
+    Skin skin = new Skin(Gdx.files.internal("app/assets/skins/neon/skin/neon-ui.json"));
+    hud = new MinigameHud(batch, skin, GAME_WORLD_WIDTH, GAME_WORLD_HEIGHT, minigame_store, router);
+  }
+
 
   public void loadSprites() {
     viewport = new FitViewport(GAME_WORLD_WIDTH, GAME_WORLD_HEIGHT, cam);
     Player.loadTextures();
     Rocket.loadTextures();
     stage = new Stage(viewport);
+
+    statsContainer = new StatsContainer(minigame_store);
+    statsContainer.setZIndex(20);
+
     background = new Sprite(new Texture(Gdx.files.internal("app/assets/backgrounds/game.png")));
 
-    statsContainer = new StatsContainer(store);
+
     mainPlayer.load();
 
     for (Entity e : entities) {
@@ -126,22 +152,28 @@ public class Renderer {
     backgroundBatch.draw(background, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
     backgroundBatch.end();
 
-    stage.addActor(statsContainer);
+    //stage.addActor(statsContainer);
 
     drawPlanet();
     batch.begin();
     drawEntities();
-
     //drawMainPlayer();
     updateStats();
 
     batch.end();
+
+    // Draw the ui
+    this.batch.setProjectionMatrix(hud.stage.getCamera().combined);
+    hud.getStage().act(Gdx.graphics.getDeltaTime());
+    hud.updateHud();
+    hud.getStage().draw();
+
   }
 
   public void drawPlanet() {
     renderer.begin(ShapeType.Filled);
     renderer.setColor(Color.SALMON);
-    renderer.circle(0, 0, (float) store.getPlanetRadius());
+    renderer.circle(0, 0, (float) minigame_store.getPlanetRadius());
     renderer.end();
   }
 

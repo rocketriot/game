@@ -10,16 +10,20 @@ import bham.bioshock.minigame.models.Player;
 import bham.bioshock.minigame.models.Rocket;
 import bham.bioshock.minigame.physics.SpeedVector;
 import bham.bioshock.minigame.worlds.World;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 
 public class MinigameStore {
 
   private World currentWorld;
   private UUID mainPlayerId;
   private HashMap<UUID, Player> players;
+  private HashMap<Player, bham.bioshock.common.models.Player> minigame_players_map;
   private ArrayList<Rocket> rockets;
+  private Skin skin;
 
   public MinigameStore() {
     players = new HashMap<>();
+    minigame_players_map = new HashMap<>();
     rockets = new ArrayList<>();
   }
 
@@ -37,11 +41,13 @@ public class MinigameStore {
       mainPlayerId = store.getMainPlayer().getId();      
     }
     ArrayList<bham.bioshock.common.models.Player> players = store.getPlayers();
+    System.out.println("there are " + players.size() + " players in the store");
     Position[] playerPos = world.getPlayerPositions();
 
     for (int i = 0; i < players.size(); i++) {
       Player p = new Player(world, playerPos[i]);
       this.players.put(players.get(i).getId(), p);
+      this.minigame_players_map.put(p, players.get(i));
     }
     
     this.rockets = world.getRockets();
@@ -63,8 +69,10 @@ public class MinigameStore {
   public Collection<Player> getPlayers() {
     return players.values();
   }
-  public HashMap
 
+  public HashMap<Player, bham.bioshock.common.models.Player> getPlayerMap() {
+    return minigame_players_map;
+  }
   public Collection<Rocket> getRockets() {
     return rockets;
   }
@@ -72,5 +80,13 @@ public class MinigameStore {
   public double getPlanetRadius() {
     return currentWorld.getPlanetRadius();
   }
+
+  public void setSkin(Skin skin) { this.skin = skin; }
+
+  public Skin getSkin() {
+    return skin;
+  }
+
+
 
 }
