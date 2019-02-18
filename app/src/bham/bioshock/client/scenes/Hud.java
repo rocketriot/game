@@ -2,7 +2,6 @@ package bham.bioshock.client.scenes;
 
 import bham.bioshock.client.Route;
 import bham.bioshock.client.Router;
-import bham.bioshock.client.controllers.GameBoardController;
 import bham.bioshock.common.models.Player;
 import bham.bioshock.common.models.store.Store;
 import com.badlogic.gdx.Gdx;
@@ -10,7 +9,14 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.ui.HorizontalGroup;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.ProgressBar;
+import com.badlogic.gdx.scenes.scene2d.ui.SelectBox;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.TextArea;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.viewport.FitViewport;
@@ -45,6 +51,7 @@ public class Hud implements Disposable {
     setupTopBar();
     setupFuelBar();
     setupScoreList();
+    setupBottomBar();
   }
 
   private void setupFuelBar() {
@@ -113,6 +120,21 @@ public class Hud implements Disposable {
       }
     });
   }
+
+  private void setupBottomBar() {
+    HorizontalGroup bottomBar = new HorizontalGroup();
+    bottomBar.bottom();
+    TextButton endTurnButton = new TextButton("End Turn", skin);
+    bottomBar.addActor(endTurnButton);
+    stage.addActor(bottomBar);
+    endTurnButton.addListener(new ChangeListener() {
+      @Override
+      public void changed(ChangeEvent event, Actor actor) {
+        //TODO Add end turn code
+      }
+    });
+  }
+
 
   public void updateHud() {
     ArrayList<Player> players = store.getPlayers();
