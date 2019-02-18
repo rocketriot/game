@@ -1,50 +1,42 @@
 package bham.bioshock.common.models.store;
 
-import java.util.ArrayList;
-
-import com.badlogic.gdx.Screen;
-import com.google.inject.*;
 import bham.bioshock.client.AppPreferences;
 import bham.bioshock.common.models.Coordinates;
 import bham.bioshock.common.models.GameBoard;
 import bham.bioshock.common.models.Player;
+import com.badlogic.gdx.Screen;
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+
+import java.util.ArrayList;
 import java.util.UUID;
 
 /** Stores all of the models */
-
 @Singleton
 public class Store {
-
-  private AppPreferences preferences;
-  
-  private Screen currentScreen;
-  
-  @Inject
-  public Store() {
-    this.preferences = new AppPreferences();
-  }
 
   /** Max number of players in a game */
   // FOR TESTING
   public final int MAX_PLAYERS = 4;
-
+  private AppPreferences preferences;
+  private Screen currentScreen;
   /** Contains all of the information about the game board */
   private GameBoard gameBoard = new GameBoard();
-
   /** A list of players */
   private ArrayList<Player> players = new ArrayList<>(MAX_PLAYERS);
-
   /** The ID of the player that the client is controlling, only used client-side */
   private UUID mainPlayerId;
-
   /** The game's round */
   private int round = 0;
-
   /** The next player's turn */
   private int turn = 0;
-  
   /** Minigame World */
   private MinigameStore minigameStore;
+
+  @Inject
+  public Store() {
+    this.preferences = new AppPreferences();
+  }
 
   public AppPreferences getPreferences() {
     return preferences;
@@ -64,17 +56,17 @@ public class Store {
   public GameBoard getGameBoard() {
     return gameBoard;
   }
-  
-  public void setScreen(Screen screen) {
-    currentScreen = screen;
+
+  public void setGameBoard(GameBoard gameBoard) {
+    this.gameBoard = gameBoard;
   }
 
   public Screen getScreen() {
     return currentScreen;
   }
 
-  public void setGameBoard(GameBoard gameBoard) {
-    this.gameBoard = gameBoard;
+  public void setScreen(Screen screen) {
+    currentScreen = screen;
   }
 
   public ArrayList<Player> getPlayers() {
@@ -100,16 +92,14 @@ public class Store {
 
   public void updatePlayer(Player updatingPlayer) {
     for (int i = 0; i < players.size(); i++) {
-      if (players.get(i).getId().equals(updatingPlayer.getId()))
-        players.set(i, updatingPlayer);
+      if (players.get(i).getId().equals(updatingPlayer.getId())) players.set(i, updatingPlayer);
     }
   }
 
   public Player getMainPlayer() {
     // Might be too slow
     for (Player player : players) {
-      if (player.getId().equals(mainPlayerId))
-        return player;
+      if (player.getId().equals(mainPlayerId)) return player;
     }
 
     return null;
@@ -140,18 +130,18 @@ public class Store {
       turn = 0;
 
       // Increase player's fuel after each round
-      for (Player player : players)
-        player.increaseFuel(5.0f);
+      for (Player player : players) player.increaseFuel(5.0f);
     }
   }
-  
+
+  public MinigameStore getMinigameStore() {
+    return this.minigameStore;
+  }
+
   /*
    * MINIGAME
    */
   public void setMinigameStore(MinigameStore store) {
     this.minigameStore = store;
-  }
-  public MinigameStore getMinigameStore() {
-    return this.minigameStore;
   }
 }

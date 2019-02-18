@@ -5,7 +5,7 @@ import bham.bioshock.communication.Sendable;
 public class Position extends Sendable {
 
   private static final long serialVersionUID = 1L;
-  
+
   public float x;
   public float y;
 
@@ -13,5 +13,4 @@ public class Position extends Sendable {
     this.x = x;
     this.y = y;
   }
-
 }

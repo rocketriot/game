@@ -6,6 +6,7 @@ import bham.bioshock.communication.Action;
 import bham.bioshock.communication.Command;
 import bham.bioshock.communication.server.ServerHandler;
 import bham.bioshock.communication.server.ServerService;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 
@@ -13,12 +14,12 @@ public class JoinScreenHandler {
 
   Store store;
   ServerHandler handler;
-  
+
   public JoinScreenHandler(Store store, ServerHandler handler) {
     this.store = store;
     this.handler = handler;
   }
-  
+
   /**
    * Adds a player to the server and sends the player to all the clients
    *
@@ -26,10 +27,10 @@ public class JoinScreenHandler {
    */
   public void addPlayer(Action action, ServerService service) throws Exception {
     Player player = (Player) action.getArgument(0);
-    
+
     // Save client's ID
     service.saveId(player.getId());
-    
+
     // Set the texture ID of the player
     int textureId = store.getPlayers().size();
     player.setTextureID(textureId);
@@ -39,15 +40,15 @@ public class JoinScreenHandler {
 
     // Send all connected clients the new player
     handler.sendToAllExcept(action, service.Id());
-    
+
     // Send all connected players to the new player
     ArrayList<Serializable> arguments = new ArrayList<>();
-    for(Player p : store.getPlayers()) {
+    for (Player p : store.getPlayers()) {
       arguments.add(p);
     }
     handler.sendTo(player.getId(), new Action(Command.ADD_PLAYER, arguments));
   }
-  
+
   public void disconnectPlayer(ServerService service) {
     store.removePlayer(service.Id());
     handler.sendToAll(new Action(Command.REMOVE_PLAYER, service.Id()));
@@ -70,10 +71,10 @@ public class JoinScreenHandler {
       store.addPlayer(player);
       cpuPlayers.add(player);
     }
-    
+
     // Send the board and the players
     gameBoardHandler.getGameBoard(action);
-    
+
     // Tell the clients to start the game
     handler.sendToAll(new Action(Command.START_GAME));
   }

@@ -1,17 +1,17 @@
 package bham.bioshock.common.models;
 
 import bham.bioshock.common.consts.GridPoint;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.Serializable;
 import java.util.Random;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 /** Stores the data required for the main game board */
 public class GameBoard implements Serializable {
 
   private static final Logger logger = LogManager.getLogger(GameBoard.class);
-  
+
   private static final long serialVersionUID = 5775730008817100527L;
 
   public final int GRID_SIZE = 36;
@@ -39,37 +39,37 @@ public class GameBoard implements Serializable {
     // Setup bounds
     int min = 4;
     int max = (GRID_SIZE - min) - 1;
-    
+
     // Check top left
     if (x < min && y < min) return true;
-    
+
     // Check top right
     if (x < min && y > max) return true;
-    
+
     // Check bottom left
     if (x > max && y < min) return true;
-    
+
     // Check bottom right
     if (x > max && y > max) return true;
 
     return false;
   }
-  
+
   public boolean isNextToThePlanet(Coordinates pos) {
     // Currently on the planet
-    if(getGridPoint(pos).isType(GridPoint.Type.PLANET)) {
+    if (getGridPoint(pos).isType(GridPoint.Type.PLANET)) {
       return true;
     }
-    
+
     // Next to the planet
-    for(Coordinates p : pos.getNearby()) {
+    for (Coordinates p : pos.getNearby()) {
       if (pos.getX() > 0 && pos.getX() < GRID_SIZE && pos.getY() > 0 && pos.getY() < GRID_SIZE) {
         if (getGridPoint(p).isType(GridPoint.Type.PLANET)) {
           return true;
         }
       }
     }
-    
+
     return false;
   }
 
@@ -93,18 +93,17 @@ public class GameBoard implements Serializable {
 
       return;
     }
-    
+
     // Generate a planet
     if (randomFloat <= 0.035) {
       // Check if there's enough space to generate the planet
       if (isEnoughSpace(x, y, Planet.WIDTH, Planet.HEIGHT)) {
-          // Create a new planet
-          Planet planet = new Planet("test", new Coordinates(x, y));
+        // Create a new planet
+        Planet planet = new Planet("test", new Coordinates(x, y));
 
-          // Add the planet to the 3x3 space it takes up on the grid
-          for (int i = x; i < x + 3; i++)
-            for (int j = y; j < y + 3; j++)
-              grid[i][j] = new GridPoint(GridPoint.Type.PLANET, planet);
+        // Add the planet to the 3x3 space it takes up on the grid
+        for (int i = x; i < x + 3; i++)
+          for (int j = y; j < y + 3; j++) grid[i][j] = new GridPoint(GridPoint.Type.PLANET, planet);
       }
 
       return;
@@ -152,7 +151,7 @@ public class GameBoard implements Serializable {
   public GridPoint getGridPoint(Coordinates coordinates) {
     int x = coordinates.getX();
     int y = coordinates.getY();
-    if(x >= 0 && grid.length > x && y >= 0 && grid[x].length > y) {
+    if (x >= 0 && grid.length > x && y >= 0 && grid[x].length > y) {
       return grid[x][y];
     }
     logger.error("No coordinates " + coordinates + " in the grid!");
