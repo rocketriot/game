@@ -1,13 +1,16 @@
 package bham.bioshock.client.controllers;
 
+import bham.bioshock.client.BoardGame;
 import bham.bioshock.client.Router;
 import bham.bioshock.client.screens.GameBoardScreen;
-import bham.bioshock.client.BoardGame;
-import bham.bioshock.client.Route;
-import bham.bioshock.client.screens.ScreenMaster;
 import bham.bioshock.common.Direction;
 import bham.bioshock.common.consts.GridPoint;
-import bham.bioshock.common.models.*;
+import bham.bioshock.common.models.BoardMove;
+import bham.bioshock.common.models.Coordinates;
+import bham.bioshock.common.models.Fuel;
+import bham.bioshock.common.models.GameBoard;
+import bham.bioshock.common.models.Planet;
+import bham.bioshock.common.models.Player;
 import bham.bioshock.common.models.store.Store;
 import bham.bioshock.common.pathfinding.AStarPathfinding;
 import bham.bioshock.communication.Action;
@@ -84,6 +87,14 @@ public class GameBoardController extends Controller {
     ArrayList<Serializable> arguments = new ArrayList<>();
     arguments.add(gameBoard);
     arguments.add(mainPlayer);
+    clientService.send(new Action(Command.MOVE_PLAYER_ON_BOARD, arguments));
+  }
+
+  public void endTurn() {
+    // TODO REMOVE TEMP SOLUTION
+    ArrayList<Serializable> arguments = new ArrayList<>();
+    arguments.add(store.getGameBoard());
+    arguments.add(store.getGameBoard());
     clientService.send(new Action(Command.MOVE_PLAYER_ON_BOARD, arguments));
   }
 

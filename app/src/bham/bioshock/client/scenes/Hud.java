@@ -130,7 +130,7 @@ public class Hud implements Disposable {
     endTurnButton.addListener(new ChangeListener() {
       @Override
       public void changed(ChangeEvent event, Actor actor) {
-        //TODO Add end turn code
+        router.call(Route.END_TURN);
       }
     });
   }
