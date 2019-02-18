@@ -51,7 +51,7 @@ public class JoinScreenHandler {
 
     // If there is not 4 players, create CPU players
     while (store.getPlayers().size() != store.MAX_PLAYERS) {
-      int number = store.getPlayers().size();
+      int number = store.getPlayers().size() + 1;
 
       Player player = new Player("Player " + number, true);
 
