@@ -99,9 +99,9 @@ public class Store {
   }
 
   public void updatePlayer(Player updatingPlayer) {
-    for (Player player : players) {
-      if (player.getId() == updatingPlayer.getId())
-        player = updatingPlayer;
+    for (int i = 0; i < players.size(); i++) {
+      if (players.get(i).getId().equals(updatingPlayer.getId()))
+        players.set(i, updatingPlayer);
     }
   }
 
