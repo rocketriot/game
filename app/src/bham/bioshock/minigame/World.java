@@ -1,6 +1,7 @@
 package bham.bioshock.minigame;
 
 import bham.bioshock.common.Position;
+import bham.bioshock.common.models.Store;
 import bham.bioshock.minigame.models.Player;
 import bham.bioshock.minigame.models.Rocket;
 
@@ -15,7 +16,10 @@ public class World {
   private ArrayList<Player> players;
   private ArrayList<Rocket> rockets;
 
-  public World() {
+  private Store store;
+
+  public World(Store store) {
+    this.store = store;
     mainPlayer = new Player(10, 2100);
 
     players = new ArrayList<>();
@@ -37,6 +41,10 @@ public class World {
     flying.setSpeed(90, 1200.0f);
     flying.setRotation(270);
     rockets.add(flying);
+  }
+
+  public Store getStore() {
+    return store;
   }
 
   public Player getMainPlayer() {

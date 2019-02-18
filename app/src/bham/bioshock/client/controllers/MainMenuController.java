@@ -1,6 +1,8 @@
 package bham.bioshock.client.controllers;
 
 import bham.bioshock.client.screens.ScreenMaster;
+import bham.bioshock.client.screens.StatsContainer;
+import com.badlogic.gdx.scenes.scene2d.Stage;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.core.Logger;
 import com.google.inject.Inject;
@@ -39,6 +41,10 @@ public class MainMenuController extends Controller {
   /** Renders main menu */
   public void show() {
     setScreen(new MainMenuScreen(router));
+  }
+
+  public void testStat(Stage stage) {
+    stage.addActor( new StatsContainer(store));
   }
   
   public void alert(String message) {

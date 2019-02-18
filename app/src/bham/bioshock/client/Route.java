@@ -28,7 +28,9 @@ public enum Route {
   PLAYERS_SAVE      (GameBoardController.class,     "savePlayers"),
   GAME_BOARD_SHOW   (GameBoardController.class,     "show"),
 
-  START_MINIGAME    (MinigameController.class,      "show");
+  START_MINIGAME    (MinigameController.class,      "show"),
+
+  TEST_STAT (MainMenuController.class, "testStat");
   
 //@formatter:on
 

@@ -1,5 +1,6 @@
 package bham.bioshock.minigame;
 
+import bham.bioshock.client.screens.StatsContainer;
 import bham.bioshock.common.consts.Config;
 import bham.bioshock.minigame.models.Entity;
 import bham.bioshock.minigame.models.Player;
@@ -38,6 +39,7 @@ public class Renderer {
   private SpriteBatch backgroundBatch;
   private Viewport viewport;
   private double camRotation;
+  private StatsContainer statsContainer;
 
   public Renderer(World _w) {
     w = _w;
@@ -65,11 +67,12 @@ public class Renderer {
     Rocket.loadTextures();
     stage = new Stage(viewport);
     background = new Sprite(new Texture(Gdx.files.internal("app/assets/backgrounds/game.png")));
-
+    statsContainer = new StatsContainer(w.getStore());
     mainPlayer.load();
     for (Entity e : entities) {
       e.load();
     }
+
   }
 
   public void render(float delta) {
@@ -90,10 +93,13 @@ public class Renderer {
     backgroundBatch.draw(background, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
     backgroundBatch.end();
 
+    stage.addActor(statsContainer);
+
     drawPlanet();
     batch.begin();
     drawEntities();
     drawMainPlayer();
+    updateStats();
     batch.end();
   }
 
@@ -139,5 +145,10 @@ public class Renderer {
 
   public void resize(int width, int height) {
     stage.getViewport().update(width, height, true);
+  }
+
+
+  private void updateStats() {
+    statsContainer.updateAll();
   }
 }

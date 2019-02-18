@@ -25,7 +25,7 @@ public class MainMenuScreen extends ScreenMaster {
     stage = new Stage(new ScreenViewport());
     batch = new SpriteBatch();
 
-    // calls act with Graphics.getDeltaTime()
+    router.call(Route.TEST_STAT, stage);
   }
 
   @Override

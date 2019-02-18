@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import com.badlogic.gdx.Screen;
 import com.google.inject.*;
 import bham.bioshock.client.AppPreferences;
+
+import java.util.HashMap;
 import java.util.UUID;
 
 /** Stores all of the models */
@@ -30,6 +32,9 @@ public class Store {
 
   /** A list of players */
   private ArrayList<Player> players = new ArrayList<>(MAX_PLAYERS);
+
+  /** A hash map of players to their userID */
+  private HashMap<UUID, Player> players_map = new HashMap<>();
 
   /** The ID of the player that the client is controlling, only used client-side */
   private UUID mainPlayerId;
@@ -75,21 +80,26 @@ public class Store {
     return players;
   }
 
+  public HashMap<UUID, Player> getPlayersMap() { return players_map; }
+
   public void setPlayers(ArrayList<Player> players) {
     this.players.clear();
     this.players = players;
   }
 
   public void addPlayer(Player player) {
+    players_map.put(player.getId(), player);
     players.add(player);
   }
 
   public void removePlayer(UUID id) {
     players.removeIf(p -> p.getId().equals(id));
+    players_map.remove(id);
   }
 
   public void removeAllPlayers() {
     players.clear();
+    players_map.clear();
   }
 
   public void updatePlayer(Player updatingPlayer) {

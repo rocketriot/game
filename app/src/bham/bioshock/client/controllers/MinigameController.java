@@ -17,7 +17,7 @@ public class MinigameController extends Controller {
 
     public void show(){
 
-        World world = new World();
+        World world = new World(store);
         setScreen(new MinigameScreen(game, world));
 
         System.out.println("Showing minigame");
