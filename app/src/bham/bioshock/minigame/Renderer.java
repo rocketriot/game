@@ -184,7 +184,6 @@ public class Renderer {
             mainPlayer.moveLeft(dt);
 
             if (collidesWithFreeRocket(mainPlayer.getRectangle())) {
-                System.out.println("l");
 
                 if(mainPlayer.colRight) {
 
@@ -206,7 +205,6 @@ public class Renderer {
             mainPlayer.moveRight(dt);
 
             if (collidesWithFreeRocket(mainPlayer.getRectangle())) {
-                System.out.println("r");
 
                 if (mainPlayer.colLeft) {
                     System.out.println("stop left");
