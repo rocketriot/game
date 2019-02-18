@@ -30,13 +30,9 @@ public class Store {
   private int round = 0;
   /** The next player's turn */
   private int turn = 0;
+  
   /** Minigame World */
   private MinigameStore minigameStore;
-
-  @Inject
-  public Store() {
-    this.preferences = new AppPreferences();
-  }
 
   public AppPreferences getPreferences() {
     return preferences;
@@ -133,15 +129,15 @@ public class Store {
       for (Player player : players) player.increaseFuel(5.0f);
     }
   }
-
-  public MinigameStore getMinigameStore() {
-    return this.minigameStore;
-  }
-
+  
   /*
    * MINIGAME
    */
   public void setMinigameStore(MinigameStore store) {
     this.minigameStore = store;
+  }
+
+  public MinigameStore getMinigameStore() {
+    return this.minigameStore;
   }
 }

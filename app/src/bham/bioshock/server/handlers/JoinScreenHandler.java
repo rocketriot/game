@@ -14,12 +14,11 @@ public class JoinScreenHandler {
 
   Store store;
   ServerHandler handler;
-
   public JoinScreenHandler(Store store, ServerHandler handler) {
     this.store = store;
     this.handler = handler;
   }
-
+  
   /**
    * Adds a player to the server and sends the player to all the clients
    *

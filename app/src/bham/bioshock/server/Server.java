@@ -1,8 +1,8 @@
 package bham.bioshock.server;
 
+import com.google.inject.Singleton;
 import bham.bioshock.communication.server.CommunicationServer;
 import bham.bioshock.communication.server.ServerHandler;
-import com.google.inject.Singleton;
 
 @Singleton
 public class Server extends Thread {
