@@ -7,6 +7,7 @@ import bham.bioshock.client.Router;
 import bham.bioshock.common.consts.Config;
 import bham.bioshock.common.models.store.MinigameStore;
 import bham.bioshock.minigame.models.Entity;
+import bham.bioshock.minigame.models.Map;
 import bham.bioshock.minigame.models.Player;
 import bham.bioshock.minigame.models.Rocket;
 import bham.bioshock.minigame.physics.Gravity;
@@ -32,7 +33,7 @@ public class Renderer {
     private Player mainPlayer;
     private ArrayList<Entity> entities;
 
-    ShapeRenderer renderer;
+    ShapeRenderer shapeRenderer;
     private OrthographicCamera cam;
     Vector3 lerpTarget = new Vector3();
     private Sprite background;
@@ -55,13 +56,14 @@ public class Renderer {
         this.store = store;
         this.router = router;
         mainPlayer = store.getMainPlayer();
-        renderer = new ShapeRenderer();
+        shapeRenderer = new ShapeRenderer();
         entities = new ArrayList<Entity>();
         entities.addAll(store.getPlayers());
         entities.addAll(store.getRockets());
         gravity = new Gravity(store.getWorld());
 
         cam = new OrthographicCamera();
+        map = new Map(store);
         batch = new SpriteBatch();
         backgroundBatch = new SpriteBatch();
         camRotation = 0;
@@ -86,9 +88,9 @@ public class Renderer {
 
     public void render(float delta) {
         batch.setProjectionMatrix(cam.combined);
-        renderer.setProjectionMatrix(cam.combined);
+        shapeRenderer.setProjectionMatrix(cam.combined);
 
-        if(DEBUG_MODE) {
+        if (DEBUG_MODE) {
             drawCollisionBorders();
         }
 
@@ -115,41 +117,43 @@ public class Renderer {
 
 
     public void drawPlanet() {
-        renderer.begin(ShapeType.Filled);
-        renderer.setColor(Color.SALMON);
+        shapeRenderer.begin(ShapeType.Filled);
+        shapeRenderer.setColor(Color.SALMON);
 
-        renderer.circle(0, 0, (float) store.getPlanetRadius());
+        shapeRenderer.circle(0, 0, (float) store.getPlanetRadius());
         // bounding circle
         mainPlanet = new Circle(0, 0, (float) store.getPlanetRadius() - 50);
 
-        renderer.end();
+        shapeRenderer.end();
     }
 
     public void drawCollisionBorders() {
-        for(Entity e : entities) {
+        for (Entity e : entities) {
             drawBorder(e.getRectangle());
         }
     }
 
 
     public void drawBorder(Rectangle border) {
-        renderer.begin(ShapeType.Filled);
-        renderer.setColor(Color.BLACK);
-        renderer.rect(border.getX(), border.getY(), border.getWidth(), border.getHeight());
-        renderer.end();
+        shapeRenderer.begin(ShapeType.Filled);
+        shapeRenderer.setColor(Color.BLACK);
+        shapeRenderer.rect(border.getX(), border.getY(), border.getWidth(), border.getHeight());
+        shapeRenderer.end();
     }
 
     public void handleCollisions() {
         // Check collisions between any two entities
-        for(Entity e1 : entities) {
-            for(Entity e2 : entities) {
-
+        for (Entity e1 : entities) {
+            for (Entity e2 : entities) {
+                if(!e1.equals(e2)) {
+                    e1.checkCollision(e2);
+                }
             }
         }
     }
 
     public void drawEntities() {
-        for(Entity e : entities) {
+        for (Entity e : entities) {
             Sprite sprite = e.getSprite();
             sprite.setRegion(e.getTexture());
             sprite.setPosition(e.getX(), e.getY());
@@ -169,12 +173,10 @@ public class Renderer {
             mainPlayer.moveLeft(dt);
         }
 
-
         if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) || Gdx.input.isKeyPressed(Input.Keys.D)) {
             moveMade = true;
             mainPlayer.moveRight(dt);
         }
-
 
         if (Gdx.input.isKeyPressed(Input.Keys.UP) || Gdx.input.isKeyPressed(Input.Keys.W)) {
             moveMade = true;
@@ -182,6 +184,7 @@ public class Renderer {
         }
 
         if (moveMade) {
+            // Send a move to the server
             router.call(Route.MINIGAME_MOVE);
         }
 
@@ -192,15 +195,6 @@ public class Renderer {
         stage.getViewport().update(width, height, true);
     }
 
-    public boolean collidesWithFreeRocket(Rectangle r) {
-        ArrayList<Rectangle> rockets = map.getRockets();
-
-        for (int i = 0; i < rockets.size(); i++) {
-            if (Intersector.overlaps(r, rockets.get(i))) {
-                return true;
-            }
-        }
-        return false;
-    }
 }
+
 
