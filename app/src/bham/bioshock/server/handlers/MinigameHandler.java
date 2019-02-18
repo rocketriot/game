@@ -1,7 +1,9 @@
 package bham.bioshock.server.handlers;
 
+import java.util.ArrayList;
 import java.util.UUID;
 import bham.bioshock.common.Position;
+import bham.bioshock.common.models.Player;
 import bham.bioshock.common.models.store.MinigameStore;
 import bham.bioshock.common.models.store.Store;
 import bham.bioshock.communication.Action;
@@ -41,5 +43,13 @@ public class MinigameHandler {
     localStore.updatePlayer(playerId, speed, pos, null);
     
     handler.sendToAllExcept(action, playerId);
+  }
+
+  /**
+   * Method to end the minigame and send the players back to the main board
+   */
+  public void endMinigame(Action action, UUID playerId){
+    Player player = store.getPlayer(playerId);
+    player.addPoints(100);
   }
 }
