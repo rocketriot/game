@@ -250,7 +250,7 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
             // Check if planet has already been drawn
             if (!planet.getCoordinates().isEqual(new Coordinates(x, y)))
               continue;
-            
+
             sprite = planetSprites.get(planet.getTextureID());
             break;
 
@@ -260,30 +260,31 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
             // Check if asteroid has already been drawn
             if (!asteroid.getCoordinates().isEqual(new Coordinates(x, y)))
               continue;
-  
+
             sprite = asteroidSprites.get(asteroid.getTextureID());
             break;
 
           case FUEL:
             sprite = fuelSprite;
             break;
-          
+
           case EMPTY:
             continue;
 
           default:
             break;
         }
-          
+
         // Draw Sprite
         sprite.setX(x * PPS);
         sprite.setY(y * PPS);
         sprite.draw(batch);
       }
     }
+  }
 
+  private void drawPlayers() {
     boolean drawnMove = false;
-
     // Draw players
     for (Player player : store.getPlayers()) {
       if (player.getBoardMove() != null && !drawnMove) {
@@ -395,11 +396,12 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
     
     drawBackground();
     drawBoardObjects();
-    drawPath();
+    drawPlayers();
     drawEffects(delta);
 
     batch.end();
 
+    drawPath();
     drawGridLines();
     
 
