@@ -61,12 +61,29 @@ public class Store {
     return currentScreen;
   }
 
+  public boolean isMainPlayer(UUID id) {
+    if(mainPlayerId == null) {
+      return false;
+    }
+    return mainPlayerId.equals(id);
+  }
+
   public void setScreen(Screen screen) {
     currentScreen = screen;
   }
 
   public ArrayList<Player> getPlayers() {
     return players;
+  }
+
+  public Player getPlayer(UUID playerId) {
+    // Might be too slow
+    for (Player player : players) {
+      if (player.getId().equals(playerId))
+        return player;
+    }
+
+    return null;
   }
 
   public void setPlayers(ArrayList<Player> players) {
@@ -93,12 +110,7 @@ public class Store {
   }
 
   public Player getMainPlayer() {
-    // Might be too slow
-    for (Player player : players) {
-      if (player.getId().equals(mainPlayerId)) return player;
-    }
-
-    return null;
+    return getPlayer(mainPlayerId);
   }
 
   public void setMainPlayer(Player player) {
@@ -130,14 +142,16 @@ public class Store {
     }
   }
 
-  public MinigameStore getMinigameStore() {
-    return this.minigameStore;
-  }
-
   /*
    * MINIGAME
    */
   public void setMinigameStore(MinigameStore store) {
     this.minigameStore = store;
+  }
+  public MinigameStore getMinigameStore() {
+    return this.minigameStore;
+  }
+  public void resetMinigameStore(){
+    minigameStore = null;
   }
 }

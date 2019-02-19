@@ -33,7 +33,9 @@ public enum Route {
   SEND_MINIGAME_START(MinigameController.class,     "sendStart"),
   START_MINIGAME    (MinigameController.class,      "show"),
   MINIGAME_MOVE     (MinigameController.class,      "playerMove"),
-  MINIGAME_PLAYER_UPDATE(MinigameController.class,  "updatePlayer");
+  MINIGAME_PLAYER_UPDATE(MinigameController.class,  "updatePlayer"),
+  SERVER_MINIGAME_END(MinigameController.class,     "sendEnd"),
+  MINIGAME_END       (MinigameController.class,     "end");
   
 //@formatter:on
 

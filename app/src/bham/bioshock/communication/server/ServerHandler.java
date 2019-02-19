@@ -85,6 +85,9 @@ public class ServerHandler {
         case MINIGAME_PLAYER_MOVE:
           minigameHandler.playerMove(action, service.Id());
           break;
+        case MINIGAME_END:
+          minigameHandler.endMinigame(action, service.Id());
+          break;
         default:
           System.out.println("Received unhandled command: " + action.getCommand().toString());
           break;

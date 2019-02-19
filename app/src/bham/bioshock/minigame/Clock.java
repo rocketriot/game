@@ -12,7 +12,7 @@ public class Clock {
     time += delta;
     
     for(TimeListener l : listeners) {
-      if(time - l.lastCall > l.every) {
+      if((l.at != 0 && l.lastCall == 0f && time > l.at) || (l.every != 0 && time - l.lastCall > l.every)) {
         l.update(time);
         l.handle(new TimeUpdateEvent(time));      
       }
@@ -26,6 +26,13 @@ public class Clock {
     }
   }
   
+  public void at(float second, TimeListener listener) {
+    listener.setAt(second);
+    if(!listeners.contains(listener)) {
+      listeners.add(listener);      
+    }
+  }
+  
   public void everySecond(TimeListener listener) {
     every(1, listener);
   }
@@ -34,6 +41,7 @@ public class Clock {
  
     float lastCall = 0f; 
     float every = 0;
+    float at = 0;
     
     void update(float time) {
       lastCall = time;
@@ -41,6 +49,10 @@ public class Clock {
     
     void setEvery(float second) {
       every = second;
+    }
+    
+    void setAt(float second) {
+      at = second;
     }
     
     public abstract void handle(TimeUpdateEvent event); 
