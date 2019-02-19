@@ -61,6 +61,13 @@ public class Store {
     return currentScreen;
   }
 
+  public boolean isMainPlayer(UUID id) {
+    if(mainPlayerId == null) {
+      return false;
+    }
+    return mainPlayerId.equals(id);
+  }
+
   public void setScreen(Screen screen) {
     currentScreen = screen;
   }
