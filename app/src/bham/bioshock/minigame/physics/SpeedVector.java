@@ -1,5 +1,9 @@
 package bham.bioshock.minigame.physics;
 
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
+import bham.bioshock.common.Position;
 import bham.bioshock.communication.Sendable;
 
 public class SpeedVector extends Sendable {
@@ -55,15 +59,23 @@ public class SpeedVector extends Sendable {
 
   public void friction(double u) {
     Vector v = stopVector(getSpeedAngle());
-    dx -= v.dx * u;
-    dy -= v.dy * u;
+    dx -= round(v.dx * u);
+    dy -= round(v.dy * u);
   }
 
   private Vector stopVector(double angleDegrees) {
     double angle = Math.toRadians(angleDegrees);
     double length = getValue();
+    double speedAngle = (getSpeedAngle() + 360) % 360;
+    double normalizedDegrees = (angleDegrees + 360) % 360;
     if (length == 0) return new Vector(0, 0);
-    double da = Math.toRadians(getSpeedAngle() - angleDegrees);
+    
+    double angleDiff = 180 - Math.abs(Math.abs(normalizedDegrees - speedAngle) - 180); 
+    // Case for opposite direction
+    if(angleDiff >= 90) {
+      return new Vector(0,0);
+    }
+    double da = Math.toRadians(speedAngle - angleDegrees);
 
     double groundV = Math.cos(da) * length;
     double dx1 = Math.sin(angle) * groundV;
@@ -79,14 +91,12 @@ public class SpeedVector extends Sendable {
   public double dY() {
     return dy;
   }
-
-  private class Vector {
-    public double dx;
-    public double dy;
-
-    public Vector(double dx, double dy) {
-      this.dx = dx;
-      this.dy = dy;
-    }
+  
+  public void draw(ShapeRenderer shapeRenderer, Position pos) {
+    shapeRenderer.begin(ShapeType.Line);
+    shapeRenderer.setColor(Color.RED);
+    shapeRenderer.line(pos.x, pos.y, (float) (pos.x+dx), (float) (pos.y+dy));
+    shapeRenderer.end();
   }
+
 }

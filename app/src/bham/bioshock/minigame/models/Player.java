@@ -28,6 +28,8 @@ public class Player extends Entity {
     animationTime = 0;
     fromGround = -25;
     update(0);
+    collisionWidth = 75;
+    collisionHeight = 150;
   }
 
   public Player(World w, Position p) {
@@ -82,9 +84,10 @@ public class Player extends Entity {
 
   public void setPosition(Position p) {
     pos = p;
+    collisionBoundary.update(pos, getRotation());
   }
 
-  
+
   /**
    * Player textures
    **/
@@ -142,6 +145,12 @@ public class Player extends Entity {
 
   public void shoot() {
     // TODO Auto-generated method stub
-    
+
+  }
+
+  /** Collisions **/
+  @Override
+  public void handleCollision(Entity e) {
+    collide(e, 0.2f);
   }
 }

@@ -14,7 +14,7 @@ public class Platform extends Entity {
     private static HashMap<Integer, Texture> textures = new HashMap<>();
 
     public Platform(World w, float x, float y) {
-        super(w,x, y);
+        super(w, x, y);
     }
 
     public TextureRegion getTexture() {

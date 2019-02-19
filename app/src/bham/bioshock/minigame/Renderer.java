@@ -129,12 +129,7 @@ public class Renderer {
     batch.setProjectionMatrix(cam.combined);
     shapeRenderer.setProjectionMatrix(cam.combined);
 
-    if (DEBUG_MODE) {
-      drawCollisionBorders();
-    }
-
     handleCollisions();
-    updatePosition();
     cam.position.lerp(lerpTarget.set(mainPlayer.getX(), mainPlayer.getY(), 0), 3f * delta);
 
     double rotation = -gravity.getAngleTo(cam.position.x, cam.position.y);
@@ -149,9 +144,16 @@ public class Renderer {
     backgroundBatch.end();
 
     drawPlanet();
+    
+    if (DEBUG_MODE) {
+      drawDebug();
+    }
+
     batch.begin();
     drawEntities();
     batch.end();
+    
+    updatePosition();
   }
 
 
@@ -166,13 +168,9 @@ public class Renderer {
     shapeRenderer.end();
   }
 
-  public void drawCollisionBorders() {
+  public void drawDebug() {
     for (Entity e : entities) {
-      Rectangle border = e.getRectangle();
-      shapeRenderer.begin(ShapeType.Filled);
-      shapeRenderer.setColor(Color.BLACK);
-      shapeRenderer.rect(border.getX(), border.getY(), border.getWidth(), border.getHeight());
-      shapeRenderer.end();
+      e.drawDebug(shapeRenderer);
     }
   }
 
@@ -180,8 +178,8 @@ public class Renderer {
     // Check collisions between any two entities
     for (Entity e1 : entities) {
       for (Entity e2 : entities) {
-        if (!e1.equals(e2)) {
-          e1.checkCollision(e2);
+        if (!e1.equals(e2) && e1.checkCollision(e2)) {
+          e1.handleCollision(e2);
         }
       }
     }
@@ -202,7 +200,7 @@ public class Renderer {
     for (Entity e : entities) {
       Sprite sprite = e.getSprite();
       sprite.setRegion(e.getTexture());
-      sprite.setPosition(e.getX(), e.getY());
+      sprite.setPosition(e.getX() - (sprite.getWidth()/2), e.getY());
       sprite.setRotation((float) e.getRotation());
       sprite.draw(batch);
       e.update(Gdx.graphics.getDeltaTime());
@@ -233,7 +231,6 @@ public class Renderer {
       // Send a move to the server
       router.call(Route.MINIGAME_MOVE);
     }
-
   }
 
 
