@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.UUID;
 import bham.bioshock.common.Position;
 import bham.bioshock.minigame.PlayerTexture;
+import bham.bioshock.minigame.models.Gun;
 import bham.bioshock.minigame.models.Player;
 import bham.bioshock.minigame.models.Rocket;
 import bham.bioshock.minigame.physics.SpeedVector;
@@ -17,10 +18,12 @@ public class MinigameStore {
   private UUID mainPlayerId;
   private HashMap<UUID, Player> players;
   private ArrayList<Rocket> rockets;
-
+  private ArrayList<Gun> guns;
+  
   public MinigameStore() {
     players = new HashMap<>();
     rockets = new ArrayList<>();
+    guns = new ArrayList<>();
   }
 
   public void updatePlayer(UUID playerId, SpeedVector speed, Position pos, PlayerTexture dir) {
@@ -45,6 +48,7 @@ public class MinigameStore {
     }
     
     this.rockets = world.getRockets();
+    this.guns = world.getGuns();
   }
   
 
@@ -68,6 +72,16 @@ public class MinigameStore {
     return rockets;
   }
 
+  public Collection<Gun> getGuns() {
+    return guns;
+  }
+  public void removeGun(Gun g) {
+    guns.removeIf(gun -> gun == g);
+  }
+  public void addGun(Gun g) {
+    guns.add(g);
+  }
+  
   public double getPlanetRadius() {
     return currentWorld.getPlanetRadius();
   }

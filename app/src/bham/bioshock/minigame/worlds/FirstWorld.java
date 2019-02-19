@@ -2,6 +2,7 @@ package bham.bioshock.minigame.worlds;
 
 import java.util.ArrayList;
 import bham.bioshock.common.Position;
+import bham.bioshock.minigame.models.Gun;
 import bham.bioshock.minigame.models.Rocket;
 
 public class FirstWorld extends World {
@@ -11,6 +12,7 @@ public class FirstWorld extends World {
   double GRAVITY = 1500;
   Position[] playerPositions = new Position[4];
   ArrayList<Rocket> rockets = new ArrayList<>();
+  ArrayList<Gun> guns = new ArrayList<>();
   Position gravityCenter = new Position(0, 0);
   
   
@@ -22,6 +24,8 @@ public class FirstWorld extends World {
     
     rockets.add(new Rocket(this, 0, 2000, 1));
     rockets.add(new Rocket(this, 500, 2500, 2));
+    
+    guns.add(new Gun(this, -2020, 20));
   } 
   
   @Override
@@ -47,6 +51,11 @@ public class FirstWorld extends World {
   @Override
   public ArrayList<Rocket> getRockets() {
     return rockets;
+  }
+
+  @Override
+  public ArrayList<Gun> getGuns() {
+    return guns;
   }
   
 }

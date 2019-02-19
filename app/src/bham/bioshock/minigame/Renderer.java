@@ -8,6 +8,7 @@ import bham.bioshock.common.consts.Config;
 import bham.bioshock.common.models.store.MinigameStore;
 import bham.bioshock.minigame.Clock.TimeUpdateEvent;
 import bham.bioshock.minigame.models.Entity;
+import bham.bioshock.minigame.models.Gun;
 import bham.bioshock.minigame.models.Player;
 import bham.bioshock.minigame.models.Rocket;
 import bham.bioshock.minigame.physics.Gravity;
@@ -58,6 +59,7 @@ public class Renderer {
     entities = new ArrayList<Entity>();
     entities.addAll(store.getPlayers());
     entities.addAll(store.getRockets());
+    entities.addAll(store.getGuns());
     gravity = new Gravity(store.getWorld());
     clock = new Clock();
 
@@ -77,6 +79,7 @@ public class Renderer {
     viewport = new FitViewport(GAME_WORLD_WIDTH, GAME_WORLD_HEIGHT, cam);
     Player.loadTextures();
     Rocket.loadTextures();
+    Gun.loadTextures();
     stage = new Stage(viewport);
     background = new Sprite(new Texture(Gdx.files.internal("app/assets/backgrounds/game.png")));
 
@@ -89,7 +92,7 @@ public class Renderer {
     clock.at(15, clock.new TimeListener() {
       @Override
       public void handle(TimeUpdateEvent event) {
-        router.call(Route.SERVER_MINIGAME_END);
+       // router.call(Route.SERVER_MINIGAME_END);
       }
     });
   }
