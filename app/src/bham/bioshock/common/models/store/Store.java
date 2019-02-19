@@ -39,7 +39,7 @@ public class Store {
   private ArrayList<Player> players = new ArrayList<>(MAX_PLAYERS);
 
   /** A hash map of players to their userID */
-  private HashMap<UUID, Player> players_map = new HashMap<>();
+  private HashMap<UUID, Player> playersMap = new HashMap<>();
 
   /** The ID of the player that the client is controlling, only used client-side */
   private UUID mainPlayerId;
@@ -88,7 +88,11 @@ public class Store {
     return players;
   }
 
-  public HashMap<UUID, Player> getPlayersMap() { return players_map; }
+  public HashMap<UUID, Player> getPlayersMap() { return playersMap; }
+
+  public Player getPlayerByID(UUID id) {
+    return playersMap.get(id);
+  }
 
   public void setPlayers(ArrayList<Player> players) {
     this.players.clear();
@@ -96,18 +100,18 @@ public class Store {
   }
 
   public void addPlayer(Player player) {
-    players_map.put(player.getId(), player);
+    playersMap.put(player.getId(), player);
     players.add(player);
   }
 
   public void removePlayer(UUID id) {
     players.removeIf(p -> p.getId().equals(id));
-    players_map.remove(id);
+    playersMap.remove(id);
   }
 
   public void removeAllPlayers() {
     players.clear();
-    players_map.clear();
+    playersMap.clear();
   }
 
   public void updatePlayer(Player updatingPlayer) {

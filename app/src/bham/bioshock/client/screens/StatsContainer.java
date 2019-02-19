@@ -15,7 +15,7 @@ import java.util.*;
 
 public class StatsContainer extends Container {
 
-    private MinigameStore minigame_store;
+    private Store store;
 
     private Skin skin;
 
@@ -24,39 +24,29 @@ public class StatsContainer extends Container {
 
 
 
-    public StatsContainer(MinigameStore minigame_store) {
+    public StatsContainer(Store store) {
 
-        this.minigame_store = minigame_store;
+        this.store = store;
 
         /*nb: change the skin*/
         this.skin = new Skin(Gdx.files.internal("app/assets/skins/neon/skin/neon-ui.json"));
-        setUp();
         setupContainers();
     }
 
-    private void setUp() {
-        this.fill();
-        this.setSize(Gdx.graphics.getWidth()*0.2f, Gdx.graphics.getHeight()*0.2f);
-        this.setPosition(10,10);
-    }
 
     private void setupContainers() {
 
         Table table = new Table();
         Label l = new Label("STATS", skin);
-        table.add(l);
+        table.add(l).colspan(store.MAX_PLAYERS);
         table.row();
-        HashMap<bham.bioshock.minigame.models.Player, Player> minigames_players_map = minigame_store.getPlayerMap();
-        Iterator<Player> iterator = minigames_players_map.values().iterator();
+        Iterator<Player> iterator = store.getPlayers().iterator();
         int i = 0;
         while(iterator.hasNext()) {
             Player p = iterator.next();
             playerTables.add(new PlayerContainer(p.getId(), p.getUsername()));
             update(playerTables.get(i));
             table.add(playerTables.get(i));
-            if(i%2 == 0){
-                table.row();
-            }
             i++;
 
         }
@@ -71,11 +61,9 @@ public class StatsContainer extends Container {
     }
 
     private void update(PlayerContainer player_container) {
-        HashMap<bham.bioshock.minigame.models.Player, Player> minigames_players_map = minigame_store.getPlayerMap();
 
         UUID id = player_container.getId();
-        bham.bioshock.minigame.models.Player minigame_player = minigame_store.getPlayer(id);
-        Player player = minigames_players_map.get(minigame_player);
+        Player player = store.getPlayerByID(id);
 
         float fuel = player.getFuel();
         int planets = player.getPlanetsCaptured();
@@ -105,7 +93,7 @@ public class StatsContainer extends Container {
             planets_label = new Label("", skin);
             points_label = new Label("", skin);
 
-            table.add(player_name);
+            table.add(player_name).colspan(2);
             table.row();
             table.add(l1);
             table.add(fuel_label);

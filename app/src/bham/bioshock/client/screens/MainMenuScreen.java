@@ -25,7 +25,6 @@ public class MainMenuScreen extends ScreenMaster {
     stage = new Stage(new ScreenViewport());
     batch = new SpriteBatch();
 
-    router.call(Route.TEST_STAT, stage);
   }
 
   @Override

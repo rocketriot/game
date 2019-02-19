@@ -29,10 +29,7 @@ public class MinigameController extends Controller {
     localStore = store.getMinigameStore();
   }
 
-/*<<<<<<< HEAD
-        World world = new World(store);
-        setScreen(new MinigameScreen(game, world));
-=======*/
+
   public void sendStart() {
     clientService.send(new Action(Command.MINIGAME_START));
   }
@@ -63,7 +60,6 @@ public class MinigameController extends Controller {
     
     store.setMinigameStore(localStore);
 
-
-    setScreen(new MinigameScreen(localStore, router));
+    setScreen(new MinigameScreen(store, router));
   }
 }

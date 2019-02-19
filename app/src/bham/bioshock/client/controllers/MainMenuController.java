@@ -44,9 +44,6 @@ public class MainMenuController extends Controller {
     setScreen(new MainMenuScreen(router));
   }
 
-  /*public void testStat(Stage stage) {
-    stage.addActor( new StatsContainer(store));
-  }*/
   
   public void alert(String message) {
     ((ScreenMaster)store.getScreen()).alert(message);

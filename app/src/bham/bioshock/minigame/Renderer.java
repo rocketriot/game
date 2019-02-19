@@ -8,7 +8,7 @@ import bham.bioshock.client.Router;
 
 import bham.bioshock.common.consts.Config;
 import bham.bioshock.common.models.store.MinigameStore;
-import bham.bioshock.minigame.Clock.TimeUpdateEvent;
+import bham.bioshock.common.models.store.Store;
 import bham.bioshock.minigame.models.Entity;
 import bham.bioshock.minigame.models.Player;
 import bham.bioshock.minigame.models.Rocket;
@@ -27,12 +27,10 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
-import java.awt.*;
 import java.util.ArrayList;
 
 public class Renderer {
@@ -52,30 +50,28 @@ public class Renderer {
   private Viewport viewport;
   private double camRotation;
 
-  private StatsContainer statsContainer;
-  private World world;
+  private Store store;
 
 
-  private MinigameStore minigame_store;
+  private MinigameStore minigameStore;
   private Gravity gravity;
   private Router router;
 
   private MinigameHud hud;
   private final InputMultiplexer inputMultiplexer;
 
-  public Renderer(MinigameStore store, Router router) {
-    this.minigame_store = store;
+  public Renderer(Store store, Router router) {
+    this.store = store;
+    this.minigameStore = store.getMinigameStore();
     this.router = router;
-    mainPlayer = store.getMainPlayer();
-
-    world = store.getWorld();
+    mainPlayer = minigameStore.getMainPlayer();
 
     renderer = new ShapeRenderer();
     clock = new Clock();
     entities = new ArrayList<Entity>();
-    entities.addAll(store.getPlayers());
-    entities.addAll(store.getRockets());
-    gravity = new Gravity(store.getWorld());
+    entities.addAll(minigameStore.getPlayers());
+    entities.addAll(minigameStore.getRockets());
+    gravity = new Gravity(minigameStore.getWorld());
 
     cam = new OrthographicCamera();
 
@@ -99,7 +95,7 @@ public class Renderer {
 
   private void setupUI() {
     Skin skin = new Skin(Gdx.files.internal("app/assets/skins/neon/skin/neon-ui.json"));
-    hud = new MinigameHud(batch, skin, GAME_WORLD_WIDTH, GAME_WORLD_HEIGHT, minigame_store, router);
+    hud = new MinigameHud(batch, skin, GAME_WORLD_WIDTH, GAME_WORLD_HEIGHT, store, router);
   }
 
 
@@ -109,11 +105,7 @@ public class Renderer {
     Rocket.loadTextures();
     stage = new Stage(viewport);
 
-    statsContainer = new StatsContainer(minigame_store);
-    statsContainer.setZIndex(20);
-
     background = new Sprite(new Texture(Gdx.files.internal("app/assets/backgrounds/game.png")));
-
 
     mainPlayer.load();
 
@@ -158,7 +150,6 @@ public class Renderer {
     batch.begin();
     drawEntities();
     //drawMainPlayer();
-    updateStats();
 
     batch.end();
 
@@ -173,7 +164,7 @@ public class Renderer {
   public void drawPlanet() {
     renderer.begin(ShapeType.Filled);
     renderer.setColor(Color.SALMON);
-    renderer.circle(0, 0, (float) minigame_store.getPlanetRadius());
+    renderer.circle(0, 0, (float) minigameStore.getPlanetRadius());
     renderer.end();
   }
 
@@ -216,7 +207,4 @@ public class Renderer {
   }
 
 
-  private void updateStats() {
-    statsContainer.updateAll();
-  }
 }
