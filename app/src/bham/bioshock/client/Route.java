@@ -38,6 +38,7 @@ public enum Route {
   START_MENU_MUSIC  (SoundController.class,         "startMenuMusic"),
   MUSIC_VOLUME      (SoundController.class,         "setMusicVolume"),
   MUSIC_ENABLED     (SoundController.class,         "enableMusic"),
+  STOP_MAIN_MUSIC   (SoundController.class,         "stopMainMusic"),
   SELECT_SOUND      (SoundController.class,         "selectSound"),
   SOUNDS_VOLUME     (SoundController.class,         "setSoundsVolume"),
   SOUNDS_ENABLED    (SoundController.class,         "enableSounds");

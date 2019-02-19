@@ -51,13 +51,13 @@ public class SoundController extends Controller {
 
         if (!enable){
             menuPlaying = false;
-            stopMusic();
+            stopMainMusic();
         } else {
             startMenuMusic();
         }
     }
 
-    public void stopMusic(){
+    public void stopMainMusic(){
         mainMenuMusic.stop();
     }
 

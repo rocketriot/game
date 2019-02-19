@@ -39,7 +39,7 @@ public class PreferencesController extends Controller {
 }
 
   private AppPreferences readPreferences() {
-    reader.printNodes("sound");
+    //reader.printNodes("sound");
     return new AppPreferences();
   }
 }
