@@ -21,6 +21,7 @@ public class MainMenuController extends Controller {
     super(store, router, game);
     this.server = server;
     this.game = game;
+    menuMusic();
   }
 
   /** Creates a server */
@@ -43,5 +44,9 @@ public class MainMenuController extends Controller {
   
   public void alert(String message) {
     ((ScreenMaster)store.getScreen()).alert(message);
+  }
+
+  public void menuMusic(){
+    router.call(Route.MENU_MUSIC);
   }
 }

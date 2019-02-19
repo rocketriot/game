@@ -11,6 +11,7 @@ public enum Route {
   MAIN_MENU         (MainMenuController.class,      "show"),
   HOST_GAME         (MainMenuController.class,      "hostGame"),
   ALERT             (MainMenuController.class,      "alert"),
+  MENU_MUSIC        (SoundController.class,         "menuMusic"),
   
   HOW_TO            (HowToController.class,         "show"),
   LOADING           (LoadingController.class,       "show"),

@@ -9,29 +9,30 @@ import com.badlogic.gdx.audio.Sound;
 import javax.inject.Singleton;
 
 @Singleton
-public class MusicController extends Controller {
+public class SoundController extends Controller {
 
-    Sound mainMenuMusic;
-    float musicVolume;
-    long musicID;
-    boolean menuPlaying;
+    private Sound mainMenuMusic;
+    private float musicVolume;
+    private long musicID;
+    private boolean menuPlaying;
 
-    public MusicController(Store store, Router router, BoardGame game) {
+    public SoundController(Store store, Router router, BoardGame game) {
         super(store, router, game);
         mainMenuMusic = Gdx.audio.newSound(Gdx.files.internal("app/assets/music/MainMenuMusic.mp3"));
         menuPlaying = false;
     }
 
-    private void startMenuMusic(){
-        musicVolume = 1.0f;
-        musicID = mainMenuMusic.loop();
-        menuPlaying = true;
+    private void menuMusic() {
+        if (!menuPlaying){
+            musicVolume = 1.0f;
+            musicID = mainMenuMusic.loop();
+            menuPlaying = true;
+        }
     }
 
-    public void setMusicVolume(float volume, long id){
+    public void setMusicVolume(float volume, long id) {
         musicVolume = volume;
         mainMenuMusic.setVolume(id, musicVolume);
     }
-
 
 }
