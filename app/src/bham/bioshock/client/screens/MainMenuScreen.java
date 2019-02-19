@@ -2,6 +2,7 @@ package bham.bioshock.client.screens;
 
 import bham.bioshock.client.Route;
 import bham.bioshock.client.Router;
+import bham.bioshock.client.controllers.SoundController;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -92,6 +93,7 @@ public class MainMenuScreen extends ScreenMaster {
     exit.addListener(new ChangeListener() {
       @Override
       public void changed(ChangeEvent event, Actor actor) {
+        SoundController.menuSelect.play();
         Gdx.app.exit();
       }
     });
@@ -100,6 +102,7 @@ public class MainMenuScreen extends ScreenMaster {
       @Override
       public void changed(ChangeEvent event, Actor actor) {
         /** Bring up a dialogue to ask the user for a host name then start the new server */
+        SoundController.menuSelect.play();
         showHostDialogue();
       }
     });
@@ -107,6 +110,7 @@ public class MainMenuScreen extends ScreenMaster {
     howto.addListener(new ChangeListener() {
       @Override
       public void changed(ChangeEvent event, Actor actor) {
+        SoundController.menuSelect.play();
         router.call(Route.HOW_TO);
       }
     });
@@ -114,6 +118,7 @@ public class MainMenuScreen extends ScreenMaster {
     preferences.addListener(new ChangeListener() {
       @Override
       public void changed(ChangeEvent event, Actor actor) {
+        SoundController.menuSelect.play();
         router.call(Route.PREFERENCES);
       }
     });
