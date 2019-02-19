@@ -7,13 +7,17 @@ import bham.bioshock.client.Router;
 import bham.bioshock.common.consts.Config;
 import bham.bioshock.common.models.store.MinigameStore;
 import bham.bioshock.minigame.Clock.TimeUpdateEvent;
+import bham.bioshock.minigame.models.Bullet;
 import bham.bioshock.minigame.models.Entity;
 import bham.bioshock.minigame.models.Gun;
 import bham.bioshock.minigame.models.Player;
 import bham.bioshock.minigame.models.Rocket;
 import bham.bioshock.minigame.physics.Gravity;
+import bham.bioshock.minigame.physics.SpeedVector;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.Input.Keys;
+import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -50,6 +54,7 @@ public class Renderer {
   private MinigameStore store;
   private Gravity gravity;
   private Router router;
+  private boolean shooting;
 
   public Renderer(MinigameStore store, Router router) {
     this.store = store;
@@ -62,6 +67,7 @@ public class Renderer {
     entities.addAll(store.getGuns());
     gravity = new Gravity(store.getWorld());
     clock = new Clock();
+    shooting = false;
 
     cam = new OrthographicCamera();
     batch = new SpriteBatch();
@@ -80,26 +86,46 @@ public class Renderer {
     Player.loadTextures();
     Rocket.loadTextures();
     Gun.loadTextures();
+    Bullet.loadTextures();
     stage = new Stage(viewport);
     background = new Sprite(new Texture(Gdx.files.internal("app/assets/backgrounds/game.png")));
 
     for (Entity e : entities) {
       e.load();
     }
+
+    Gdx.input.setInputProcessor(new InputAdapter() {
+      @Override
+      public boolean keyDown(int keyCode) {
+        if (Keys.SPACE == keyCode && !shooting) {
+          createBullet();
+          shooting = true;
+        }
+        return true;
+      }
+
+      @Override
+      public boolean keyUp(int keyCode) {
+        if (Keys.SPACE == keyCode) {
+          shooting = false;
+        }
+        return true;
+      }
+    });
   }
-  
+
   public void startClock() {
     clock.at(15, clock.new TimeListener() {
       @Override
       public void handle(TimeUpdateEvent event) {
-       // router.call(Route.SERVER_MINIGAME_END);
+        // router.call(Route.SERVER_MINIGAME_END);
       }
     });
   }
- 
+
   public void render(float delta) {
     clock.update(delta);
-  
+
     batch.setProjectionMatrix(cam.combined);
     shapeRenderer.setProjectionMatrix(cam.combined);
 
@@ -136,7 +162,7 @@ public class Renderer {
     shapeRenderer.circle(0, 0, (float) store.getPlanetRadius());
     // bounding circle
     new Circle(0, 0, (float) store.getPlanetRadius() - 50);
-    
+
     shapeRenderer.end();
   }
 
@@ -159,6 +185,17 @@ public class Renderer {
         }
       }
     }
+  }
+  
+  public void createBullet() {
+    Player main = store.getMainPlayer();
+    Bullet b = new Bullet(store.getWorld(), main.getX(), main.getY() + main.getSize()*3/4);
+    
+    // First synchronise the bullet with the player
+    b.setSpeedVector((SpeedVector) main.getSpeedVector().clone());
+    b.setSpeed((float) main.getSpeedVector().getSpeedAngle(), 2000);
+    b.load();
+    entities.add(b);
   }
 
   public void drawEntities() {

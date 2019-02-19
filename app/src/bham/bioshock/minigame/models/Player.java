@@ -68,10 +68,6 @@ public class Player extends Entity {
     return speed;
   }
 
-  public void setSpeedVector(SpeedVector s) {
-    speed = s;
-  }
-
   public PlayerTexture getDirection() {
     return dir;
   }
@@ -142,5 +138,10 @@ public class Player extends Entity {
 
     walkAnimation = textureToAnimation(walkSheet);
     walkGunAnimation = textureToAnimation(walkGunSheet);
+  }
+
+  public void shoot() {
+    // TODO Auto-generated method stub
+    
   }
 }

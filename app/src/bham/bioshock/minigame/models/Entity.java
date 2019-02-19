@@ -97,6 +97,9 @@ public abstract class Entity {
   public void setSpeed(float angle, float force) {
     speed.apply(angle, force);
   }
+  public void setSpeedVector(SpeedVector s) {
+    speed = s;
+  }
 
   public void update(float delta) {
     double angle = angleToCenterOfGravity();
@@ -129,9 +132,9 @@ public abstract class Entity {
    * Can be overwritten by the subclass
    */
   public void handleCollision(Entity e) {
-    double speedAngle = speed.getSpeedAngle();
-    speed.stop(speedAngle);
-    speed.apply(-speedAngle, 20);
+//    double speedAngle = speed.getSpeedAngle();
+//    speed.stop(speedAngle);
+//    speed.apply(-speedAngle, 20);
   }
 
   // returns rectangle of the sprite
