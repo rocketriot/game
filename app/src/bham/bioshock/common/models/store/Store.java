@@ -76,6 +76,16 @@ public class Store {
     return players;
   }
 
+  public Player getPlayer(UUID playerId) {
+    // Might be too slow
+    for (Player player : players) {
+      if (player.getId().equals(playerId))
+        return player;
+    }
+
+    return null;
+  }
+
   public void setPlayers(ArrayList<Player> players) {
     this.players.clear();
     this.players = players;
@@ -100,12 +110,7 @@ public class Store {
   }
 
   public Player getMainPlayer() {
-    // Might be too slow
-    for (Player player : players) {
-      if (player.getId().equals(mainPlayerId)) return player;
-    }
-
-    return null;
+    return getPlayer(mainPlayerId);
   }
 
   public void setMainPlayer(Player player) {
@@ -146,5 +151,11 @@ public class Store {
    */
   public void setMinigameStore(MinigameStore store) {
     this.minigameStore = store;
+  }
+  public MinigameStore getMinigameStore() {
+    return this.minigameStore;
+  }
+  public void resetMinigameStore(){
+    minigameStore = null;
   }
 }

@@ -108,8 +108,12 @@ public class Player extends Sendable {
     return points;
   }
 
-  public void setPoints(int points) {
-    this.points = points;
+  public void addPoints(int points){
+    this.points += points;
+  }
+
+  public void setBoardMove(BoardMove boardMove) {
+    this.boardMove = boardMove;
   }
 
   public BoardMove getBoardMove() {
