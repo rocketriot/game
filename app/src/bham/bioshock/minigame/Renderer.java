@@ -1,10 +1,11 @@
 package bham.bioshock.minigame;
 
+
+import java.util.ArrayList;
 import bham.bioshock.client.Route;
 import bham.bioshock.client.Router;
 import bham.bioshock.common.consts.Config;
 import bham.bioshock.common.models.store.MinigameStore;
-import bham.bioshock.minigame.Clock.TimeUpdateEvent;
 import bham.bioshock.minigame.models.Entity;
 import bham.bioshock.minigame.models.Player;
 import bham.bioshock.minigame.models.Rocket;
@@ -19,23 +20,25 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
+import com.badlogic.gdx.math.Circle;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
-import java.util.ArrayList;
-
 public class Renderer {
 
+  private static boolean DEBUG_MODE = false;
   private final int GAME_WORLD_WIDTH = Config.GAME_WORLD_WIDTH;
   private final int GAME_WORLD_HEIGHT = Config.GAME_WORLD_HEIGHT;
-  ShapeRenderer renderer;
-  Vector3 lerpTarget = new Vector3();
   private Player mainPlayer;
   private Clock clock;
   private ArrayList<Entity> entities;
+
+  ShapeRenderer shapeRenderer;
   private OrthographicCamera cam;
+  Vector3 lerpTarget = new Vector3();
   private Sprite background;
   private Stage stage;
   private SpriteBatch batch;
@@ -50,15 +53,13 @@ public class Renderer {
     this.store = store;
     this.router = router;
     mainPlayer = store.getMainPlayer();
-    renderer = new ShapeRenderer();
-    clock = new Clock();
+    shapeRenderer = new ShapeRenderer();
     entities = new ArrayList<Entity>();
     entities.addAll(store.getPlayers());
     entities.addAll(store.getRockets());
     gravity = new Gravity(store.getWorld());
 
     cam = new OrthographicCamera();
-
     batch = new SpriteBatch();
     backgroundBatch = new SpriteBatch();
     camRotation = 0;
@@ -66,8 +67,9 @@ public class Renderer {
     cam.update();
 
     loadSprites();
-//    startClock();
+    startClock();
   }
+
 
   public void loadSprites() {
     viewport = new FitViewport(GAME_WORLD_WIDTH, GAME_WORLD_HEIGHT, cam);
@@ -81,21 +83,26 @@ public class Renderer {
     }
   }
   
-//  public void startClock() {
-//    clock.every(0.01f, clock.new TimeListener() {
-//      @Override
-//      public void handle(TimeUpdateEvent event) {
-//        router.call(Route.MINIGAME_MOVE);
-//      }
-//    });
-//  }
+  public void startClock() {
+    clock.at(15, clock.new TimeListener() {
+      @Override
+      public void handle(TimeUpdateEvent event) {
+        router.call(Route.SERVER_MINIGAME_END);
+      }
+    });
+  }
  
   public void render(float delta) {
-//    clock.update(delta);
+    clock.update(delta);
   
     batch.setProjectionMatrix(cam.combined);
-    renderer.setProjectionMatrix(cam.combined);
+    shapeRenderer.setProjectionMatrix(cam.combined);
 
+    if (DEBUG_MODE) {
+      drawCollisionBorders();
+    }
+
+    handleCollisions();
     updatePosition();
     cam.position.lerp(lerpTarget.set(mainPlayer.getX(), mainPlayer.getY(), 0), 3f * delta);
 
@@ -116,11 +123,37 @@ public class Renderer {
     batch.end();
   }
 
+
   public void drawPlanet() {
-    renderer.begin(ShapeType.Filled);
-    renderer.setColor(Color.SALMON);
-    renderer.circle(0, 0, (float) store.getPlanetRadius());
-    renderer.end();
+    shapeRenderer.begin(ShapeType.Filled);
+    shapeRenderer.setColor(Color.SALMON);
+
+    shapeRenderer.circle(0, 0, (float) store.getPlanetRadius());
+    // bounding circle
+    new Circle(0, 0, (float) store.getPlanetRadius() - 50);
+    
+    shapeRenderer.end();
+  }
+
+  public void drawCollisionBorders() {
+    for (Entity e : entities) {
+      Rectangle border = e.getRectangle();
+      shapeRenderer.begin(ShapeType.Filled);
+      shapeRenderer.setColor(Color.BLACK);
+      shapeRenderer.rect(border.getX(), border.getY(), border.getWidth(), border.getHeight());
+      shapeRenderer.end();
+    }
+  }
+
+  public void handleCollisions() {
+    // Check collisions between any two entities
+    for (Entity e1 : entities) {
+      for (Entity e2 : entities) {
+        if (!e1.equals(e2)) {
+          e1.checkCollision(e2);
+        }
+      }
+    }
   }
 
   public void drawEntities() {
@@ -134,6 +167,7 @@ public class Renderer {
     }
   }
 
+
   public void updatePosition() {
     float dt = Gdx.graphics.getDeltaTime();
     boolean moveMade = false;
@@ -142,22 +176,29 @@ public class Renderer {
       moveMade = true;
       mainPlayer.moveLeft(dt);
     }
+
     if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) || Gdx.input.isKeyPressed(Input.Keys.D)) {
       moveMade = true;
       mainPlayer.moveRight(dt);
     }
+
     if (Gdx.input.isKeyPressed(Input.Keys.UP) || Gdx.input.isKeyPressed(Input.Keys.W)) {
       moveMade = true;
       mainPlayer.jump(dt);
     }
-    
-    if(moveMade) {
+
+    if (moveMade) {
+      // Send a move to the server
       router.call(Route.MINIGAME_MOVE);
     }
+
   }
 
 
   public void resize(int width, int height) {
     stage.getViewport().update(width, height, true);
   }
+
 }
+
+

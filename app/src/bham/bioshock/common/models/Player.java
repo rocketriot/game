@@ -1,8 +1,8 @@
 package bham.bioshock.common.models;
 
-import java.util.UUID;
-
 import bham.bioshock.communication.Sendable;
+
+import java.util.UUID;
 
 /** Stores the data of a player on the game board */
 public class Player extends Sendable {
@@ -33,9 +33,7 @@ public class Player extends Sendable {
   /** The number of points the player has */
   private int points = 0;
 
-  /**
-   * Object containing infomation about a players move
-  */
+  /** Object containing infomation about a players move */
   private BoardMove boardMove;
 
   public Player() {
@@ -110,6 +108,10 @@ public class Player extends Sendable {
     return points;
   }
 
+  public void addPoints(int points){
+    this.points += points;
+  }
+
   public void setBoardMove(BoardMove boardMove) {
     this.boardMove = boardMove;
   }
@@ -118,8 +120,8 @@ public class Player extends Sendable {
     return boardMove;
   }
 
-  public void setPoints(int points) {
-    this.points = points;
+  public void setBoardMove(BoardMove boardMove) {
+    this.boardMove = boardMove;
   }
 
   public int getTextureID() {
