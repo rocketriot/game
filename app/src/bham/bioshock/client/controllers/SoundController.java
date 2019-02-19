@@ -6,6 +6,7 @@ import bham.bioshock.common.models.store.Store;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
 
+import javax.inject.Inject;
 import javax.inject.Singleton;
 
 @Singleton
@@ -16,14 +17,18 @@ public class SoundController extends Controller {
     private long musicID;
     private boolean menuPlaying;
 
+    @Inject
     public SoundController(Store store, Router router, BoardGame game) {
         super(store, router, game);
         mainMenuMusic = Gdx.audio.newSound(Gdx.files.internal("app/assets/music/MainMenuMusic.mp3"));
         menuPlaying = false;
     }
 
-    private void menuMusic() {
+    public void menuMusic() {
         if (!menuPlaying){
+
+            System.out.println("Starting menu music");
+
             musicVolume = 1.0f;
             musicID = mainMenuMusic.loop();
             menuPlaying = true;
