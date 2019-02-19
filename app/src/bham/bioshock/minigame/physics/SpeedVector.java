@@ -69,7 +69,10 @@ public class SpeedVector extends Sendable {
     double speedAngle = (getSpeedAngle() + 360) % 360;
     double normalizedDegrees = (angleDegrees + 360) % 360;
     if (length == 0) return new Vector(0, 0);
-    if( Math.abs(normalizedDegrees - speedAngle) >= 120) {
+    
+    double angleDiff = 180 - Math.abs(Math.abs(normalizedDegrees - speedAngle) - 180); 
+    // Case for opposite direction
+    if(angleDiff >= 90) {
       return new Vector(0,0);
     }
     double da = Math.toRadians(speedAngle - angleDegrees);
@@ -96,17 +99,4 @@ public class SpeedVector extends Sendable {
     shapeRenderer.end();
   }
 
-  public void collide(SpeedVector speed, float elastic) {
-    double initAngle = this.getSpeedAngle();
-    double initValue = this.getValue();
-    
-    double initAngle2 = speed.getSpeedAngle();
-    double initValue2 = speed.getValue();
-    
-    this.stop(initAngle);
-    speed.stop(initAngle2);
-    
-    this.apply(initAngle2, initValue2);
-    speed.apply(initAngle, initValue);
-  }
 }

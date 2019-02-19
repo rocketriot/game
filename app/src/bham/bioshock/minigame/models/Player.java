@@ -98,6 +98,7 @@ public class Player extends Entity {
   }
   public void setPosition(Position p) {
     pos = p;
+    collisionBoundary.update(pos, getRotation());
   }
 
   public TextureRegion getTexture() {
@@ -117,7 +118,8 @@ public class Player extends Entity {
   /** Collisions **/
   @Override
   public void handleCollision(Entity e) {
-
+    System.out.println("COLLISION");
+    collide(e, 1);
   }
   
 }

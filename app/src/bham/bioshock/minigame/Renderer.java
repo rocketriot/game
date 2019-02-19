@@ -136,8 +136,8 @@ public class Renderer {
     // Check collisions between any two entities
     for (Entity e1 : entities) {
       for (Entity e2 : entities) {
-        if (!e1.equals(e2)) {
-          e1.checkCollision(e2);
+        if (!e1.equals(e2) && e1.checkCollision(e2)) {
+          e1.handleCollision(e2);
         }
       }
     }
