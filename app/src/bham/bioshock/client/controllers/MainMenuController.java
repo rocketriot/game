@@ -24,7 +24,7 @@ public class MainMenuController extends Controller {
     super(store, router, game);
     this.server = server;
     this.game = game;
-    mainMenuMusic = Gdx.audio.newSound(Gdx.files.internal("assets/music/MainMenuMusic.mp3"));
+    mainMenuMusic = Gdx.audio.newSound(Gdx.files.internal("app/assets/music/MainMenuMusic.mp3"));
     mainMenuMusic.loop();
   }
 
