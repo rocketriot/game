@@ -88,6 +88,7 @@ public class Player extends Entity {
     pos = p;
   }
 
+  
   /**
    * Player textures
    **/

@@ -8,14 +8,11 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.Rectangle;
-import java.util.ArrayList;
-import java.util.Arrays;
 
 
 public abstract class Entity {
 
   protected final double GROUND_FRICTION = 0.2;
-  private final double AIR_FRICTION = 0.001;
 
   protected int size = 50;
 

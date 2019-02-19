@@ -60,7 +60,7 @@ public class ServerHandler {
   }
 
   public void handleRequest(Action action, ServerService service) {
-    logger.debug("Server received: " + action);
+    logger.trace("Server received: " + action);
     
     try {
       switch (action.getCommand()) {
@@ -89,7 +89,7 @@ public class ServerHandler {
           minigameHandler.endMinigame(action, service.Id());
           break;
         default:
-          System.out.println("Received unhandled command: " + action.getCommand().toString());
+          logger.error("Received unhandled command: " + action.getCommand().toString());
           break;
       }
     

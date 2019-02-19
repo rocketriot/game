@@ -12,6 +12,7 @@ public class Gun extends Entity {
   public Gun(World w, float x, float y) {
     super(w, x, y);
     setRotation(0);
+    fromGround = -5;
   }
 
   @Override
