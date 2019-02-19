@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
 import bham.bioshock.common.Position;
 import bham.bioshock.minigame.PlayerTexture;
 import bham.bioshock.minigame.models.Player;
@@ -16,21 +15,19 @@ public class MinigameStore {
 
   private World currentWorld;
   private UUID mainPlayerId;
-  private ConcurrentHashMap<UUID, Player> players;
+  private HashMap<UUID, Player> players;
   private ArrayList<Rocket> rockets;
 
   public MinigameStore() {
-    players = new ConcurrentHashMap<>();
+    players = new HashMap<>();
     rockets = new ArrayList<>();
   }
 
   public void updatePlayer(UUID playerId, SpeedVector speed, Position pos, PlayerTexture dir) {
     Player p = getPlayer(playerId);
-    synchronized(p) {
-      p.setSpeedVector(speed);
-      p.setPosition(pos);
-      p.setDirection(dir);      
-    }
+    p.setSpeedVector(speed);
+    p.setPosition(pos);
+    p.setDirection(dir);
   }
 
   // Create world from the seeder
@@ -44,11 +41,7 @@ public class MinigameStore {
 
     for (int i = 0; i < players.size(); i++) {
       Player p = new Player(world, playerPos[i]);
-      UUID playerId = players.get(i).getId();
-      if(store.isMainPlayer(playerId)) {
-        p.setMain();
-      }
-      this.players.put(playerId, p);
+      this.players.put(players.get(i).getId(), p);
     }
     
     this.rockets = world.getRockets();
