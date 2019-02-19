@@ -15,6 +15,7 @@ public class SoundController extends Controller {
     private Sound mainMenuMusic;
     private Sound menuSelect;
     private float musicVolume;
+    private float masterVolume;
     private long musicID;
     private boolean menuPlaying;
 
@@ -22,13 +23,14 @@ public class SoundController extends Controller {
     public SoundController(Store store, Router router, BoardGame game) {
         super(store, router, game);
         mainMenuMusic = Gdx.audio.newSound(Gdx.files.internal("app/assets/music/MainMenuMusic.mp3"));
-        menuSelect = Gdx.audio.newSound(Gdx.files.internal("app/assets/music/MenuSelect.mp3"));
+        menuSelect = Gdx.audio.newSound(Gdx.files.internal("app/assets/music/MenuSelect.wav"));
         menuPlaying = false;
+        musicVolume = 1.0f;
+        masterVolume = 1.0f;
     }
 
     public void menuMusic() {
         if (!menuPlaying){
-            musicVolume = 1.0f;
             musicID = mainMenuMusic.loop();
             menuPlaying = true;
 
