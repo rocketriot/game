@@ -17,7 +17,6 @@ public class Player extends Entity {
   private final double JUMP_FORCE = 700;
   float animationTime;
   private PlayerTexture dir;
-  private boolean isMain;
   private float v = 700f;
 
   public Player(World w, float x, float y) {
@@ -25,7 +24,6 @@ public class Player extends Entity {
     size = 150;
     animationTime = 0;
     fromGround = -25;
-    isMain = false;
     update(0);
   }
   
@@ -35,10 +33,6 @@ public class Player extends Entity {
 
   public Player(World w) {
     this(w, 0f, 0f);
-  }
-  
-  public void setMain() {
-    this.isMain = true;
   }
 
   public static void loadTextures() {
@@ -80,9 +74,7 @@ public class Player extends Entity {
   public void update(float delta) {
     super.update(delta);
     animationTime += delta;
-    if(isMain || speed.getValue() < 10) {
-      dir = PlayerTexture.FRONT;      
-    }
+    dir = PlayerTexture.FRONT;
   }
   
   public SpeedVector getSpeedVector() {
