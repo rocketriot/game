@@ -142,10 +142,6 @@ public class Store {
     }
   }
 
-  public MinigameStore getMinigameStore() {
-    return this.minigameStore;
-  }
-
   /*
    * MINIGAME
    */

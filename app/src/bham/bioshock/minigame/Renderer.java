@@ -6,6 +6,7 @@ import bham.bioshock.client.Route;
 import bham.bioshock.client.Router;
 import bham.bioshock.common.consts.Config;
 import bham.bioshock.common.models.store.MinigameStore;
+import bham.bioshock.minigame.Clock.TimeUpdateEvent;
 import bham.bioshock.minigame.models.Entity;
 import bham.bioshock.minigame.models.Player;
 import bham.bioshock.minigame.models.Rocket;
@@ -58,6 +59,7 @@ public class Renderer {
     entities.addAll(store.getPlayers());
     entities.addAll(store.getRockets());
     gravity = new Gravity(store.getWorld());
+    clock = new Clock();
 
     cam = new OrthographicCamera();
     batch = new SpriteBatch();
