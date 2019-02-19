@@ -13,8 +13,6 @@ public class CollisionBoundary extends Polygon {
 
   float width;
   float height;
-  float x;
-  float y;
   double rotation;
   
   public CollisionBoundary(float width, float height) {
@@ -32,11 +30,9 @@ public class CollisionBoundary extends Polygon {
   }  
 
   public void update(Position pos, double rotation) {
-    this.x = pos.x;
-    this.y = pos.y;
     this.rotation = rotation;
     this.setRotation((float) rotation);
-    this.setPosition(x - (width/2), y);
+    this.setPosition(pos.x - (width/2), pos.y);
   }
   
   public boolean collideWith(CollisionBoundary cb) {
@@ -44,21 +40,25 @@ public class CollisionBoundary extends Polygon {
   }
   
   public Direction getDirectionTo(CollisionBoundary cb) {
-    if((x - width/2) < (cb.x + cb.width/2) && (x + width/2) > (cb.x - cb.width/2)) {
-      if(cb.y > y) {
-        return Direction.UP;
-      } else {
-        return Direction.DOWN;
-      }
-    }
+    float x = this.getX();
+    float y = this.getY();
     
-    if((y - height/2) < (cb.y + cb.height/2) && (y + height/2) > (cb.y - cb.height/2)) {
-      if(cb.x > x) {
+    if(y < (cb.getY() + cb.height) && (y + height) > cb.getY()) {
+      if(cb.getX() > x) {
         return Direction.RIGHT;
       } else {
         return Direction.LEFT;
       }
     }
+    
+    if((x - width/2) < (cb.getX() + cb.width/2) && (x + width/2) > (cb.getX() - cb.width/2)) {
+      if(cb.getY() > y) {
+        return Direction.UP;
+      } else {
+        return Direction.DOWN;
+      }
+    }
+
     
     return Direction.NONE;
   }

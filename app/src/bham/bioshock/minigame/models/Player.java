@@ -118,8 +118,7 @@ public class Player extends Entity {
   /** Collisions **/
   @Override
   public void handleCollision(Entity e) {
-    System.out.println("COLLISION");
-    collide(e, 1);
+    collide(e, 0.2f);
   }
   
 }

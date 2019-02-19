@@ -30,7 +30,7 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 
 public class Renderer {
 
-  private static boolean DEBUG_MODE = true;
+  private static boolean DEBUG_MODE = false;
   private final int GAME_WORLD_WIDTH = Config.GAME_WORLD_WIDTH;
   private final int GAME_WORLD_HEIGHT = Config.GAME_WORLD_HEIGHT;
   private Player mainPlayer;
@@ -89,7 +89,7 @@ public class Renderer {
     clock.at(15, clock.new TimeListener() {
       @Override
       public void handle(TimeUpdateEvent event) {
-        router.call(Route.SERVER_MINIGAME_END);
+       router.call(Route.SERVER_MINIGAME_END);
       }
     });
   }
@@ -101,7 +101,6 @@ public class Renderer {
     shapeRenderer.setProjectionMatrix(cam.combined);
 
     handleCollisions();
-    updatePosition();
     cam.position.lerp(lerpTarget.set(mainPlayer.getX(), mainPlayer.getY(), 0), 3f * delta);
 
     double rotation = -gravity.getAngleTo(cam.position.x, cam.position.y);
@@ -125,6 +124,7 @@ public class Renderer {
     drawEntities();
     batch.end();
     
+    updatePosition();
   }
 
 
@@ -191,7 +191,6 @@ public class Renderer {
       // Send a move to the server
       router.call(Route.MINIGAME_MOVE);
     }
-
   }
 
 

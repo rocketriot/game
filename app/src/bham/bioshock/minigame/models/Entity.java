@@ -157,14 +157,19 @@ public abstract class Entity {
   public void collide(Entity e, float elastic) {
     Direction colPlace = collisionBoundary.getDirectionTo(e.collisionBoundary());
     double angleNorm = angleFromCenter();
+    double speedVBefore = speed.getValue();
     
     switch(colPlace) {
       case RIGHT:
         speed.stop(angleNorm + 90);
+        speed.apply(angleNorm - 90, (speedVBefore - speed.getValue()) * elastic);
       break;
       case LEFT:
         speed.stop(angleNorm - 90);
+        speed.apply(angleNorm + 90, (speedVBefore - speed.getValue()) * elastic);
       break;
+      default:
+        break;
     }
   }
 
