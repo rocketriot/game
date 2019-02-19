@@ -13,7 +13,7 @@ import javax.inject.Singleton;
 public class SoundController extends Controller {
 
     private Sound mainMenuMusic;
-    public static Sound menuSelect;
+    private Sound menuSelect;
     private float musicVolume;
     private long musicID;
     private boolean menuPlaying;
@@ -22,7 +22,7 @@ public class SoundController extends Controller {
     public SoundController(Store store, Router router, BoardGame game) {
         super(store, router, game);
         mainMenuMusic = Gdx.audio.newSound(Gdx.files.internal("app/assets/music/MainMenuMusic.mp3"));
-        menuSelect = Gdx.audio.newSound(Gdx.files.internal("app/assets/music/MenuSelect.wav"));
+        menuSelect = Gdx.audio.newSound(Gdx.files.internal("app/assets/music/MenuSelect.mp3"));
         menuPlaying = false;
     }
 
