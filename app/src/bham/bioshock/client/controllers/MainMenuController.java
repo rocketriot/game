@@ -18,14 +18,15 @@ public class MainMenuController extends Controller {
   Server server;
   BoardGame game;
   Sound mainMenuMusic;
+  float musicVolume;
+  long musicID;
 
   @Inject
   public MainMenuController(Store store, Router router, BoardGame game, Server server) {
     super(store, router, game);
     this.server = server;
     this.game = game;
-    mainMenuMusic = Gdx.audio.newSound(Gdx.files.internal("app/assets/music/MainMenuMusic.mp3"));
-    mainMenuMusic.loop();
+    startMusic();
   }
 
   /** Creates a server */
@@ -50,5 +51,15 @@ public class MainMenuController extends Controller {
     ((ScreenMaster)store.getScreen()).alert(message);
   }
 
+  private void startMusic(){
+    mainMenuMusic = Gdx.audio.newSound(Gdx.files.internal("app/assets/music/MainMenuMusic.mp3"));
+    musicID = mainMenuMusic.loop();
+    setMusicVolume(0.5f, musicID);
+  }
+
+  public void setMusicVolume(float volume, long id){
+    musicVolume = volume;
+    mainMenuMusic.setVolume(id, musicVolume);
+  }
 
 }
