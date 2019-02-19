@@ -31,12 +31,18 @@ public class SoundController extends Controller {
             musicVolume = 1.0f;
             musicID = mainMenuMusic.loop();
             menuPlaying = true;
+
+            setMusicVolume(0f, musicID);
         }
     }
 
     public void setMusicVolume(float volume, long id) {
         musicVolume = volume;
         mainMenuMusic.setVolume(id, musicVolume);
+    }
+
+    public void selectSound(){
+        menuSelect.play();
     }
 
 }

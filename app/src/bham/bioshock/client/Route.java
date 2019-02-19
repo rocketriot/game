@@ -11,7 +11,6 @@ public enum Route {
   MAIN_MENU         (MainMenuController.class,      "show"),
   HOST_GAME         (MainMenuController.class,      "hostGame"),
   ALERT             (MainMenuController.class,      "alert"),
-  MENU_MUSIC        (SoundController.class,         "menuMusic"),
   
   HOW_TO            (HowToController.class,         "show"),
   LOADING           (LoadingController.class,       "show"),
@@ -34,7 +33,10 @@ public enum Route {
   SEND_MINIGAME_START(MinigameController.class,     "sendStart"),
   START_MINIGAME    (MinigameController.class,      "show"),
   MINIGAME_MOVE     (MinigameController.class,      "playerMove"),
-  MINIGAME_PLAYER_UPDATE(MinigameController.class,  "updatePlayer");
+  MINIGAME_PLAYER_UPDATE(MinigameController.class,  "updatePlayer"),
+
+  MENU_MUSIC        (SoundController.class,         "menuMusic"),
+  SELECT_SOUND      (SoundController.class,         "selectSound");
   
 //@formatter:on
 
