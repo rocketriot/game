@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import bham.bioshock.client.Route;
 import bham.bioshock.client.Router;
 import bham.bioshock.common.consts.Config;
+import bham.bioshock.common.models.store.Map;
 import bham.bioshock.common.models.store.MinigameStore;
 import bham.bioshock.minigame.models.*;
 import bham.bioshock.minigame.physics.Gravity;
@@ -19,7 +20,6 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Circle;
-import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -29,6 +29,7 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 public class Renderer {
     private Player mainPlayer;
     private ArrayList<Entity> entities;
+    private ArrayList<StaticEntity> staticEntities;
 
     ShapeRenderer shapeRenderer;
     private OrthographicCamera cam;
@@ -49,14 +50,16 @@ public class Renderer {
     private static boolean DEBUG_MODE = false;
 
 
-    public Renderer(MinigameStore store, Router router) {
+    public Renderer(MinigameStore store, Router router, Map map) {
         this.store = store;
         this.router = router;
         mainPlayer = store.getMainPlayer();
         shapeRenderer = new ShapeRenderer();
         entities = new ArrayList<Entity>();
+        staticEntities = new ArrayList<StaticEntity>();
         entities.addAll(store.getPlayers());
         entities.addAll(store.getRockets());
+        staticEntities.addAll(map.getPlatforms());
         gravity = new Gravity(store.getWorld());
 
         cam = new OrthographicCamera();
@@ -79,6 +82,10 @@ public class Renderer {
         background = new Sprite(new Texture(Gdx.files.internal("app/assets/backgrounds/game.png")));
 
         for (Entity e : entities) {
+            e.load();
+        }
+
+        for (StaticEntity e : staticEntities) {
             e.load();
         }
     }
@@ -170,6 +177,16 @@ public class Renderer {
             sprite.draw(batch);
             e.update(Gdx.graphics.getDeltaTime());
         }
+
+        for (StaticEntity e : staticEntities) {
+            Sprite sprite = e.getSprite();
+            sprite.setRegion(e.getTexture());
+            sprite.setPosition(e.getX(), e.getY());
+            sprite.draw(batch);
+
+        }
+
+
     }
 
 

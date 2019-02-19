@@ -4,6 +4,7 @@ import bham.bioshock.client.BoardGame;
 import bham.bioshock.client.Router;
 import bham.bioshock.client.screens.MinigameScreen;
 import bham.bioshock.common.Position;
+import bham.bioshock.common.models.store.Map;
 import bham.bioshock.common.models.store.MinigameStore;
 import bham.bioshock.common.models.store.Store;
 import bham.bioshock.communication.Action;
@@ -55,10 +56,12 @@ public class MinigameController extends Controller {
   public void show() {
     // Create local store for the minigame, and create a new world
     MinigameStore localStore = new MinigameStore();
+
     localStore.seed(store, new FirstWorld());
+    Map map = new Map(localStore);
     
     store.setMinigameStore(localStore);
 
-    setScreen(new MinigameScreen(localStore, router));
+    setScreen(new MinigameScreen(localStore, router, map));
   }
 }

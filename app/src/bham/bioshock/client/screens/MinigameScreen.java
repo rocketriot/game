@@ -1,6 +1,7 @@
 package bham.bioshock.client.screens;
 
 import bham.bioshock.client.Router;
+import bham.bioshock.common.models.store.Map;
 import bham.bioshock.common.models.store.MinigameStore;
 import bham.bioshock.minigame.Renderer;
 import com.badlogic.gdx.Screen;
@@ -9,8 +10,8 @@ public class MinigameScreen implements Screen {
 
   private Renderer renderer;
 
-  public MinigameScreen(MinigameStore store, Router router) {
-    this.renderer = new Renderer(store, router);
+  public MinigameScreen(MinigameStore store, Router router, Map map) {
+    this.renderer = new Renderer(store, router, map);
   }
 
   @Override
