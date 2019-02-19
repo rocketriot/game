@@ -37,18 +37,14 @@ public class StatsContainer extends Container {
     private void setupContainers() {
 
         Table table = new Table();
-        Label l = new Label("STATS", skin);
-        table.add(l).colspan(store.MAX_PLAYERS);
-        table.row();
         Iterator<Player> iterator = store.getPlayers().iterator();
         int i = 0;
         while(iterator.hasNext()) {
             Player p = iterator.next();
             playerTables.add(new PlayerContainer(p.getId(), p.getUsername()));
             update(playerTables.get(i));
-            table.add(playerTables.get(i));
+            table.add(playerTables.get(i)).padRight(20);
             i++;
-
         }
 
         this.setActor(table);

@@ -26,57 +26,51 @@ public class MinigameHud implements Disposable {
     public Stage stage;
     public FitViewport viewport;
 
-    private HorizontalGroup topBar;
     private ProgressBar fuelBar;
     private String fuelString;
     private Label fuelLabel;
-    private Table table;
-    private ArrayList<Label> labels;
 
     private StatsContainer statsContainer;
-    private ArrayList<Player> players;
 
-    private final int PADDING = 20;
+
+    private final int PADDING = 50;
+
+
+    private Table topTable;
 
 
     public MinigameHud(SpriteBatch batch, Skin skin, int gameWidth, int gameHeight, Store store, Router router) {
         this.store = store;
         this.router = router;
         this.skin = skin;
-        this.gameWidth = gameWidth / 1.5f;
-        this.gameHeight = gameHeight / 1.5f;
+        this.gameWidth = gameWidth;
+        this.gameHeight = gameHeight;
+
         viewport = new FitViewport(this.gameWidth, this.gameHeight, new OrthographicCamera());
         stage = new Stage(viewport, batch);
-
-        players = store.getPlayers();
 
         setupTopBar();
         setupFuelBar();
         setupStatsContainer();
-        //setupScoreList();
     }
 
     private void setupTopBar() {
-        topBar = new HorizontalGroup();
-        topBar.setFillParent(true);
-        topBar.top();
-        topBar.setWidth(gameWidth);
-        topBar.setPosition(0, 0);
-        topBar.pad(PADDING);
-        stage.addActor(topBar);
+        topTable = new Table();
+        topTable.setFillParent(true);
+        topTable.top();
+        //topTable.setDebug(true);
+        topTable.padTop(PADDING);
+        stage.addActor(topTable);
 
     }
     private void setupStatsContainer() {
         statsContainer = new StatsContainer(store);
-        statsContainer.setWidth(topBar.getWidth()/2);
-        statsContainer.setPosition(topBar.getWidth() - (statsContainer.getWidth() + PADDING), PADDING);
-        System.out.println("stats container X Pos: "+ statsContainer.getX() + "width: "+statsContainer.getWidth());
-        topBar.addActor(statsContainer);
+        System.out.println("stats X Pos: "+ statsContainer.getX() + "width: "+statsContainer.getWidth() + " height: "+statsContainer.getHeight()+ "Y POS: "+ statsContainer.getY());
+        topTable.add(statsContainer).padRight(PADDING).right().top().expand();
     }
 
     private void setupFuelBar() {
         VerticalGroup fuelGroup = new VerticalGroup();
-        fuelGroup.setWidth(topBar.getWidth()/2);
         fuelBar = new ProgressBar(0, 100, 1, false, skin);
         float fuel = store.getMainPlayer().getFuel();
         fuelBar.setValue(fuel);
@@ -84,50 +78,13 @@ public class MinigameHud implements Disposable {
         fuelLabel = new Label(fuelString, skin);
         fuelGroup.addActor(fuelLabel);
         fuelGroup.addActor(fuelBar);
-        fuelGroup.setPosition(PADDING, PADDING);
 
-        topBar.addActor(fuelGroup);
+        System.out.println("fuelbar X Pos: "+ fuelGroup.getX() + "width: "+fuelGroup.getWidth() + " height: "+fuelGroup.getHeight() + "Y POS: "+ fuelGroup.getY());
+
+
+        topTable.add(fuelGroup).padLeft(PADDING).width(stage.getWidth()/4).left().top();
     }
 
-    private void setupScoreList() {
-        table = new Table();
-        table.pad(PADDING);
-        table.top();
-        table.setPosition(0, 0);
-        table.setFillParent(true);
-        stage.addActor(table);
-
-        statsContainer = new StatsContainer(store);
-        table.add(statsContainer).right();
-
-        /*float maxPad = 0;
-
-        Label l1 = new Label("SCORES  ", skin);
-        table.add(l1);
-        if(maxPad < l1.getPrefWidth()) {
-            maxPad = l1.getPrefWidth();
-        }
-        table.row();
-
-        labels = new ArrayList<>();
-        Iterator<Player> iterator = players.iterator();
-
-        while(iterator.hasNext()) {
-            Player p = iterator.next();
-            String pointsString = p.getUsername() + ": " + p.getPoints();
-            labels.add(new Label(pointsString, skin));
-        }
-
-        for (Label l : labels) {
-            table.add(l);
-            if(maxPad < l.getPrefWidth()) {
-                maxPad = l.getPrefWidth();
-            }
-            table.row();
-        }
-        table.padLeft(gameWidth - maxPad);
-        */
-    }
 
     private void updateFuel() {
         float fuel = store.getMainPlayer().getFuel();
@@ -136,17 +93,10 @@ public class MinigameHud implements Disposable {
         fuelLabel.setText(fuelString);
     }
 
-    private void updatePoints() {
-        table.clearChildren();
-        setupScoreList();
-    }
-
-
 
     public void updateHud() {
         updateFuel();
-        //statsContainer.updateAll();
-        //updatePoints();
+        statsContainer.updateAll();
     }
 
     public Stage getStage() {
