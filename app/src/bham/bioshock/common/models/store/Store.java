@@ -67,9 +67,7 @@ public class Store {
     }
     return mainPlayerId.equals(id);
   }
-  
-  public void setGameBoard(GameBoard gameBoard) {
-    this.gameBoard = gameBoard;
+
   public void setScreen(Screen screen) {
     currentScreen = screen;
   }
