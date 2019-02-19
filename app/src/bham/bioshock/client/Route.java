@@ -35,8 +35,12 @@ public enum Route {
   MINIGAME_MOVE     (MinigameController.class,      "playerMove"),
   MINIGAME_PLAYER_UPDATE(MinigameController.class,  "updatePlayer"),
 
-  MENU_MUSIC        (SoundController.class,         "menuMusic"),
-  SELECT_SOUND      (SoundController.class,         "selectSound");
+  START_MENU_MUSIC  (SoundController.class,         "startMenuMusic"),
+  MUSIC_VOLUME      (SoundController.class,         "setMusicVolume"),
+  MUSIC_ENABLED     (SoundController.class,         "enableMusic"),
+  SELECT_SOUND      (SoundController.class,         "selectSound"),
+  SOUNDS_VOLUME     (SoundController.class,         "setSoundsVolume"),
+  SOUNDS_ENABLED    (SoundController.class,         "enableSounds");
   
 //@formatter:on
 

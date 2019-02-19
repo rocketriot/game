@@ -15,36 +15,58 @@ public class SoundController extends Controller {
     private Sound mainMenuMusic;
     private Sound menuSelect;
     private float musicVolume;
-    private float masterVolume;
-    private long musicID;
+    private boolean musicEnabled;
+    private long menuMusicID;
     private boolean menuPlaying;
+    private float soundsVolume;
+    private boolean soundsEnabled;
 
     @Inject
     public SoundController(Store store, Router router, BoardGame game) {
         super(store, router, game);
         mainMenuMusic = Gdx.audio.newSound(Gdx.files.internal("app/assets/music/MainMenuMusic.mp3"));
         menuSelect = Gdx.audio.newSound(Gdx.files.internal("app/assets/music/MenuSelect.wav"));
+
         menuPlaying = false;
-        musicVolume = 1.0f;
-        masterVolume = 1.0f;
+        musicVolume = 0.4f;
+        musicEnabled = true;
+        soundsEnabled = true;
+        soundsVolume = 0.4f;
     }
 
-    public void menuMusic() {
-        if (!menuPlaying){
-            musicID = mainMenuMusic.loop();
+    public void startMenuMusic() {
+        if (!menuPlaying && musicEnabled){
+            menuMusicID = mainMenuMusic.loop();
             menuPlaying = true;
-
-            setMusicVolume(0f, musicID);
         }
     }
 
-    public void setMusicVolume(float volume, long id) {
+    public void setMusicVolume(float volume) {
         musicVolume = volume;
-        mainMenuMusic.setVolume(id, musicVolume);
+        mainMenuMusic.setVolume(menuMusicID, musicVolume);
+    }
+
+    public void enableMusic(Boolean enable){
+        musicEnabled = enable;
+
+        if (!enable){
+            mainMenuMusic.stop();
+            menuPlaying = false;
+        }
     }
 
     public void selectSound(){
-        menuSelect.play();
+        if (soundsEnabled) {
+            menuSelect.play(soundsVolume);
+        }
+    }
+
+    public void setSoundsVolume(float volume) {
+        soundsVolume = volume;
+    }
+
+    public void enableSounds(Boolean enable){
+        soundsEnabled = enable;
     }
 
 }

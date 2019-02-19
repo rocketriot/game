@@ -47,6 +47,6 @@ public class MainMenuController extends Controller {
   }
 
   public void menuMusic(){
-    router.call(Route.MENU_MUSIC);
+    router.call(Route.START_MENU_MUSIC);
   }
 }
