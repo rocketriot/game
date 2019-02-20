@@ -63,15 +63,14 @@ public class Player extends Entity {
   public boolean haveGun() {
     return haveGun;
   }
+  public void setGun(Boolean b) {
+    this.haveGun = b;
+  }
 
   public void update(float delta) {
     super.update(delta);
     animationTime += delta;
     dir = PlayerTexture.FRONT;
-  }
-
-  public SpeedVector getSpeedVector() {
-    return speed;
   }
 
   public PlayerTexture getDirection() {

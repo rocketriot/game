@@ -21,7 +21,8 @@ public enum Command {
   // Minigame
   MINIGAME_START,
   MINIGAME_PLAYER_MOVE,
-  MINIGAME_END;
+  MINIGAME_END,
+  MINIGAME_BULLET;
 
   // @formatter:on
 

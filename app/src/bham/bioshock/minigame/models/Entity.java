@@ -109,6 +109,9 @@ public abstract class Entity {
   public void setSpeedVector(SpeedVector s) {
     speed = s;
   }
+  public SpeedVector getSpeedVector() {
+    return speed;
+  }
 
   public void update(float delta) {
     if (!loaded)

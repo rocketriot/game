@@ -194,10 +194,14 @@ public class Renderer {
     Position bulletPos = world.convert(pp);
     
     Bullet b = new Bullet(store.getWorld(), bulletPos.x, bulletPos.y);
-
     // First synchronise the bullet with the player
     b.setSpeedVector((SpeedVector) main.getSpeedVector().clone());
     b.setSpeed((float) main.getSpeedVector().getSpeedAngle(), Bullet.launchSpeed);
+    router.call(Route.MINIGAME_BULLET_SEND, b);
+    addBullet(b);
+  }
+  
+  public void addBullet(Bullet b) {
     b.load();
     entities.add(b);
   }

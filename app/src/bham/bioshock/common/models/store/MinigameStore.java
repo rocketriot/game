@@ -26,11 +26,12 @@ public class MinigameStore {
     guns = new ArrayList<>();
   }
 
-  public void updatePlayer(UUID playerId, SpeedVector speed, Position pos, PlayerTexture dir) {
+  public void updatePlayer(UUID playerId, SpeedVector speed, Position pos, PlayerTexture dir, Boolean haveGun) {
     Player p = getPlayer(playerId);
     p.setSpeedVector(speed);
     p.setPosition(pos);
     p.setDirection(dir);
+    p.setGun(haveGun);
   }
 
   // Create world from the seeder
