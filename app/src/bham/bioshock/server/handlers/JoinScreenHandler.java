@@ -74,7 +74,7 @@ public class JoinScreenHandler {
 
     // Send the board and the players
     gameBoardHandler.getGameBoard(action);
-
+    
     // Tell the clients to start the game
     handler.sendToAll(new Action(Command.START_GAME));
   }
