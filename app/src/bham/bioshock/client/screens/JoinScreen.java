@@ -53,7 +53,6 @@ public class JoinScreen extends ScreenMaster {
     super.show();
 
     buildJoinScreen();
-
   }
 
   private void buildJoinScreen() {

@@ -1,5 +1,5 @@
 
-neon-ui.png
+neon-ui-2.png
 size: 512,512
 format: RGBA8888
 filter: Linear,Linear
@@ -374,6 +374,15 @@ white
 window
   rotate: false
   xy: 165, 229
+  size: 56, 56
+  split: 17, 16, 17, 17
+  pad: 16, 15, 16, 16
+  orig: 56, 56
+  offset: 0, 0
+  index: -1
+window-dialogue
+  rotate: false
+  xy: 210, 229
   size: 56, 56
   split: 17, 16, 17, 17
   pad: 16, 15, 16, 16

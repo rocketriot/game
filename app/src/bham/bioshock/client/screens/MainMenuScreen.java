@@ -26,7 +26,6 @@ public class MainMenuScreen extends ScreenMaster {
     stage = new Stage(new ScreenViewport());
     batch = new SpriteBatch();
 
-    // calls act with Graphics.getDeltaTime()
   }
 
   @Override
@@ -136,7 +135,7 @@ public class MainMenuScreen extends ScreenMaster {
 
   private void showHostDialogue() {
 
-    TextField textField = new TextField("", skin);
+    TextField textField = new TextField("", skin, "login");
 
     Dialog diag = new Dialog("Host Game", skin) {
 
@@ -167,7 +166,7 @@ public class MainMenuScreen extends ScreenMaster {
 
   private void showJoinDialogue() {
 
-    TextField textField = new TextField("", skin);
+    TextField textField = new TextField("", skin, "login");
 
     Dialog diag = new Dialog("Join Game", skin) {
 
