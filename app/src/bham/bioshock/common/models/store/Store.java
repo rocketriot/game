@@ -81,7 +81,7 @@ public class Store {
   }
 
   public Player getPlayer(UUID id) {
-    return players.stream().filter(p -> p.getId() == id).findAny().orElse(null);
+    return players.stream().filter(p -> p.getId().equals(id)).findAny().orElse(null);
   }
 
   public void setPlayers(ArrayList<Player> ps) {
