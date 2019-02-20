@@ -54,7 +54,11 @@ public class SoundController extends Controller {
     if (!playing.get(music)) {
       long id = this.music.get(music).loop(musicVolume);
       ids.put(music, id);
-      playing.replace(music, true);
+      if (playing.keySet().contains(music)) {
+        playing.replace(music, true);
+      } else {
+        playing.put(music, true);
+      }
     }
   }
 
