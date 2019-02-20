@@ -41,7 +41,6 @@ public class Renderer {
   private final int GAME_WORLD_WIDTH = Config.GAME_WORLD_WIDTH;
   private final int GAME_WORLD_HEIGHT = Config.GAME_WORLD_HEIGHT;
   private Player mainPlayer;
-  private Clock clock;
   private ArrayList<Entity> entities;
 
   ShapeRenderer shapeRenderer;
@@ -71,7 +70,6 @@ public class Renderer {
     mainPlayer = minigameStore.getMainPlayer();
 
     shapeRenderer = new ShapeRenderer();
-    clock = new Clock();
     entities = new ArrayList<Entity>();
     entities.addAll(minigameStore.getPlayers());
     entities.addAll(minigameStore.getRockets());
@@ -91,9 +89,6 @@ public class Renderer {
     this.inputMultiplexer = new InputMultiplexer();
     this.inputMultiplexer.addProcessor(hud.getStage());
     this.inputMultiplexer.addProcessor(stage);
-
-
-    startClock();
   }
 
   private void setupUI() {
@@ -117,19 +112,8 @@ public class Renderer {
     }
 
   }
-  
-  public void startClock() {
-    clock.at(15, clock.new TimeListener() {
-      @Override
-      public void handle(TimeUpdateEvent event) {
-       router.call(Route.SERVER_MINIGAME_END);
-      }
-    });
-  }
  
   public void render(float delta) {
-    clock.update(delta);
-  
     batch.setProjectionMatrix(cam.combined);
     shapeRenderer.setProjectionMatrix(cam.combined);
 

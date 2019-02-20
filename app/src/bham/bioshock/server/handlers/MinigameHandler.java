@@ -51,7 +51,7 @@ public class MinigameHandler {
    * Method to end the minigame and send the players back to the main board
    */
   public void endMinigame(Action action, UUID playerId){
-    Player player = store.getPlayer(playerId);
+    Player player = store.getPlayerByID(playerId);
     player.addPoints(100);
     store.resetMinigameStore();
 

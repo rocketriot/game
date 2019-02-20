@@ -116,7 +116,7 @@ public class Store {
   }
 
   public Player getMainPlayer() {
-    return getPlayer(mainPlayerId);
+    return getPlayerByID(mainPlayerId);
   }
 
   public void setMainPlayer(Player player) {

@@ -72,7 +72,7 @@ public class MinigameController extends Controller {
     // end the minigame and send players back to the board
     UUID playerId = (UUID) arguments.get(0);
     int newScore = (int) arguments.get(1);
-    store.getPlayer(playerId).setPoints(newScore);
+    store.getPlayerByID(playerId).setPoints(newScore);
 
     router.call(Route.GAME_BOARD_SHOW);
     store.resetMinigameStore();
