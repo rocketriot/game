@@ -165,7 +165,12 @@ public class Renderer {
                     e1.checkCollision(e2);
                 }
             }
+
+            for (StaticEntity e3 :staticEntities){
+                e3.checkCollision(e1);
+            }
         }
+
     }
 
     public void drawEntities() {
