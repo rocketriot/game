@@ -15,6 +15,7 @@ import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 
 import java.util.ArrayList;
+import java.util.Collection;
 
 public class Hud implements Disposable {
 
@@ -132,7 +133,7 @@ public class Hud implements Disposable {
   }
 
   public void updateHud() {
-    ArrayList<Player> players = store.getPlayers();
+    Collection<Player> players = store.getPlayers();
 
     if (players.size() != store.MAX_PLAYERS) return;
 
@@ -143,8 +144,8 @@ public class Hud implements Disposable {
     table.clearChildren();
     labels = new ArrayList<>();
 
-    for (int i = 0; i < players.size(); i++) {
-      String pointsString = (players.get(i).getUsername() + ": " + players.get(i).getPoints());
+    for(Player p : players) {
+      String pointsString = p.getUsername() + ": " + p.getPoints();
       labels.add(new Label(pointsString, skin));
     }
 

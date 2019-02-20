@@ -6,6 +6,7 @@ import bham.bioshock.common.models.Player;
 import bham.bioshock.common.models.store.Store;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 
 // method to find a path between two points
@@ -55,7 +56,7 @@ public class AStarPathfinding {
      * @param maxY          The maximum y value of the grid, i.e. the y limit of the game map
      * @param players       The list of players that are playing
      */
-    public AStarPathfinding(GridPoint[][] grid, Coordinates startPosition, int maxX, int maxY, ArrayList<Player> players) {
+    public AStarPathfinding(GridPoint[][] grid, Coordinates startPosition, int maxX, int maxY, Collection<Player> players) {
         setStartPosition(startPosition);
         this.maxX = maxX;
         this.maxY = maxY;
@@ -131,7 +132,7 @@ public class AStarPathfinding {
      * @param grid    The grid that will be used
      * @param players The list of players that are currently playing
      */
-    public void setGameGrid(GridPoint[][] grid, ArrayList<Player> players) {
+    public void setGameGrid(GridPoint[][] grid, Collection<Player> players) {
         gameGrid = Arrays.stream(grid).map(r -> r.clone()).toArray(GridPoint[][]::new);
 
         // get the position of each player and add them into the grid

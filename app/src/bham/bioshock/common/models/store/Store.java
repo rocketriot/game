@@ -1,16 +1,15 @@
 package bham.bioshock.common.models.store;
 
 import bham.bioshock.client.AppPreferences;
-
 import java.util.HashMap;
-
+import java.util.Map.Entry;
 import bham.bioshock.common.models.Coordinates;
 import bham.bioshock.common.models.GameBoard;
 import bham.bioshock.common.models.Player;
 import com.badlogic.gdx.Screen;
 import com.google.inject.Singleton;
-
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.UUID;
 
 /** Stores all of the models */
@@ -25,11 +24,8 @@ public class Store {
   private Screen currentScreen;
   /** Contains all of the information about the game board */
   private GameBoard gameBoard = new GameBoard();
-  /** A list of players */
-  private ArrayList<Player> players = new ArrayList<>(MAX_PLAYERS);
-
   /** A hash map of players to their userID */
-  private HashMap<UUID, Player> playersMap = new HashMap<>();
+  private HashMap<UUID, Player> players = new HashMap<>();
 
   /** The ID of the player that the client is controlling, only used client-side */
   private UUID mainPlayerId;
@@ -48,10 +44,11 @@ public class Store {
   public void generateGrid() {
     // Set coordinates of the players
     int last = gameBoard.GRID_SIZE - 1;
-    players.get(0).setCoordinates(new Coordinates(0, 0));
-    players.get(1).setCoordinates(new Coordinates(0, last));
-    players.get(2).setCoordinates(new Coordinates(last, last));
-    players.get(3).setCoordinates(new Coordinates(last, 0));
+    Player[] list = (Player[]) players.values().toArray();
+    list[0].setCoordinates(new Coordinates(0, 0));
+    list[1].setCoordinates(new Coordinates(0, last));
+    list[2].setCoordinates(new Coordinates(last, last));
+    list[3].setCoordinates(new Coordinates(last, 0));
 
     gameBoard.generateGrid();
   }
@@ -65,12 +62,12 @@ public class Store {
   }
 
   public boolean isMainPlayer(UUID id) {
-    if(mainPlayerId == null) {
+    if (mainPlayerId == null) {
       return false;
     }
     return mainPlayerId.equals(id);
   }
-  
+
   public void setGameBoard(GameBoard gameBoard) {
     this.gameBoard = gameBoard;
   }
@@ -79,44 +76,35 @@ public class Store {
     currentScreen = screen;
   }
 
-  public ArrayList<Player> getPlayers() {
-    return players;
+  public Collection<Player> getPlayers() {
+    return players.values();
   }
-
-  public HashMap<UUID, Player> getPlayersMap() { return playersMap; }
 
   public Player getPlayer(UUID id) {
-    return playersMap.get(id);
+    return players.get(id);
   }
 
-  public void setPlayers(ArrayList<Player> players) {
+  public void setPlayers(ArrayList<Player> ps) {
     this.players.clear();
-    this.playersMap.clear();
-    this.players = players;
-    for(Player p : players) {
-      playersMap.put(p.getId(), p);
+    for (Player p : ps) {
+      players.put(p.getId(), p);
     }
   }
 
   public void addPlayer(Player player) {
-    playersMap.put(player.getId(), player);
-    players.add(player);
+    players.put(player.getId(), player);
   }
 
   public void removePlayer(UUID id) {
-    players.removeIf(p -> p.getId().equals(id));
-    playersMap.remove(id);
+    players.remove(id);
   }
 
   public void removeAllPlayers() {
     players.clear();
-    playersMap.clear();
   }
 
   public void updatePlayer(Player updatingPlayer) {
-    for (int i = 0; i < players.size(); i++) {
-      if (players.get(i).getId().equals(updatingPlayer.getId())) players.set(i, updatingPlayer);
-    }
+    players.put(updatingPlayer.getId(), updatingPlayer);
   }
 
   public Player getMainPlayer() {
@@ -137,7 +125,8 @@ public class Store {
 
   /** Get's the player who's turn it is */
   public Player getMovingPlayer() {
-    return players.get(turn);
+    Player[] list = (Player[]) players.values().toArray();
+    return list[turn];
   }
 
   /** After a player has finished their turn, set the next turn */
@@ -148,7 +137,9 @@ public class Store {
       turn = 0;
 
       // Increase player's fuel after each round
-      for (Player player : players) player.increaseFuel(30.0f);
+      for (Entry<UUID, Player> entry : players.entrySet()) {
+        entry.getValue().increaseFuel(30.0f);
+      }
     }
   }
 
@@ -158,10 +149,18 @@ public class Store {
   public void setMinigameStore(MinigameStore store) {
     this.minigameStore = store;
   }
+
   public MinigameStore getMinigameStore() {
     return this.minigameStore;
   }
-  public void resetMinigameStore(){
+
+  public void resetMinigameStore() {
     minigameStore = null;
+  }
+
+  /** Check if it is the main player's turn */
+  public boolean isMainPlayerTurn() {
+    // TODO Auto-generated method stub
+    return false;
   }
 }

@@ -193,11 +193,4 @@ public class GameBoardController extends Controller {
     return store.getGameBoard().getGrid() != null;
   }
 
-  /** Check if it is the main player's turn */
-  public boolean isMainPlayersTurn() {
-    int turn = store.getTurn();
-    Player nextPlayer = store.getPlayers().get(turn);
-
-    return store.getMainPlayer().getId().equals(nextPlayer.getId());
-  }
 }
