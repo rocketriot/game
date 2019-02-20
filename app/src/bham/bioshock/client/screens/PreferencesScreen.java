@@ -58,6 +58,11 @@ public class PreferencesScreen extends ScreenMaster {
           public boolean handle(Event event) {
             router.call(Route.MUSIC_ENABLED, musicCheckBox.isChecked());
             preferences.setPrefMusicEnabled(musicCheckBox.isChecked());
+
+            if (musicCheckBox.isChecked()){
+              router.call(Route.START_MUSIC, "mainMenu");
+            }
+
             return false;
           }
         });
@@ -75,7 +80,7 @@ public class PreferencesScreen extends ScreenMaster {
         });
 
     // volume control
-    final Slider musicVolumeSlider = new Slider(0f, 1f, 0.2f, false, skin);
+    final Slider musicVolumeSlider = new Slider(0f, 1f, 0.1f, false, skin);
     musicVolumeSlider.setValue(preferences.getMusicVolume());
     musicVolumeSlider.addListener(
         new EventListener() {
@@ -87,7 +92,7 @@ public class PreferencesScreen extends ScreenMaster {
           }
         });
 
-    final Slider soundVolumeSlider = new Slider(0f, 1f, 0.2f, false, skin);
+    final Slider soundVolumeSlider = new Slider(0f, 1f, 0.1f, false, skin);
     soundVolumeSlider.setValue(preferences.getSoundVolume());
     soundVolumeSlider.addListener(
         new EventListener() {

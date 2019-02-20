@@ -36,7 +36,6 @@ public class MainMenuController extends Controller {
 
   public void hostGame(String hostName) {
     startServer();
-    
     router.call(Route.JOIN_SCREEN, hostName);
   }
   
@@ -51,6 +50,6 @@ public class MainMenuController extends Controller {
   }
 
   public void menuMusic(){
-    router.call(Route.START_MENU_MUSIC);
+    router.call(Route.START_MUSIC, "mainMenu");
   }
 }

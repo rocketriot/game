@@ -4,16 +4,21 @@ import bham.bioshock.client.BoardGame;
 import bham.bioshock.client.Router;
 import bham.bioshock.common.models.store.Store;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 
+import com.sun.org.apache.xpath.internal.functions.FuncFalse;
+import java.util.HashMap;
+import java.util.Map;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
 @Singleton
 public class SoundController extends Controller {
 
-  private Sound mainMenuMusic;
-  private Sound menuSelect;
+  private Sound mainMenuMusic ;
+  private Sound menuSelectSound;
+
   private float musicVolume;
   private boolean musicEnabled;
   private long menuMusicID;
@@ -21,24 +26,38 @@ public class SoundController extends Controller {
   private float soundsVolume;
   private boolean soundsEnabled;
 
+  private HashMap<String, Sound> music = new HashMap<>();
+  private HashMap<String, Boolean> playing = new HashMap<>();
+  private HashMap<String, Sound> sounds = new HashMap<>();
+
   @Inject
   public SoundController(Store store, Router router, BoardGame game) {
     super(store, router, game);
-    mainMenuMusic = Gdx.audio.newSound(Gdx.files.internal("app/assets/music/MainMenuMusic.mp3"));
-    menuSelect = Gdx.audio.newSound(Gdx.files.internal("app/assets/music/MenuSelect.wav"));
 
-    menuPlaying = false;
+    mainMenuMusic = Gdx.audio.newSound(Gdx.files.internal("app/assets/music/MainMenuMusic.mp3"));
+    menuSelectSound = Gdx.audio.newSound(Gdx.files.internal("app/assets/music/MenuSelect.wav"));
+
     musicVolume = 0.4f;
     musicEnabled = true;
     soundsEnabled = true;
     soundsVolume = 0.4f;
+
+    addMusic();
+    addPlaying();
+    addSounds();
   }
 
-  public void startMenuMusic() {
-    if (!menuPlaying && musicEnabled) {
-      menuMusicID = mainMenuMusic.loop();
-      menuPlaying = true;
+
+  public void startMusic(String music) {
+    if (!playing.get(music)){
+      this.music.get(music).loop(musicVolume);
+      playing.replace(music, true);
     }
+  }
+
+  public void stopMusic(String music) {
+    this.music.get(music).stop();
+    playing.replace(music, false);
   }
 
   public void setMusicVolume(float volume) {
@@ -49,21 +68,16 @@ public class SoundController extends Controller {
   public void enableMusic(Boolean enable) {
     musicEnabled = enable;
 
-    if (!enable) {
-      menuPlaying = false;
-      stopMainMusic();
-    } else {
-      startMenuMusic();
+    if (!musicEnabled){
+      for (String key : music.keySet()){
+        stopMusic(key);
+      }
     }
   }
 
-  public void stopMainMusic() {
-    mainMenuMusic.stop();
-  }
-
-  public void selectSound() {
+  public void playSound(String sound) {
     if (soundsEnabled) {
-      menuSelect.play(soundsVolume);
+      sounds.get(sound).play(soundsVolume);
     }
   }
 
@@ -74,4 +88,17 @@ public class SoundController extends Controller {
   public void enableSounds(Boolean enable) {
     soundsEnabled = enable;
   }
+
+  private void addMusic(){
+    music.put("mainMenu", mainMenuMusic);
+  }
+
+  private void addPlaying(){
+    playing.put("mainMenu", false);
+  }
+
+  private void addSounds(){
+    sounds.put("menuSelect", menuSelectSound);
+  }
+
 }

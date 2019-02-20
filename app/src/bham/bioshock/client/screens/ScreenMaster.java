@@ -98,7 +98,7 @@ public abstract class ScreenMaster implements Screen {
     backButton.addListener(new ChangeListener() {
       @Override
       public void changed(ChangeEvent event, Actor actor) {
-        router.call(Route.SELECT_SOUND);
+        router.call(Route.PLAY_SOUND, "menuSelect");
         router.back();
       }
     });
