@@ -61,12 +61,25 @@ public class ClientHandler implements IClientHandler {
             router.call(Route.PLAYERS_SAVE, players);     
             break;
           }
+          case MOVE_PLAYER_ON_BOARD: {
+            ArrayList<Serializable> arguments = action.getArguments();
+            GameBoard gameBoard = (GameBoard) arguments.get(0);
+            Player movingPlayer = (Player) arguments.get(1);
+
+            router.call(Route.MOVE_RECEIVED, movingPlayer);
+            router.call(Route.GAME_BOARD_SAVE, gameBoard);
+            break;
+          }
           case MINIGAME_START: {
             router.call(Route.START_MINIGAME);
             break;
           }
           case MINIGAME_PLAYER_MOVE: {
             router.call(Route.MINIGAME_PLAYER_UPDATE, action.getArguments());
+            break;
+          }
+          case MINIGAME_END: {
+            router.call(Route.MINIGAME_END, action.getArguments());
             break;
           }
           default: {

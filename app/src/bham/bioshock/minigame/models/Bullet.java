@@ -10,11 +10,9 @@ public class Bullet extends Entity {
     public boolean isFired = false;
 
     public Bullet(World w, float x, float y) {
+
         super(w,x, y);
         size = 100;
-    }
-
-    public void loadTexture() {
     }
 
     public TextureRegion getTexture() {
@@ -22,7 +20,7 @@ public class Bullet extends Entity {
     }
 
     public void load() {
-        loadTexture();
+        //loadTexture();
         super.load();
         sprite.setOrigin(sprite.getWidth() / 2, 0);
 

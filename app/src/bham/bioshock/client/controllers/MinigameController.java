@@ -1,6 +1,7 @@
 package bham.bioshock.client.controllers;
 
 import bham.bioshock.client.BoardGame;
+import bham.bioshock.client.Route;
 import bham.bioshock.client.Router;
 import bham.bioshock.client.screens.MinigameScreen;
 import bham.bioshock.common.Position;
@@ -63,5 +64,19 @@ public class MinigameController extends Controller {
     store.setMinigameStore(localStore);
 
     setScreen(new MinigameScreen(localStore, router, map));
+  }
+
+  public void sendEnd(){
+    clientService.send(new Action(Command.MINIGAME_END));
+  }
+
+  public void end(ArrayList<Serializable> arguments){
+    // end the minigame and send players back to the board
+    UUID playerId = (UUID) arguments.get(0);
+    int newScore = (int) arguments.get(1);
+    store.getPlayer(playerId).setPoints(newScore);
+
+    router.call(Route.GAME_BOARD_SHOW);
+    store.resetMinigameStore();
   }
 }

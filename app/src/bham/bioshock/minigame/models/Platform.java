@@ -17,6 +17,7 @@ public class Platform extends StaticEntity {
     public Platform(World w, float x, float y) {
         super(w,x, y);
         size = 100;
+
     }
 
 

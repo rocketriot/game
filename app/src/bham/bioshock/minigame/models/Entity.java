@@ -1,11 +1,14 @@
 package bham.bioshock.minigame.models;
 
+import bham.bioshock.common.Direction;
 import bham.bioshock.common.Position;
+import bham.bioshock.minigame.physics.CollisionBoundary;
 import bham.bioshock.minigame.physics.Gravity;
 import bham.bioshock.minigame.physics.SpeedVector;
 import bham.bioshock.minigame.worlds.World;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.Rectangle;
 import java.util.ArrayList;
@@ -27,6 +30,9 @@ public abstract class Entity {
   protected SpeedVector speed;
   public World world;
   private Gravity gravity;
+  protected CollisionBoundary collisionBoundary;
+  protected float collisionWidth = 50;
+  protected float collisionHeight = 50;
 
   public Entity(World w, float x, float y) {
     pos = new Position(x, y);
@@ -34,10 +40,6 @@ public abstract class Entity {
     speed = new SpeedVector();
     fromGround = 0;
     world = w;
-  }
-
-  public Entity(World w) {
-    this(w, 0f, 0f);
   }
 
   public int getSize() {
@@ -60,6 +62,10 @@ public abstract class Entity {
     return distanceFromGround() > 10;
   }
 
+  public boolean isA(Class<? extends Entity> c) {
+    return c.isInstance(this);
+  }
+  
   public void setRotation(float rotation) {
     this.rotation = rotation;
   }
@@ -88,9 +94,13 @@ public abstract class Entity {
   public abstract TextureRegion getTexture();
 
   public void load() {
-    sprite = new Sprite(getTexture());
-    sprite.setSize(getSize(), getSize());
-    sprite.setOrigin(0, 0);
+    this.loaded = true;
+    if(getTexture() != null) {
+      sprite = new Sprite(getTexture());
+      sprite.setSize(getSize(), getSize());
+      sprite.setOrigin(sprite.getWidth()/2, 0);      
+    }
+    collisionBoundary = new CollisionBoundary(collisionWidth, collisionHeight);
   }
 
   public Sprite getSprite() {
@@ -102,29 +112,29 @@ public abstract class Entity {
   }
 
   public void update(float delta) {
+    if(!loaded) return;
     double angle = angleToCenterOfGravity();
-    double angleFromCenter = angleFromCenter();
 
     pos.y += speed.dY() * delta;
     pos.x += speed.dX() * delta;
 
-
     if (isFlying()) {
       speed.apply(angle, world.getGravity() * delta);
-    } else {
-      speed.stop(angleFromCenter);
     }
-
-    if (!isFlying()) {
+    if(!isFlying()) {
       speed.friction(GROUND_FRICTION);
+      speed.stop(angle);
     }
-
+    
+    collisionBoundary.update(pos, getRotation());
   }
 
-  public void checkCollision(Entity e) {
-    if( Intersector.overlaps(getRectangle(), e.getRectangle()) ) {
-      handleCollision(e);
+  public boolean checkCollision(Entity e) {
+
+    if( collisionBoundary.collideWith(e.collisionBoundary) ) {
+      return true;
     }
+    return false;
   }
   
   /*
@@ -132,20 +142,35 @@ public abstract class Entity {
    * Can be overwritten by the subclass
    */
   public void handleCollision(Entity e) {
-    double speedAngle = speed.getSpeedAngle();
-    speed.stop(speedAngle);
-    speed.apply(-speedAngle, 20);
+    
   }
 
-  // returns rectangle of the sprite
-  public Rectangle getRectangle() {
-    Rectangle border = sprite.getBoundingRectangle();
-
-    float new_width = border.getWidth() * 0.5f;
-    float x = border.getX() + (border.width - new_width) / 2f;
-    Rectangle r = new Rectangle(x, border.getY(), new_width, border.height);
-
-    return r;
+  public CollisionBoundary collisionBoundary() {
+    return collisionBoundary;
+  }
+  
+  public void drawDebug(ShapeRenderer shapeRenderer) {
+    collisionBoundary().draw(shapeRenderer);
+    speed.draw(shapeRenderer, pos);
+  }
+  
+  public void collide(Entity e, float elastic) {
+    Direction colPlace = collisionBoundary.getDirectionTo(e.collisionBoundary());
+    double angleNorm = angleFromCenter();
+    double speedVBefore = speed.getValue();
+    
+    switch(colPlace) {
+      case RIGHT:
+        speed.stop(angleNorm + 90);
+        speed.apply(angleNorm - 90, (speedVBefore - speed.getValue()) * elastic);
+      break;
+      case LEFT:
+        speed.stop(angleNorm - 90);
+        speed.apply(angleNorm + 90, (speedVBefore - speed.getValue()) * elastic);
+      break;
+      default:
+        break;
+    }
   }
 
 }

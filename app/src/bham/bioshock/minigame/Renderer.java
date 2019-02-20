@@ -8,6 +8,10 @@ import bham.bioshock.common.consts.Config;
 import bham.bioshock.common.models.store.Map;
 import bham.bioshock.common.models.store.MinigameStore;
 import bham.bioshock.minigame.models.*;
+import bham.bioshock.minigame.Clock.TimeUpdateEvent;
+import bham.bioshock.minigame.models.Entity;
+import bham.bioshock.minigame.models.Player;
+import bham.bioshock.minigame.models.Rocket;
 import bham.bioshock.minigame.physics.Gravity;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
@@ -48,6 +52,7 @@ public class Renderer {
     private Gravity gravity;
     private Router router;
     private static boolean DEBUG_MODE = false;
+    private Clock clock;
 
 
     public Renderer(MinigameStore store, Router router, Map map) {
@@ -71,7 +76,12 @@ public class Renderer {
         cam.update();
 
         loadSprites();
+        //startClock();
     }
+
+
+
+
 
 
     public void loadSprites() {
@@ -90,18 +100,14 @@ public class Renderer {
         }
     }
 
+
     public void render(float delta) {
+
+
         batch.setProjectionMatrix(cam.combined);
         shapeRenderer.setProjectionMatrix(cam.combined);
 
-        if (DEBUG_MODE) {
-            drawCollisionBorders();
-        }
-
         handleCollisions();
-        updatePosition();
-        shoot();
-
         cam.position.lerp(lerpTarget.set(mainPlayer.getX(), mainPlayer.getY(), 0), 3f * delta);
 
         double rotation = -gravity.getAngleTo(cam.position.x, cam.position.y);
@@ -116,12 +122,27 @@ public class Renderer {
         backgroundBatch.end();
 
         drawPlanet();
+
+        if (DEBUG_MODE) {
+            drawDebug();
+        }
+
         batch.begin();
         drawEntities();
-
         batch.end();
+
+        updatePosition();
+        //shoot();
     }
 
+    public void startClock() {
+        clock.at(15, clock.new TimeListener() {
+            @Override
+            public void handle(TimeUpdateEvent event) {
+                router.call(Route.SERVER_MINIGAME_END);
+            }
+        });
+    }
 
     public void drawPlanet() {
         shapeRenderer.begin(ShapeType.Filled);
@@ -134,43 +155,25 @@ public class Renderer {
         shapeRenderer.end();
     }
 
-    public void drawCollisionBorders() {
+    public void drawDebug() {
         for (Entity e : entities) {
-            drawBorder(e.getRectangle());
+            e.drawDebug(shapeRenderer);
         }
     }
-
-
-    public void drawBorder(Rectangle border) {
-        shapeRenderer.begin(ShapeType.Filled);
-        shapeRenderer.setColor(Color.BLACK);
-        shapeRenderer.rect(border.getX(), border.getY(), border.getWidth(), border.getHeight());
-        shapeRenderer.end();
-    }
-
-
-    public void drawBullet(float x, float y) {
-        shapeRenderer.begin(ShapeType.Filled);
-        shapeRenderer.setColor(Color.BLACK);
-        shapeRenderer.circle(x, y, 10);
-        shapeRenderer.end();
-    }
-
 
     public void handleCollisions() {
         // Check collisions between any two entities
         for (Entity e1 : entities) {
             for (Entity e2 : entities) {
-                if(!e1.equals(e2)) {
-                    e1.checkCollision(e2);
+                if (!e1.equals(e2) && e1.checkCollision(e2)) {
+                    e1.handleCollision(e2);
+                }
+
+                for (StaticEntity e3 :staticEntities){
+                    e3.checkCollision(e1);
                 }
             }
-
-            for (StaticEntity e3 :staticEntities){
-                e3.checkCollision(e1);
-            }
         }
-
     }
 
     public void drawEntities() {
@@ -193,7 +196,6 @@ public class Renderer {
 
 
     }
-
 
     public void updatePosition() {
         float dt = Gdx.graphics.getDeltaTime();
@@ -220,7 +222,6 @@ public class Renderer {
         }
 
     }
-
 
     public void resize(int width, int height) {
         stage.getViewport().update(width, height, true);

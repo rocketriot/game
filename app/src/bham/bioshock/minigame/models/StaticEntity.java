@@ -1,6 +1,7 @@
 package bham.bioshock.minigame.models;
 
 import bham.bioshock.common.Position;
+import bham.bioshock.minigame.physics.CollisionBoundary;
 import bham.bioshock.minigame.physics.Gravity;
 import bham.bioshock.minigame.physics.SpeedVector;
 import bham.bioshock.minigame.worlds.World;
@@ -18,6 +19,10 @@ public abstract class StaticEntity {
     protected Sprite sprite;
     protected int size = 100;
     protected float fromGround;
+    protected CollisionBoundary collisionBoundary;
+    protected float collisionWidth = 100;
+    protected float collisionHeight = 100;
+
 
     public StaticEntity(World w, float x, float y) {
         pos = new Position(x, y);
@@ -61,17 +66,22 @@ public abstract class StaticEntity {
         sprite = new Sprite(getTexture());
         sprite.setSize(getSize()/2, getSize());
         sprite.setOrigin(0, 0);
+
+        collisionBoundary = new CollisionBoundary(collisionWidth, collisionHeight);
     }
 
     public Rectangle getRectangle() {
         Rectangle border = sprite.getBoundingRectangle();
         return border;
     }
-    public void checkCollision(Entity e) {
-        if( Intersector.overlaps(getRectangle(), e.getRectangle()) ) {
-            handleCollision(e);
+    public boolean checkCollision(Entity e) {
+
+        if( collisionBoundary.collideWith(e.collisionBoundary) ) {
+            return true;
         }
+        return false;
     }
+
 
     public void handleCollision(Entity e) {
         double speedAngle = e.speed.getSpeedAngle();

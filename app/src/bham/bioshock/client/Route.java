@@ -24,14 +24,18 @@ public enum Route {
   START_GAME        (JoinScreenController.class,    "start"),
 
   MOVE_PLAYER       (GameBoardController.class,     "move"),
+  MOVE_RECEIVED     (GameBoardController.class,     "moveReceived"),
   GAME_BOARD_SAVE   (GameBoardController.class,     "saveGameBoard"),
   PLAYERS_SAVE      (GameBoardController.class,     "savePlayers"),
   GAME_BOARD_SHOW   (GameBoardController.class,     "show"),
+  SKIP_TURN         (GameBoardController.class,     "skipTurn"),
 
   SEND_MINIGAME_START(MinigameController.class,     "sendStart"),
   START_MINIGAME    (MinigameController.class,      "show"),
   MINIGAME_MOVE     (MinigameController.class,      "playerMove"),
-  MINIGAME_PLAYER_UPDATE(MinigameController.class,  "updatePlayer");
+  MINIGAME_PLAYER_UPDATE(MinigameController.class,  "updatePlayer"),
+  SERVER_MINIGAME_END(MinigameController.class,     "sendEnd"),
+  MINIGAME_END       (MinigameController.class,     "end");
   
 //@formatter:on
 
