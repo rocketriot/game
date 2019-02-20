@@ -25,7 +25,7 @@ public class Store {
   /** Contains all of the information about the game board */
   private GameBoard gameBoard = new GameBoard();
   /** A list of players **/
-  private ArrayList<Player> players = new ArrayList<>();
+  private ArrayList<Player> players = new ArrayList<>(MAX_PLAYERS);
 
   /** The ID of the player that the client is controlling, only used client-side */
   private UUID mainPlayerId;
@@ -94,7 +94,7 @@ public class Store {
   }
 
   public void removePlayer(UUID id) {
-    players.removeIf(p -> p.getId() == id);
+    players.removeIf(p -> p.getId().equals(id));
   }
 
   public void removeAllPlayers() {
@@ -149,11 +149,5 @@ public class Store {
 
   public void resetMinigameStore() {
     minigameStore = null;
-  }
-
-  /** Check if it is the main player's turn */
-  public boolean isMainPlayerTurn() {
-    // TODO Auto-generated method stub
-    return false;
   }
 }
