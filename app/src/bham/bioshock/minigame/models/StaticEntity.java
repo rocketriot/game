@@ -6,6 +6,7 @@ import bham.bioshock.minigame.physics.SpeedVector;
 import bham.bioshock.minigame.worlds.World;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.Rectangle;
 
@@ -20,12 +21,16 @@ public abstract class StaticEntity {
     protected CollisionBoundary collisionBoundary;
     protected float collisionWidth = 100;
     protected float collisionHeight = 100;
+    private boolean loaded = false;
+    protected SpeedVector speed;
 
+    protected final double GROUND_FRICTION = 0.2;
 
     public StaticEntity(World w, float x, float y) {
         pos = new Position(x, y);
         world = w;
         fromGround = 0;
+        speed = new SpeedVector();
 
     }
 
@@ -50,6 +55,9 @@ public abstract class StaticEntity {
     }
     */
     public abstract TextureRegion getTexture();
+    public double angleToCenterOfGravity() {
+        return 180 + angleFromCenter();
+    }
 
     public Sprite getSprite() {
         return sprite;
@@ -58,25 +66,43 @@ public abstract class StaticEntity {
     public int getSize() {
         return size;
     }
+    public double angleFromCenter() {
+        return world.getAngleTo(getX(), getY());
+    }
 
     public void load() {
+        this.loaded = true;
         sprite = new Sprite(getTexture());
         sprite.setSize(getSize()/2, getSize());
-        sprite.setOrigin(0, 0);
+        sprite.setOrigin(sprite.getWidth() / 2, 0);
 
-        collisionBoundary = new CollisionBoundary(collisionWidth, collisionHeight);
+        collisionWidth = sprite.getWidth();
+        collisionHeight = sprite.getHeight();
+        collisionBoundary = new CollisionBoundary(collisionHeight,collisionWidth);
+        collisionBoundary.update(pos, getRotation());
+       
     }
 
-    public Rectangle getRectangle() {
-        Rectangle border = sprite.getBoundingRectangle();
-        return border;
-    }
     public boolean checkCollision(Entity e) {
-
-        if( collisionBoundary.collideWith(e.collisionBoundary) ) {
+        if(collisionBoundary.collideWith(e.collisionBoundary) ) {
+            System.out.println("col");
             return true;
         }
         return false;
+    }
+
+    public void setPosition(float x, float y){
+        this.pos.x = x;
+        this.pos.y = y;
+
+    }
+
+
+    public double getRotation() {
+        return rotation - angleFromCenter();
+    }
+    public CollisionBoundary collisionBoundary() {
+        return collisionBoundary;
     }
 
 

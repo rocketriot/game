@@ -61,7 +61,7 @@ public class Renderer {
     private Circle mainPlanet;
     private Store store;
     private Router router;
-    private static boolean DEBUG_MODE = false;
+    private static boolean DEBUG_MODE = true;
     private Clock clock;
     private MinigameStore minigameStore;
     private boolean shooting;
@@ -72,12 +72,16 @@ public class Renderer {
 
 
   public Renderer(Store store, Router router) {
+      this.store = store;
     this.minigameStore = store.getMinigameStore();
     this.router = router;
     mainPlayer = minigameStore.getMainPlayer();
 
     shapeRenderer = new ShapeRenderer();
     entities = new ArrayList<Entity>();
+    staticEntities = new ArrayList<StaticEntity>();
+
+    staticEntities.addAll(minigameStore.getWorld().getMap().getPlatforms());
     entities.addAll(minigameStore.getPlayers());
     entities.addAll(minigameStore.getRockets());
     entities.addAll(minigameStore.getGuns());
@@ -122,6 +126,10 @@ public class Renderer {
       e.load();
     }
 
+    for (StaticEntity e : staticEntities) {
+          e.load();
+    }
+
     Gdx.input.setInputProcessor(new InputAdapter() {
       @Override
       public boolean keyDown(int keyCode) {
@@ -140,9 +148,7 @@ public class Renderer {
         return true;
       }
     });
-      for (StaticEntity e : staticEntities) {
-          e.load();
-      }
+
   }
 
   public void render(float delta) {
@@ -154,7 +160,7 @@ public class Renderer {
 
     cam.position.lerp(lerpTarget.set(mainPlayer.getX(), mainPlayer.getY(), 0), 3f * delta);
 
-    double rotation = -world.getAngleTo(cam.position.x, cam.position.y);
+    double rotation = -minigameStore.getWorld().getAngleTo(cam.position.x, cam.position.y);
     cam.rotate((float) (camRotation - rotation));
     camRotation = rotation;
     cam.update();
@@ -224,28 +230,30 @@ public class Renderer {
   public void drawEntities(){
         entities.removeIf(e->e.isRemoved());
         for(Entity e:entities){
-        Sprite sprite=e.getSprite();
-        sprite.setRegion(e.getTexture());
-        sprite.setPosition(e.getX()-(sprite.getWidth()/2),e.getY());
-        sprite.setRotation((float)e.getRotation());
-        sprite.draw(batch);
-        e.update(Gdx.graphics.getDeltaTime());
-        }
+            Sprite sprite=e.getSprite();
+            sprite.setRegion(e.getTexture());
+            sprite.setPosition(e.getX()-(sprite.getWidth()/2),e.getY());
+            sprite.setRotation((float)e.getRotation());
+            sprite.draw(batch);
+            e.update(Gdx.graphics.getDeltaTime());
+  }
         for(StaticEntity e:staticEntities){
-        Sprite sprite=e.getSprite();
-        sprite.setRegion(e.getTexture());
-        sprite.setPosition(e.getX(),e.getY());
-        sprite.draw(batch);
-
+            Sprite sprite=e.getSprite();
+            sprite.setRegion(e.getTexture());
+            sprite.setPosition(e.getX()-(sprite.getWidth()/2),e.getY());
+            sprite.draw(batch);
         }
-
-        }
+  }
 
 
 
     public void drawDebug() {
         for (Entity e : entities) {
             e.drawDebug(shapeRenderer);
+        }
+        for (StaticEntity e : staticEntities) {
+
+            e.collisionBoundary().draw(shapeRenderer);
         }
     }
 
@@ -257,9 +265,10 @@ public class Renderer {
                     e1.handleCollision(e2);
                 }
 
-                for (StaticEntity e3 :staticEntities){
-                    e3.checkCollision(e1);
-                }
+            }
+            for (StaticEntity e3 :staticEntities){
+                e3.checkCollision(e1);
+
             }
         }
     }
@@ -292,26 +301,12 @@ public class Renderer {
 
     }
 
+
+
     public void resize(int width, int height) {
         stage.getViewport().update(width, height, true);
     }
 
-    public void shoot(){
-        if(Gdx.input.isButtonPressed(Input.Buttons.LEFT)){
-            float xBullet;
-            if(mainPlayer.getX() >0)
-                xBullet = mainPlayer.getX() + mainPlayer.getSprite().getHeight()/2;
-            else
-                xBullet = mainPlayer.getX() - mainPlayer.getSprite().getHeight()/2;
-
-            Bullet b = new Bullet (store.getWorld(),xBullet,mainPlayer.getY());
-            b.load();
-            entities.add(b);
-            float dt = Gdx.graphics.getDeltaTime();
-            b.update(dt);
-        }
-
-    }
 
 }
 

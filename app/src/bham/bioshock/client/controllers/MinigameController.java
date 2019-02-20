@@ -82,11 +82,10 @@ public class MinigameController extends Controller {
     MinigameStore localStore = new MinigameStore();
 
     localStore.seed(store, new FirstWorld());
-    Map map = new Map(localStore);
 
     store.setMinigameStore(localStore);
 
-    setScreen(new MinigameScreen(localStore, router, map));
+    setScreen(new MinigameScreen(store, router));
   }
 
   public void sendEnd(){
