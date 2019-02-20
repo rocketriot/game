@@ -4,6 +4,7 @@ package bham.bioshock.minigame;
 import java.util.ArrayList;
 import bham.bioshock.client.Route;
 import bham.bioshock.client.Router;
+import bham.bioshock.common.Position;
 import bham.bioshock.common.consts.Config;
 import bham.bioshock.common.models.store.MinigameStore;
 import bham.bioshock.minigame.Clock.TimeUpdateEvent;
@@ -12,8 +13,9 @@ import bham.bioshock.minigame.models.Entity;
 import bham.bioshock.minigame.models.Gun;
 import bham.bioshock.minigame.models.Player;
 import bham.bioshock.minigame.models.Rocket;
-import bham.bioshock.minigame.physics.Gravity;
 import bham.bioshock.minigame.physics.SpeedVector;
+import bham.bioshock.minigame.worlds.World;
+import bham.bioshock.minigame.worlds.World.PlanetPosition;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Input.Keys;
@@ -26,8 +28,6 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
-import com.badlogic.gdx.math.Circle;
-import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.FitViewport;
@@ -52,9 +52,10 @@ public class Renderer {
   private Viewport viewport;
   private double camRotation;
   private MinigameStore store;
-  private Gravity gravity;
+  private World world;
   private Router router;
   private boolean shooting;
+  private boolean firstRender = true;
 
   public Renderer(MinigameStore store, Router router) {
     this.store = store;
@@ -65,16 +66,17 @@ public class Renderer {
     entities.addAll(store.getPlayers());
     entities.addAll(store.getRockets());
     entities.addAll(store.getGuns());
-    gravity = new Gravity(store.getWorld());
+    world = store.getWorld();
     clock = new Clock();
     shooting = false;
 
     cam = new OrthographicCamera();
+    cam.position.set(mainPlayer.getX(), mainPlayer.getY(), 0);
+    camRotation = 0;
+    cam.update();
+    
     batch = new SpriteBatch();
     backgroundBatch = new SpriteBatch();
-    camRotation = 0;
-
-    cam.update();
 
     loadSprites();
     startClock();
@@ -97,7 +99,7 @@ public class Renderer {
     Gdx.input.setInputProcessor(new InputAdapter() {
       @Override
       public boolean keyDown(int keyCode) {
-        if (Keys.SPACE == keyCode && !shooting) {
+        if (Keys.SPACE == keyCode && !shooting && mainPlayer.haveGun()) {
           createBullet();
           shooting = true;
         }
@@ -128,11 +130,13 @@ public class Renderer {
 
     batch.setProjectionMatrix(cam.combined);
     shapeRenderer.setProjectionMatrix(cam.combined);
+    if(!firstRender) {
+      handleCollisions();
+    } 
 
-    handleCollisions();
     cam.position.lerp(lerpTarget.set(mainPlayer.getX(), mainPlayer.getY(), 0), 3f * delta);
 
-    double rotation = -gravity.getAngleTo(cam.position.x, cam.position.y);
+    double rotation = -world.getAngleTo(cam.position.x, cam.position.y);
     cam.rotate((float) (camRotation - rotation));
     camRotation = rotation;
     cam.update();
@@ -144,7 +148,7 @@ public class Renderer {
     backgroundBatch.end();
 
     drawPlanet();
-    
+
     if (DEBUG_MODE) {
       drawDebug();
     }
@@ -152,18 +156,16 @@ public class Renderer {
     batch.begin();
     drawEntities();
     batch.end();
-    
+
     updatePosition();
+    firstRender = false;
   }
 
 
   public void drawPlanet() {
     shapeRenderer.begin(ShapeType.Filled);
     shapeRenderer.setColor(Color.SALMON);
-
     shapeRenderer.circle(0, 0, (float) store.getPlanetRadius());
-    // bounding circle
-    new Circle(0, 0, (float) store.getPlanetRadius() - 50);
 
     shapeRenderer.end();
   }
@@ -181,26 +183,31 @@ public class Renderer {
         if (!e1.equals(e2) && e1.checkCollision(e2)) {
           e1.handleCollision(e2);
         }
-      }
+       }
     }
   }
-  
+
   public void createBullet() {
     Player main = store.getMainPlayer();
-    Bullet b = new Bullet(store.getWorld(), main.getX(), main.getY() + main.getSize()*3/4);
+    PlanetPosition pp = world.convert(main.getPosition());
+    pp.fromCenter += main.getSize() / 2;
+    Position bulletPos = world.convert(pp);
     
+    Bullet b = new Bullet(store.getWorld(), bulletPos.x, bulletPos.y);
+
     // First synchronise the bullet with the player
     b.setSpeedVector((SpeedVector) main.getSpeedVector().clone());
-    b.setSpeed((float) main.getSpeedVector().getSpeedAngle(), 2000);
+    b.setSpeed((float) main.getSpeedVector().getSpeedAngle(), Bullet.launchSpeed);
     b.load();
     entities.add(b);
   }
 
   public void drawEntities() {
+    entities.removeIf(e -> e.isRemoved());
     for (Entity e : entities) {
       Sprite sprite = e.getSprite();
       sprite.setRegion(e.getTexture());
-      sprite.setPosition(e.getX() - (sprite.getWidth()/2), e.getY());
+      sprite.setPosition(e.getX() - (sprite.getWidth() / 2), e.getY());
       sprite.setRotation((float) e.getRotation());
       sprite.draw(batch);
       e.update(Gdx.graphics.getDeltaTime());

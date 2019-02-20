@@ -25,7 +25,7 @@ public class FirstWorld extends World {
     rockets.add(new Rocket(this, 0, 2000, 1));
     rockets.add(new Rocket(this, 500, 2500, 2));
     
-    guns.add(new Gun(this, -2050, -50));
+    guns.add(new Gun(this, -2070, -100));
   } 
   
   @Override

@@ -59,6 +59,10 @@ public class Player extends Entity {
       speed.apply(angleFromCenter(), JUMP_FORCE);
     }
   }
+  
+  public boolean haveGun() {
+    return haveGun;
+  }
 
   public void update(float delta) {
     super.update(delta);
@@ -143,14 +147,16 @@ public class Player extends Entity {
     walkGunAnimation = textureToAnimation(walkGunSheet);
   }
 
-  public void shoot() {
-    // TODO Auto-generated method stub
-
-  }
-
   /** Collisions **/
   @Override
   public void handleCollision(Entity e) {
-    collide(e, 0.2f);
+    if(e.isA(Bullet.class)) {
+      collide(e, 0.2f);      
+    } else if(e.isA(Player.class) || e.isA(Rocket.class)) {
+      collide(e, 0.8f);
+    } else if(e.isA(Gun.class)) {
+      e.state = State.REMOVED;
+      haveGun = true;
+    }
   }
 }
