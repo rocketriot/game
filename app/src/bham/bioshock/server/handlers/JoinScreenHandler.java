@@ -58,7 +58,6 @@ public class JoinScreenHandler {
     ArrayList<Serializable> cpuPlayers = new ArrayList<>();
 
     // If there is not 4 players, create CPU players
-    System.out.println("PLAYERS IN THE STORE: "+store.getPlayers());
     while (store.getPlayers().size() != store.MAX_PLAYERS) {
       int number = store.getPlayers().size() + 1;
 

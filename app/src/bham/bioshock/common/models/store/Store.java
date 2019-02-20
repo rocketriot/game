@@ -24,8 +24,8 @@ public class Store {
   private Screen currentScreen;
   /** Contains all of the information about the game board */
   private GameBoard gameBoard = new GameBoard();
-  /** A hash map of players to their userID */
-  private HashMap<UUID, Player> players = new HashMap<>();
+  /** A list of players **/
+  private ArrayList<Player> players = new ArrayList<>();
 
   /** The ID of the player that the client is controlling, only used client-side */
   private UUID mainPlayerId;
@@ -44,11 +44,11 @@ public class Store {
   public void generateGrid() {
     // Set coordinates of the players
     int last = gameBoard.GRID_SIZE - 1;
-    Player[] list = (Player[]) players.values().toArray();
-    list[0].setCoordinates(new Coordinates(0, 0));
-    list[1].setCoordinates(new Coordinates(0, last));
-    list[2].setCoordinates(new Coordinates(last, last));
-    list[3].setCoordinates(new Coordinates(last, 0));
+
+    players.get(0).setCoordinates(new Coordinates(0, 0));
+    players.get(1).setCoordinates(new Coordinates(0, last));
+    players.get(2).setCoordinates(new Coordinates(last, last));
+    players.get(3).setCoordinates(new Coordinates(last, 0));
 
     gameBoard.generateGrid();
   }
@@ -76,35 +76,29 @@ public class Store {
     currentScreen = screen;
   }
 
-  public Collection<Player> getPlayers() {
-    return players.values();
+  public ArrayList<Player> getPlayers() {
+    return players;
   }
 
   public Player getPlayer(UUID id) {
-    return players.get(id);
+    return players.stream().filter(p -> p.getId() == id).findAny().orElse(null);
   }
 
   public void setPlayers(ArrayList<Player> ps) {
     this.players.clear();
-    for (Player p : ps) {
-      players.put(p.getId(), p);
-    }
+    players = ps;
   }
 
   public void addPlayer(Player player) {
-    players.put(player.getId(), player);
+    players.add(player);
   }
 
   public void removePlayer(UUID id) {
-    players.remove(id);
+    players.removeIf(p -> p.getId() == id);
   }
 
   public void removeAllPlayers() {
     players.clear();
-  }
-
-  public void updatePlayer(Player updatingPlayer) {
-    players.put(updatingPlayer.getId(), updatingPlayer);
   }
 
   public Player getMainPlayer() {
@@ -125,8 +119,7 @@ public class Store {
 
   /** Get's the player who's turn it is */
   public Player getMovingPlayer() {
-    Player[] list = (Player[]) players.values().toArray();
-    return list[turn];
+    return players.get(turn % players.size());
   }
 
   /** After a player has finished their turn, set the next turn */
@@ -137,8 +130,8 @@ public class Store {
       turn = 0;
 
       // Increase player's fuel after each round
-      for (Entry<UUID, Player> entry : players.entrySet()) {
-        entry.getValue().increaseFuel(30.0f);
+      for (Player p : players) {
+        p.increaseFuel(30.0f);
       }
     }
   }

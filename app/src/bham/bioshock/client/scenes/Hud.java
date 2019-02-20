@@ -133,7 +133,7 @@ public class Hud implements Disposable {
   }
 
   public void updateHud() {
-    Collection<Player> players = store.getPlayers();
+    ArrayList<Player> players = store.getPlayers();
 
     if (players.size() != store.MAX_PLAYERS) return;
 

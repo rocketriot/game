@@ -101,7 +101,10 @@ public class GameBoardController extends Controller {
   /** Player move received from the server */
   public void moveReceived(Player movingPlayer) {
     // Update the model
-    store.updatePlayer(movingPlayer);
+    Player p = store.getPlayer(movingPlayer.getId());
+    p.setCoordinates(movingPlayer.getCoordinates());
+    p.setFuel(movingPlayer.getFuel());
+    
     store.nextTurn();
   }
 

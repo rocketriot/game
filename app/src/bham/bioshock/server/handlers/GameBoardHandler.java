@@ -45,7 +45,9 @@ public class GameBoardHandler {
 
     // Update the store
     store.setGameBoard(gameBoard);
-    store.updatePlayer(movingPlayer);
+    Player p = store.getPlayer(movingPlayer.getId());
+    p.setCoordinates(movingPlayer.getCoordinates());
+    p.setFuel(movingPlayer.getFuel());
 
     // Send out new game board and moving player to players
     ArrayList<Serializable> response = new ArrayList<>();

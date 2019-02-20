@@ -127,7 +127,7 @@ public class JoinScreen extends ScreenMaster {
 
   @Override
   public void render(float delta) {
-    Collection<Player> players = store.getPlayers();
+    ArrayList<Player> players = store.getPlayers();
     int i = 0;
     
     for(Player p : players) {
