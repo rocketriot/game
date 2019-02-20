@@ -16,17 +16,19 @@ import javax.inject.Singleton;
 @Singleton
 public class SoundController extends Controller {
 
-  private Sound mainMenuMusic ;
+  private Sound mainMenuMusic;
+  private long menuMusicID;
+  private Sound boardGameMusic;
+  private long boardMusicID;
   private Sound menuSelectSound;
 
   private float musicVolume;
   private boolean musicEnabled;
-  private long menuMusicID;
-  private boolean menuPlaying;
   private float soundsVolume;
   private boolean soundsEnabled;
 
   private HashMap<String, Sound> music = new HashMap<>();
+  private HashMap<String, Long> ids = new HashMap<>();
   private HashMap<String, Boolean> playing = new HashMap<>();
   private HashMap<String, Sound> sounds = new HashMap<>();
 
@@ -35,6 +37,7 @@ public class SoundController extends Controller {
     super(store, router, game);
 
     mainMenuMusic = Gdx.audio.newSound(Gdx.files.internal("app/assets/music/MainMenuMusic.mp3"));
+    boardGameMusic = Gdx.audio.newSound(Gdx.files.internal("app/assets/music/GameBoardMusic.mp3"));
     menuSelectSound = Gdx.audio.newSound(Gdx.files.internal("app/assets/music/MenuSelect.wav"));
 
     musicVolume = 0.4f;
@@ -43,33 +46,52 @@ public class SoundController extends Controller {
     soundsVolume = 0.4f;
 
     addMusic();
-    addPlaying();
     addSounds();
   }
 
 
   public void startMusic(String music) {
-    if (!playing.get(music)){
-      this.music.get(music).loop(musicVolume);
+    if (!playing.get(music)) {
+
+      System.out.println("Starting the music");
+
+      long id = this.music.get(music).loop(musicVolume);
+      ids.put(music, id);
       playing.replace(music, true);
     }
   }
 
   public void stopMusic(String music) {
-    this.music.get(music).stop();
+
+    System.out.println("Stopping the music");
+
+    this.music.get(music).pause();
     playing.replace(music, false);
+    ids.remove(music);
   }
 
   public void setMusicVolume(float volume) {
+
+    System.out.println("Changing music volume");
+
     musicVolume = volume;
-    mainMenuMusic.setVolume(menuMusicID, musicVolume);
+
+    for (String key : playing.keySet()) {
+      if (playing.get(key)) {
+        adjustCurrentVolume(key, ids.get(key), musicVolume);
+      }
+    }
+  }
+
+  private void adjustCurrentVolume(String music, long id, float volume) {
+    this.music.get(music).setVolume(id, volume);
   }
 
   public void enableMusic(Boolean enable) {
     musicEnabled = enable;
 
-    if (!musicEnabled){
-      for (String key : music.keySet()){
+    if (!musicEnabled) {
+      for (String key : music.keySet()) {
         stopMusic(key);
       }
     }
@@ -89,15 +111,14 @@ public class SoundController extends Controller {
     soundsEnabled = enable;
   }
 
-  private void addMusic(){
+  private void addMusic() {
     music.put("mainMenu", mainMenuMusic);
-  }
-
-  private void addPlaying(){
     playing.put("mainMenu", false);
+    music.put("boardGame", boardGameMusic);
+    playing.put("boardGame", false);
   }
 
-  private void addSounds(){
+  private void addSounds() {
     sounds.put("menuSelect", menuSelectSound);
   }
 
