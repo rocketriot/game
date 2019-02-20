@@ -91,7 +91,11 @@ public class Store {
 
   public void setPlayers(ArrayList<Player> players) {
     this.players.clear();
+    this.playersMap.clear();
     this.players = players;
+    for(Player p : players) {
+      playersMap.put(p.getId(), p);
+    }
   }
 
   public void addPlayer(Player player) {

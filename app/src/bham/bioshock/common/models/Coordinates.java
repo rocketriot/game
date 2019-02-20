@@ -2,9 +2,10 @@ package bham.bioshock.common.models;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import bham.bioshock.communication.Sendable;
 
 /** Stores x and y coordinates */
-public class Coordinates implements Serializable {
+public class Coordinates extends Sendable {
   private static final long serialVersionUID = 5775730008817100527L;
 
   private int x;
