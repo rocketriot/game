@@ -24,6 +24,7 @@ import com.badlogic.gdx.graphics.g2d.ParticleEmitter;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
@@ -423,6 +424,14 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
         e.update(delta);
       }
     }
+  }
+
+  private void drawPlanetOwnerShip(Planet planet) {
+    sh.set(ShapeType.Filled);
+    Gdx.gl.glEnable(GL30.GL_BLEND);
+    Gdx.gl.glBlendFunc(GL30.GL_SRC_ALPHA, GL30.GL_ONE_MINUS_SRC_ALPHA);
+    Player player = planet.getPlayerCaptured();
+    sh.rect();
   }
 
   public boolean[] getPathColour(ArrayList<Coordinates> path) {

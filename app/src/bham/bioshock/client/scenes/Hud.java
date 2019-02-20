@@ -150,7 +150,7 @@ public class Hud implements Disposable {
 
     for (Label l : labels) {
       table.add(l);
-      table.padLeft((gameWidth - l.getPrefWidth()));
+      table.padLeft((gameWidth - l.getPrefWidth() - 50));
       table.row();
     }
   }
