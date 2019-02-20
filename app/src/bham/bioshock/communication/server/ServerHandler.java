@@ -37,24 +37,30 @@ public class ServerHandler {
   }
 
   public void sendToAll(Action action) {
-    for (ServerService s : connections) {
-      s.send(action);
+    synchronized(connections) {
+      for (ServerService s : connections) {
+        s.send(action);
+      }
     }
   }
 
   public void sendToAllExcept(Action action, UUID id) {
-    for(ServerService s : connections) {
-      if(s.Id() != id) {
-        s.send(action);        
+    synchronized(connections) {
+      for(ServerService s : connections) {
+        if(s.Id() != id) {
+          s.send(action);        
+        }
       }
     }
   }
   
   public void sendTo(UUID clientId, Action action) {
-    for(ServerService s : connections) {
-      if(s.Id() == clientId) {
-        s.send(action);
-        return;
+    synchronized(connections) {
+      for(ServerService s : connections) {
+        if(s.Id() == clientId) {
+          s.send(action);
+          return;
+        }
       }
     }
   }
