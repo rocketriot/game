@@ -1,5 +1,6 @@
 package bham.bioshock.client.controllers;
 
+import bham.bioshock.client.screens.PreferencesScreen;
 import com.google.inject.Inject;
 import bham.bioshock.client.BoardGame;
 import bham.bioshock.client.Router;
@@ -24,4 +25,8 @@ public class PreferencesController extends Controller {
   }
 
   private void readPreferences() {}
+
+  public void show() {
+    setScreen(new PreferencesScreen(router, store.getPreferences()));
+  }
 }

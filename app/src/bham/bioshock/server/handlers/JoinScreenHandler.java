@@ -46,6 +46,14 @@ public class JoinScreenHandler {
       arguments.add(p);
     }
     handler.sendTo(player.getId(), new Action(Command.ADD_PLAYER, arguments));
+
+
+    // If there are the max number of players start the game
+    if (store.getPlayers().size() == store.MAX_PLAYERS) {
+      System.out.println("starting game...");
+      handler.sendToAll(new Action(Command.START_GAME));
+    }
+
   }
 
   public void disconnectPlayer(ServerService service) {
@@ -58,6 +66,7 @@ public class JoinScreenHandler {
     ArrayList<Serializable> cpuPlayers = new ArrayList<>();
 
     // If there is not 4 players, create CPU players
+    System.out.println("PLAYERS IN THE STORE: "+store.getPlayers());
     while (store.getPlayers().size() != store.MAX_PLAYERS) {
       int number = store.getPlayers().size() + 1;
 

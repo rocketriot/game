@@ -1,5 +1,8 @@
 package bham.bioshock.minigame;
 
+import bham.bioshock.client.scenes.MinigameHud;
+import bham.bioshock.client.screens.StatsContainer;
+
 
 import java.util.ArrayList;
 import bham.bioshock.client.Route;
@@ -7,7 +10,7 @@ import bham.bioshock.client.Router;
 import bham.bioshock.common.Position;
 import bham.bioshock.common.consts.Config;
 import bham.bioshock.common.models.store.MinigameStore;
-import bham.bioshock.minigame.Clock.TimeUpdateEvent;
+import bham.bioshock.common.models.store.Store;
 import bham.bioshock.minigame.models.Bullet;
 import bham.bioshock.minigame.models.Entity;
 import bham.bioshock.minigame.models.Gun;
@@ -20,6 +23,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputAdapter;
+import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -30,6 +34,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
@@ -39,7 +44,6 @@ public class Renderer {
   private final int GAME_WORLD_WIDTH = Config.GAME_WORLD_WIDTH;
   private final int GAME_WORLD_HEIGHT = Config.GAME_WORLD_HEIGHT;
   private Player mainPlayer;
-  private Clock clock;
   private ArrayList<Entity> entities;
 
   ShapeRenderer shapeRenderer;
@@ -51,25 +55,31 @@ public class Renderer {
   private SpriteBatch backgroundBatch;
   private Viewport viewport;
   private double camRotation;
-  private MinigameStore store;
   private World world;
+  private Store store;
+  private MinigameStore minigameStore;
+
   private Router router;
   private boolean shooting;
   private boolean firstRender = true;
 
-  public Renderer(MinigameStore store, Router router) {
+  private MinigameHud hud;
+  private final InputMultiplexer inputMultiplexer;
+
+  public Renderer(Store store, Router router) {
     this.store = store;
+    this.minigameStore = store.getMinigameStore();
     this.router = router;
-    mainPlayer = store.getMainPlayer();
+    mainPlayer = minigameStore.getMainPlayer();
+
     shapeRenderer = new ShapeRenderer();
     entities = new ArrayList<Entity>();
-    entities.addAll(store.getPlayers());
-    entities.addAll(store.getRockets());
-    entities.addAll(store.getGuns());
-    world = store.getWorld();
-    clock = new Clock();
+    entities.addAll(minigameStore.getPlayers());
+    entities.addAll(minigameStore.getRockets());
+    entities.addAll(minigameStore.getGuns());
+    world = minigameStore.getWorld();
     shooting = false;
-
+ 
     cam = new OrthographicCamera();
     cam.position.set(mainPlayer.getX(), mainPlayer.getY(), 0);
     camRotation = 0;
@@ -78,8 +88,18 @@ public class Renderer {
     batch = new SpriteBatch();
     backgroundBatch = new SpriteBatch();
 
+    setupUI();
     loadSprites();
-    startClock();
+
+    // Setup the input processing
+    this.inputMultiplexer = new InputMultiplexer();
+    this.inputMultiplexer.addProcessor(hud.getStage());
+    this.inputMultiplexer.addProcessor(stage);
+  }
+
+  private void setupUI() {
+    Skin skin = new Skin(Gdx.files.internal("app/assets/skins/neon/skin/neon-ui.json"));
+    hud = new MinigameHud(batch, skin, GAME_WORLD_WIDTH, GAME_WORLD_HEIGHT, store, router);
   }
 
 
@@ -90,7 +110,10 @@ public class Renderer {
     Gun.loadTextures();
     Bullet.loadTextures();
     stage = new Stage(viewport);
+
     background = new Sprite(new Texture(Gdx.files.internal("app/assets/backgrounds/game.png")));
+
+    mainPlayer.load();
 
     for (Entity e : entities) {
       e.load();
@@ -116,18 +139,7 @@ public class Renderer {
     });
   }
 
-  public void startClock() {
-    clock.at(15, clock.new TimeListener() {
-      @Override
-      public void handle(TimeUpdateEvent event) {
-        // router.call(Route.SERVER_MINIGAME_END);
-      }
-    });
-  }
-
   public void render(float delta) {
-    clock.update(delta);
-
     batch.setProjectionMatrix(cam.combined);
     shapeRenderer.setProjectionMatrix(cam.combined);
     if(!firstRender) {
@@ -147,6 +159,8 @@ public class Renderer {
     backgroundBatch.draw(background, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
     backgroundBatch.end();
 
+    //stage.addActor(statsContainer);
+
     drawPlanet();
 
     if (DEBUG_MODE) {
@@ -155,7 +169,15 @@ public class Renderer {
 
     batch.begin();
     drawEntities();
+    //drawMainPlayer();
+
     batch.end();
+
+    // Draw the ui
+    this.batch.setProjectionMatrix(hud.stage.getCamera().combined);
+    hud.getStage().act(Gdx.graphics.getDeltaTime());
+    hud.updateHud();
+    hud.getStage().draw();
 
     updatePosition();
     firstRender = false;
@@ -165,8 +187,8 @@ public class Renderer {
   public void drawPlanet() {
     shapeRenderer.begin(ShapeType.Filled);
     shapeRenderer.setColor(Color.SALMON);
-    shapeRenderer.circle(0, 0, (float) store.getPlanetRadius());
-
+    shapeRenderer.circle(0, 0, (float) minigameStore.getPlanetRadius());
+    
     shapeRenderer.end();
   }
 
@@ -188,12 +210,12 @@ public class Renderer {
   }
 
   public void createBullet() {
-    Player main = store.getMainPlayer();
+    Player main = minigameStore.getMainPlayer();
     PlanetPosition pp = world.convert(main.getPosition());
     pp.fromCenter += main.getSize() / 2;
     Position bulletPos = world.convert(pp);
     
-    Bullet b = new Bullet(store.getWorld(), bulletPos.x, bulletPos.y);
+    Bullet b = new Bullet(minigameStore.getWorld(), bulletPos.x, bulletPos.y);
     // First synchronise the bullet with the player
     b.setSpeedVector((SpeedVector) main.getSpeedVector().clone());
     b.setSpeed((float) main.getSpeedVector().getSpeedAngle(), Bullet.launchSpeed);

@@ -11,6 +11,7 @@ import bham.bioshock.minigame.models.Player;
 import bham.bioshock.minigame.models.Rocket;
 import bham.bioshock.minigame.physics.SpeedVector;
 import bham.bioshock.minigame.worlds.World;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 
 public class MinigameStore {
 
@@ -20,6 +21,8 @@ public class MinigameStore {
   private ArrayList<Rocket> rockets;
   private ArrayList<Gun> guns;
   
+  private Skin skin;
+
   public MinigameStore() {
     players = new HashMap<>();
     rockets = new ArrayList<>();
@@ -41,6 +44,7 @@ public class MinigameStore {
       mainPlayerId = store.getMainPlayer().getId();      
     }
     ArrayList<bham.bioshock.common.models.Player> players = store.getPlayers();
+    System.out.println("there are " + players.size() + " players in the store");
     Position[] playerPos = world.getPlayerPositions();
 
     for (int i = 0; i < players.size(); i++) {
@@ -86,5 +90,13 @@ public class MinigameStore {
   public double getPlanetRadius() {
     return currentWorld.getPlanetRadius();
   }
+
+  public void setSkin(Skin skin) { this.skin = skin; }
+
+  public Skin getSkin() {
+    return skin;
+  }
+
+
 
 }
