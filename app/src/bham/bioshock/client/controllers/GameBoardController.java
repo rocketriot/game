@@ -1,6 +1,7 @@
 package bham.bioshock.client.controllers;
 
 import bham.bioshock.client.BoardGame;
+import bham.bioshock.client.Route;
 import bham.bioshock.client.Router;
 import bham.bioshock.client.screens.GameBoardScreen;
 import bham.bioshock.common.Direction;
@@ -30,6 +31,7 @@ public class GameBoardController extends Controller {
 
   /* Start the game */
   public void show() {
+    router.call(Route.STOP_MAIN_MUSIC);
     setScreen(new GameBoardScreen(router, store));
   }
 

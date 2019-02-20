@@ -16,7 +16,7 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 public class PreferencesScreen extends ScreenMaster {
 
   private AppPreferences preferences;
-  
+
   // labels
   private Label soundVolLabel;
   private Label musicVolLabel;

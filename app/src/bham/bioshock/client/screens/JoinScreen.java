@@ -100,7 +100,6 @@ public class JoinScreen extends ScreenMaster {
     startButton.addListener(new ChangeListener() {
       @Override
       public void changed(ChangeEvent event, Actor actor) {
-        router.call(Route.STOP_MAIN_MUSIC);
         router.call(Route.START_GAME);
       }
     });
