@@ -35,7 +35,7 @@ public class SoundController extends Controller {
     }
 
     public void startMenuMusic() {
-        if (!menuPlaying && musicEnabled){
+        if (!menuPlaying && musicEnabled) {
             menuMusicID = mainMenuMusic.loop();
             menuPlaying = true;
         }
@@ -46,10 +46,10 @@ public class SoundController extends Controller {
         mainMenuMusic.setVolume(menuMusicID, musicVolume);
     }
 
-    public void enableMusic(Boolean enable){
+    public void enableMusic(Boolean enable) {
         musicEnabled = enable;
 
-        if (!enable){
+        if (!enable) {
             menuPlaying = false;
             stopMainMusic();
         } else {
@@ -57,11 +57,11 @@ public class SoundController extends Controller {
         }
     }
 
-    public void stopMainMusic(){
+    public void stopMainMusic() {
         mainMenuMusic.stop();
     }
 
-    public void selectSound(){
+    public void selectSound() {
         if (soundsEnabled) {
             menuSelect.play(soundsVolume);
         }
@@ -71,7 +71,7 @@ public class SoundController extends Controller {
         soundsVolume = volume;
     }
 
-    public void enableSounds(Boolean enable){
+    public void enableSounds(Boolean enable) {
         soundsEnabled = enable;
     }
 
