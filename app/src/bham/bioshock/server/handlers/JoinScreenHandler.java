@@ -46,14 +46,6 @@ public class JoinScreenHandler {
       arguments.add(p);
     }
     handler.sendTo(player.getId(), new Action(Command.ADD_PLAYER, arguments));
-
-
-    // If there are the max number of players start the game
-    if (store.getPlayers().size() == store.MAX_PLAYERS) {
-      System.out.println("starting game...");
-      handler.sendToAll(new Action(Command.START_GAME));
-    }
-
   }
 
   public void disconnectPlayer(ServerService service) {
