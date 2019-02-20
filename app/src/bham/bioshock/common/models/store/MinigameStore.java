@@ -17,13 +17,11 @@ public class MinigameStore {
   private World currentWorld;
   private UUID mainPlayerId;
   private HashMap<UUID, Player> players;
-  private HashMap<Player, bham.bioshock.common.models.Player> minigame_players_map;
   private ArrayList<Rocket> rockets;
   private Skin skin;
 
   public MinigameStore() {
     players = new HashMap<>();
-    minigame_players_map = new HashMap<>();
     rockets = new ArrayList<>();
   }
 
@@ -47,7 +45,6 @@ public class MinigameStore {
     for (int i = 0; i < players.size(); i++) {
       Player p = new Player(world, playerPos[i]);
       this.players.put(players.get(i).getId(), p);
-      this.minigame_players_map.put(p, players.get(i));
     }
     
     this.rockets = world.getRockets();
@@ -70,9 +67,6 @@ public class MinigameStore {
     return players.values();
   }
 
-  public HashMap<Player, bham.bioshock.common.models.Player> getPlayerMap() {
-    return minigame_players_map;
-  }
   public Collection<Rocket> getRockets() {
     return rockets;
   }
