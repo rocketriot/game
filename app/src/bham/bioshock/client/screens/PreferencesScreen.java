@@ -1,6 +1,7 @@
 package bham.bioshock.client.screens;
 
 import bham.bioshock.client.AppPreferences;
+import bham.bioshock.client.Route;
 import bham.bioshock.client.Router;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.Event;
@@ -55,6 +56,7 @@ public class PreferencesScreen extends ScreenMaster {
         new EventListener() {
           @Override
           public boolean handle(Event event) {
+            router.call(Route.MUSIC_ENABLED, musicCheckBox.isChecked());
             preferences.setPrefMusicEnabled(musicCheckBox.isChecked());
             return false;
           }
@@ -66,6 +68,7 @@ public class PreferencesScreen extends ScreenMaster {
         new EventListener() {
           @Override
           public boolean handle(Event event) {
+            router.call(Route.SOUNDS_ENABLED, soundCheckBox.isChecked());
             preferences.setPrefSoundEnabled(soundCheckBox.isChecked());
             return false;
           }
@@ -78,6 +81,7 @@ public class PreferencesScreen extends ScreenMaster {
         new EventListener() {
           @Override
           public boolean handle(Event event) {
+            router.call(Route.MUSIC_VOLUME, musicVolumeSlider.getValue());
             preferences.setPrefMusicVolume(musicVolumeSlider.getValue());
             return false;
           }
@@ -89,6 +93,7 @@ public class PreferencesScreen extends ScreenMaster {
         new EventListener() {
           @Override
           public boolean handle(Event event) {
+            router.call(Route.SOUNDS_VOLUME, soundVolumeSlider.getValue());
             preferences.setPrefSoundVolume(soundVolumeSlider.getValue());
             return false;
           }
