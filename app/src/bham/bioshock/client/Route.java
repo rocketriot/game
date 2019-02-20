@@ -34,6 +34,8 @@ public enum Route {
   START_MINIGAME    (MinigameController.class,      "show"),
   MINIGAME_MOVE     (MinigameController.class,      "playerMove"),
   MINIGAME_PLAYER_UPDATE(MinigameController.class,  "updatePlayer"),
+  SERVER_MINIGAME_END(MinigameController.class,     "sendEnd"),
+  MINIGAME_END       (MinigameController.class,     "end"),
 
   START_MENU_MUSIC  (SoundController.class,         "startMenuMusic"),
   MUSIC_VOLUME      (SoundController.class,         "setMusicVolume"),

@@ -29,8 +29,7 @@ public class JoinScreenHandler {
 
     // Save client's ID
     service.saveId(player.getId());
-    handler.connect(service, player.getId());
-    
+
     // Set the texture ID of the player
     int textureId = store.getPlayers().size();
     player.setTextureID(textureId);

@@ -7,7 +7,6 @@ import bham.bioshock.server.handlers.JoinScreenHandler;
 import bham.bioshock.server.handlers.MinigameHandler;
 import java.util.ArrayList;
 import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -16,7 +15,6 @@ public class ServerHandler {
   private static final Logger logger = LogManager.getLogger(ServerHandler.class);
 
   private ArrayList<ServerService> connections;
-  private ConcurrentHashMap<UUID, ServerService> connected;
   private Store store;
   private JoinScreenHandler joinHandler;
   private GameBoardHandler gameBoardHandler;
@@ -24,7 +22,6 @@ public class ServerHandler {
   
   public ServerHandler() {
     connections = new ArrayList<>();
-    connected = new ConcurrentHashMap<>();
     store = new Store();
     joinHandler = new JoinScreenHandler(store, this);
     gameBoardHandler = new GameBoardHandler(store, this);
@@ -34,37 +31,31 @@ public class ServerHandler {
   public void register(ServerService service) {
     connections.add(service);
   }
-  
-  public void connect(ServerService service, UUID id) {
-    connected.put(id, service);
-  }
 
   public ArrayList<ServerService> getConnections() {
     return connections;
   }
 
   public void sendToAll(Action action) {
-    synchronized(connections) {
-      for (ServerService s : connections) {
-        s.send(action);
-      }
+    for (ServerService s : connections) {
+      s.send(action);
     }
   }
 
   public void sendToAllExcept(Action action, UUID id) {
-    synchronized(connections) {
-      for(ServerService s : connections) {
-        if(s.Id() != id) {
-          s.send(action);        
-        }
-      }      
+    for(ServerService s : connections) {
+      if(s.Id() != id) {
+        s.send(action);        
+      }
     }
   }
   
   public void sendTo(UUID clientId, Action action) {
-    ServerService conn = connected.get(clientId);
-    if(conn != null) {
-      conn.send(action);
+    for(ServerService s : connections) {
+      if(s.Id() == clientId) {
+        s.send(action);
+        return;
+      }
     }
   }
 
@@ -93,6 +84,9 @@ public class ServerHandler {
           break;
         case MINIGAME_PLAYER_MOVE:
           minigameHandler.playerMove(action, service.Id());
+          break;
+        case MINIGAME_END:
+          minigameHandler.endMinigame(action, service.Id());
           break;
         default:
           System.out.println("Received unhandled command: " + action.getCommand().toString());

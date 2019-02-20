@@ -17,7 +17,6 @@ public class Player extends Entity {
   private final double JUMP_FORCE = 700;
   float animationTime;
   private PlayerTexture dir;
-  private boolean isMain;
   private float v = 700f;
 
   public Player(World w, float x, float y) {
@@ -25,8 +24,9 @@ public class Player extends Entity {
     size = 150;
     animationTime = 0;
     fromGround = -25;
-    isMain = false;
     update(0);
+    collisionWidth = 75;
+    collisionHeight = 150;
   }
   
   public Player(World w, Position p) {
@@ -35,10 +35,6 @@ public class Player extends Entity {
 
   public Player(World w) {
     this(w, 0f, 0f);
-  }
-  
-  public void setMain() {
-    this.isMain = true;
   }
 
   public static void loadTextures() {
@@ -80,9 +76,7 @@ public class Player extends Entity {
   public void update(float delta) {
     super.update(delta);
     animationTime += delta;
-    if(isMain || speed.getValue() < 10) {
-      dir = PlayerTexture.FRONT;      
-    }
+    dir = PlayerTexture.FRONT;
   }
   
   public SpeedVector getSpeedVector() {
@@ -104,6 +98,7 @@ public class Player extends Entity {
   }
   public void setPosition(Position p) {
     pos = p;
+    collisionBoundary.update(pos, getRotation());
   }
 
   public TextureRegion getTexture() {
@@ -118,6 +113,12 @@ public class Player extends Entity {
       region.flip(true, false);
     }
     return region;
+  }
+  
+  /** Collisions **/
+  @Override
+  public void handleCollision(Entity e) {
+    collide(e, 0.2f);
   }
   
 }
