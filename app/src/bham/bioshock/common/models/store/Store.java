@@ -85,7 +85,7 @@ public class Store {
 
   public HashMap<UUID, Player> getPlayersMap() { return playersMap; }
 
-  public Player getPlayerByID(UUID id) {
+  public Player getPlayer(UUID id) {
     return playersMap.get(id);
   }
 
@@ -116,7 +116,7 @@ public class Store {
   }
 
   public Player getMainPlayer() {
-    return getPlayerByID(mainPlayerId);
+    return getPlayer(mainPlayerId);
   }
 
   public void setMainPlayer(Player player) {

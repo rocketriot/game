@@ -59,7 +59,7 @@ public class StatsContainer extends Container {
     private void update(PlayerContainer player_container) {
 
         UUID id = player_container.getId();
-        Player player = store.getPlayerByID(id);
+        Player player = store.getPlayer(id);
 
         float fuel = player.getFuel();
         int planets = player.getPlanetsCaptured();
