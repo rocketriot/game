@@ -5,15 +5,15 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-public static final int launchSpeed = 1200;
-static TextureRegion texture;
-static Animation<TextureRegion> splash;
-static int FRAMES = 5;
-private float animationTime = 0;
+
 
 public class Bullet extends Entity {
-    private TextureRegion texture;
+    private static TextureRegion texture;
     public boolean isFired = false;
+  public static final int launchSpeed = 1200;
+  static Animation<TextureRegion> splash;
+  static int FRAMES = 5;
+  private float animationTime = 0;
 
   public Bullet(World w, float x, float y) {
     super(w, x, y);

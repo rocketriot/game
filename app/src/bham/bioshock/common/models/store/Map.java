@@ -4,6 +4,7 @@ import bham.bioshock.common.Position;
 import bham.bioshock.common.models.store.MinigameStore;
 import bham.bioshock.minigame.models.Platform;
 import bham.bioshock.minigame.worlds.FirstWorld;
+import bham.bioshock.minigame.worlds.World;
 import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Rectangle;
 
@@ -12,7 +13,7 @@ import java.util.ArrayList;
 public class Map {
 
     /** The world */
-    private MinigameStore world;
+    private World world;
 
 
     /** Platforms */
@@ -24,12 +25,12 @@ public class Map {
     /** Bound of the main planet */
     Circle mainPlanet;
 
-    public Map(MinigameStore world){
+    public Map(World w){
         this.world = world;
         mainPlanet = new Circle(0,0,(float)world.getPlanetRadius()-10);
 
-        platforms.add(new Platform(world.getWorld(),-2300,0));
-        platforms.add(new Platform(world.getWorld(),-2300,200));
+        platforms.add(new Platform(world,-2300,0));
+        platforms.add(new Platform(world,-2300,200));
 
     }
 

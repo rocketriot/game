@@ -2,7 +2,6 @@ package bham.bioshock.minigame.models;
 
 import bham.bioshock.common.Position;
 import bham.bioshock.minigame.physics.CollisionBoundary;
-import bham.bioshock.minigame.physics.Gravity;
 import bham.bioshock.minigame.physics.SpeedVector;
 import bham.bioshock.minigame.worlds.World;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -13,7 +12,6 @@ import com.badlogic.gdx.math.Rectangle;
 public abstract class StaticEntity {
 
     protected Position pos;
-    protected Gravity gravity;
     protected World world;
     protected float rotation;
     protected Sprite sprite;
@@ -26,7 +24,6 @@ public abstract class StaticEntity {
 
     public StaticEntity(World w, float x, float y) {
         pos = new Position(x, y);
-        gravity = new Gravity(w);
         world = w;
         fromGround = 0;
 

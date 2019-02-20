@@ -11,14 +11,8 @@ import com.badlogic.gdx.Screen;
 public class MinigameScreen implements Screen {
 
   private Renderer renderer;
-
-<<<<<<< HEAD
   public MinigameScreen(MinigameStore store, Router router, Map map) {
     this.renderer = new Renderer(store, router, map);
-=======
-  public MinigameScreen(Store store, Router router) {
-    this.renderer = new Renderer(store, router);
->>>>>>> master
   }
 
   @Override

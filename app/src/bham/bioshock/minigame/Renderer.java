@@ -56,11 +56,10 @@ public class Renderer {
     private SpriteBatch backgroundBatch;
     private Viewport viewport;
     private double camRotation;
-    private Map map;
     private final int GAME_WORLD_WIDTH = Config.GAME_WORLD_WIDTH;
     private final int GAME_WORLD_HEIGHT = Config.GAME_WORLD_HEIGHT;
     private Circle mainPlanet;
-    private MinigameStore store;
+    private Store store;
     private Router router;
     private static boolean DEBUG_MODE = false;
     private Clock clock;
@@ -68,33 +67,8 @@ public class Renderer {
     private boolean shooting;
     private boolean firstRender = true;
     private MinigameHud hud;
-    //private final InputMultiplexer inputMultiplexer;
-
-
-
-    public Renderer(MinigameStore store, Router router, Map map) {
-        this.store = store;
-        this.router = router;
-        mainPlayer = store.getMainPlayer();
-        shapeRenderer = new ShapeRenderer();
-        entities = new ArrayList<Entity>();
-        staticEntities = new ArrayList<StaticEntity>();
-        entities.addAll(store.getPlayers());
-        entities.addAll(store.getRockets());
-        staticEntities.addAll(map.getPlatforms());
-
-        cam = new OrthographicCamera();
-        map = new Map(store);
-        batch = new SpriteBatch();
-        backgroundBatch = new SpriteBatch();
-        camRotation = 0;
-
-        cam.update();
-
-        loadSprites();
-        //startClock();
-    }
-
+    private InputMultiplexer inputMultiplexer;
+    private World world;
 
 
   public Renderer(Store store, Router router) {
