@@ -19,7 +19,7 @@ public abstract class StaticEntity {
     protected int size = 100;
     protected float fromGround;
     protected CollisionBoundary collisionBoundary;
-    protected float collisionWidth = 100;
+    public float collisionWidth = 100;
     protected float collisionHeight = 100;
     private boolean loaded = false;
     protected SpeedVector speed;
@@ -76,16 +76,15 @@ public abstract class StaticEntity {
         sprite.setSize(getSize()/2, getSize());
         sprite.setOrigin(sprite.getWidth() / 2, 0);
 
-        collisionWidth = sprite.getWidth();
-        collisionHeight = sprite.getHeight();
-        collisionBoundary = new CollisionBoundary(collisionHeight,collisionWidth);
+        collisionWidth = sprite.getHeight();
+        collisionHeight = sprite.getWidth();
+        collisionBoundary = new CollisionBoundary(collisionWidth,collisionHeight);
         collisionBoundary.update(pos, getRotation());
        
     }
 
     public boolean checkCollision(Entity e) {
         if(collisionBoundary.collideWith(e.collisionBoundary) ) {
-            System.out.println("col");
             return true;
         }
         return false;

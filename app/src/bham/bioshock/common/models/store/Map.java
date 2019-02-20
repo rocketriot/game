@@ -29,7 +29,7 @@ public class Map {
         this.world = w;
         mainPlanet = new Circle(0,0,(float)world.getPlanetRadius()-10);
 
-        platforms.add(new Platform(world,-2300,0));
+        platforms.add(new Platform(world,-2100,0));
         platforms.add(new Platform(world,-2200,500));
 
     }

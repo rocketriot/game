@@ -203,9 +203,7 @@ public class Renderer {
     
     shapeRenderer.end();
   }
-
-
-
+  
 
     public void createBullet() {
         Player main = minigameStore.getMainPlayer();
@@ -226,7 +224,6 @@ public class Renderer {
         entities.add(b);
     }
 
-
   public void drawEntities(){
         entities.removeIf(e->e.isRemoved());
         for(Entity e:entities){
@@ -240,7 +237,7 @@ public class Renderer {
         for(StaticEntity e:staticEntities){
             Sprite sprite=e.getSprite();
             sprite.setRegion(e.getTexture());
-            sprite.setPosition(e.getX()-(sprite.getWidth()/2),e.getY());
+            sprite.setPosition(e.getX() - (e.collisionWidth/ 2), e.getY());;
             sprite.draw(batch);
         }
   }
@@ -264,7 +261,6 @@ public class Renderer {
                 if (!e1.equals(e2) && e1.checkCollision(e2)) {
                     e1.handleCollision(e2);
                 }
-
             }
             for (StaticEntity e3 :staticEntities){
                 e3.checkCollision(e1);
@@ -272,8 +268,6 @@ public class Renderer {
             }
         }
     }
-
-
 
     public void updatePosition() {
         float dt = Gdx.graphics.getDeltaTime();
@@ -300,8 +294,6 @@ public class Renderer {
         }
 
     }
-
-
 
     public void resize(int width, int height) {
         stage.getViewport().update(width, height, true);
