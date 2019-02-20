@@ -13,11 +13,14 @@ public class Player extends Entity {
 
   private static final int FRAMES = 11;
   private static Animation<TextureRegion> walkAnimation;
+  private static Animation<TextureRegion> walkGunAnimation;
   private static TextureRegion frontTexture;
+  private static TextureRegion frontGunTexture;
   private final double JUMP_FORCE = 700;
   float animationTime;
   private PlayerTexture dir;
   private float v = 700f;
+  private boolean haveGun = false;
 
   public Player(World w, float x, float y) {
     super(w, x, y);
@@ -28,29 +31,13 @@ public class Player extends Entity {
     collisionWidth = 75;
     collisionHeight = 150;
   }
-  
+
   public Player(World w, Position p) {
     this(w, p.x, p.y);
   }
 
   public Player(World w) {
     this(w, 0f, 0f);
-  }
-
-  public static void loadTextures() {
-    Texture walkSheet = new Texture(Gdx.files.internal("app/assets/minigame/astronaut.png"));
-
-    TextureRegion[][] tmp =
-        TextureRegion.split(walkSheet, walkSheet.getWidth() / FRAMES, walkSheet.getHeight());
-
-    TextureRegion[] walkFrames = new TextureRegion[FRAMES - 1];
-    int index = 0;
-    frontTexture = tmp[0][0];
-    for (int i = 1; i < FRAMES; i++) {
-      walkFrames[index++] = tmp[0][i];
-    }
-
-    walkAnimation = new Animation<TextureRegion>(0.1f, walkFrames);
   }
 
   public void moveLeft(float delta) {
@@ -72,40 +59,45 @@ public class Player extends Entity {
       speed.apply(angleFromCenter(), JUMP_FORCE);
     }
   }
+  
+  public boolean haveGun() {
+    return haveGun;
+  }
+  public void setGun(Boolean b) {
+    this.haveGun = b;
+  }
 
   public void update(float delta) {
     super.update(delta);
     animationTime += delta;
     dir = PlayerTexture.FRONT;
   }
-  
-  public SpeedVector getSpeedVector() {
-    return speed;
-  }
-  public void setSpeedVector(SpeedVector s) {
-    speed = s;
-  }
-  
+
   public PlayerTexture getDirection() {
     return dir;
   }
+
   public void setDirection(PlayerTexture t) {
     dir = t;
   }
-  
+
   public Position getPosition() {
     return pos;
   }
+
   public void setPosition(Position p) {
     pos = p;
     collisionBoundary.update(pos, getRotation());
   }
 
+
+  /**
+   * Player textures
+   **/
+
   public TextureRegion getTexture() {
-    if (dir == PlayerTexture.FRONT) {
-      return frontTexture;
-    }
-    TextureRegion region = walkAnimation.getKeyFrame(animationTime, true);
+    TextureRegion region = getTexture(haveGun);
+
     if (region.isFlipX()) {
       region.flip(true, false);
     }
@@ -114,11 +106,56 @@ public class Player extends Entity {
     }
     return region;
   }
-  
+
+  private TextureRegion getTexture(boolean withGun) {
+    if (withGun && dir.equals(PlayerTexture.FRONT)) {
+      return frontGunTexture;
+    } else if (dir.equals(PlayerTexture.FRONT)) {
+      return frontTexture;
+    } else if (withGun) {
+      return walkGunAnimation.getKeyFrame(animationTime, true);
+    }
+
+    return walkAnimation.getKeyFrame(animationTime, true);
+  }
+
+
+  private static TextureRegion[][] splittedTexture(String path) {
+    Texture t = new Texture(Gdx.files.internal(path));
+    return TextureRegion.split(t, t.getWidth() / FRAMES, t.getHeight());
+  }
+
+  private static Animation<TextureRegion> textureToAnimation(TextureRegion[][] list) {
+
+    TextureRegion[] frames = new TextureRegion[FRAMES - 1];
+    for (int i = 1; i < FRAMES; i++) {
+      frames[i - 1] = list[0][i];
+    }
+
+    return new Animation<TextureRegion>(0.1f, frames);
+  }
+
+  public static void loadTextures() {
+    TextureRegion[][] walkSheet = splittedTexture("app/assets/minigame/astronaut.png");
+    TextureRegion[][] walkGunSheet = splittedTexture("app/assets/minigame/astronaut_gun.png");
+
+    frontTexture = walkSheet[0][0];
+    frontGunTexture = walkGunSheet[0][0];
+
+    walkAnimation = textureToAnimation(walkSheet);
+    walkGunAnimation = textureToAnimation(walkGunSheet);
+  }
+
   /** Collisions **/
   @Override
   public void handleCollision(Entity e) {
-    collide(e, 0.2f);
+    if(e.isA(Bullet.class)) {
+      collide(e, 0.2f);      
+    } else if(e.isA(Player.class) || e.isA(Rocket.class)) {
+      collide(e, 0.8f);
+    } else if(e.isA(Gun.class)) {
+      e.state = State.REMOVED;
+      haveGun = true;
+    }
   }
-  
 }

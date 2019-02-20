@@ -3,40 +3,34 @@ package bham.bioshock.minigame.models;
 import bham.bioshock.common.Direction;
 import bham.bioshock.common.Position;
 import bham.bioshock.minigame.physics.CollisionBoundary;
-import bham.bioshock.minigame.physics.Gravity;
 import bham.bioshock.minigame.physics.SpeedVector;
 import bham.bioshock.minigame.worlds.World;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.math.Intersector;
-import com.badlogic.gdx.math.Rectangle;
-import java.util.ArrayList;
-import java.util.Arrays;
-
 
 public abstract class Entity {
 
   protected final double GROUND_FRICTION = 0.2;
-  private final double AIR_FRICTION = 0.001;
 
   protected int size = 50;
 
   protected Position pos;
   protected boolean loaded = false;
   protected Sprite sprite;
-  private float rotation;
+  protected float rotation;
   protected float fromGround;
   protected SpeedVector speed;
   public World world;
-  private Gravity gravity;
+
   protected CollisionBoundary collisionBoundary;
   protected float collisionWidth = 50;
   protected float collisionHeight = 50;
 
+  protected State state = State.CREATED;
+
   public Entity(World w, float x, float y) {
     pos = new Position(x, y);
-    gravity = new Gravity(w);
     speed = new SpeedVector();
     fromGround = 0;
     world = w;
@@ -44,6 +38,10 @@ public abstract class Entity {
 
   public int getSize() {
     return size;
+  }
+
+  public boolean isRemoved() {
+    return state.equals(State.REMOVED);
   }
 
   public Position getPos() {
@@ -65,17 +63,13 @@ public abstract class Entity {
   public boolean isA(Class<? extends Entity> c) {
     return c.isInstance(this);
   }
-  
+
   public void setRotation(float rotation) {
     this.rotation = rotation;
   }
 
   public double distanceFromGround() {
-    double dx = getX() - world.gravityCenter().x;
-    double dy = getY() - world.gravityCenter().y;
-
-    double toCenter = Math.sqrt(dx * dx + dy * dy);
-    return toCenter - (world.getPlanetRadius() + fromGround);
+    return world.fromGroundTo(getX(), getY()) - fromGround;
   }
 
   public double angleToCenterOfGravity() {
@@ -83,11 +77,11 @@ public abstract class Entity {
   }
 
   public double getRotation() {
-    return -angleFromCenter() + rotation;
+    return rotation - angleFromCenter();
   }
 
   public double angleFromCenter() {
-    return gravity.getAngleTo(getX(), getY());
+    return world.getAngleTo(getX(), getY());
   }
 
 
@@ -95,12 +89,14 @@ public abstract class Entity {
 
   public void load() {
     this.loaded = true;
-    if(getTexture() != null) {
+    state = State.LOADED;
+    if (getTexture() != null) {
       sprite = new Sprite(getTexture());
       sprite.setSize(getSize(), getSize());
-      sprite.setOrigin(sprite.getWidth()/2, 0);      
+      sprite.setOrigin(sprite.getWidth() / 2, 0);
     }
     collisionBoundary = new CollisionBoundary(collisionWidth, collisionHeight);
+    collisionBoundary.update(pos, getRotation());
   }
 
   public Sprite getSprite() {
@@ -111,8 +107,16 @@ public abstract class Entity {
     speed.apply(angle, force);
   }
 
+  public void setSpeedVector(SpeedVector s) {
+    speed = s;
+  }
+  public SpeedVector getSpeedVector() {
+    return speed;
+  }
+
   public void update(float delta) {
-    if(!loaded) return;
+    if (!loaded)
+      return;
     double angle = angleToCenterOfGravity();
 
     pos.y += speed.dY() * delta;
@@ -121,56 +125,70 @@ public abstract class Entity {
     if (isFlying()) {
       speed.apply(angle, world.getGravity() * delta);
     }
-    if(!isFlying()) {
+    if (!isFlying()) {
       speed.friction(GROUND_FRICTION);
       speed.stop(angle);
     }
-    
+
     collisionBoundary.update(pos, getRotation());
   }
 
   public boolean checkCollision(Entity e) {
-
-    if( collisionBoundary.collideWith(e.collisionBoundary) ) {
+    if (collisionBoundary.collideWith(e.collisionBoundary)) {
       return true;
     }
     return false;
   }
-  
+
   /*
-   * Default behaviour for the collision.
-   * Can be overwritten by the subclass
+   * Default behaviour for the collision. Can be overwritten by the subclass
    */
   public void handleCollision(Entity e) {
-    
+
   }
 
   public CollisionBoundary collisionBoundary() {
     return collisionBoundary;
   }
-  
+
   public void drawDebug(ShapeRenderer shapeRenderer) {
     collisionBoundary().draw(shapeRenderer);
     speed.draw(shapeRenderer, pos);
   }
-  
+
+  public boolean is(State s) {
+    return state.equals(s);
+  }
+
   public void collide(Entity e, float elastic) {
-    Direction colPlace = collisionBoundary.getDirectionTo(e.collisionBoundary());
+    if (!loaded)
+      return;
+    Direction colPlace = collisionBoundary.getDirectionTo(world, e.collisionBoundary());
     double angleNorm = angleFromCenter();
     double speedVBefore = speed.getValue();
-    
-    switch(colPlace) {
+
+    switch (colPlace) {
       case RIGHT:
         speed.stop(angleNorm + 90);
         speed.apply(angleNorm - 90, (speedVBefore - speed.getValue()) * elastic);
-      break;
+        break;
       case LEFT:
         speed.stop(angleNorm - 90);
         speed.apply(angleNorm + 90, (speedVBefore - speed.getValue()) * elastic);
-      break;
+        break;
+      case UP:
+        speed.stop(angleNorm);
+        speed.apply(angleNorm + 180, (speedVBefore - speed.getValue()) * elastic);
+      case DOWN:
+        speed.stop(angleNorm + 180);
+        speed.apply(angleNorm, (speedVBefore - speed.getValue()) * elastic);
       default:
         break;
     }
+  }
+
+  public enum State {
+    CREATED, LOADED, REMOVED, REMOVING,
   }
 
 }

@@ -1,7 +1,10 @@
 package bham.bioshock.client.controllers;
 
 import bham.bioshock.client.screens.ScreenMaster;
+import bham.bioshock.client.screens.StatsContainer;
+import com.badlogic.gdx.scenes.scene2d.Stage;
 import bham.bioshock.common.models.store.Store;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.core.Logger;
 import com.google.inject.Inject;
@@ -21,6 +24,7 @@ public class MainMenuController extends Controller {
     super(store, router, game);
     this.server = server;
     this.game = game;
+    menuMusic();
   }
 
   /** Creates a server */
@@ -40,8 +44,13 @@ public class MainMenuController extends Controller {
   public void show() {
     setScreen(new MainMenuScreen(router));
   }
+
   
   public void alert(String message) {
     ((ScreenMaster)store.getScreen()).alert(message);
+  }
+
+  public void menuMusic(){
+    router.call(Route.START_MENU_MUSIC);
   }
 }

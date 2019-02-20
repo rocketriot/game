@@ -2,6 +2,7 @@ package bham.bioshock.client.screens;
 
 import bham.bioshock.client.Route;
 import bham.bioshock.client.Router;
+import bham.bioshock.client.controllers.SoundController;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -25,7 +26,6 @@ public class MainMenuScreen extends ScreenMaster {
     stage = new Stage(new ScreenViewport());
     batch = new SpriteBatch();
 
-    // calls act with Graphics.getDeltaTime()
   }
 
   @Override
@@ -92,6 +92,7 @@ public class MainMenuScreen extends ScreenMaster {
     exit.addListener(new ChangeListener() {
       @Override
       public void changed(ChangeEvent event, Actor actor) {
+        router.call(Route.SELECT_SOUND);
         Gdx.app.exit();
       }
     });
@@ -100,6 +101,7 @@ public class MainMenuScreen extends ScreenMaster {
       @Override
       public void changed(ChangeEvent event, Actor actor) {
         /** Bring up a dialogue to ask the user for a host name then start the new server */
+        router.call(Route.SELECT_SOUND);
         showHostDialogue();
       }
     });
@@ -107,6 +109,7 @@ public class MainMenuScreen extends ScreenMaster {
     howto.addListener(new ChangeListener() {
       @Override
       public void changed(ChangeEvent event, Actor actor) {
+        router.call(Route.SELECT_SOUND);
         router.call(Route.HOW_TO);
       }
     });
@@ -114,6 +117,7 @@ public class MainMenuScreen extends ScreenMaster {
     preferences.addListener(new ChangeListener() {
       @Override
       public void changed(ChangeEvent event, Actor actor) {
+        router.call(Route.SELECT_SOUND);
         router.call(Route.PREFERENCES);
       }
     });
@@ -122,6 +126,7 @@ public class MainMenuScreen extends ScreenMaster {
       @Override
       public void changed(ChangeEvent event, Actor actor) {
         // Do something to add a new player...
+        router.call(Route.SELECT_SOUND);
         showJoinDialogue();
       }
     });
@@ -130,7 +135,7 @@ public class MainMenuScreen extends ScreenMaster {
 
   private void showHostDialogue() {
 
-    TextField textField = new TextField("", skin);
+    TextField textField = new TextField("", skin, "login");
 
     Dialog diag = new Dialog("Host Game", skin) {
 
@@ -141,9 +146,11 @@ public class MainMenuScreen extends ScreenMaster {
             alert("Please Enter a Host Name");
           } else {
             // show join screen
+            router.call(Route.SELECT_SOUND);
             router.call(Route.HOST_GAME, host_name);
           }
         } else {
+          router.call(Route.SELECT_SOUND);
           System.out.println("Cancelled..");
         }
       }
@@ -159,7 +166,7 @@ public class MainMenuScreen extends ScreenMaster {
 
   private void showJoinDialogue() {
 
-    TextField textField = new TextField("", skin);
+    TextField textField = new TextField("", skin, "login");
 
     Dialog diag = new Dialog("Join Game", skin) {
 
@@ -171,10 +178,12 @@ public class MainMenuScreen extends ScreenMaster {
           if (username.equals("")) {
             alert("Please Enter a Username");
           } else {
+            router.call(Route.SELECT_SOUND);
             router.call(Route.JOIN_SCREEN, username);
           }
 
         } else {
+          router.call(Route.SELECT_SOUND);
           System.out.println("Cancelled..");
         }
       }

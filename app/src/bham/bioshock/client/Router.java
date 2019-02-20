@@ -43,10 +43,10 @@ public class Router {
           if(arg != null) {
             Object[] args = new Object[1];
             args[0] = arg;
-            logger.debug("Executing " + c.toString() + " : " + method + " : " + arg.toString());
+            logger.trace("Executing " + c.toString() + " : " + method + " : " + arg.toString());
             m.invoke(controller, args);
           } else {
-            logger.debug("Executing " + c.toString() + " : " + method);
+            logger.trace("Executing " + c.toString() + " : " + method);
             m.invoke(controller, new Object[0]);
           }
           return;
