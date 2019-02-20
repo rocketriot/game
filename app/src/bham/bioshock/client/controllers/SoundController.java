@@ -52,9 +52,6 @@ public class SoundController extends Controller {
 
   public void startMusic(String music) {
     if (!playing.get(music)) {
-
-      System.out.println("Starting the music");
-
       long id = this.music.get(music).loop(musicVolume);
       ids.put(music, id);
       playing.replace(music, true);
@@ -62,23 +59,19 @@ public class SoundController extends Controller {
   }
 
   public void stopMusic(String music) {
-
-    System.out.println("Stopping the music");
-
     this.music.get(music).pause();
     playing.replace(music, false);
     ids.remove(music);
   }
 
   public void setMusicVolume(float volume) {
+    if (volume != musicVolume) {
+      musicVolume = volume;
 
-    System.out.println("Changing music volume");
-
-    musicVolume = volume;
-
-    for (String key : playing.keySet()) {
-      if (playing.get(key)) {
-        adjustCurrentVolume(key, ids.get(key), musicVolume);
+      for (String key : playing.keySet()) {
+        if (playing.get(key)) {
+          adjustCurrentVolume(key, ids.get(key), musicVolume);
+        }
       }
     }
   }
