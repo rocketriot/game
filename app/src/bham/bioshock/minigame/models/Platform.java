@@ -29,8 +29,6 @@ public class Platform extends StaticEntity {
     public void load() {
         texture =new TextureRegion( new Texture(Gdx.files.internal("app/assets/minigame/platform.png")));
         super.load();
-        sprite.setOrigin(sprite.getWidth() / 2, 0);
-
     }
 
 

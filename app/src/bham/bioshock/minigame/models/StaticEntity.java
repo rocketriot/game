@@ -45,15 +45,6 @@ public abstract class StaticEntity {
     public void setRotation(float rotation) {
         this.rotation = rotation;
     }
-/*
-    public double distanceFromGround() {
-        double dx = getX() - world.gravityCenter().x;
-        double dy = getY() - world.gravityCenter().y;
-
-        double toCenter = Math.sqrt(dx * dx + dy * dy);
-        return toCenter - (world.getPlanetRadius() + fromGround);
-    }
-    */
     public abstract TextureRegion getTexture();
     public double angleToCenterOfGravity() {
         return 180 + angleFromCenter();
@@ -72,15 +63,15 @@ public abstract class StaticEntity {
 
     public void load() {
         this.loaded = true;
-        sprite = new Sprite(getTexture());
-        sprite.setSize(getSize()/2, getSize());
-        sprite.setOrigin(sprite.getWidth() / 2, 0);
-
+        if (getTexture() != null) {
+            sprite = new Sprite(getTexture());
+            sprite.setSize(getSize() / 2, getSize());
+            sprite.setOrigin(sprite.getWidth() / 2, 0);
+        }
         collisionWidth = sprite.getHeight();
         collisionHeight = sprite.getWidth();
         collisionBoundary = new CollisionBoundary(collisionWidth,collisionHeight);
         collisionBoundary.update(pos, getRotation());
-       
     }
 
     public boolean checkCollision(Entity e) {
@@ -95,10 +86,8 @@ public abstract class StaticEntity {
         this.pos.y = y;
 
     }
-
-
     public double getRotation() {
-        return rotation - angleFromCenter();
+        return rotation - angleFromCenter() ;
     }
     public CollisionBoundary collisionBoundary() {
         return collisionBoundary;

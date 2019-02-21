@@ -33,7 +33,7 @@ public class CollisionBoundary extends Polygon {
   public void update(Position pos, double rotation) {
     this.rotation = rotation;
     this.setRotation((float) rotation);
-    this.setPosition(pos.x - (width / 2), pos.y);
+    this.setPosition(pos.x - width/2, pos.y);
   }
 
   public boolean collideWith(CollisionBoundary cb) {

@@ -203,7 +203,7 @@ public class Renderer {
     
     shapeRenderer.end();
   }
-  
+
 
     public void createBullet() {
         Player main = minigameStore.getMainPlayer();
@@ -237,7 +237,8 @@ public class Renderer {
         for(StaticEntity e:staticEntities){
             Sprite sprite=e.getSprite();
             sprite.setRegion(e.getTexture());
-            sprite.setPosition(e.getX() - (e.collisionWidth/ 2), e.getY());;
+            sprite.setPosition(e.getX() - (e.collisionWidth/ 2), e.getY());
+            sprite.setRotation(90.0f +(float)e.getRotation());
             sprite.draw(batch);
         }
   }
@@ -249,7 +250,6 @@ public class Renderer {
             e.drawDebug(shapeRenderer);
         }
         for (StaticEntity e : staticEntities) {
-
             e.collisionBoundary().draw(shapeRenderer);
         }
     }
