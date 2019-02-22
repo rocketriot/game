@@ -7,22 +7,20 @@ import bham.bioshock.client.scenes.gameboard.DrawAsteroid;
 import bham.bioshock.client.scenes.gameboard.DrawFuel;
 import bham.bioshock.client.scenes.gameboard.DrawPlanet;
 import bham.bioshock.client.scenes.gameboard.DrawPlayer;
+import bham.bioshock.client.scenes.gameboard.PathRenderer;
 import bham.bioshock.client.scenes.Hud;
 import bham.bioshock.common.consts.Config;
 import bham.bioshock.common.consts.GridPoint;
 import bham.bioshock.common.models.*;
 import bham.bioshock.common.models.store.Store;
-import bham.bioshock.common.pathfinding.AStarPathfinding;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.InputProcessor;
-import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.GL30;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.ParticleEffect;
 import com.badlogic.gdx.graphics.g2d.ParticleEmitter;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -35,24 +33,19 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 
-import java.util.ArrayList;
-
 public class GameBoardScreen extends ScreenMaster implements InputProcessor {
   private final InputMultiplexer inputMultiplexer;
   private final int GAME_WORLD_WIDTH = Config.GAME_WORLD_WIDTH;
   private final int GAME_WORLD_HEIGHT = Config.GAME_WORLD_HEIGHT;
+  
   /** The game data */
   private Store store;
-  /** Pathfinding for player movement */
-  private AStarPathfinding pathFinder;
-
-  private ArrayList<Coordinates> path = new ArrayList<>();
+  
   private SpriteBatch batch;
   private Sprite background;
   private OrthographicCamera camera;
   private FitViewport viewport;
   private ShapeRenderer sh;
-  private Sprite sprite;
 
   /** Pixels Per Square (on the grid) */
   private int PPS = 27;
@@ -76,6 +69,7 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
   DrawPlanet drawPlanet;
   DrawFuel drawFuel;
   DrawAsteroid drawAsteroid;
+  PathRenderer pathRenderer;
 
   public GameBoardScreen(Router router, Store store) {
     super(router);
@@ -95,6 +89,8 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
     drawPlanet = new DrawPlanet(batch);
     drawFuel = new DrawFuel(batch);
     drawAsteroid = new DrawAsteroid(batch);
+
+    pathRenderer = new PathRenderer(camera, store.getGameBoard(), store.getMainPlayer(), store.getPlayers());
 
     // Generate the sprites
     this.movingSprite = new Sprite();
@@ -325,13 +321,6 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
   @Override
   public void show() {
     Gdx.input.setInputProcessor(inputMultiplexer);
-    pathFinder =
-        new AStarPathfinding(
-            store.getGameBoard().getGrid(),
-            store.getMainPlayer().getCoordinates(),
-            gridSize,
-            gridSize,
-            store.getPlayers());
   }
 
   @Override
@@ -380,7 +369,7 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
     batch.end();
 
     // Shape render drawn methods
-    drawPath();
+    pathRenderer.draw(PPS);
 
     // Draw the ui
     this.batch.setProjectionMatrix(hud.stage.getCamera().combined);
@@ -412,47 +401,6 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
     }
     sh.end();
     Gdx.gl.glDisable(GL30.GL_BLEND);
-  }
-
-  public boolean[] getPathColour(ArrayList<Coordinates> path) {
-    boolean[] allowedMove = new boolean[path.size()];
-    float fuel = store.getMainPlayer().getFuel();
-    for (int i = 0; i < path.size(); i++) {
-      if (fuel < 10f) {
-        allowedMove[i] = false;
-      } else {
-        allowedMove[i] = true;
-        fuel -= 10;
-      }
-    }
-    return allowedMove;
-  }
-
-  private void drawPath() {
-    if (playerSelected && path != null) {
-      sh.setProjectionMatrix(camera.combined);
-      sh.begin(ShapeRenderer.ShapeType.Filled);
-      Gdx.gl.glEnable(GL30.GL_BLEND);
-      Gdx.gl.glBlendFunc(GL30.GL_SRC_ALPHA, GL30.GL_ONE_MINUS_SRC_ALPHA);
-      boolean[] allowedPath = getPathColour(path);
-      // Draw white box at player position
-      sh.setColor(255, 255, 255, 0.4f);
-      Coordinates playerCoords = store.getMainPlayer().getCoordinates();
-      sh.rect(PPS * playerCoords.getX(), PPS * playerCoords.getY(), PPS, PPS);
-      // Draw Path
-      for (int i = 1; i < path.size(); i++) {
-        if (!allowedPath[i - 1]) {
-          // Red
-          sh.setColor(255, 0, 0, 0.5f);
-        } else if (allowedPath[i - 1]) {
-          // Green
-          sh.setColor(124, 252, 0, 0.4f);
-        }
-        sh.rect(PPS * path.get(i).getX(), PPS * path.get(i).getY(), PPS, PPS);
-      }
-      sh.end();
-      Gdx.gl.glDisable(GL30.GL_BLEND);
-    }
   }
 
   protected void drawBackground() {
@@ -535,7 +483,7 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
         if (clickCoords.y >= player.getCoordinates().getY() * PPS
             && clickCoords.y <= (player.getCoordinates().getY() + 1) * PPS) {
           playerSelected = true;
-          path = null;
+          pathRenderer.clearPath();
         }
       }
       return true;
@@ -585,7 +533,7 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
         if (gridCoords.getX() < gridSize && gridCoords.getX() >= 0) {
           if (gridCoords.getY() < gridSize && gridCoords.getY() >= 0) {
             if (!gridCoords.isEqual(store.getMainPlayer().getCoordinates())) {
-              path = pathFinder.pathfind(gridCoords);
+              pathRenderer.generatePath(gridCoords);
               oldGridCoords = gridCoords;
               return true;
             }
