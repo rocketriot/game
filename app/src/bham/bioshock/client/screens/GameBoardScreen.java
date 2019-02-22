@@ -253,8 +253,6 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
         switch (type) {
           case PLANET:
             Planet planet = (Planet) grid[x][y].getValue();
-            //TODO REMOVE DEBUG CODE
-            //planet.setPlayerCaptured(store.getMainPlayer());
 
             if (!store.getPlanets().contains(planet)) {
               store.addPlanets(planet);
