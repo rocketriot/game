@@ -88,7 +88,7 @@ public class GameBoard implements Serializable {
 
     // Generate a fuel box
     if (randomFloat <= 0.015) {
-      Fuel fuel = new Fuel(new Coordinates(0, 0));
+      Fuel fuel = new Fuel(new Coordinates(x, y));
       grid[x][y] = new GridPoint(GridPoint.Type.FUEL, fuel);
 
       return;

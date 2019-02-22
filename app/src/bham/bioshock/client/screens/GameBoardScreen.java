@@ -3,11 +3,13 @@ package bham.bioshock.client.screens;
 import bham.bioshock.client.Assets;
 import bham.bioshock.client.Route;
 import bham.bioshock.client.Router;
+import bham.bioshock.client.scenes.gameboard.DrawAsteroid;
+import bham.bioshock.client.scenes.gameboard.DrawFuel;
+import bham.bioshock.client.scenes.gameboard.DrawPlanet;
+import bham.bioshock.client.scenes.gameboard.DrawPlayer;
 import bham.bioshock.client.scenes.Hud;
-import bham.bioshock.common.Direction;
 import bham.bioshock.common.consts.Config;
 import bham.bioshock.common.consts.GridPoint;
-import bham.bioshock.common.consts.GridPoint.Type;
 import bham.bioshock.common.models.*;
 import bham.bioshock.common.models.store.Store;
 import bham.bioshock.common.pathfinding.AStarPathfinding;
@@ -51,11 +53,6 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
   private FitViewport viewport;
   private ShapeRenderer sh;
   private Sprite sprite;
-  private ArrayList<Sprite> planetSprites;
-  private ArrayList<Sprite> asteroidSprites;
-  private ArrayList<Sprite> playerSprites;
-  private ArrayList<Sprite> outlinedPlayerSprites;
-  private Sprite fuelSprite;
 
   /** Pixels Per Square (on the grid) */
   private int PPS = 27;
@@ -75,6 +72,11 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
   private float msXCoords, msYCoords, rtXCoords, rtYCoords;
   private int boardMovePointer = 0;
 
+  DrawPlayer drawPlayer;
+  DrawPlanet drawPlanet;
+  DrawFuel drawFuel;
+  DrawAsteroid drawAsteroid;
+
   public GameBoardScreen(Router router, Store store) {
     super(router);
 
@@ -89,12 +91,12 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
     this.viewport = new FitViewport(GAME_WORLD_WIDTH, GAME_WORLD_HEIGHT, camera);
     this.viewport.apply();
 
+    drawPlayer = new DrawPlayer(batch);
+    drawPlanet = new DrawPlanet(batch);
+    drawFuel = new DrawFuel(batch);
+    drawAsteroid = new DrawAsteroid(batch);
+
     // Generate the sprites
-    this.planetSprites = generateSprites(Assets.planetsFolder);
-    this.playerSprites = generateSprites(Assets.playersFolder);
-    this.outlinedPlayerSprites = generateSprites(Assets.playersFolder);
-    this.asteroidSprites = generateSprites(Assets.asteroidsFolder);
-    this.fuelSprite = generateSprite(Assets.fuel);
     this.movingSprite = new Sprite();
 
     generateEffects();
@@ -254,45 +256,36 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
           case PLANET:
             Planet planet = (Planet) grid[x][y].getValue();
 
-            if (!store.getPlanets().contains(planet)) {
-              store.addPlanets(planet);
-            }
-            // Check if planet has already been drawn
-            if (!planet.getCoordinates().isEqual(new Coordinates(x, y))) continue;
-
-            sprite = planetSprites.get(planet.getTextureID());
+            // Only draw the planet from the bottom left coordinate
+            if (planet.getCoordinates().isEqual(new Coordinates(x, y)))
+              drawPlanet.draw(planet, PPS);
+            
             break;
 
           case ASTEROID:
             Asteroid asteroid = (Asteroid) grid[x][y].getValue();
 
-            // Check if asteroid has already been drawn
-            if (!asteroid.getCoordinates().isEqual(new Coordinates(x, y))) continue;
+            // Only draw the asteroid from the bottom left coordinate
+            if (asteroid.getCoordinates().isEqual(new Coordinates(x, y)))
+              drawAsteroid.draw(asteroid, PPS);
 
-            sprite = asteroidSprites.get(asteroid.getTextureID());
             break;
 
           case FUEL:
-            sprite = fuelSprite;
+            Fuel fuel = (Fuel) grid[x][y].getValue();
+            drawFuel.draw(fuel, PPS);
             break;
-
-          case EMPTY:
-            continue;
 
           default:
             break;
         }
-
-        // Draw Sprite
-        sprite.setX(x * PPS);
-        sprite.setY(y * PPS);
-        sprite.draw(batch);
       }
     }
   }
 
   private void drawPlayers() {
     boolean drawnMove = false;
+
     // Draw players
     for (Player player : store.getPlayers()) {
       // Checks if the player's move needs to be drawn
@@ -300,14 +293,8 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
         drawPlayerMove(player);
         drawnMove = true;
       } else if (player.getBoardMove() == null) {
-        if (playerSelected && player.equals(store.getMainPlayer())) {
-          sprite = outlinedPlayerSprites.get(player.getTextureID());
-        } else {
-          sprite = playerSprites.get(player.getTextureID());
-        }
-        sprite.setX(player.getCoordinates().getX() * PPS);
-        sprite.setY(player.getCoordinates().getY() * PPS);
-        sprite.draw(batch);
+          boolean isMainPlayer = player.equals(store.getMainPlayer());
+          drawPlayer.draw(player, PPS, isMainPlayer);
       }
     }
   }
@@ -381,19 +368,11 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
   }
 
   private void resizeSprites() {
-    for (Sprite s : planetSprites) {
-      s.setSize(PPS * 3, PPS * 3);
-    }
-    for (Sprite s : asteroidSprites) {
-      s.setSize(PPS * 3, PPS * 4);
-    }
-    for (Sprite s : playerSprites) {
-      s.setSize(PPS, PPS);
-    }
-    for (Sprite s : outlinedPlayerSprites) {
-      s.setSize(PPS, PPS);
-    }
-    fuelSprite.setSize(PPS, PPS);
+    drawPlayer.resize(PPS);
+    drawPlanet.resize(PPS);
+    drawFuel.resize(PPS);
+    drawAsteroid.resize(PPS);
+
     movingSprite.setSize(PPS, PPS);
     background.setSize(PPS * 38.4f, PPS * 21.6f);
   }
@@ -511,21 +490,12 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
     hud.dispose();
     background.getTexture().dispose();
     sh.dispose();
-    for (Sprite s : planetSprites) {
-      s.getTexture().dispose();
-    }
 
-    for (Sprite s : asteroidSprites) {
-      s.getTexture().dispose();
-    }
+    drawPlayer.dispose();
+    drawPlanet.dispose();
+    drawFuel.dispose();
+    drawAsteroid.dispose();
 
-    for (Sprite s : playerSprites) {
-      s.getTexture().dispose();
-    }
-
-    for (Sprite s : outlinedPlayerSprites) {
-      s.getTexture().dispose();
-    }
     for (ParticleEffect e : effects) {
       e.dispose();
     }
