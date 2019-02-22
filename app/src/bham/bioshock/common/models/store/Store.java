@@ -1,6 +1,9 @@
 package bham.bioshock.common.models.store;
 
 import bham.bioshock.client.AppPreferences;
+
+import java.util.HashMap;
+
 import bham.bioshock.common.models.Coordinates;
 import bham.bioshock.common.models.GameBoard;
 import bham.bioshock.common.models.Player;
@@ -24,6 +27,10 @@ public class Store {
   private GameBoard gameBoard = new GameBoard();
   /** A list of players */
   private ArrayList<Player> players = new ArrayList<>(MAX_PLAYERS);
+
+  /** A hash map of players to their userID */
+  private HashMap<UUID, Player> playersMap = new HashMap<>();
+
   /** The ID of the player that the client is controlling, only used client-side */
   private UUID mainPlayerId;
   /** The game's round */
@@ -53,10 +60,6 @@ public class Store {
     return gameBoard;
   }
 
-  public void setGameBoard(GameBoard gameBoard) {
-    this.gameBoard = gameBoard;
-  }
-
   public Screen getScreen() {
     return currentScreen;
   }
@@ -67,6 +70,10 @@ public class Store {
     }
     return mainPlayerId.equals(id);
   }
+  
+  public void setGameBoard(GameBoard gameBoard) {
+    this.gameBoard = gameBoard;
+  }
 
   public void setScreen(Screen screen) {
     currentScreen = screen;
@@ -76,31 +83,34 @@ public class Store {
     return players;
   }
 
-  public Player getPlayer(UUID playerId) {
-    // Might be too slow
-    for (Player player : players) {
-      if (player.getId().equals(playerId))
-        return player;
-    }
+  public HashMap<UUID, Player> getPlayersMap() { return playersMap; }
 
-    return null;
+  public Player getPlayer(UUID id) {
+    return playersMap.get(id);
   }
 
   public void setPlayers(ArrayList<Player> players) {
     this.players.clear();
+    this.playersMap.clear();
     this.players = players;
+    for(Player p : players) {
+      playersMap.put(p.getId(), p);
+    }
   }
 
   public void addPlayer(Player player) {
+    playersMap.put(player.getId(), player);
     players.add(player);
   }
 
   public void removePlayer(UUID id) {
     players.removeIf(p -> p.getId().equals(id));
+    playersMap.remove(id);
   }
 
   public void removeAllPlayers() {
     players.clear();
+    playersMap.clear();
   }
 
   public void updatePlayer(Player updatingPlayer) {

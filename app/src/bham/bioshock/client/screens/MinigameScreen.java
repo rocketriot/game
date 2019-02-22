@@ -2,14 +2,16 @@ package bham.bioshock.client.screens;
 
 import bham.bioshock.client.Router;
 import bham.bioshock.common.models.store.MinigameStore;
+import bham.bioshock.common.models.store.Store;
 import bham.bioshock.minigame.Renderer;
+import bham.bioshock.minigame.models.Bullet;
 import com.badlogic.gdx.Screen;
 
 public class MinigameScreen implements Screen {
 
   private Renderer renderer;
 
-  public MinigameScreen(MinigameStore store, Router router) {
+  public MinigameScreen(Store store, Router router) {
     this.renderer = new Renderer(store, router);
   }
 
@@ -19,6 +21,7 @@ public class MinigameScreen implements Screen {
 
   }
 
+
   @Override
   public void render(float delta) {
     renderer.render(delta);
@@ -27,6 +30,10 @@ public class MinigameScreen implements Screen {
   @Override
   public void resize(int width, int height) {
     renderer.resize(width, height);
+  }
+  
+  public void addBullet(Bullet b) {
+    renderer.addBullet(b);
   }
 
   @Override
