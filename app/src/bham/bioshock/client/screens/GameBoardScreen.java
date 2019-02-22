@@ -71,6 +71,8 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
   DrawAsteroid drawAsteroid;
   PathRenderer pathRenderer;
 
+  private final float CAMERA_MOVE_SPEED = 5f;
+
   public GameBoardScreen(Router router, Store store) {
     super(router);
 
@@ -349,7 +351,7 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
   public void render(float delta) {
     batch.setProjectionMatrix(camera.combined);
     Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
-    handleInput();
+    handleKeyPress();
     camera.update();
 
     batch.begin();
@@ -436,22 +438,15 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
     return coordinates;
   }
 
-  private void handleInput() {
-    if (Gdx.input.isKeyPressed(Input.Keys.A)) {
-      camera.translate(-5f, 0f);
-    }
-    if (Gdx.input.isKeyPressed(Input.Keys.D)) {
-      camera.translate(5f, 0f);
-    }
-    if (Gdx.input.isKeyPressed(Input.Keys.W)) {
-      camera.translate(0f, 5f);
-    }
-    if (Gdx.input.isKeyPressed(Input.Keys.S)) {
-      camera.translate(0f, -5f);
-    }
-    if (Gdx.input.isKeyPressed(Input.Keys.ESCAPE)) {
-      playerSelected = false;
-    }
+  private void handleKeyPress() {
+    // Unselect player on ESC
+    if (Gdx.input.isKeyPressed(Input.Keys.ESCAPE)) playerSelected = false;
+
+    // Move camera with WASD
+    if (Gdx.input.isKeyPressed(Input.Keys.W)) camera.translate(0f, CAMERA_MOVE_SPEED);
+    if (Gdx.input.isKeyPressed(Input.Keys.A)) camera.translate(-CAMERA_MOVE_SPEED, 0f);
+    if (Gdx.input.isKeyPressed(Input.Keys.S)) camera.translate(0f, -CAMERA_MOVE_SPEED);
+    if (Gdx.input.isKeyPressed(Input.Keys.D)) camera.translate(CAMERA_MOVE_SPEED, 0f);
   }
 
   @Override
@@ -463,10 +458,10 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
     // Get mouse coordinates
     Vector3 mouse = getMouseCoordinates(screenX, screenY);
 
-    if (playerSelected) {
-      endMove(mouse);
-    } else {
+    if (!playerSelected) {
       startMove(mouse);
+    } else {
+      endMove(mouse);
     }
 
     return false;
