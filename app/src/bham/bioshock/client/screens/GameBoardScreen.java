@@ -253,7 +253,7 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
           case PLANET:
             Planet planet = (Planet) grid[x][y].getValue();
             //TODO REMOVE DEBUG CODE
-            planet.setPlayerCaptured(store.getMainPlayer());
+            //planet.setPlayerCaptured(store.getMainPlayer());
 
             if (!store.getPlanets().contains(planet)) {
               store.addPlanets(planet);
@@ -447,8 +447,10 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
     sh.setColor(255/255f, 150/255f, 60/255f, 0.5f);
     for (Planet p : store.getPlanets()) {
       Player player = p.getPlayerCaptured();
-      Coordinates planetCoords = p.getCoordinates();
-      sh.rect(planetCoords.getX() * PPS, planetCoords.getY() * PPS, PPS * 3, PPS * 3);
+      if (player != null) {
+        Coordinates planetCoords = p.getCoordinates();
+        sh.rect(planetCoords.getX() * PPS, planetCoords.getY() * PPS, PPS * 3, PPS * 3);
+      }
     }
     sh.end();
     Gdx.gl.glDisable(GL30.GL_BLEND);
