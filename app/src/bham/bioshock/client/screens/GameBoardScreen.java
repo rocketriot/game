@@ -45,7 +45,7 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
   private Sprite background;
   private OrthographicCamera camera;
   private FitViewport viewport;
-  private ShapeRenderer sh;
+  private ShapeRenderer sr;
 
   /** Pixels Per Square (on the grid) */
   private int PPS = 27;
@@ -81,7 +81,7 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
 
     this.camera = new OrthographicCamera();
     this.batch = new SpriteBatch();
-    this.sh = new ShapeRenderer();
+    this.sr = new ShapeRenderer();
 
 
     this.viewport = new FitViewport(GAME_WORLD_WIDTH, GAME_WORLD_HEIGHT, camera);
@@ -293,20 +293,20 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
   }
 
   private void drawGridLines() {
-    sh.setProjectionMatrix(camera.combined);
-    sh.begin(ShapeRenderer.ShapeType.Line);
-    sh.setColor(211, 211, 211, 0.2f);
+    sr.setProjectionMatrix(camera.combined);
+    sr.begin(ShapeRenderer.ShapeType.Line);
+    sr.setColor(211, 211, 211, 0.2f);
 
     Gdx.gl.glEnable(GL30.GL_BLEND);
     Gdx.gl.glBlendFunc(GL30.GL_SRC_ALPHA, GL30.GL_ONE_MINUS_SRC_ALPHA);
     
     for (int i = 0; i < gridSize + 1; i++)
-      sh.line(i * PPS, 0, i * PPS, (gridSize) * PPS);
+      sr.line(i * PPS, 0, i * PPS, (gridSize) * PPS);
     
     for (int i = 0; i < gridSize + 1; i++)
-      sh.line(0, i * PPS, (gridSize) * PPS, i * PPS);
+      sr.line(0, i * PPS, (gridSize) * PPS, i * PPS);
 
-    sh.end();
+    sr.end();
 
     Gdx.gl.glDisable(GL30.GL_BLEND);
   }
@@ -381,18 +381,18 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
   }
 
   private void drawPlanetOwnerShip() {
-    sh.begin(ShapeType.Filled);
+    sr.begin(ShapeType.Filled);
     Gdx.gl.glEnable(GL30.GL_BLEND);
     Gdx.gl.glBlendFunc(GL30.GL_SRC_ALPHA, GL30.GL_ONE_MINUS_SRC_ALPHA);
-    sh.setColor(255/255f, 150/255f, 60/255f, 0.5f);
+    sr.setColor(255/255f, 150/255f, 60/255f, 0.5f);
     for (Planet p : store.getPlanets()) {
       Player player = p.getPlayerCaptured();
       if (player != null) {
         Coordinates planetCoords = p.getCoordinates();
-        sh.rect(planetCoords.getX() * PPS, planetCoords.getY() * PPS, PPS * 3, PPS * 3);
+        sr.rect(planetCoords.getX() * PPS, planetCoords.getY() * PPS, PPS * 3, PPS * 3);
       }
     }
-    sh.end();
+    sr.end();
     Gdx.gl.glDisable(GL30.GL_BLEND);
   }
 
@@ -410,7 +410,7 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
     batch.dispose();
     hud.dispose();
     background.getTexture().dispose();
-    sh.dispose();
+    sr.dispose();
 
     drawPlayer.dispose();
     drawPlanet.dispose();
