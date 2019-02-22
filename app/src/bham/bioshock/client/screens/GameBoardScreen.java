@@ -6,6 +6,7 @@ import bham.bioshock.client.scenes.Hud;
 import bham.bioshock.common.Direction;
 import bham.bioshock.common.consts.Config;
 import bham.bioshock.common.consts.GridPoint;
+import bham.bioshock.common.consts.GridPoint.Type;
 import bham.bioshock.common.models.*;
 import bham.bioshock.common.models.store.Store;
 import bham.bioshock.common.pathfinding.AStarPathfinding;
@@ -136,6 +137,10 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
       if (player.getId().equals(store.getMainPlayer().getId())) {
         playerSelected = true;
         pathFinder.setStartPosition(player.getCoordinates());
+        // Remove fuel from the grid
+        if (gameBoard.getGridPoint(player.getCoordinates()).getType().equals(Type.FUEL)) {
+          gameBoard.removeGridPoint(player.getCoordinates());
+        }
       }
     } else {
       // Calculate distance to travel
