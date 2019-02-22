@@ -247,7 +247,12 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
         switch (type) {
           case PLANET:
             Planet planet = (Planet) grid[x][y].getValue();
-
+            //TODO REMOVE DEBUG CODE
+            planet.setPlayerCaptured(store.getMainPlayer());
+            
+            if (!store.getPlanets().contains(planet)) {
+              store.addPlanets(planet);
+            }
             // Check if planet has already been drawn
             if (!planet.getCoordinates().isEqual(new Coordinates(x, y))) continue;
 
@@ -392,18 +397,22 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
   @Override
   public void render(float delta) {
     batch.setProjectionMatrix(camera.combined);
-    Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+    Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
     handleInput();
     camera.update();
 
     batch.begin();
-
-    // Batch drawn methods
     drawBackground();
+    batch.end();
+
+    // Needs to be drawn in front of the background but behind the board objects
+    drawPlanetOwnerShip();
+
+    batch.begin();
+    // Batch drawn methods
     drawBoardObjects();
     drawPlayers();
     drawEffects(delta);
-
     batch.end();
 
     // Shape render drawn methods
@@ -426,12 +435,18 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
     }
   }
 
-  private void drawPlanetOwnerShip(Planet planet) {
-    sh.set(ShapeType.Filled);
+  private void drawPlanetOwnerShip() {
+    sh.begin(ShapeType.Filled);
     Gdx.gl.glEnable(GL30.GL_BLEND);
     Gdx.gl.glBlendFunc(GL30.GL_SRC_ALPHA, GL30.GL_ONE_MINUS_SRC_ALPHA);
-    Player player = planet.getPlayerCaptured();
-    sh.rect();
+    sh.setColor(255/255f, 150/255f, 60/255f, 0.5f);
+    for (Planet p : store.getPlanets()) {
+      Player player = p.getPlayerCaptured();
+      Coordinates planetCoords = p.getCoordinates();
+      sh.rect(planetCoords.getX() * PPS, planetCoords.getY() * PPS, PPS * 3, PPS * 3);
+    }
+    sh.end();
+    Gdx.gl.glDisable(GL30.GL_BLEND);
   }
 
   public boolean[] getPathColour(ArrayList<Coordinates> path) {
