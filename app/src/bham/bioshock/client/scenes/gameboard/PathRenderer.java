@@ -76,7 +76,8 @@ public class PathRenderer {
         return allowedMove;
     }
 
-    public void generatePath(Coordinates goal) {
+    public void generatePath(Coordinates start, Coordinates goal) {
+        pathFinder.setStartPosition(start);
         path = pathFinder.pathfind(goal);
     }
 

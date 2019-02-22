@@ -559,7 +559,7 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
         if (gridCoords.getX() < gridSize && gridCoords.getX() >= 0) {
           if (gridCoords.getY() < gridSize && gridCoords.getY() >= 0) {
             if (!gridCoords.isEqual(store.getMainPlayer().getCoordinates())) {
-              pathRenderer.generatePath(gridCoords);
+              pathRenderer.generatePath(store.getMainPlayer().getCoordinates(), gridCoords);
               oldGridCoords = gridCoords;
               return true;
             }
