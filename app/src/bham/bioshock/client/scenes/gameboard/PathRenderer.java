@@ -30,6 +30,8 @@ public class PathRenderer {
     }
 
     public void draw(int PPS) {
+        if (path.size() == 0) return;
+
         sr.setProjectionMatrix(camera.combined);
         sr.begin(ShapeRenderer.ShapeType.Filled);
 
