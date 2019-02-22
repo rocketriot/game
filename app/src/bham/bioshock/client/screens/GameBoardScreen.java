@@ -133,7 +133,7 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
       this.drawRocketTrail = false;
       player.setBoardMove(null);
       boardMovePointer = 0;
-      if (player.equals(store.getMainPlayer())) {
+      if (player.getId().equals(store.getMainPlayer().getId())) {
         playerSelected = true;
         pathFinder.setStartPosition(player.getCoordinates());
       }
@@ -249,7 +249,7 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
             Planet planet = (Planet) grid[x][y].getValue();
             //TODO REMOVE DEBUG CODE
             planet.setPlayerCaptured(store.getMainPlayer());
-            
+
             if (!store.getPlanets().contains(planet)) {
               store.addPlanets(planet);
             }
