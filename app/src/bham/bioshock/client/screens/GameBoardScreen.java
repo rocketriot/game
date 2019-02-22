@@ -369,6 +369,8 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
 
     // Needs to be drawn in front of the background but behind the board objects
     drawPlanetOwnerShip();
+    
+    drawGridLines();
 
     batch.begin();
     // Batch drawn methods
@@ -379,7 +381,6 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
 
     // Shape render drawn methods
     drawPath();
-    drawGridLines();
 
     // Draw the ui
     this.batch.setProjectionMatrix(hud.stage.getCamera().combined);
