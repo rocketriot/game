@@ -2,6 +2,7 @@ package bham.bioshock.common.models.store;
 
 import bham.bioshock.client.AppPreferences;
 
+import bham.bioshock.common.models.Planet;
 import java.util.HashMap;
 
 import bham.bioshock.common.models.Coordinates;
@@ -27,6 +28,9 @@ public class Store {
   private GameBoard gameBoard = new GameBoard();
   /** A list of players */
   private ArrayList<Player> players = new ArrayList<>(MAX_PLAYERS);
+
+  /** A list of planets */
+  private ArrayList<Planet> planets = new ArrayList<>();
 
   /** A hash map of players to their userID */
   private HashMap<UUID, Player> playersMap = new HashMap<>();
@@ -163,5 +167,13 @@ public class Store {
   }
   public void resetMinigameStore(){
     minigameStore = null;
+  }
+
+  public ArrayList<Planet> getPlanets() {
+    return planets;
+  }
+
+  public void addPlanets(Planet planet) {
+    planets.add(planet);
   }
 }
