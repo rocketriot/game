@@ -1,5 +1,6 @@
 package bham.bioshock.client.screens;
 
+import bham.bioshock.client.Assets;
 import bham.bioshock.client.Route;
 import bham.bioshock.client.Router;
 import bham.bioshock.client.scenes.Hud;
@@ -89,11 +90,11 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
     this.viewport.apply();
 
     // Generate the sprites
-    this.planetSprites = generateSprites("app/assets/entities/planets");
-    this.playerSprites = generateSprites("app/assets/entities/players");
-    this.outlinedPlayerSprites = generateSprites("app/assets/entities/players");
-    this.asteroidSprites = generateSprites("app/assets/entities/asteroids");
-    this.fuelSprite = generateSprite("app/assets/entities/fuel.png");
+    this.planetSprites = generateSprites(Assets.planetsFolder);
+    this.playerSprites = generateSprites(Assets.playersFolder);
+    this.outlinedPlayerSprites = generateSprites(Assets.playersFolder);
+    this.asteroidSprites = generateSprites(Assets.asteroidsFolder);
+    this.fuelSprite = generateSprite(Assets.fuel);
     this.movingSprite = new Sprite();
 
     generateEffects();
@@ -109,15 +110,15 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
   private void generateEffects() {
     rocketTrail = new ParticleEffect();
     rocketTrail.load(
-        Gdx.files.internal("app/assets/particle-effects/rocket-trail.p"),
-        Gdx.files.internal("app/assets/particle-effects"));
+        Gdx.files.internal(Assets.particleEffect),
+        Gdx.files.internal(Assets.particleEffectsFolder));
     rocketTrail.start();
     effects.add(rocketTrail);
   }
 
   private void setupUI() {
     hud = new Hud(batch, skin, GAME_WORLD_WIDTH, GAME_WORLD_HEIGHT, store, router);
-    background = new Sprite(new Texture(Gdx.files.internal("app/assets/backgrounds/game.png")));
+    background = new Sprite(new Texture(Gdx.files.internal(Assets.gameBackground)));
   }
 
   /** Draws the player move */

@@ -28,7 +28,7 @@ public class GameBoardController extends Controller {
     this.router = router;
   }
 
-  /* Start the game */
+  /** Start the game */
   public void show() {
     setScreen(new GameBoardScreen(router, store));
   }
