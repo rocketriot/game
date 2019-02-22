@@ -429,10 +429,11 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
     }
   }
 
-  private Vector3 getWorldCoords(int screenX, int screenY) {
-    Vector3 coords = new Vector3(screenX, screenY, 0);
-    coords = viewport.unproject(coords);
-    return coords;
+  private Vector3 getMouseCoordinates(int screenX, int screenY) {
+    Vector3 vector = new Vector3(screenX, screenY, 0);
+    Vector3 coordinates = viewport.unproject(vector);
+    
+    return coordinates;
   }
 
   private void handleInput() {
@@ -454,6 +455,79 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
   }
 
   @Override
+  public boolean touchDown(int screenX, int screenY, int pointer, int button) {        
+    // Used for mouse panning
+    mouseDownX = screenX;
+    mouseDownY = screenY;
+    
+    // Get mouse coordinates
+    Vector3 mouse = getMouseCoordinates(screenX, screenY);
+
+    if (playerSelected) {
+      endMove(mouse);
+    } else {
+      startMove(mouse);
+    }
+
+    return false;
+  }
+
+  private boolean startMove(Vector3 mouse) {
+    // Check a left click was performed
+    if (!Gdx.input.isButtonPressed(Input.Buttons.LEFT)) return false;
+
+    // Get player coordinates
+    Player player = store.getMainPlayer();
+    int playerX = player.getCoordinates().getX();
+    int playerY = player.getCoordinates().getY();
+
+    // Handle when mouse click is within player grid point
+    if (
+      playerX * PPS <= mouse.x && mouse.x <= (playerX + 1) * PPS && 
+      playerY * PPS <= mouse.y && mouse.y <= (playerY + 1) * PPS
+    ) {
+        playerSelected = true;
+        pathRenderer.clearPath();
+      }
+
+    return true;
+  }
+
+  private boolean endMove(Vector3 mouse) {
+    // Check a left click was performed
+    if (!Gdx.input.isButtonPressed(Input.Buttons.LEFT)) return false;
+    
+    // Get players
+    Player player = store.getMainPlayer();
+    Player movingPlayer = store.getMovingPlayer();
+
+    // Check it's the client's turn to move
+    if (!movingPlayer.getId().equals(player.getId())) return false;
+    
+    // Check if click is on the grid
+    if (
+      0 <= mouse.x && mouse.x <= gridSize * PPS && 
+      0 <= mouse.y && mouse.y <= gridSize * PPS
+    ) {
+      // this.minigamePromptShown = false;
+      
+      // Get new player coordinates
+      int gridX = (int) mouse.x / PPS;
+      int gridY = (int) mouse.y / PPS;
+      Coordinates coordinates = new Coordinates(gridX, gridY);
+
+      // Check that the player isn't attemping to move to it's current position
+      if (!store.getMainPlayer().getCoordinates().isEqual(coordinates)) {
+        router.call(Route.MOVE_PLAYER, coordinates);
+        playerSelected = false;
+      }
+    }
+
+    return true;
+  }
+
+
+  @Override
   public boolean keyDown(int keycode) {
     return false;
   }
@@ -465,43 +539,6 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
 
   @Override
   public boolean keyTyped(char character) {
-    return false;
-  }
-
-  @Override
-  public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-    Vector3 clickCoords = getWorldCoords(screenX, screenY);
-    Player player = store.getMainPlayer();
-    Player movingPlayer = store.getMovingPlayer();
-    if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
-      // Used for mouse panning
-      mouseDownX = screenX;
-      mouseDownY = screenY;
-
-      if (clickCoords.x >= player.getCoordinates().getX() * PPS
-          && clickCoords.x <= (player.getCoordinates().getX() + 1) * PPS) {
-        if (clickCoords.y >= player.getCoordinates().getY() * PPS
-            && clickCoords.y <= (player.getCoordinates().getY() + 1) * PPS) {
-          playerSelected = true;
-          pathRenderer.clearPath();
-        }
-      }
-      return true;
-    } else if (Gdx.input.isButtonPressed(Input.Buttons.RIGHT)) {
-
-      // Do nothing if it's not the client's turn to move
-      if (!movingPlayer.getId().equals(player.getId())) return true;
-
-      this.minigamePromptShown = false;
-      // Move ship to click position
-      Coordinates gridCoords =
-          new Coordinates((int) clickCoords.x / PPS, (int) clickCoords.y / PPS);
-
-      if (!store.getMainPlayer().getCoordinates().isEqual(gridCoords)) {
-        router.call(Route.MOVE_PLAYER, gridCoords);
-        return true;
-      }
-    }
     return false;
   }
 
@@ -524,9 +561,12 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
 
   @Override
   public boolean mouseMoved(int screenX, int screenY) {
+    // Check if player is selected
+    if (!playerSelected) return false;
+    
     // Pathfind to mouse coordinates
-    if (playerSelected) {
-      Vector3 mouseCoords = getWorldCoords(screenX, screenY);
+    Vector3 mouseCoords = getMouseCoordinates(screenX, screenY);
+
       Coordinates gridCoords =
           new Coordinates((int) mouseCoords.x / PPS, (int) mouseCoords.y / PPS);
       if (!oldGridCoords.isEqual(gridCoords)) {
@@ -540,7 +580,7 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
           }
         }
       }
-    }
+
     return false;
   }
 
