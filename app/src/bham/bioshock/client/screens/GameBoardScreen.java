@@ -299,27 +299,6 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
     }
   }
 
-  /** Generates an array of sprites from a folder */
-  public ArrayList<Sprite> generateSprites(String path) {
-    ArrayList<Sprite> sprites = new ArrayList<>();
-    FileHandle[] fileHandle = Gdx.files.internal(path).list();
-
-    for (FileHandle file : fileHandle) {
-      sprite = generateSprite(file.path());
-      sprites.add(sprite);
-    }
-
-    return sprites;
-  }
-
-  /** Generates a sprite from a file */
-  public Sprite generateSprite(String path) {
-    FileHandle file = Gdx.files.internal(path);
-    Texture texture = new Texture(file);
-    texture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
-    return new Sprite(texture);
-  }
-
   private void drawGridLines() {
     sh.setProjectionMatrix(camera.combined);
     sh.begin(ShapeRenderer.ShapeType.Line);
