@@ -77,12 +77,12 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
     super(router);
 
     this.store = store;
+    this.gridSize = store.getGameBoard().GRID_SIZE;
 
+    this.camera = new OrthographicCamera();
     this.batch = new SpriteBatch();
     this.sh = new ShapeRenderer();
 
-    this.gridSize = store.getGameBoard().GRID_SIZE;
-    this.camera = new OrthographicCamera();
 
     this.viewport = new FitViewport(GAME_WORLD_WIDTH, GAME_WORLD_HEIGHT, camera);
     this.viewport.apply();
@@ -94,12 +94,12 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
 
     pathRenderer = new PathRenderer(camera, store.getGameBoard(), store.getMainPlayer(), store.getPlayers());
 
-    // Generate the sprites
     this.movingSprite = new Sprite();
 
     generateEffects();
 
-    setupUI();
+    hud = new Hud(batch, skin, GAME_WORLD_WIDTH, GAME_WORLD_HEIGHT, store, router);
+    background = new Sprite(new Texture(Gdx.files.internal(Assets.gameBackground)));
 
     // Setup the input processing
     this.inputMultiplexer = new InputMultiplexer();
@@ -114,11 +114,6 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
         Gdx.files.internal(Assets.particleEffectsFolder));
     rocketTrail.start();
     effects.add(rocketTrail);
-  }
-
-  private void setupUI() {
-    hud = new Hud(batch, skin, GAME_WORLD_WIDTH, GAME_WORLD_HEIGHT, store, router);
-    background = new Sprite(new Texture(Gdx.files.internal(Assets.gameBackground)));
   }
 
   /** Draws the player move */
@@ -300,23 +295,19 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
   private void drawGridLines() {
     sh.setProjectionMatrix(camera.combined);
     sh.begin(ShapeRenderer.ShapeType.Line);
+    sh.setColor(211, 211, 211, 0.2f);
+
     Gdx.gl.glEnable(GL30.GL_BLEND);
     Gdx.gl.glBlendFunc(GL30.GL_SRC_ALPHA, GL30.GL_ONE_MINUS_SRC_ALPHA);
-    sh.setColor(211, 211, 211, 0.2f);
-    for (int i = 0; i < gridSize + 1; i++) {
-      if (i == 0) {
-        sh.line(0, 0, 0, (gridSize) * PPS);
-      }
+    
+    for (int i = 0; i < gridSize + 1; i++)
       sh.line(i * PPS, 0, i * PPS, (gridSize) * PPS);
-    }
-    for (int i = 0; i < gridSize + 1; i++) {
-      if (i == 0) {
-        sh.line(0, 0, (gridSize) * PPS, 0);
-      }
+    
+    for (int i = 0; i < gridSize + 1; i++)
       sh.line(0, i * PPS, (gridSize) * PPS, i * PPS);
-    }
 
     sh.end();
+
     Gdx.gl.glDisable(GL30.GL_BLEND);
   }
 
