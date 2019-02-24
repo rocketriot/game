@@ -17,9 +17,7 @@ import javax.inject.Singleton;
 public class SoundController extends Controller {
 
   private Sound mainMenuMusic;
-  private long menuMusicID;
   private Sound boardGameMusic;
-  private long boardMusicID;
   private Sound menuSelectSound;
 
   private float musicVolume;
@@ -120,7 +118,14 @@ public class SoundController extends Controller {
    * @param music The name of the music that you want to fade out
    */
   public void fadeOut(String music){
+    float currentVolume = musicVolume;
+    float step = musicVolume / 3;
 
+    for (int i = 0; i < 3; i++){
+      currentVolume -= step;
+      adjustCurrentVolume(music, ids.get(music), currentVolume);
+    }
+    stopMusic(music);
   }
 
   /**
