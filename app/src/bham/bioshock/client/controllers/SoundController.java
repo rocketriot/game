@@ -61,6 +61,9 @@ public class SoundController extends Controller {
       musicIds.put(music, id);
 
       if (musicPlaying.keySet().contains(music)) {
+
+        System.out.println("Setting " + music + " music to be playing");
+
         musicPlaying.replace(music, true);
       } else {
         musicPlaying.put(music, true);
@@ -131,6 +134,9 @@ public class SoundController extends Controller {
    */
   public void fadeOut(String music) throws InterruptedException {
     if (musicPlaying.get(music)) {
+
+      System.out.println("Fading out " + music + " music");
+
       int fadeTime = 30;
       float currentVolume = musicVolume;
       float step = currentVolume / fadeTime;
