@@ -122,17 +122,18 @@ public class SoundController extends Controller {
    * @param music The name of the music that you want to fade out
    */
   public void fadeOut(String music) throws InterruptedException {
+    if (playing.get(music)) {
+      int fadeTime = 30;
+      float currentVolume = musicVolume;
+      float step = currentVolume / fadeTime;
 
-    int fadeTime = 30;
-    float currentVolume = musicVolume;
-    float step = currentVolume / fadeTime;
-
-    for (int i = 0; i < fadeTime; i++) {
-      currentVolume -= step;
-      adjustCurrentVolume(music, ids.get(music), currentVolume);
-      Thread.sleep(100);
+      for (int i = 0; i < fadeTime; i++) {
+        currentVolume -= step;
+        adjustCurrentVolume(music, ids.get(music), currentVolume);
+        Thread.sleep(100);
+      }
+      stopMusic(music);
     }
-    stopMusic(music);
   }
 
   /**
@@ -177,7 +178,9 @@ public class SoundController extends Controller {
     playing.put("minigame", false);
   }
 
-  /** Method to add sounds to the hashmap of sounds */
+  /**
+   * Method to add sounds to the hashmap of sounds
+   */
   private void addSounds() {
     sounds.put("menuSelect", menuSelectSound);
   }
