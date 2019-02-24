@@ -25,9 +25,11 @@ public class SoundController extends Controller {
   private boolean soundsEnabled;
 
   private HashMap<String, Sound> music = new HashMap<>();
-  private HashMap<String, Long> ids = new HashMap<>();
-  private HashMap<String, Boolean> playing = new HashMap<>();
+  private HashMap<String, Long> musicIds = new HashMap<>();
+  private HashMap<String, Boolean> musicPlaying = new HashMap<>();
   private HashMap<String, Sound> sounds = new HashMap<>();
+  private HashMap<String, Boolean> soundsPlaying = new HashMap<>();
+  private HashMap<String, Long> soundsIds = new HashMap<>();
 
   @Inject
   public SoundController(Store store, Router router, BoardGame game) {
@@ -54,13 +56,14 @@ public class SoundController extends Controller {
    * @param music The name of the music that you want to start
    */
   public void startMusic(String music) {
-    if (!playing.get(music)) {
+    if (!musicPlaying.get(music)) {
       long id = this.music.get(music).loop(musicVolume);
-      ids.put(music, id);
-      if (playing.keySet().contains(music)) {
-        playing.replace(music, true);
+      musicIds.put(music, id);
+
+      if (musicPlaying.keySet().contains(music)) {
+        musicPlaying.replace(music, true);
       } else {
-        playing.put(music, true);
+        musicPlaying.put(music, true);
       }
     }
   }
@@ -71,9 +74,11 @@ public class SoundController extends Controller {
    * @param music The name of the music that you want to stop
    */
   public void stopMusic(String music) {
-    this.music.get(music).pause();
-    playing.replace(music, false);
-    ids.remove(music);
+    if (musicPlaying.get(music)) {
+      this.music.get(music).stop();
+      musicPlaying.replace(music, false);
+      musicIds.remove(music);
+    }
   }
 
   /**
@@ -85,9 +90,9 @@ public class SoundController extends Controller {
     if (volume != musicVolume) {
       musicVolume = volume;
 
-      for (String key : playing.keySet()) {
-        if (playing.get(key)) {
-          adjustCurrentVolume(key, ids.get(key), musicVolume);
+      for (String key : musicPlaying.keySet()) {
+        if (musicPlaying.get(key)) {
+          adjustCurrentVolume(key, musicIds.get(key), musicVolume);
         }
       }
     }
@@ -100,7 +105,7 @@ public class SoundController extends Controller {
    * @param id The ID of the music that you want to adjust
    * @param volume The volume you want to set the music to
    */
-  private void adjustCurrentVolume(String music, long id, float volume) {
+  public void adjustCurrentVolume(String music, long id, float volume) {
     this.music.get(music).setVolume(id, volume);
   }
 
@@ -125,14 +130,14 @@ public class SoundController extends Controller {
    * @param music The name of the music that you want to fade out
    */
   public void fadeOut(String music) throws InterruptedException {
-    if (playing.get(music)) {
+    if (musicPlaying.get(music)) {
       int fadeTime = 30;
       float currentVolume = musicVolume;
       float step = currentVolume / fadeTime;
 
       for (int i = 0; i < fadeTime; i++) {
         currentVolume -= step;
-        adjustCurrentVolume(music, ids.get(music), currentVolume);
+        adjustCurrentVolume(music, musicIds.get(music), currentVolume);
         Thread.sleep(100);
       }
       stopMusic(music);
@@ -147,6 +152,37 @@ public class SoundController extends Controller {
   public void playSound(String sound) {
     if (soundsEnabled) {
       sounds.get(sound).play(soundsVolume);
+    }
+  }
+
+  /**
+   * Method to stop a looping sound
+   *
+   * @param sound The looping sound to stop
+   */
+  public void stopSound(String sound) {
+    if (soundsPlaying.get(sound)) {
+      sounds.get(sound).stop();
+      soundsPlaying.replace(sound, false);
+      soundsPlaying.remove(sound);
+    }
+  }
+
+  /**
+   * Method to loop a sound effect
+   *
+   * @param sound The sound to loop
+   */
+  public void loopSound(String sound) {
+    if (soundsEnabled) {
+      long id = sounds.get(sound).loop(soundsVolume);
+      soundsIds.put(sound, id);
+
+      if (soundsPlaying.keySet().contains(music)) {
+        soundsPlaying.replace(sound, true);
+      } else {
+        soundsPlaying.put(sound, true);
+      }
     }
   }
 
@@ -174,19 +210,20 @@ public class SoundController extends Controller {
    */
   private void addMusic() {
     music.put("mainMenu", mainMenuMusic);
-    playing.put("mainMenu", false);
+    musicPlaying.put("mainMenu", false);
     music.put("boardGame", boardGameMusic);
-    playing.put("boardGame", false);
+    musicPlaying.put("boardGame", false);
     music.put("minigame", minigameMusic);
-    playing.put("minigame", false);
-    music.put("rocket", rocketSound);
-    playing.put("rocket", true);
+    musicPlaying.put("minigame", false);
   }
 
   /**
-   * Method to add sounds to the hashmap of sounds
+   * Method to add sounds to the hashmap of sounds and whether the sounds are playing or not if the
+   * sound effect is one to be looped
    */
   private void addSounds() {
     sounds.put("menuSelect", menuSelectSound);
+    sounds.put("rocket", rocketSound);
+    soundsPlaying.put("rocket", false);
   }
 }

@@ -2,6 +2,7 @@ package bham.bioshock.client;
 
 import bham.bioshock.client.controllers.Controller;
 import bham.bioshock.client.controllers.*;
+import com.badlogic.gdx.audio.Sound;
 
 public enum Route {
 //@formatter:off
@@ -43,6 +44,8 @@ public enum Route {
   MUSIC_VOLUME      (SoundController.class,         "setMusicVolume"),
   MUSIC_ENABLED     (SoundController.class,         "enableMusic"),
   PLAY_SOUND        (SoundController.class,         "playSound"),
+  LOOP_SOUND        (SoundController.class,         "loopSound"),
+  STOP_SOUND        (SoundController.class,         "stopSound"),
   SOUNDS_VOLUME     (SoundController.class,         "setSoundsVolume"),
   SOUNDS_ENABLED    (SoundController.class,         "enableSounds");
   
