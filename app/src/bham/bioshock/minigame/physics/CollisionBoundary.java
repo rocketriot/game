@@ -20,7 +20,7 @@ public class CollisionBoundary extends Polygon {
     super(new float[] {0, 0, width, 0, width, height, 0, height});
     this.width = width;
     this.height = height;
-    this.setOrigin(width / 2, 0);
+    this.setOrigin(width/2, 0);
   }
 
   public void draw(ShapeRenderer shapeRenderer) {

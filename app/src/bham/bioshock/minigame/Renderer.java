@@ -224,6 +224,8 @@ public class Renderer {
         entities.add(b);
     }
 
+    // change
+
   public void drawEntities(){
         entities.removeIf(e->e.isRemoved());
         for(Entity e:entities){
@@ -238,7 +240,8 @@ public class Renderer {
             Sprite sprite=e.getSprite();
             sprite.setRegion(e.getTexture());
             sprite.setPosition(e.getX() - (e.collisionWidth/ 2), e.getY());
-            sprite.setRotation(90.0f +(float)e.getRotation());
+            sprite.setRotation((float)e.getRotation());
+
             sprite.draw(batch);
         }
   }
@@ -256,16 +259,20 @@ public class Renderer {
 
     public void handleCollisions() {
         // Check collisions between any two entities
-        for (Entity e1 : entities) {
+        for (Entity e1 : entities)
             for (Entity e2 : entities) {
                 if (!e1.equals(e2) && e1.checkCollision(e2)) {
                     e1.handleCollision(e2);
                 }
             }
-            for (StaticEntity e3 :staticEntities){
-                e3.checkCollision(e1);
 
-            }
+        for (StaticEntity e1:staticEntities){
+           for (Entity e2 : entities){
+               if(e1.checkCollision(e2))
+                   e2.handleStaticCollision(e1);
+           }
+
+
         }
     }
 

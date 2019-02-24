@@ -10,17 +10,12 @@ import java.util.HashMap;
 
 public class Platform extends StaticEntity {
 
-    private Integer color;
     private TextureRegion texture;
-
 
     public Platform(World w, float x, float y) {
         super(w,x, y);
-        size = 100;
-
+        size = 150;
     }
-
-
 
     public TextureRegion getTexture() {
        return texture;

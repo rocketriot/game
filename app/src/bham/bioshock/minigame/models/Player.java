@@ -16,7 +16,7 @@ public class Player extends Entity {
   private static Animation<TextureRegion> walkGunAnimation;
   private static TextureRegion frontTexture;
   private static TextureRegion frontGunTexture;
-  private final double JUMP_FORCE = 700;
+  private final double JUMP_FORCE = 600;
   float animationTime;
   private PlayerTexture dir;
   private float v = 700f;
@@ -150,12 +150,17 @@ public class Player extends Entity {
   @Override
   public void handleCollision(Entity e) {
     if(e.isA(Bullet.class)) {
-      collide(e, 0.2f);      
+      collide(.2f,e.collisionBoundary);
     } else if(e.isA(Player.class) || e.isA(Rocket.class)) {
-      collide(e, 0.8f);
+      collide(0.8f,e.collisionBoundary);
     } else if(e.isA(Gun.class)) {
       e.state = State.REMOVED;
       haveGun = true;
     }
+  }
+
+  @Override // to be changed
+  public void handleStaticCollision(StaticEntity e) {
+      collide(1, e.collisionBoundary);
   }
 }

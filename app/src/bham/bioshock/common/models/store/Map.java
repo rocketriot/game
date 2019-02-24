@@ -1,9 +1,5 @@
 package bham.bioshock.common.models.store;
-
-import bham.bioshock.common.Position;
-import bham.bioshock.common.models.store.MinigameStore;
 import bham.bioshock.minigame.models.Platform;
-import bham.bioshock.minigame.worlds.FirstWorld;
 import bham.bioshock.minigame.worlds.World;
 import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Rectangle;
@@ -29,7 +25,7 @@ public class Map {
         this.world = w;
         mainPlanet = new Circle(0,0,(float)world.getPlanetRadius()-10);
 
-        platforms.add(new Platform(world,-2100,0));
+        platforms.add(new Platform(world,-2050,200));
         platforms.add(new Platform(world,-2200,500));
 
     }

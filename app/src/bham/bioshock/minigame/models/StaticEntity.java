@@ -1,5 +1,6 @@
 package bham.bioshock.minigame.models;
 
+import bham.bioshock.common.Direction;
 import bham.bioshock.common.Position;
 import bham.bioshock.minigame.physics.CollisionBoundary;
 import bham.bioshock.minigame.physics.SpeedVector;
@@ -19,8 +20,8 @@ public abstract class StaticEntity {
     protected int size = 100;
     protected float fromGround;
     protected CollisionBoundary collisionBoundary;
-    public float collisionWidth = 100;
-    protected float collisionHeight = 100;
+    public float collisionWidth;
+    protected float collisionHeight;
     private boolean loaded = false;
     protected SpeedVector speed;
 
@@ -31,6 +32,7 @@ public abstract class StaticEntity {
         world = w;
         fromGround = 0;
         speed = new SpeedVector();
+        rotation = 90;
 
     }
 
@@ -68,16 +70,15 @@ public abstract class StaticEntity {
             sprite.setSize(getSize() / 2, getSize());
             sprite.setOrigin(sprite.getWidth() / 2, 0);
         }
-        collisionWidth = sprite.getHeight();
-        collisionHeight = sprite.getWidth();
+        collisionWidth = sprite.getWidth();
+        collisionHeight = sprite.getHeight();
         collisionBoundary = new CollisionBoundary(collisionWidth,collisionHeight);
         collisionBoundary.update(pos, getRotation());
     }
 
     public boolean checkCollision(Entity e) {
-        if(collisionBoundary.collideWith(e.collisionBoundary) ) {
+        if(collisionBoundary.collideWith(e.collisionBoundary) )
             return true;
-        }
         return false;
     }
 
@@ -94,9 +95,4 @@ public abstract class StaticEntity {
     }
 
 
-    public void handleCollision(Entity e) {
-        double speedAngle = e.speed.getSpeedAngle();
-        e.speed.stop(speedAngle);
-        e.speed.apply(-speedAngle, 20);
-    }
 }

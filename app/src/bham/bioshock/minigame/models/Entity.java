@@ -21,7 +21,7 @@ public abstract class Entity {
   protected float rotation;
   protected float fromGround;
   protected SpeedVector speed;
-  public World world;
+  protected World world;
 
   protected CollisionBoundary collisionBoundary;
   protected float collisionWidth = 50;
@@ -147,6 +147,10 @@ public abstract class Entity {
 
   }
 
+  public void handleStaticCollision(StaticEntity e){
+
+  }
+
   public CollisionBoundary collisionBoundary() {
     return collisionBoundary;
   }
@@ -160,10 +164,10 @@ public abstract class Entity {
     return state.equals(s);
   }
 
-  public void collide(Entity e, float elastic) {
+  public void collide(float elastic, CollisionBoundary c) {
     if (!loaded)
       return;
-    Direction colPlace = collisionBoundary.getDirectionTo(world, e.collisionBoundary());
+    Direction colPlace = collisionBoundary.getDirectionTo(world, c);
     double angleNorm = angleFromCenter();
     double speedVBefore = speed.getValue();
 
@@ -186,6 +190,7 @@ public abstract class Entity {
         break;
     }
   }
+
 
   public enum State {
     CREATED, LOADED, REMOVED, REMOVING,
