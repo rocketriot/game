@@ -17,6 +17,7 @@ public class SoundController extends Controller {
   private Sound boardGameMusic;
   private Sound minigameMusic;
   private Sound menuSelectSound;
+  private Sound rocketSound;
 
   private float musicVolume;
   private boolean musicEnabled;
@@ -34,7 +35,9 @@ public class SoundController extends Controller {
 
     mainMenuMusic = Gdx.audio.newSound(Gdx.files.internal("app/assets/music/MainMenuMusic.mp3"));
     boardGameMusic = Gdx.audio.newSound(Gdx.files.internal("app/assets/music/GameBoardMusic.mp3"));
+    minigameMusic = Gdx.audio.newSound(Gdx.files.internal("app/assets/music/MinigameMusic.mp3"));
     menuSelectSound = Gdx.audio.newSound(Gdx.files.internal("app/assets/music/MenuSelect.wav"));
+    rocketSound = Gdx.audio.newSound(Gdx.files.internal("app/assets/music/RocketSound.wav"));
 
     musicVolume = 0.4f;
     musicEnabled = true;
@@ -176,6 +179,8 @@ public class SoundController extends Controller {
     playing.put("boardGame", false);
     music.put("minigame", minigameMusic);
     playing.put("minigame", false);
+    music.put("rocket", rocketSound);
+    playing.put("rocket", true);
   }
 
   /**
