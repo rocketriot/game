@@ -11,6 +11,11 @@ import bham.bioshock.communication.Action;
 import bham.bioshock.communication.Command;
 import bham.bioshock.communication.client.ClientService;
 import bham.bioshock.communication.client.CommunicationClient;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.google.inject.Inject;
 
 import java.net.ConnectException;
@@ -94,4 +99,6 @@ public class JoinScreenController extends Controller {
         commClient.getConnection().send(new Action(Command.START_GAME));
         logger.debug("Ready to start! Waiting for the board");
     }
+
+
 }
