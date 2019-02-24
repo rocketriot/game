@@ -4,12 +4,9 @@ import bham.bioshock.client.BoardGame;
 import bham.bioshock.client.Router;
 import bham.bioshock.common.models.store.Store;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 
-import com.sun.org.apache.xpath.internal.functions.FuncFalse;
 import java.util.HashMap;
-import java.util.Map;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -49,6 +46,7 @@ public class SoundController extends Controller {
 
   /**
    * Method to start a specified music
+   *
    * @param music The name of the music that you want to start
    */
   public void startMusic(String music) {
@@ -65,6 +63,7 @@ public class SoundController extends Controller {
 
   /**
    * Method to stop a specified music
+   *
    * @param music The name of the music that you want to stop
    */
   public void stopMusic(String music) {
@@ -75,6 +74,7 @@ public class SoundController extends Controller {
 
   /**
    * Method to adjust the overall music volume of the game
+   *
    * @param volume The volume you want to set the music to
    */
   public void setMusicVolume(float volume) {
@@ -91,9 +91,10 @@ public class SoundController extends Controller {
 
   /**
    * Method to adjust the volume of a music track while it is playing
-   * @param music   The name of the music you want to adjust
-   * @param id      The ID of the music that you want to adjust
-   * @param volume  The volume you want to set the music to
+   *
+   * @param music The name of the music you want to adjust
+   * @param id The ID of the music that you want to adjust
+   * @param volume The volume you want to set the music to
    */
   private void adjustCurrentVolume(String music, long id, float volume) {
     this.music.get(music).setVolume(id, volume);
@@ -101,7 +102,8 @@ public class SoundController extends Controller {
 
   /**
    * Method to enable music to be played in the game
-   * @param enable  Whether the music is enabled or not
+   *
+   * @param enable Whether the music is enabled or not
    */
   public void enableMusic(Boolean enable) {
     musicEnabled = enable;
@@ -115,21 +117,26 @@ public class SoundController extends Controller {
 
   /**
    * Method to fade out music so that another can start in a better sounding way
+   *
    * @param music The name of the music that you want to fade out
    */
-  public void fadeOut(String music){
-    float currentVolume = musicVolume;
-    float step = musicVolume / 3;
+  public void fadeOut(String music) throws InterruptedException {
 
-    for (int i = 0; i < 3; i++){
+    int fadeTime = 30;
+    float currentVolume = musicVolume;
+    float step = currentVolume / fadeTime;
+
+    for (int i = 0; i < fadeTime; i++) {
       currentVolume -= step;
       adjustCurrentVolume(music, ids.get(music), currentVolume);
+      Thread.sleep(100);
     }
     stopMusic(music);
   }
 
   /**
    * Method to play a sound
+   *
    * @param sound The sound that you want to play
    */
   public void playSound(String sound) {
@@ -140,7 +147,8 @@ public class SoundController extends Controller {
 
   /**
    * Method to set the overall volume for sounds in a game
-   * @param volume  The volume to set the sounds to
+   *
+   * @param volume The volume to set the sounds to
    */
   public void setSoundsVolume(float volume) {
     soundsVolume = volume;
@@ -148,7 +156,8 @@ public class SoundController extends Controller {
 
   /**
    * Method to enable sounds to be played in the game
-   * @param enable  Whether sounds should be enabled or not
+   *
+   * @param enable Whether sounds should be enabled or not
    */
   public void enableSounds(Boolean enable) {
     soundsEnabled = enable;
@@ -165,11 +174,8 @@ public class SoundController extends Controller {
     playing.put("boardGame", false);
   }
 
-  /**
-   * Method to add sounds to the hashmap of sounds
-   */
+  /** Method to add sounds to the hashmap of sounds */
   private void addSounds() {
     sounds.put("menuSelect", menuSelectSound);
   }
-
 }

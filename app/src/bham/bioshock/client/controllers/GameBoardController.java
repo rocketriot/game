@@ -31,7 +31,7 @@ public class GameBoardController extends Controller {
 
   /* Start the game */
   public void show() {
-    router.call(Route.STOP_MUSIC, "mainMenu");
+    router.call(Route.FADE_OUT, "mainMenu");
     router.call(Route.START_MUSIC, "boardGame");
     setScreen(new GameBoardScreen(router, store));
   }
