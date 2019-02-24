@@ -49,7 +49,10 @@ public class SoundController extends Controller {
     addSounds();
   }
 
-
+  /**
+   * Method to start a specified music
+   * @param music The name of the music that you want to start
+   */
   public void startMusic(String music) {
     if (!playing.get(music)) {
       long id = this.music.get(music).loop(musicVolume);
@@ -62,12 +65,20 @@ public class SoundController extends Controller {
     }
   }
 
+  /**
+   * Method to stop a specified music
+   * @param music The name of the music that you want to stop
+   */
   public void stopMusic(String music) {
     this.music.get(music).pause();
     playing.replace(music, false);
     ids.remove(music);
   }
 
+  /**
+   * Method to adjust the overall music volume of the game
+   * @param volume The volume you want to set the music to
+   */
   public void setMusicVolume(float volume) {
     if (volume != musicVolume) {
       musicVolume = volume;
@@ -80,10 +91,20 @@ public class SoundController extends Controller {
     }
   }
 
+  /**
+   * Method to adjust the volume of a music track while it is playing
+   * @param music   The name of the music you want to adjust
+   * @param id      The ID of the music that you want to adjust
+   * @param volume  The volume you want to set the music to
+   */
   private void adjustCurrentVolume(String music, long id, float volume) {
     this.music.get(music).setVolume(id, volume);
   }
 
+  /**
+   * Method to enable music to be played in the game
+   * @param enable  Whether the music is enabled or not
+   */
   public void enableMusic(Boolean enable) {
     musicEnabled = enable;
 
@@ -94,20 +115,44 @@ public class SoundController extends Controller {
     }
   }
 
+  /**
+   * Method to fade out music so that another can start in a better sounding way
+   * @param music The name of the music that you want to fade out
+   */
+  public void fadeOut(String music){
+
+  }
+
+  /**
+   * Method to play a sound
+   * @param sound The sound that you want to play
+   */
   public void playSound(String sound) {
     if (soundsEnabled) {
       sounds.get(sound).play(soundsVolume);
     }
   }
 
+  /**
+   * Method to set the overall volume for sounds in a game
+   * @param volume  The volume to set the sounds to
+   */
   public void setSoundsVolume(float volume) {
     soundsVolume = volume;
   }
 
+  /**
+   * Method to enable sounds to be played in the game
+   * @param enable  Whether sounds should be enabled or not
+   */
   public void enableSounds(Boolean enable) {
     soundsEnabled = enable;
   }
 
+  /**
+   * Method to add music tracks to the hashmap of music, as well as add them to the hashmap that
+   * holds whether the music is playing or not
+   */
   private void addMusic() {
     music.put("mainMenu", mainMenuMusic);
     playing.put("mainMenu", false);
@@ -115,6 +160,9 @@ public class SoundController extends Controller {
     playing.put("boardGame", false);
   }
 
+  /**
+   * Method to add sounds to the hashmap of sounds
+   */
   private void addSounds() {
     sounds.put("menuSelect", menuSelectSound);
   }
