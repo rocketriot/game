@@ -56,6 +56,8 @@ public class MinigameController extends Controller {
   
   public void show() {
     // Create local store for the minigame, and create a new world
+    router.call(Route.FADE_OUT, "boardGame");
+    router.call(Route.START_MUSIC, "minigame");
     MinigameStore localStore = new MinigameStore();
     localStore.seed(store, new FirstWorld());
     

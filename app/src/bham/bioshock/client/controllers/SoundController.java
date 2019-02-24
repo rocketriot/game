@@ -15,6 +15,7 @@ public class SoundController extends Controller {
 
   private Sound mainMenuMusic;
   private Sound boardGameMusic;
+  private Sound minigameMusic;
   private Sound menuSelectSound;
 
   private float musicVolume;
@@ -172,6 +173,8 @@ public class SoundController extends Controller {
     playing.put("mainMenu", false);
     music.put("boardGame", boardGameMusic);
     playing.put("boardGame", false);
+    music.put("minigame", minigameMusic);
+    playing.put("minigame", false);
   }
 
   /** Method to add sounds to the hashmap of sounds */
