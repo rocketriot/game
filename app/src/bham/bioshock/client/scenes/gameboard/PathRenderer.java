@@ -19,6 +19,9 @@ public class PathRenderer {
     private Player mainPlayer;
     private OrthographicCamera camera;
 
+    /** Specifies the current path goal to prevent useless rerenders */
+    private Coordinates currentCoordinates;
+
     public PathRenderer(OrthographicCamera camera, GameBoard gameBoard, Player mainPlayer, ArrayList<Player> players) {
         pathFinder = new AStarPathfinding(
             gameBoard.getGrid(), mainPlayer.getCoordinates(), gameBoard.GRID_SIZE, gameBoard.GRID_SIZE, players);
@@ -77,11 +80,15 @@ public class PathRenderer {
     }
 
     public void generatePath(Coordinates start, Coordinates goal) {
+        // Do nothing if generating the same path
+        if (goal.isEqual(currentCoordinates)) return;
+
         pathFinder.setStartPosition(start);
         path = pathFinder.pathfind(goal);
     }
 
     public void clearPath() {
+        currentCoordinates = new Coordinates(-1, -1);
         path.clear();
     }
 }

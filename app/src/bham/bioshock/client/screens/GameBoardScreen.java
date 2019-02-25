@@ -34,39 +34,56 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 
 public class GameBoardScreen extends ScreenMaster implements InputProcessor {
-  private final InputMultiplexer inputMultiplexer;
-  private final int GAME_WORLD_WIDTH = Config.GAME_WORLD_WIDTH;
-  private final int GAME_WORLD_HEIGHT = Config.GAME_WORLD_HEIGHT;
-  
   /** The game data */
   private Store store;
-  
+
   private SpriteBatch batch;
-  private Sprite background;
+  
   private OrthographicCamera camera;
+  
   private FitViewport viewport;
+  
   private ShapeRenderer sr;
 
+  private final InputMultiplexer inputMultiplexer;
+  
   /** Pixels Per Square (on the grid) */
   private int PPS = 27;
 
   /** Size of the board */
   private int gridSize;
 
+  /** Used for displaying the current game statistics */
   private Hud hud;
-  private int mouseDownX, mouseDownY;
-  private boolean playerSelected = false;
-  private Coordinates oldGridCoords = new Coordinates(-1, -1);
-  // private Array<ParticleEffect> effects = new Array<>();
-  // private ParticleEffect rocketTrail;
 
+  /** Used for mouse panning */
+  private int mouseDownX, mouseDownY;
+
+  private Coordinates oldGridCoords = new Coordinates(-1, -1);
+
+  /** The game background sprite */
+  private Sprite background;
+
+  /** Draws players on the board */
   DrawPlayer drawPlayer;
+  
+  /** Draws planets on the board */
   DrawPlanet drawPlanet;
+  
+  /** Draws fuel on the board */
   DrawFuel drawFuel;
+  
+  /** Draws asteroids on the board */
   DrawAsteroid drawAsteroid;
+  
+  /** Handles the path rendering */
   PathRenderer pathRenderer;
 
+  /** The speed at which to move the board with the WASD keys */
   private final float CAMERA_MOVE_SPEED = 5f;
+
+  /** Flag for if the player is selecting a move */
+  private boolean playerSelected = false;
 
   public GameBoardScreen(Router router, Store store) {
     super(router);
@@ -79,7 +96,7 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
     this.sr = new ShapeRenderer();
 
 
-    this.viewport = new FitViewport(GAME_WORLD_WIDTH, GAME_WORLD_HEIGHT, camera);
+    this.viewport = new FitViewport(Config.GAME_WORLD_WIDTH, Config.GAME_WORLD_HEIGHT, camera);
     this.viewport.apply();
 
     drawPlayer = new DrawPlayer(batch);
@@ -91,7 +108,7 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
 
     // generateEffects();
 
-    hud = new Hud(batch, skin, GAME_WORLD_WIDTH, GAME_WORLD_HEIGHT, store, router);
+    hud = new Hud(batch, skin, Config.GAME_WORLD_WIDTH, Config.GAME_WORLD_HEIGHT, store, router);
     background = new Sprite(new Texture(Gdx.files.internal(Assets.gameBackground)));
 
     // Setup the input processing
@@ -424,31 +441,29 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
     // Check if player is selected
     if (!playerSelected) return false;
     
-    // Pathfind to mouse coordinates
-    Vector3 mouseCoords = getMouseCoordinates(screenX, screenY);
+    // Get the board coordinates of where the mouse is positioned
+    Vector3 mouse = getMouseCoordinates(screenX, screenY);
+    Coordinates coordinates = new Coordinates((int) mouse.x / PPS, (int) mouse.y / PPS);
+      
+    // Do nothing if the mouse is in the same position as where the player currently is at
+    if (coordinates.isEqual(store.getMainPlayer().getCoordinates())) return false;
 
-      Coordinates gridCoords =
-          new Coordinates((int) mouseCoords.x / PPS, (int) mouseCoords.y / PPS);
-      if (!oldGridCoords.isEqual(gridCoords)) {
-        if (gridCoords.getX() < gridSize && gridCoords.getX() >= 0) {
-          if (gridCoords.getY() < gridSize && gridCoords.getY() >= 0) {
-            if (!gridCoords.isEqual(store.getMainPlayer().getCoordinates())) {
-              pathRenderer.generatePath(store.getMainPlayer().getCoordinates(), gridCoords);
-              oldGridCoords = gridCoords;
-              return true;
-            }
-          }
-        }
-      }
+    // Ensure the mouse is clicking on the board
+    if (
+      coordinates.getX() >= gridSize && coordinates.getX() < 0 && 
+      coordinates.getY() >= gridSize && coordinates.getY() < 0
+    ) return false;
 
-    return false;
+    // Pathfind to where the mouse is located
+    pathRenderer.generatePath(store.getMainPlayer().getCoordinates(), coordinates);
+    return true;
   }
 
   @Override
   public boolean scrolled(int amount) {
     // Zoom code
-    if ((PPS -= amount) <= ((GAME_WORLD_HEIGHT / gridSize) - 4)) {
-      PPS = (GAME_WORLD_HEIGHT / gridSize) - 3;
+    if ((PPS -= amount) <= ((Config.GAME_WORLD_HEIGHT / gridSize) - 4)) {
+      PPS = (Config.GAME_WORLD_HEIGHT / gridSize) - 3;
     } else if (PPS < 30) {
       PPS -= amount;
     } else if (PPS < 50) {
