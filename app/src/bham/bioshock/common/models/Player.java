@@ -155,9 +155,11 @@ public class Player extends Sendable {
     }
   }
 
-  public class Move {
+  public class Move extends Sendable {
     private Direction direction;
     private Coordinates coordinates;
+
+    private static final long serialVersionUID = 5775730008817100526L;
 
     public Move(Direction direction, Coordinates coordinates) {
       this.direction = direction;

@@ -8,7 +8,6 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 
 import bham.bioshock.client.Assets;
 import bham.bioshock.common.Direction;
-import bham.bioshock.common.models.BoardMove;
 import bham.bioshock.common.models.Player;
 
 public class DrawPlayer extends DrawEntity {
@@ -16,8 +15,8 @@ public class DrawPlayer extends DrawEntity {
     ArrayList<Sprite> outlinedSprites = new ArrayList<>();
     Sprite movingSprite = new Sprite();
     boolean isMoving = false;
-    int msXCoords = -1;
-    int msYCoords = -1;
+    float msXCoords = -1;
+    float msYCoords = -1;
 
     public DrawPlayer(Batch batch) {
         super(batch);
@@ -123,7 +122,7 @@ public class DrawPlayer extends DrawEntity {
             boardMove.remove(0);
 
             movingSprite.setX(nextMoveX * PPS);
-            movingSprite.setY(msYCoords * PPS);
+            movingSprite.setY(nextMoveY * PPS);
             movingSprite.draw(batch);
             return;
           }
@@ -142,7 +141,7 @@ public class DrawPlayer extends DrawEntity {
             boardMove.remove(0);
 
             movingSprite.setX(nextMoveX * PPS);
-            movingSprite.setY(msYCoords * PPS);
+            movingSprite.setY(nextMoveY * PPS);
             movingSprite.draw(batch);
             return;
           }
