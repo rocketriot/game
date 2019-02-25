@@ -5,7 +5,7 @@ import bham.bioshock.client.Router;
 import bham.bioshock.common.models.Player;
 import bham.bioshock.common.models.store.Store;
 import java.util.ArrayList;
-
+import java.util.Collection;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
@@ -128,16 +128,18 @@ public class JoinScreen extends ScreenMaster {
   @Override
   public void render(float delta) {
     ArrayList<Player> players = store.getPlayers();
+    int i = 0;
     
-    for(int i=0; i<4; i++) {
-      if(players.size() > i) {
-        Player p = players.get(i);        
-        containers[i].waitingLabel.setText(WaitText.CONNECTED.text);
-        containers[i].nameLabel.setText(p.getUsername());
-      } else {
-        containers[i].waitingLabel.setText(WaitText.WAITING.text);
-        containers[i].nameLabel.setText("Player" + (i+1));
-      }
+    for(Player p : players) {
+      containers[i].waitingLabel.setText(WaitText.CONNECTED.text);
+      containers[i].nameLabel.setText(p.getUsername());
+      i++;
+    }
+    
+    while(i < 4) {
+      containers[i].waitingLabel.setText(WaitText.WAITING.text);
+      containers[i].nameLabel.setText("Player" + (i+1));
+      i++;
     }
     
     super.render(delta);

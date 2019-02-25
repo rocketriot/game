@@ -1,7 +1,6 @@
 package bham.bioshock.minigame;
 
 import bham.bioshock.client.scenes.MinigameHud;
-import bham.bioshock.client.screens.StatsContainer;
 
 
 import java.util.ArrayList;
@@ -112,8 +111,6 @@ public class Renderer {
     stage = new Stage(viewport);
 
     background = new Sprite(new Texture(Gdx.files.internal("app/assets/backgrounds/game.png")));
-
-    mainPlayer.load();
 
     for (Entity e : entities) {
       e.load();
