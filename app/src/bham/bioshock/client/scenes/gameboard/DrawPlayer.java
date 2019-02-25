@@ -30,6 +30,7 @@ public class DrawPlayer extends DrawEntity {
         ? outlinedSprites.get(player.getTextureID())
         : sprites.get(player.getTextureID());
 
+      sprite.setOriginCenter();
       sprite.setX(player.getCoordinates().getX() * PPS);
       sprite.setY(player.getCoordinates().getY() * PPS);
       sprite.draw(batch);
