@@ -25,16 +25,12 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.GL30;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.ParticleEffect;
-import com.badlogic.gdx.graphics.g2d.ParticleEmitter;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 
 public class GameBoardScreen extends ScreenMaster implements InputProcessor {
@@ -104,15 +100,6 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
     this.inputMultiplexer.addProcessor(hud.getStage());
     this.inputMultiplexer.addProcessor(this);
   }
-
-  // private void generateEffects() {
-  //   rocketTrail = new ParticleEffect();
-  //   rocketTrail.load(
-  //       Gdx.files.internal(Assets.particleEffect),
-  //       Gdx.files.internal(Assets.particleEffectsFolder));
-  //   rocketTrail.start();
-  //   effects.add(rocketTrail);
-  // }
 
   /** Draws the player move */
   private void drawPlayerMove(Player player) {
@@ -277,10 +264,8 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
     drawGridLines();
 
     batch.begin();
-    // Batch drawn methods
     drawBoardObjects();
     drawPlayers();
-    // drawEffects(delta);
     batch.end();
 
     // Shape render drawn methods
