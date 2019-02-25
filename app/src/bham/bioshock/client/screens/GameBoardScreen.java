@@ -295,9 +295,11 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
   }
 
   protected void drawBackground() {
+    int offset = 1;
+
     for (int i = -1; i <= 1; i++) {
       for (int j = -1; j <= 1; j++) {
-        background.setPosition(i * background.getWidth(), j * background.getHeight());
+        background.setPosition(i * background.getWidth() - offset++, j * background.getHeight());
         background.draw(batch);
       }
     }
