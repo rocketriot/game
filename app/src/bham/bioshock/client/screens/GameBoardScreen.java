@@ -223,21 +223,33 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
 
   private void drawGrid() {
     sr.setProjectionMatrix(camera.combined);
-    sr.begin(ShapeRenderer.ShapeType.Line);
-    sr.setColor(211, 211, 211, 0.2f);
+    sr.begin(ShapeRenderer.ShapeType.Filled);
+    sr.setColor(new Color(0x213C69ff));
+    
+    for (int i = 0; i < gridSize + 1; i++) {
+      // Outer grid lines are thicker
+      boolean isOuterLine = i == 0 || i == gridSize;
+      int lineThickness = isOuterLine ? (PPS / 4) : (PPS / 6);
+      int offset = lineThickness / 2;
 
-    Gdx.gl.glEnable(GL30.GL_BLEND);
-    Gdx.gl.glBlendFunc(GL30.GL_SRC_ALPHA, GL30.GL_ONE_MINUS_SRC_ALPHA);
-    
-    for (int i = 0; i < gridSize + 1; i++)
-      sr.line(i * PPS, 0, i * PPS, (gridSize) * PPS);
-    
-    for (int i = 0; i < gridSize + 1; i++)
-      sr.line(0, i * PPS, (gridSize) * PPS, i * PPS);
+      // Draw horizontal lines
+      sr.rect(
+        (i * PPS) - offset,
+        0 - offset,
+        lineThickness,
+        (gridSize * PPS) + lineThickness
+      );
+        
+      // Draw vertical lines
+      sr.rect(
+        0 - offset,
+        (i * PPS) - offset,
+        (gridSize * PPS) + lineThickness,
+        lineThickness
+      );
+    }
 
     sr.end();
-
-    Gdx.gl.glDisable(GL30.GL_BLEND);
   }
 
   @Override
