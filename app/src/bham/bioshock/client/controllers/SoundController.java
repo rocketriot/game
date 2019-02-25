@@ -170,6 +170,9 @@ public class SoundController extends Controller {
    */
   public void loopSound(String sound) {
     if (soundsEnabled) {
+
+      System.out.println("Starting loop");
+
       long id = sounds.get(sound).loop(soundsVolume);
       soundsIds.put(sound, id);
 
@@ -231,7 +234,7 @@ public class SoundController extends Controller {
    */
   private void addSounds() {
     sounds.put("menuSelect", menuSelectSound);
-    sounds.put("rocket", rocketSound);
+    sounds.put("rocketSound", rocketSound);
     soundsPlaying.put("rocket", false);
     sounds.put("jumpSound", jumpSound);
     sounds.put("laserSound", laserSound);
