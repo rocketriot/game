@@ -11,13 +11,13 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
-import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
 import java.util.ArrayList;
@@ -27,10 +27,7 @@ public class JoinScreen extends ScreenMaster {
     private Store store;
 
     /* Container elements */
-    Group playersGroup;
     private Holder holder;
-    private PlayerContainer[] playerContainers;
-    int animationWidth;
 
     /* Animation Elements */
     private float stateTime = 0;
@@ -51,44 +48,8 @@ public class JoinScreen extends ScreenMaster {
         setUpPlayerContainers();
         addStartGameButton();
 
-
     }
 
-    public void addStartGameButton() {
-        TextButton startButton = new TextButton("Start Game", skin);
-        TextButton miniGameButton = new TextButton("TEST Mini Game", skin);
-        startButton.setPosition(screen_width - 150, 40);
-        miniGameButton.setPosition(screen_width - 150, 0);
-        stage.addActor(startButton);
-        stage.addActor(miniGameButton);
-
-        startButton.addListener(new ChangeListener() {
-            @Override
-            public void changed(ChangeEvent event, Actor actor) {
-                router.call(Route.STOP_MAIN_MUSIC);
-                router.call(Route.START_GAME);
-            }
-        });
-
-        miniGameButton.addListener(new ChangeListener() {
-            @Override
-            public void changed(ChangeEvent event, Actor actor) {
-                router.call(Route.SEND_MINIGAME_START);
-            }
-        });
-    }
-
-    @Override
-    protected void setPrevious() {
-        backButton.addListener(new ChangeListener() {
-            @Override
-            public void changed(ChangeEvent event, Actor actor) {
-                router.call(Route.DISCONNECT_PLAYER);
-                store.removeAllPlayers();
-                router.back();
-            }
-        });
-    }
 
 
     private void setUpHolder() {
@@ -125,13 +86,16 @@ public class JoinScreen extends ScreenMaster {
         ArrayList<Player> players = store.getPlayers();
 
         for(int i=0; i<store.MAX_PLAYERS; i++) {
+            PlayerContainer pc = holder.getPlayerContainer(i);
             if(players.size() > i) {
                 Player p = players.get(i);
-                PlayerContainer pc = holder.getPlayerContainer(i);
                 pc.setName(p.getUsername());
                 pc.setWaitText(WaitText.CONNECTED);
             }
+
         }
+
+
     }
 
     public enum WaitText {
@@ -141,19 +105,17 @@ public class JoinScreen extends ScreenMaster {
             this.text = text;
         }
     }
-    
+
 
     public class Holder extends Table {
         private ArrayList<PlayerContainer> playerContainers;
-        private int padding = 20;
+        private int padding = 100;
 
         public Holder() {
             //this.setDebug(true);
             this.setFillParent(true);
-            this.pad(padding);
 
-            this.setWidth(stage.getWidth());
-            this.setHeight(stage.getHeight());
+            this.pad(padding);
 
             playerContainers = new ArrayList<>();
         }
@@ -176,25 +138,23 @@ public class JoinScreen extends ScreenMaster {
 
         private Label name;
         private Label waitText;
-        private LoadingAnimation animation;
+        private Anim animation;
         private int padding = 20;
 
         public PlayerContainer(String n, WaitText status) {
             //this.setDebug(true);
             name = new Label(n, skin);
             waitText = new Label(status.toString(), skin);
-            animation = new LoadingAnimation(loadingSheet);
+            animation = new Anim(loadingSheet);
 
             this.pad(padding);
 
             this.add(name);
             this.row();
-            this.add(animation);
+            this.add(animation).height(animation.getHeight()).width(animation.getWidth());
             this.row();
             this.add(waitText);
 
-            this.setWidth(stage.getWidth()/4);
-            this.setHeight(stage.getHeight()/4);
 
         }
 
@@ -207,21 +167,27 @@ public class JoinScreen extends ScreenMaster {
         public void changeAnimation() {
 
         }
+
+
+        public Anim getAnimation() {
+            return animation;
+        }
     }
 
-    public class LoadingAnimation extends Actor {
-        private float frameDuration = 0.35f;
+    public class Anim extends Image {
+
+        private float frameDuration = 0.8f;
         private int cols = 26;
         private int rows = 1;
 
-        private float x = 0;
-        private float y = 0;
+        private int width = 100;
+        private int height = 100;
 
         private Animation<TextureRegion> animation;
 
         private TextureRegion[] textureRegion;
 
-        public LoadingAnimation(Texture sheet) {
+        public Anim(Texture sheet) {
 
 
             textureRegion = new TextureRegion[cols*rows];
@@ -235,28 +201,76 @@ public class JoinScreen extends ScreenMaster {
             }
 
             animation = new Animation<>(frameDuration, textureRegion);
-            this.setBounds(x,y, 100,100);
+
+            setWidth(width);
+            setHeight(height);
         }
 
-        public void updatePosition() {
-            Vector2 pos = getStageLocation(this);
-            this.x = pos.x;
-            this.y = pos.y;
-        }
-
-        public Vector2 getPosition() {
-            return getStageLocation(this);
-        }
 
         public void act(float delta) {
             stateTime += delta;
-            batch.begin();
-            TextureRegion currentFrame = animation.getKeyFrame(stateTime, true);
-            updatePosition();
-            batch.draw(currentFrame, x, y, 100,100);
-            batch.end();
+            TextureRegion currentFrame = animation.getKeyFrame(stateTime+=delta, true);
+            TextureRegionDrawable drawable = new TextureRegionDrawable(currentFrame);
+            this.setDrawable(drawable);
+            super.act(delta);
         }
 
+
+    }
+
+    public class ButtonsContainer extends Table {
+        ButtonsContainer() {
+            bottom();
+            right();
+            setWidth(stage.getWidth());
+            pad(20);
+
+            TextButton startButton = new TextButton("Start Game", skin);
+            TextButton miniGameButton = new TextButton("TEST Mini Game", skin);
+            add(startButton);
+            row();
+            add(miniGameButton);
+
+            startButton.addListener(new ChangeListener() {
+                @Override
+                public void changed(ChangeEvent event, Actor actor) {
+                    router.call(Route.STOP_MAIN_MUSIC);
+                    router.call(Route.START_GAME);
+                }
+            });
+
+            miniGameButton.addListener(new ChangeListener() {
+                @Override
+                public void changed(ChangeEvent event, Actor actor) {
+                    router.call(Route.SEND_MINIGAME_START);
+                }
+            });
+        }
+
+        @Override
+        public void act(float delta) {
+            setWidth(stage.getWidth());
+            super.act(delta);
+        }
+
+
+    }
+
+    public void addStartGameButton() {
+        ButtonsContainer buttons = new ButtonsContainer();
+        stage.addActor(buttons);
+    }
+
+    @Override
+    protected void setPrevious() {
+        backButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                router.call(Route.DISCONNECT_PLAYER);
+                store.removeAllPlayers();
+                router.back();
+            }
+        });
     }
 
     public static Vector2 getStageLocation(Actor actor) {
