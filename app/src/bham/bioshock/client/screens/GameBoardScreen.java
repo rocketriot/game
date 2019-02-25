@@ -273,9 +273,6 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
     batch.begin();
     drawBackground();
     batch.end();
-
-    // Needs to be drawn in front of the background but behind the board objects
-    drawPlanetOwnerShip();
     
     drawGridLines();
 
@@ -294,31 +291,6 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
     hud.getStage().act(Gdx.graphics.getDeltaTime());
     hud.updateHud();
     hud.getStage().draw();
-  }
-
-  // private void drawEffects(float delta) {
-  //   if (drawRocketTrail) {
-  //     for (ParticleEffect e : effects) {
-  //       e.draw(batch);
-  //       e.update(delta);
-  //     }
-  //   }
-  // }
-
-  private void drawPlanetOwnerShip() {
-    sr.begin(ShapeType.Filled);
-    Gdx.gl.glEnable(GL30.GL_BLEND);
-    Gdx.gl.glBlendFunc(GL30.GL_SRC_ALPHA, GL30.GL_ONE_MINUS_SRC_ALPHA);
-    sr.setColor(255/255f, 150/255f, 60/255f, 0.5f);
-    for (Planet p : store.getPlanets()) {
-      Player player = p.getPlayerCaptured();
-      if (player != null) {
-        Coordinates planetCoords = p.getCoordinates();
-        sr.rect(planetCoords.getX() * PPS, planetCoords.getY() * PPS, PPS * 3, PPS * 3);
-      }
-    }
-    sr.end();
-    Gdx.gl.glDisable(GL30.GL_BLEND);
   }
 
   protected void drawBackground() {
