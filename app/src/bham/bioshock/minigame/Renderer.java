@@ -170,8 +170,6 @@ public class Renderer {
     backgroundBatch.draw(background, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
     backgroundBatch.end();
 
-    // stage.addActor(statsContainer);
-
     drawPlanet();
 
     if (DEBUG_MODE) {
@@ -180,7 +178,6 @@ public class Renderer {
 
     batch.begin();
     drawEntities();
-    // drawMainPlayer();
 
     batch.end();
 
@@ -201,6 +198,32 @@ public class Renderer {
     shapeRenderer.circle(0, 0, (float) minigameStore.getPlanetRadius());
 
     shapeRenderer.end();
+  }
+
+  public void drawDebug() {
+    for (Entity e : entities) {
+      e.drawDebug(shapeRenderer);
+    }
+    for (StaticEntity e : staticEntities) {
+      e.collisionBoundary().draw(shapeRenderer);
+    }
+  }
+
+  public void handleCollisions() {
+    // Check collisions between any two entities
+    for (Entity e1 : entities)
+      for (Entity e2 : entities) {
+        if (!e1.equals(e2) && e1.checkCollision(e2)) {
+          e1.handleCollision(e2);
+        }
+      }
+
+    for (StaticEntity e1 : staticEntities) {
+      for (Entity e2 : entities) {
+        if (e1.checkCollision(e2))
+          e2.handleStaticCollision(e1);
+      }
+    }
   }
 
 
@@ -242,36 +265,6 @@ public class Renderer {
       sprite.setRotation((float) e.getRotation());
 
       sprite.draw(batch);
-    }
-  }
-
-
-
-  public void drawDebug() {
-    for (Entity e : entities) {
-      e.drawDebug(shapeRenderer);
-    }
-    for (StaticEntity e : staticEntities) {
-      e.collisionBoundary().draw(shapeRenderer);
-    }
-  }
-
-  public void handleCollisions() {
-    // Check collisions between any two entities
-    for (Entity e1 : entities)
-      for (Entity e2 : entities) {
-        if (!e1.equals(e2) && e1.checkCollision(e2)) {
-          e1.handleCollision(e2);
-        }
-      }
-
-    for (StaticEntity e1 : staticEntities) {
-      for (Entity e2 : entities) {
-        if (e1.checkCollision(e2))
-          e2.handleStaticCollision(e1);
-      }
-
-
     }
   }
 
