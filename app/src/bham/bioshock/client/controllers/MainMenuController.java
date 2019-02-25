@@ -1,12 +1,8 @@
 package bham.bioshock.client.controllers;
 
 import bham.bioshock.client.screens.ScreenMaster;
-import bham.bioshock.client.screens.StatsContainer;
-import com.badlogic.gdx.scenes.scene2d.Stage;
 import bham.bioshock.common.models.store.Store;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.core.Logger;
 import com.google.inject.Inject;
 import bham.bioshock.client.BoardGame;
 import bham.bioshock.client.Route;

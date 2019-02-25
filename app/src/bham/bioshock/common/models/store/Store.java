@@ -23,7 +23,7 @@ public class Store {
   private AppPreferences preferences;
   private Screen currentScreen;
   /** Contains all of the information about the game board */
-  private GameBoard gameBoard = new GameBoard();
+  private GameBoard gameBoard = null;
   /** A list of players */
   private ArrayList<Player> players = new ArrayList<>(MAX_PLAYERS);
 
@@ -41,20 +41,12 @@ public class Store {
     return preferences;
   }
 
-  public void generateGrid() {
-    // Set coordinates of the players
-    int last = gameBoard.GRID_SIZE - 1;
-
-    players.get(0).setCoordinates(new Coordinates(0, 0));
-    players.get(1).setCoordinates(new Coordinates(0, last));
-    players.get(2).setCoordinates(new Coordinates(last, last));
-    players.get(3).setCoordinates(new Coordinates(last, 0));
-
-    gameBoard.generateGrid();
-  }
-
   public GameBoard getGameBoard() {
     return gameBoard;
+  }
+  
+  public void setGameBoard(GameBoard gameBoard) {
+    this.gameBoard = gameBoard;
   }
 
   public Screen getScreen() {
