@@ -3,27 +3,19 @@ package bham.bioshock.client.screens;
 import bham.bioshock.client.Assets;
 import bham.bioshock.client.Route;
 import bham.bioshock.client.Router;
-import bham.bioshock.client.scenes.gameboard.DrawAsteroid;
-import bham.bioshock.client.scenes.gameboard.DrawFuel;
-import bham.bioshock.client.scenes.gameboard.DrawPlanet;
-import bham.bioshock.client.scenes.gameboard.DrawPlayer;
-import bham.bioshock.client.scenes.gameboard.PathRenderer;
 import bham.bioshock.client.scenes.Hud;
+import bham.bioshock.client.scenes.gameboard.*;
 import bham.bioshock.common.Direction;
 import bham.bioshock.common.consts.Config;
 import bham.bioshock.common.consts.GridPoint;
 import bham.bioshock.common.models.*;
 import bham.bioshock.common.models.store.Store;
-
-import java.util.ArrayList;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.GL30;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -34,20 +26,37 @@ import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 
+import java.util.ArrayList;
+
 public class GameBoardScreen extends ScreenMaster implements InputProcessor {
+  private final InputMultiplexer inputMultiplexer;
+
+  /** The speed at which to move the board with the WASD keys */
+  private final float CAMERA_MOVE_SPEED = 5f;
+
+  /** Draws players on the board */
+  DrawPlayer drawPlayer;
+
+  /** Draws planets on the board */
+  DrawPlanet drawPlanet;
+
+  /** Draws fuel on the board */
+  DrawFuel drawFuel;
+
+  /** Draws asteroids on the board */
+  DrawAsteroid drawAsteroid;
+
+  /** Handles the path rendering */
+  PathRenderer pathRenderer;
+
   /** The game data */
   private Store store;
 
   private SpriteBatch batch;
-  
   private OrthographicCamera camera;
-  
   private FitViewport viewport;
-  
   private ShapeRenderer sr;
 
-  private final InputMultiplexer inputMultiplexer;
-  
   /** Pixels Per Square (on the grid) */
   private int PPS = 27;
 
@@ -65,24 +74,6 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
   /** The game background sprite */
   private Sprite background;
 
-  /** Draws players on the board */
-  DrawPlayer drawPlayer;
-  
-  /** Draws planets on the board */
-  DrawPlanet drawPlanet;
-  
-  /** Draws fuel on the board */
-  DrawFuel drawFuel;
-  
-  /** Draws asteroids on the board */
-  DrawAsteroid drawAsteroid;
-  
-  /** Handles the path rendering */
-  PathRenderer pathRenderer;
-
-  /** The speed at which to move the board with the WASD keys */
-  private final float CAMERA_MOVE_SPEED = 5f;
-
   /** Flag for if the player is selecting a move */
   private boolean playerSelected = false;
 
@@ -96,7 +87,6 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
     this.batch = new SpriteBatch();
     this.sr = new ShapeRenderer();
 
-
     this.viewport = new FitViewport(Config.GAME_WORLD_WIDTH, Config.GAME_WORLD_HEIGHT, camera);
     this.viewport.apply();
 
@@ -105,7 +95,8 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
     drawFuel = new DrawFuel(batch);
     drawAsteroid = new DrawAsteroid(batch);
 
-    pathRenderer = new PathRenderer(camera, store.getGameBoard(), store.getMainPlayer(), store.getPlayers());
+    pathRenderer =
+        new PathRenderer(camera, store.getGameBoard(), store.getMainPlayer(), store.getPlayers());
 
     // generateEffects();
 
@@ -122,7 +113,7 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
   private void drawPlayerMove(Player player) {
     GameBoard gameBoard = store.getGameBoard();
     ArrayList<Player.Move> boardMove = player.getBoardMove();
-    
+
     // Handle end of movement
     if (boardMove.size() == 0) {
       player.clearBoardMove();
@@ -139,7 +130,7 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
     if (boardMove.get(0).getDirection() == Direction.NONE) {
       // Clears the path and unselects the player
       playerSelected = false;
-      pathRenderer.clearPath(); 
+      pathRenderer.clearPath();
 
       // Sets the intial draw values
       drawPlayer.setupMove(player);
@@ -150,7 +141,7 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
 
     // Draw the updated player
     boolean didChangeCoordinates = drawPlayer.drawMove(player, PPS);
-    
+
     // Update the players coordinates if the player has moved 1 position
     if (didChangeCoordinates) {
       Coordinates nextCoordinates = boardMove.get(0).getCoordinates();
@@ -159,7 +150,7 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
       // Remove the completed move
       boardMove.remove(0);
     }
-    
+
     // Get the value of the grid point that the player has landed on
     GridPoint gridPoint = gameBoard.getGridPoint(player.getCoordinates());
 
@@ -190,7 +181,7 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
             // Only draw the planet from the bottom left coordinate
             if (planet.getCoordinates().isEqual(new Coordinates(x, y)))
               drawPlanet.draw(planet, PPS);
-            
+
             break;
 
           case ASTEROID:
@@ -231,7 +222,7 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
     sr.setProjectionMatrix(camera.combined);
     sr.begin(ShapeRenderer.ShapeType.Filled);
     sr.setColor(new Color(0x213C69ff));
-    
+
     for (int i = 0; i < gridSize + 1; i++) {
       // Outer grid lines are thicker
       boolean isOuterLine = i == 0 || i == gridSize;
@@ -239,20 +230,10 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
       int offset = lineThickness / 2;
 
       // Draw horizontal lines
-      sr.rect(
-        (i * PPS) - offset,
-        0 - offset,
-        lineThickness,
-        (gridSize * PPS) + lineThickness
-      );
-        
+      sr.rect((i * PPS) - offset, 0 - offset, lineThickness, (gridSize * PPS) + lineThickness);
+
       // Draw vertical lines
-      sr.rect(
-        0 - offset,
-        (i * PPS) - offset,
-        (gridSize * PPS) + lineThickness,
-        lineThickness
-      );
+      sr.rect(0 - offset, (i * PPS) - offset, (gridSize * PPS) + lineThickness, lineThickness);
     }
 
     sr.end();
@@ -287,17 +268,17 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
   @Override
   public void render(float delta) {
     Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
-    
+
     batch.setProjectionMatrix(camera.combined);
     camera.update();
-    
+
     handleKeyPress();
 
     // Draw background
     batch.begin();
     drawBackground();
     batch.end();
-    
+
     // Draw board grid
     drawGrid();
 
@@ -332,7 +313,7 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
   public void dispose() {
     batch.dispose();
     sr.dispose();
-    
+
     drawPlayer.dispose();
     drawPlanet.dispose();
     drawFuel.dispose();
@@ -345,7 +326,7 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
   private Vector3 getMouseCoordinates(int screenX, int screenY) {
     Vector3 vector = new Vector3(screenX, screenY, 0);
     Vector3 coordinates = viewport.unproject(vector);
-    
+
     return coordinates;
   }
 
@@ -361,11 +342,11 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
   }
 
   @Override
-  public boolean touchDown(int screenX, int screenY, int pointer, int button) {        
+  public boolean touchDown(int screenX, int screenY, int pointer, int button) {
     // Used for mouse panning
     mouseDownX = screenX;
     mouseDownY = screenY;
-    
+
     // Get mouse coordinates
     Vector3 mouse = getMouseCoordinates(screenX, screenY);
 
@@ -388,13 +369,13 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
     int playerY = player.getCoordinates().getY();
 
     // Handle when mouse click is within player grid point
-    if (
-      playerX * PPS <= mouse.x && mouse.x <= (playerX + 1) * PPS && 
-      playerY * PPS <= mouse.y && mouse.y <= (playerY + 1) * PPS
-    ) {
-        playerSelected = true;
-        pathRenderer.clearPath();
-      }
+    if (playerX * PPS <= mouse.x
+        && mouse.x <= (playerX + 1) * PPS
+        && playerY * PPS <= mouse.y
+        && mouse.y <= (playerY + 1) * PPS) {
+      playerSelected = true;
+      pathRenderer.clearPath();
+    }
 
     return true;
   }
@@ -402,20 +383,17 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
   private boolean endMove(Vector3 mouse) {
     // Check a left click was performed
     if (!Gdx.input.isButtonPressed(Input.Buttons.LEFT)) return false;
-    
+
     // Get players
     Player player = store.getMainPlayer();
     Player movingPlayer = store.getMovingPlayer();
 
     // Check it's the client's turn to move
     if (!movingPlayer.getId().equals(player.getId())) return false;
-    
+
     // Check if click is on the grid
-    if (
-      0 <= mouse.x && mouse.x <= gridSize * PPS && 
-      0 <= mouse.y && mouse.y <= gridSize * PPS
-    ) {
-      
+    if (0 <= mouse.x && mouse.x <= gridSize * PPS && 0 <= mouse.y && mouse.y <= gridSize * PPS) {
+
       // Get new player coordinates
       int gridX = (int) mouse.x / PPS;
       int gridY = (int) mouse.y / PPS;
@@ -428,7 +406,6 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
 
     return true;
   }
-
 
   @Override
   public boolean keyDown(int keycode) {
@@ -466,19 +443,19 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
   public boolean mouseMoved(int screenX, int screenY) {
     // Check if player is selected
     if (!playerSelected) return false;
-    
+
     // Get the board coordinates of where the mouse is positioned
     Vector3 mouse = getMouseCoordinates(screenX, screenY);
     Coordinates coordinates = new Coordinates((int) mouse.x / PPS, (int) mouse.y / PPS);
-      
+
     // Do nothing if the mouse is in the same position as where the player currently is at
     if (coordinates.isEqual(store.getMainPlayer().getCoordinates())) return false;
 
     // Ensure the mouse is clicking on the board
-    if (
-      coordinates.getX() >= gridSize && coordinates.getX() < 0 && 
-      coordinates.getY() >= gridSize && coordinates.getY() < 0
-    ) return false;
+    if (coordinates.getX() >= gridSize
+        && coordinates.getX() < 0
+        && coordinates.getY() >= gridSize
+        && coordinates.getY() < 0) return false;
 
     // Pathfind to where the mouse is located
     pathRenderer.generatePath(store.getMainPlayer().getCoordinates(), coordinates);

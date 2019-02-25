@@ -1,28 +1,24 @@
 package bham.bioshock.client.scenes.gameboard;
 
-import com.badlogic.gdx.graphics.g2d.ParticleEffect;
-import com.badlogic.gdx.graphics.g2d.ParticleEmitter;
-import java.util.ArrayList;
-
+import bham.bioshock.client.Assets;
+import bham.bioshock.common.models.Player;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.g2d.ParticleEffect;
+import com.badlogic.gdx.graphics.g2d.ParticleEmitter;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 
-import bham.bioshock.client.Assets;
-import bham.bioshock.common.Direction;
-import bham.bioshock.common.models.Player;
+import java.util.ArrayList;
 
 public class DrawPlayer extends DrawEntity {
-  ArrayList<Sprite> sprites = new ArrayList<>(); 
-  ArrayList<Sprite> outlinedSprites = new ArrayList<>();
-  
   Sprite movingSprite = new Sprite();
   float movingSpriteX = -1;
   float movingSpriteY = -1;
-  
   ParticleEffect rocketTrail;
   float rocketTrailX;
   float rocketTrailY;
+  private ArrayList<Sprite> sprites = new ArrayList<>();
+  private ArrayList<Sprite> outlinedSprites = new ArrayList<>();
 
   public DrawPlayer(Batch batch) {
     super(batch);
@@ -33,17 +29,16 @@ public class DrawPlayer extends DrawEntity {
   }
 
   private void generateEffects() {
-     rocketTrail = new ParticleEffect();
-     rocketTrail.load(
-         Gdx.files.internal(Assets.particleEffect),
-         Gdx.files.internal(Assets.particleEffectsFolder));
-     rocketTrail.start();
+    rocketTrail = new ParticleEffect();
+    rocketTrail.load(
+        Gdx.files.internal(Assets.particleEffect),
+        Gdx.files.internal(Assets.particleEffectsFolder));
+    rocketTrail.start();
   }
 
   public void draw(Player player, int PPS, boolean selected) {
-    Sprite sprite = selected 
-      ? outlinedSprites.get(player.getTextureID())
-      : sprites.get(player.getTextureID());
+    Sprite sprite =
+        selected ? outlinedSprites.get(player.getTextureID()) : sprites.get(player.getTextureID());
 
     sprite.setOriginCenter();
     sprite.setX(player.getCoordinates().getX() * PPS);
@@ -89,7 +84,7 @@ public class DrawPlayer extends DrawEntity {
           movingSprite.setX(nextMoveX * PPS);
           movingSprite.setY(nextMoveY * PPS);
           movingSprite.draw(batch);
-          
+
           return true;
         }
 
@@ -107,7 +102,7 @@ public class DrawPlayer extends DrawEntity {
           movingSprite.setX(nextMoveX * PPS);
           movingSprite.setY(nextMoveY * PPS);
           movingSprite.draw(batch);
-          
+
           return true;
         }
 
@@ -125,7 +120,7 @@ public class DrawPlayer extends DrawEntity {
           movingSprite.setX(nextMoveX * PPS);
           movingSprite.setY(nextMoveY * PPS);
           movingSprite.draw(batch);
-          
+
           return true;
         }
 
@@ -143,7 +138,7 @@ public class DrawPlayer extends DrawEntity {
           movingSprite.setX(nextMoveX * PPS);
           movingSprite.setY(nextMoveY * PPS);
           movingSprite.draw(batch);
-          
+
           return true;
         }
 
@@ -152,10 +147,10 @@ public class DrawPlayer extends DrawEntity {
       default:
         break;
     }
-      
+
     rocketTrail.setPosition(rocketTrailX * PPS, rocketTrailY * PPS);
     rocketTrail.draw(batch, Gdx.graphics.getDeltaTime());
-    
+
     movingSprite.setX(movingSpriteX * PPS);
     movingSprite.setY(movingSpriteY * PPS);
     movingSprite.draw(batch);
@@ -178,13 +173,12 @@ public class DrawPlayer extends DrawEntity {
     }
   }
 
-
   public void resize(int PPS) {
     sprites.forEach(sprite -> sprite.setSize(PPS, PPS));
     outlinedSprites.forEach(sprite -> sprite.setSize(PPS, PPS));
     movingSprite.setSize(PPS, PPS);
   }
-    
+
   public void dispose() {
     sprites.forEach(sprite -> sprite.getTexture().dispose());
     outlinedSprites.forEach(sprite -> sprite.getTexture().dispose());
