@@ -221,7 +221,7 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
     }
   }
 
-  private void drawGridLines() {
+  private void drawGrid() {
     sr.setProjectionMatrix(camera.combined);
     sr.begin(ShapeRenderer.ShapeType.Line);
     sr.setColor(211, 211, 211, 0.2f);
@@ -268,27 +268,32 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
 
   @Override
   public void render(float delta) {
-    batch.setProjectionMatrix(camera.combined);
     Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
-    handleKeyPress();
+    
+    batch.setProjectionMatrix(camera.combined);
     camera.update();
+    
+    handleKeyPress();
 
+    // Draw background
     batch.begin();
     drawBackground();
     batch.end();
     
-    drawGridLines();
+    // Draw board grid
+    drawGrid();
 
+    // Draw board entities
     batch.begin();
     drawBoardObjects();
     drawPlayers();
     batch.end();
 
-    // Shape render drawn methods
+    // Draw path rendering
     pathRenderer.draw(PPS);
 
-    // Draw the ui
-    this.batch.setProjectionMatrix(hud.stage.getCamera().combined);
+    // Draw the HUD
+    batch.setProjectionMatrix(hud.stage.getCamera().combined);
     hud.getStage().act(Gdx.graphics.getDeltaTime());
     hud.updateHud();
     hud.getStage().draw();
@@ -308,14 +313,15 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
   @Override
   public void dispose() {
     batch.dispose();
-    hud.dispose();
-    background.getTexture().dispose();
     sr.dispose();
-
+    
     drawPlayer.dispose();
     drawPlanet.dispose();
     drawFuel.dispose();
     drawAsteroid.dispose();
+
+    hud.dispose();
+    background.getTexture().dispose();
   }
 
   private Vector3 getMouseCoordinates(int screenX, int screenY) {
