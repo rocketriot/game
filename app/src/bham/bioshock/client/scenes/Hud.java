@@ -32,6 +32,7 @@ public class Hud implements Disposable {
   private TextArea fuelLabel;
   private Table table;
   private ArrayList<Label> labels;
+  private boolean turnPromptShown = false;
 
   public Hud(
       SpriteBatch batch, Skin skin, int gameWidth, int gameHeight, Store store, Router router) {
@@ -153,6 +154,25 @@ public class Hud implements Disposable {
       table.padLeft((gameWidth - l.getPrefWidth() - 50));
       table.row();
     }
+
+    if (store.getMovingPlayer().getId().equals(store.getMainPlayer().getId()) && !turnPromptShown) {
+      turnPromptShown = true;
+      showYourTurnDialog();
+    } else if (!store.getMovingPlayer().getId().equals(store.getMainPlayer().getId()) && turnPromptShown) {
+      turnPromptShown = false;
+    }
+  }
+
+  /** Method to ask the user whether they want to start the minigame or not */
+  private void showYourTurnDialog() {
+    Dialog diag =
+        new Dialog("", skin) {
+          protected void result(Object object) { }
+        };
+
+    diag.text(new Label("Your turn", skin));
+    diag.button("Okay", true);
+    diag.show(stage);
   }
 
   public Stage getStage() {
