@@ -122,7 +122,7 @@ public class Renderer {
       public boolean keyDown(int keyCode) {
         if (Keys.SPACE == keyCode && !shooting && mainPlayer.haveGun()) {
           createBullet();
-          SoundController.playSound("laserSound");
+          SoundController.playSound("laser");
           shooting = true;
         }
         return true;

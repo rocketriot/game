@@ -13,12 +13,16 @@ import javax.inject.Singleton;
 @Singleton
 public class SoundController extends Controller {
 
-  /** Sound variables that contain the music used in the game */
+  /**
+   * Sound variables that contain the music used in the game
+   */
   private Sound mainMenuMusic;
   private Sound boardGameMusic;
   private Sound minigameMusic;
 
-  /** Sound variables that contain the sound effects used in the game */
+  /**
+   * Sound variables that contain the sound effects used in the game
+   */
   private Sound rocketSound;
   private static Sound menuSelectSound;
   private static Sound jumpSound;
@@ -157,8 +161,8 @@ public class SoundController extends Controller {
    *
    * @param sound The name of the sound
    */
-  public static void playSound(String sound){
-    if (soundsEnabled){
+  public static void playSound(String sound) {
+    if (soundsEnabled) {
       sounds.get(sound).play(soundsVolume);
     }
   }
@@ -170,16 +174,15 @@ public class SoundController extends Controller {
    */
   public void loopSound(String sound) {
     if (soundsEnabled) {
+      if (!soundsPlaying.get(sound)) {
+        long id = sounds.get(sound).loop(soundsVolume);
+        soundsIds.put(sound, id);
 
-      System.out.println("Starting loop");
-
-      long id = sounds.get(sound).loop(soundsVolume);
-      soundsIds.put(sound, id);
-
-      if (soundsPlaying.keySet().contains(music)) {
-        soundsPlaying.replace(sound, true);
-      } else {
-        soundsPlaying.put(sound, true);
+        if (soundsPlaying.keySet().contains(music)) {
+          soundsPlaying.replace(sound, true);
+        } else {
+          soundsPlaying.put(sound, true);
+        }
       }
     }
   }
@@ -234,9 +237,9 @@ public class SoundController extends Controller {
    */
   private void addSounds() {
     sounds.put("menuSelect", menuSelectSound);
-    sounds.put("rocketSound", rocketSound);
+    sounds.put("rocket", rocketSound);
     soundsPlaying.put("rocket", false);
-    sounds.put("jumpSound", jumpSound);
-    sounds.put("laserSound", laserSound);
+    sounds.put("jump", jumpSound);
+    sounds.put("laser", laserSound);
   }
 }
