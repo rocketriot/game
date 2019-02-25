@@ -13,11 +13,20 @@ import javax.inject.Singleton;
 @Singleton
 public class SoundController extends Controller {
 
+  /**
+   * Sound variables that contain the music used in the game
+   */
   private Sound mainMenuMusic;
   private Sound boardGameMusic;
   private Sound minigameMusic;
+
+  /**
+   * Sound variables that contain the sound effects used in the game
+   */
   private Sound menuSelectSound;
   private Sound rocketSound;
+  private Sound jumpSound;
+  private Sound laserSound;
 
   private float musicVolume;
   private boolean musicEnabled;
@@ -38,8 +47,11 @@ public class SoundController extends Controller {
     mainMenuMusic = Gdx.audio.newSound(Gdx.files.internal("app/assets/music/MainMenuMusic.mp3"));
     boardGameMusic = Gdx.audio.newSound(Gdx.files.internal("app/assets/music/GameBoardMusic.mp3"));
     minigameMusic = Gdx.audio.newSound(Gdx.files.internal("app/assets/music/MinigameMusic.mp3"));
+
     menuSelectSound = Gdx.audio.newSound(Gdx.files.internal("app/assets/music/MenuSelect.wav"));
     rocketSound = Gdx.audio.newSound(Gdx.files.internal("app/assets/music/RocketSound.wav"));
+    jumpSound = Gdx.audio.newSound(Gdx.files.internal("app/assets/music/JumpSound.wav"));
+    laserSound = Gdx.audio.newSound(Gdx.files.internal("app/assets/music/LaserSound.mp3"));
 
     musicVolume = 0.4f;
     musicEnabled = true;
@@ -231,5 +243,7 @@ public class SoundController extends Controller {
     sounds.put("menuSelect", menuSelectSound);
     sounds.put("rocket", rocketSound);
     soundsPlaying.put("rocket", false);
+    sounds.put("jumpSound", jumpSound);
+    sounds.put("laserSound", laserSound);
   }
 }
