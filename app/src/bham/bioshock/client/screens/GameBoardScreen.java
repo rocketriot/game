@@ -117,21 +117,11 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
   /** Draws the player move */
   private void drawPlayerMove(Player player) {
     GameBoard gameBoard = store.getGameBoard();
-    Player mainPlayer = store.getMainPlayer();
-    ArrayList<Player.Move> boardMove = mainPlayer.getBoardMove();
+    ArrayList<Player.Move> boardMove = player.getBoardMove();
     
-    // // Handle move start
-    // if (boardMovePointer == 0) {
-    //   if (player.equals(store.getMainPlayer())) {
-    //     // Stops the renderer drawing the old path
-    //     playerSelected = false;
-    //     pathRenderer.clearPath(); 
-    //   }
-    // }   
-
     // Handle end of movement
     if (boardMove.size() == 0) {
-      mainPlayer.clearBoardMove();
+      player.clearBoardMove();
 
       // Show minigame prompt if next to planet
       if (gameBoard.isNextToThePlanet(player.getCoordinates())) {
@@ -139,6 +129,13 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
       }
 
       return;
+    }
+
+    // Handle move start
+    if (boardMove.get(0).getDirection() == Direction.NONE) {
+      // Stops the renderer drawing the old path
+      playerSelected = false;
+      pathRenderer.clearPath(); 
     }
 
     drawPlayer.drawMove(player, PPS);
