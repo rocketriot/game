@@ -1,7 +1,9 @@
 package bham.bioshock.common.models;
 
+import bham.bioshock.common.Direction;
 import bham.bioshock.communication.Sendable;
 
+import java.util.ArrayList;
 import java.util.UUID;
 
 /** Stores the data of a player on the game board */
@@ -33,8 +35,12 @@ public class Player extends Sendable {
   /** The number of points the player has */
   private int points = 0;
 
+  /** Which way the player is facing */
+  private int rotate = -1;
+
   /** Object containing infomation about a players move */
-  private BoardMove boardMove;
+  private ArrayList<Move> boardMove;
+
 
   public Player() {
     this.id = UUID.randomUUID();
@@ -116,12 +122,55 @@ public class Player extends Sendable {
     this.points = points;
   }
 
-  public BoardMove getBoardMove() {
+  public ArrayList<Move> getBoardMove() {
     return boardMove;
   }
 
-  public void setBoardMove(BoardMove boardMove) {
-    this.boardMove = boardMove;
+  public void clearBoardMove() {
+    boardMove = null;
+  }
+
+  public void createBoardMove(ArrayList<Coordinates> path) {
+    boardMove = new ArrayList<>();
+
+    // Add starting position
+    boardMove.add(new Move(Direction.NONE, path.get(0)));
+
+    for (int i = 0; i < path.size() - 1; i++) {
+      Coordinates coordinates = path.get(i);
+      Coordinates nextCoordinates = path.get(i + 1);
+
+      // Calculate the difference between the coordinates
+      Coordinates difference = nextCoordinates.difference(coordinates);
+
+      // Handle when X is unchanged
+      if (difference.getX() == 0) {
+        boardMove.add(new Move(difference.getY() < 0 ? Direction.DOWN : Direction.UP, nextCoordinates));
+      }
+      
+      // Handle when Y is unchanged
+      if (difference.getY() == 0) {
+        boardMove.add(new Move(difference.getX() < 0 ? Direction.LEFT : Direction.RIGHT, nextCoordinates));
+      }
+    }
+  }
+
+  public class Move {
+    private Direction direction;
+    private Coordinates coordinates;
+
+    public Move(Direction direction, Coordinates coordinates) {
+      this.direction = direction;
+      this.coordinates = coordinates;
+    }
+
+    public Direction getDirection() {
+      return direction;
+    }
+
+    public Coordinates getCoordinates() {
+      return coordinates;
+    }
   }
 
   public int getTextureID() {

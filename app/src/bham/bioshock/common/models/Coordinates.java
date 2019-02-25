@@ -45,7 +45,7 @@ public class Coordinates extends Sendable {
     return x == toCheck.getX() && y == toCheck.getY();
   }
 
-  public Coordinates sub(Coordinates toSub) {
+  public Coordinates difference(Coordinates toSub) {
     return (new Coordinates(this.x - toSub.getX(), this.y - toSub.getY()));
   }
 
