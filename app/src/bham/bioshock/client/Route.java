@@ -43,7 +43,6 @@ public enum Route {
   FADE_OUT          (SoundController.class,         "fadeOut"),
   MUSIC_VOLUME      (SoundController.class,         "setMusicVolume"),
   MUSIC_ENABLED     (SoundController.class,         "enableMusic"),
-  PLAY_SOUND        (SoundController.class,         "playSound"),
   LOOP_SOUND        (SoundController.class,         "loopSound"),
   STOP_SOUND        (SoundController.class,         "stopSound"),
   SOUNDS_VOLUME     (SoundController.class,         "setSoundsVolume"),

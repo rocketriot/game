@@ -15,26 +15,24 @@ public class SoundController extends Controller {
 
   /** Sound variables that contain the music used in the game */
   private Sound mainMenuMusic;
-
   private Sound boardGameMusic;
   private Sound minigameMusic;
 
   /** Sound variables that contain the sound effects used in the game */
-  private Sound menuSelectSound;
-
   private Sound rocketSound;
-  public static Sound jumpSound;
-  public static Sound laserSound;
+  private static Sound menuSelectSound;
+  private static Sound jumpSound;
+  private static Sound laserSound;
 
   private float musicVolume;
   private boolean musicEnabled;
-  public static float soundsVolume;
-  public static boolean soundsEnabled;
+  private static float soundsVolume;
+  private static boolean soundsEnabled;
 
   private HashMap<String, Sound> music = new HashMap<>();
   private HashMap<String, Long> musicIds = new HashMap<>();
   private HashMap<String, Boolean> musicPlaying = new HashMap<>();
-  private HashMap<String, Sound> sounds = new HashMap<>();
+  private static HashMap<String, Sound> sounds = new HashMap<>();
   private HashMap<String, Boolean> soundsPlaying = new HashMap<>();
   private HashMap<String, Long> soundsIds = new HashMap<>();
 
@@ -66,7 +64,7 @@ public class SoundController extends Controller {
    * @param music The name of the music that you want to start
    */
   public void startMusic(String music) {
-    if (!musicPlaying.get(music)) {
+    if (!musicPlaying.get(music) && musicEnabled) {
       long id = this.music.get(music).loop(musicVolume);
       musicIds.put(music, id);
 
@@ -155,26 +153,13 @@ public class SoundController extends Controller {
   }
 
   /**
-   * Method to play a sound
+   * Method to play a sound that does not need to loop
    *
-   * @param sound The sound that you want to play
+   * @param sound The name of the sound
    */
-  public void playSound(String sound) {
-    if (soundsEnabled) {
+  public static void playSound(String sound){
+    if (soundsEnabled){
       sounds.get(sound).play(soundsVolume);
-    }
-  }
-
-  /**
-   * Method to stop a looping sound
-   *
-   * @param sound The looping sound to stop
-   */
-  public void stopSound(String sound) {
-    if (soundsPlaying.get(sound)) {
-      sounds.get(sound).stop();
-      soundsPlaying.replace(sound, false);
-      soundsPlaying.remove(sound);
     }
   }
 
@@ -193,6 +178,19 @@ public class SoundController extends Controller {
       } else {
         soundsPlaying.put(sound, true);
       }
+    }
+  }
+
+  /**
+   * Method to stop a looping sound
+   *
+   * @param sound The looping sound to stop
+   */
+  public void stopSound(String sound) {
+    if (soundsPlaying.get(sound)) {
+      sounds.get(sound).stop();
+      soundsPlaying.replace(sound, false);
+      soundsPlaying.remove(sound);
     }
   }
 
@@ -235,5 +233,7 @@ public class SoundController extends Controller {
     sounds.put("menuSelect", menuSelectSound);
     sounds.put("rocket", rocketSound);
     soundsPlaying.put("rocket", false);
+    sounds.put("jumpSound", jumpSound);
+    sounds.put("laserSound", laserSound);
   }
 }
