@@ -2,8 +2,6 @@ package bham.bioshock.minigame;
 
 import bham.bioshock.client.scenes.MinigameHud;
 import bham.bioshock.client.screens.StatsContainer;
-
-
 import java.util.ArrayList;
 import bham.bioshock.client.Route;
 import bham.bioshock.client.Router;
@@ -43,36 +41,36 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
 public class Renderer {
-    private Player mainPlayer;
-    private ArrayList<Entity> entities;
-    private ArrayList<StaticEntity> staticEntities;
+  private Player mainPlayer;
+  private ArrayList<Entity> entities;
+  private ArrayList<StaticEntity> staticEntities;
 
-    ShapeRenderer shapeRenderer;
-    private OrthographicCamera cam;
-    Vector3 lerpTarget = new Vector3();
-    private Sprite background;
-    private Stage stage;
-    private SpriteBatch batch;
-    private SpriteBatch backgroundBatch;
-    private Viewport viewport;
-    private double camRotation;
-    private final int GAME_WORLD_WIDTH = Config.GAME_WORLD_WIDTH;
-    private final int GAME_WORLD_HEIGHT = Config.GAME_WORLD_HEIGHT;
-    private Circle mainPlanet;
-    private Store store;
-    private Router router;
-    private static boolean DEBUG_MODE = true;
-    private Clock clock;
-    private MinigameStore minigameStore;
-    private boolean shooting;
-    private boolean firstRender = true;
-    private MinigameHud hud;
-    private InputMultiplexer inputMultiplexer;
-    private World world;
+  ShapeRenderer shapeRenderer;
+  private OrthographicCamera cam;
+  Vector3 lerpTarget = new Vector3();
+  private Sprite background;
+  private Stage stage;
+  private SpriteBatch batch;
+  private SpriteBatch backgroundBatch;
+  private Viewport viewport;
+  private double camRotation;
+  private final int GAME_WORLD_WIDTH = Config.GAME_WORLD_WIDTH;
+  private final int GAME_WORLD_HEIGHT = Config.GAME_WORLD_HEIGHT;
+  private Circle mainPlanet;
+  private Store store;
+  private Router router;
+  private static boolean DEBUG_MODE = true;
+  private Clock clock;
+  private MinigameStore minigameStore;
+  private boolean shooting;
+  private boolean firstRender = true;
+  private MinigameHud hud;
+  private InputMultiplexer inputMultiplexer;
+  private World world;
 
 
   public Renderer(Store store, Router router) {
-      this.store = store;
+    this.store = store;
     this.minigameStore = store.getMinigameStore();
     this.router = router;
     mainPlayer = minigameStore.getMainPlayer();
@@ -81,17 +79,18 @@ public class Renderer {
     entities = new ArrayList<Entity>();
     staticEntities = new ArrayList<StaticEntity>();
 
-    staticEntities.addAll(minigameStore.getWorld().getMap().getPlatforms());
+    world = minigameStore.getWorld();
+    staticEntities.addAll(world.getMap().getPlatforms());
     entities.addAll(minigameStore.getPlayers());
     entities.addAll(minigameStore.getRockets());
     entities.addAll(minigameStore.getGuns());
     shooting = false;
- 
+
     cam = new OrthographicCamera();
     cam.position.set(mainPlayer.getX(), mainPlayer.getY(), 0);
     camRotation = 0;
     cam.update();
-    
+
     batch = new SpriteBatch();
     backgroundBatch = new SpriteBatch();
 
@@ -127,7 +126,7 @@ public class Renderer {
     }
 
     for (StaticEntity e : staticEntities) {
-          e.load();
+      e.load();
     }
 
     Gdx.input.setInputProcessor(new InputAdapter() {
@@ -154,13 +153,13 @@ public class Renderer {
   public void render(float delta) {
     batch.setProjectionMatrix(cam.combined);
     shapeRenderer.setProjectionMatrix(cam.combined);
-    if(!firstRender) {
+    if (!firstRender) {
       handleCollisions();
-    } 
+    }
 
     cam.position.lerp(lerpTarget.set(mainPlayer.getX(), mainPlayer.getY(), 0), 3f * delta);
 
-    double rotation = -minigameStore.getWorld().getAngleTo(cam.position.x, cam.position.y);
+    double rotation = -world.getAngleTo(cam.position.x, cam.position.y);
     cam.rotate((float) (camRotation - rotation));
     camRotation = rotation;
     cam.update();
@@ -171,7 +170,7 @@ public class Renderer {
     backgroundBatch.draw(background, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
     backgroundBatch.end();
 
-    //stage.addActor(statsContainer);
+    // stage.addActor(statsContainer);
 
     drawPlanet();
 
@@ -181,7 +180,7 @@ public class Renderer {
 
     batch.begin();
     drawEntities();
-    //drawMainPlayer();
+    // drawMainPlayer();
 
     batch.end();
 
@@ -200,111 +199,111 @@ public class Renderer {
     shapeRenderer.begin(ShapeType.Filled);
     shapeRenderer.setColor(Color.SALMON);
     shapeRenderer.circle(0, 0, (float) minigameStore.getPlanetRadius());
-    
+
     shapeRenderer.end();
   }
 
 
-    public void createBullet() {
-        Player main = minigameStore.getMainPlayer();
-        PlanetPosition pp = world.convert(main.getPosition());
-        pp.fromCenter += main.getSize() / 2;
-        Position bulletPos = world.convert(pp);
+  public void createBullet() {
+    Player main = minigameStore.getMainPlayer();
+    PlanetPosition pp = world.convert(main.getPosition());
+    pp.fromCenter += main.getSize() / 2;
+    Position bulletPos = world.convert(pp);
 
-        Bullet b = new Bullet(minigameStore.getWorld(), bulletPos.x, bulletPos.y);
-        // First synchronise the bullet with the player
-        b.setSpeedVector((SpeedVector) main.getSpeedVector().clone());
-        b.setSpeed((float) main.getSpeedVector().getSpeedAngle(), Bullet.launchSpeed);
-        router.call(Route.MINIGAME_BULLET_SEND, b);
-        addBullet(b);
-    }
-
-    public void addBullet(Bullet b) {
-        b.load();
-        entities.add(b);
-    }
-
-    // change
-
-  public void drawEntities(){
-        entities.removeIf(e->e.isRemoved());
-        for(Entity e:entities){
-            Sprite sprite=e.getSprite();
-            sprite.setRegion(e.getTexture());
-            sprite.setPosition(e.getX()-(sprite.getWidth()/2),e.getY());
-            sprite.setRotation((float)e.getRotation());
-            sprite.draw(batch);
-            e.update(Gdx.graphics.getDeltaTime());
-  }
-        for(StaticEntity e:staticEntities){
-            Sprite sprite=e.getSprite();
-            sprite.setRegion(e.getTexture());
-            sprite.setPosition(e.getX() - (e.collisionWidth/ 2), e.getY());
-            sprite.setRotation((float)e.getRotation());
-
-            sprite.draw(batch);
-        }
+    Bullet b = new Bullet(minigameStore.getWorld(), bulletPos.x, bulletPos.y);
+    // First synchronise the bullet with the player
+    b.setSpeedVector((SpeedVector) main.getSpeedVector().clone());
+    b.setSpeed((float) main.getSpeedVector().getSpeedAngle(), Bullet.launchSpeed);
+    router.call(Route.MINIGAME_BULLET_SEND, b);
+    addBullet(b);
   }
 
+  public void addBullet(Bullet b) {
+    b.load();
+    entities.add(b);
+  }
+
+  // change
+
+  public void drawEntities() {
+    entities.removeIf(e -> e.isRemoved());
+    for (Entity e : entities) {
+      Sprite sprite = e.getSprite();
+      sprite.setRegion(e.getTexture());
+      sprite.setPosition(e.getX() - (sprite.getWidth() / 2), e.getY());
+      sprite.setRotation((float) e.getRotation());
+      sprite.draw(batch);
+      e.update(Gdx.graphics.getDeltaTime());
+    }
+    for (StaticEntity e : staticEntities) {
+      Sprite sprite = e.getSprite();
+      sprite.setRegion(e.getTexture());
+      sprite.setPosition(e.getX() - (e.collisionWidth / 2), e.getY());
+      sprite.setRotation((float) e.getRotation());
+
+      sprite.draw(batch);
+    }
+  }
 
 
-    public void drawDebug() {
-        for (Entity e : entities) {
-            e.drawDebug(shapeRenderer);
+
+  public void drawDebug() {
+    for (Entity e : entities) {
+      e.drawDebug(shapeRenderer);
+    }
+    for (StaticEntity e : staticEntities) {
+      e.collisionBoundary().draw(shapeRenderer);
+    }
+  }
+
+  public void handleCollisions() {
+    // Check collisions between any two entities
+    for (Entity e1 : entities)
+      for (Entity e2 : entities) {
+        if (!e1.equals(e2) && e1.checkCollision(e2)) {
+          e1.handleCollision(e2);
         }
-        for (StaticEntity e : staticEntities) {
-            e.collisionBoundary().draw(shapeRenderer);
-        }
+      }
+
+    for (StaticEntity e1 : staticEntities) {
+      for (Entity e2 : entities) {
+        if (e1.checkCollision(e2))
+          e2.handleStaticCollision(e1);
+      }
+
+
+    }
+  }
+
+  public void updatePosition() {
+    float dt = Gdx.graphics.getDeltaTime();
+    boolean moveMade = false;
+
+    if (Gdx.input.isKeyPressed(Input.Keys.LEFT) || Gdx.input.isKeyPressed(Input.Keys.A)) {
+      moveMade = true;
+      mainPlayer.moveLeft(dt);
     }
 
-    public void handleCollisions() {
-        // Check collisions between any two entities
-        for (Entity e1 : entities)
-            for (Entity e2 : entities) {
-                if (!e1.equals(e2) && e1.checkCollision(e2)) {
-                    e1.handleCollision(e2);
-                }
-            }
-
-        for (StaticEntity e1:staticEntities){
-           for (Entity e2 : entities){
-               if(e1.checkCollision(e2))
-                   e2.handleStaticCollision(e1);
-           }
-
-
-        }
+    if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) || Gdx.input.isKeyPressed(Input.Keys.D)) {
+      moveMade = true;
+      mainPlayer.moveRight(dt);
     }
 
-    public void updatePosition() {
-        float dt = Gdx.graphics.getDeltaTime();
-        boolean moveMade = false;
-
-        if (Gdx.input.isKeyPressed(Input.Keys.LEFT) || Gdx.input.isKeyPressed(Input.Keys.A)) {
-            moveMade = true;
-            mainPlayer.moveLeft(dt);
-        }
-
-        if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) || Gdx.input.isKeyPressed(Input.Keys.D)) {
-            moveMade = true;
-            mainPlayer.moveRight(dt);
-        }
-
-        if (Gdx.input.isKeyPressed(Input.Keys.UP) || Gdx.input.isKeyPressed(Input.Keys.W)) {
-            moveMade = true;
-            mainPlayer.jump(dt);
-        }
-
-        if (moveMade) {
-            // Send a move to the server
-            router.call(Route.MINIGAME_MOVE);
-        }
-
+    if (Gdx.input.isKeyPressed(Input.Keys.UP) || Gdx.input.isKeyPressed(Input.Keys.W)) {
+      moveMade = true;
+      mainPlayer.jump(dt);
     }
 
-    public void resize(int width, int height) {
-        stage.getViewport().update(width, height, true);
+    if (moveMade) {
+      // Send a move to the server
+      router.call(Route.MINIGAME_MOVE);
     }
+
+  }
+
+  public void resize(int width, int height) {
+    stage.getViewport().update(width, height, true);
+  }
 
 
 }
