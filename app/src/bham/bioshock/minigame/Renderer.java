@@ -20,8 +20,6 @@ import bham.bioshock.minigame.worlds.World;
 import bham.bioshock.minigame.worlds.World.PlanetPosition;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.Input.Keys;
-import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
@@ -59,7 +57,6 @@ public class Renderer {
   private MinigameStore minigameStore;
 
   private Router router;
-  private boolean shooting;
   private boolean firstRender = true;
 
   private MinigameHud hud;
@@ -77,7 +74,6 @@ public class Renderer {
     entities.addAll(minigameStore.getRockets());
     entities.addAll(minigameStore.getGuns());
     world = minigameStore.getWorld();
-    shooting = false;
  
     cam = new OrthographicCamera();
     cam.position.set(mainPlayer.getX(), mainPlayer.getY(), 0);
@@ -115,25 +111,6 @@ public class Renderer {
     for (Entity e : entities) {
       e.load();
     }
-
-    Gdx.input.setInputProcessor(new InputAdapter() {
-      @Override
-      public boolean keyDown(int keyCode) {
-        if (Keys.SPACE == keyCode && !shooting && mainPlayer.haveGun()) {
-          createBullet();
-          shooting = true;
-        }
-        return true;
-      }
-
-      @Override
-      public boolean keyUp(int keyCode) {
-        if (Keys.SPACE == keyCode) {
-          shooting = false;
-        }
-        return true;
-      }
-    });
   }
 
   public void render(float delta) {
@@ -210,12 +187,18 @@ public class Renderer {
     Player main = minigameStore.getMainPlayer();
     PlanetPosition pp = world.convert(main.getPosition());
     pp.fromCenter += main.getSize() / 2;
+    if(main.getDirection().equals(PlayerTexture.LEFT)) {
+      pp.angle -= 2;
+    } else if(main.getDirection().equals(PlayerTexture.RIGHT)) {
+      pp.angle += 2;
+    }
     Position bulletPos = world.convert(pp);
     
     Bullet b = new Bullet(minigameStore.getWorld(), bulletPos.x, bulletPos.y);
     // First synchronise the bullet with the player
     b.setSpeedVector((SpeedVector) main.getSpeedVector().clone());
-    b.setSpeed((float) main.getSpeedVector().getSpeedAngle(), Bullet.launchSpeed);
+    // Apply bullet speed
+    b.setSpeed((float) main.getSpeedVector().getSpeedAngle(), Bullet.launchSpeed);    
     router.call(Route.MINIGAME_BULLET_SEND, b);
     addBullet(b);
   }
@@ -257,6 +240,10 @@ public class Renderer {
       mainPlayer.jump(dt);
     }
 
+    if(Gdx.input.isKeyJustPressed(Input.Keys.SPACE) && mainPlayer.haveGun()) {
+      createBullet();
+    }
+    
     if (moveMade) {
       // Send a move to the server
       router.call(Route.MINIGAME_MOVE);
