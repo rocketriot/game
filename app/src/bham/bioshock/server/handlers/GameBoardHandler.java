@@ -111,11 +111,12 @@ public class GameBoardHandler {
         GridPoint gridPoint = grid[x][y];
         GridPoint.Type type = gridPoint.getType();
 
-        // Skip points that the CPU can't travel to i.e. Players and Asteroids 
+        // Skip points that the CPU can't travel to i.e. Players and Asteroids
         if (
-          type != GridPoint.Type.PLAYER ||
-          type != GridPoint.Type.ASTEROID
-        ) continue;
+            type != GridPoint.Type.PLAYER ||
+                type != GridPoint.Type.ASTEROID
+        )
+          continue;
 
         // Attempt to generate path to the point
         ArrayList<Coordinates> path = pathFinder.pathfind(new Coordinates(x, y));
@@ -123,6 +124,7 @@ public class GameBoardHandler {
         // If it's possible to travel to that point, add path to possible moves
         if (!path.isEmpty())
           possibleMoves.get(type).add(path);
+      }
     }
 
     return possibleMoves;
