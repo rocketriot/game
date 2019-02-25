@@ -1,10 +1,12 @@
 package bham.bioshock.minigame.models;
 
+import bham.bioshock.client.controllers.SoundController;
 import bham.bioshock.common.Position;
 import bham.bioshock.minigame.PlayerTexture;
 import bham.bioshock.minigame.physics.SpeedVector;
 import bham.bioshock.minigame.worlds.World;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -69,6 +71,9 @@ public class Player extends Entity {
 
   public void jump(float delta) {
     if (!isFlying()) {
+      if (SoundController.soundsEnabled){
+        SoundController.jumpSound.play(SoundController.soundsVolume);
+      }
       speed.apply(angleFromCenter(), JUMP_FORCE);
     }
   }
