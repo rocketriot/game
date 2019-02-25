@@ -1,5 +1,7 @@
 package bham.bioshock.client.scenes.gameboard;
 
+import com.badlogic.gdx.graphics.g2d.ParticleEffect;
+import com.badlogic.gdx.graphics.g2d.ParticleEmitter;
 import java.util.ArrayList;
 
 import com.badlogic.gdx.Gdx;
@@ -17,19 +19,32 @@ public class DrawPlayer extends DrawEntity {
     boolean isMoving = false;
     float msXCoords = -1;
     float msYCoords = -1;
+    float rtXCoords;
+    float rtYCoords;
+    ParticleEffect rocketTrail;
 
-    public DrawPlayer(Batch batch) {
+  public DrawPlayer(Batch batch) {
         super(batch);
 
         sprites = generateSprites(Assets.playersFolder);
         outlinedSprites = generateSprites(Assets.playersFolder);
+        generateEffects();
     }
+
+  private void generateEffects() {
+     rocketTrail = new ParticleEffect();
+     rocketTrail.load(
+         Gdx.files.internal(Assets.particleEffect),
+         Gdx.files.internal(Assets.particleEffectsFolder));
+     rocketTrail.start();
+   }
 
     public void draw(Player player, int PPS, boolean selected) {
       Sprite sprite = selected 
         ? outlinedSprites.get(player.getTextureID())
         : sprites.get(player.getTextureID());
 
+      sprite.setOriginCenter();
       sprite.setX(player.getCoordinates().getX() * PPS);
       sprite.setY(player.getCoordinates().getY() * PPS);
       sprite.draw(batch);
@@ -75,10 +90,10 @@ public class DrawPlayer extends DrawEntity {
           msYCoords += distanceToMove;
   
           // Rocket trail coordinates
-          // rtXCoords = msXCoords + 0.5f;
-          // rtYCoords = msYCoords;
+          rtXCoords = msXCoords + 0.5f;
+          rtYCoords = msYCoords;
           // // Rocket trail rotation
-          // setEmmiterAngle(rocketTrail, 0);
+          setEmmiterAngle(rocketTrail, 0);
   
           // Has the sprite reach the next coordinate in the board move
           if (movingSprite.getY() >= nextMoveY * PPS) {
@@ -96,9 +111,9 @@ public class DrawPlayer extends DrawEntity {
           movingSprite.setRotation(180);
           msYCoords -= distanceToMove;
   
-          // rtXCoords = msXCoords + 0.5f;
-          // rtYCoords = msYCoords + 1;
-          // setEmmiterAngle(rocketTrail, 180);
+          rtXCoords = msXCoords + 0.5f;
+          rtYCoords = msYCoords + 1;
+          setEmmiterAngle(rocketTrail, 180);
           if (movingSprite.getY() <= nextMoveY * PPS) {
             boardMove.remove(0);
 
@@ -114,9 +129,9 @@ public class DrawPlayer extends DrawEntity {
           movingSprite.setRotation(270);
           msXCoords += distanceToMove;
   
-          // rtXCoords = msXCoords;
-          // rtYCoords = msYCoords + 0.5f;
-          // setEmmiterAngle(rocketTrail, 270);
+          rtXCoords = msXCoords;
+          rtYCoords = msYCoords + 0.5f;
+          setEmmiterAngle(rocketTrail, 270);
 
           if (movingSprite.getX() >= nextMoveX * PPS) {
             boardMove.remove(0);
@@ -133,9 +148,9 @@ public class DrawPlayer extends DrawEntity {
           movingSprite.setRotation(90);
           msXCoords -= distanceToMove;
   
-          // rtXCoords = msXCoords + 1;
-          // rtYCoords = msYCoords + 0.5f;
-          // setEmmiterAngle(rocketTrail, 90);
+          rtXCoords = msXCoords + 1;
+          rtYCoords = msYCoords + 0.5f;
+          setEmmiterAngle(rocketTrail, 90);
 
           if (movingSprite.getX() <= nextMoveX * PPS) {
             boardMove.remove(0);
@@ -151,14 +166,28 @@ public class DrawPlayer extends DrawEntity {
         default:
           break;
       }
-        
-      // rocketTrail.setPosition(rtXCoords * PPS, rtYCoords * PPS);
+      rocketTrail.setPosition(rtXCoords * PPS, rtYCoords * PPS);
+      rocketTrail.draw(batch, Gdx.graphics.getDeltaTime());
       movingSprite.setX(msXCoords * PPS);
       movingSprite.setY(msYCoords * PPS);
       movingSprite.draw(batch);
     }
 
-    public void resize(int PPS) {
+  private void setEmmiterAngle(ParticleEffect particleEffect, float angle) {
+    // Align particle effect angle with world
+    angle -= 90;
+    for (ParticleEmitter pe : particleEffect.getEmitters()) {
+      ParticleEmitter.ScaledNumericValue val = pe.getAngle();
+      float amplitude = (val.getHighMax() - val.getHighMin()) / 2f;
+      float h1 = angle + amplitude;
+      float h2 = angle - amplitude;
+      val.setHigh(h1, h2);
+      val.setLow(angle);
+    }
+  }
+
+
+  public void resize(int PPS) {
         sprites.forEach(sprite -> sprite.setSize(PPS, PPS));
         outlinedSprites.forEach(sprite -> sprite.setSize(PPS, PPS));
         movingSprite.setSize(PPS, PPS);
@@ -167,5 +196,6 @@ public class DrawPlayer extends DrawEntity {
     public void dispose() {
         sprites.forEach(sprite -> sprite.getTexture().dispose());
         outlinedSprites.forEach(sprite -> sprite.getTexture().dispose());
+        rocketTrail.dispose();
     }
 }

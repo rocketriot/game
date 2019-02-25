@@ -61,8 +61,6 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
   private int mouseDownX, mouseDownY;
   private boolean playerSelected = false;
   private Coordinates oldGridCoords = new Coordinates(-1, -1);
-  // private Array<ParticleEffect> effects = new Array<>();
-  // private ParticleEffect rocketTrail;
   private boolean minigamePromptShown = false;
 
   DrawPlayer drawPlayer;
@@ -104,15 +102,6 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
     this.inputMultiplexer.addProcessor(hud.getStage());
     this.inputMultiplexer.addProcessor(this);
   }
-
-  // private void generateEffects() {
-  //   rocketTrail = new ParticleEffect();
-  //   rocketTrail.load(
-  //       Gdx.files.internal(Assets.particleEffect),
-  //       Gdx.files.internal(Assets.particleEffectsFolder));
-  //   rocketTrail.start();
-  //   effects.add(rocketTrail);
-  // }
 
   /** Draws the player move */
   private void drawPlayerMove(Player player) {
@@ -269,7 +258,6 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
     // Batch drawn methods
     drawBoardObjects();
     drawPlayers();
-    // drawEffects(delta);
     batch.end();
 
     // Shape render drawn methods
@@ -281,15 +269,6 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
     hud.updateHud();
     hud.getStage().draw();
   }
-
-  // private void drawEffects(float delta) {
-  //   if (drawRocketTrail) {
-  //     for (ParticleEffect e : effects) {
-  //       e.draw(batch);
-  //       e.update(delta);
-  //     }
-  //   }
-  // }
 
   private void drawPlanetOwnerShip() {
     sr.begin(ShapeType.Filled);
@@ -327,10 +306,6 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
     drawPlanet.dispose();
     drawFuel.dispose();
     drawAsteroid.dispose();
-
-    // for (ParticleEffect e : effects) {
-    //   e.dispose();
-    // }
   }
 
   private Vector3 getMouseCoordinates(int screenX, int screenY) {
