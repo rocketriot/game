@@ -59,7 +59,6 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
   private Coordinates oldGridCoords = new Coordinates(-1, -1);
   // private Array<ParticleEffect> effects = new Array<>();
   // private ParticleEffect rocketTrail;
-  private boolean minigamePromptShown = false;
 
   DrawPlayer drawPlayer;
   DrawPlanet drawPlanet;
@@ -373,7 +372,6 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
       0 <= mouse.x && mouse.x <= gridSize * PPS && 
       0 <= mouse.y && mouse.y <= gridSize * PPS
     ) {
-      // this.minigamePromptShown = false;
       
       // Get new player coordinates
       int gridX = (int) mouse.x / PPS;
@@ -470,10 +468,8 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
 
   /** Method to ask the user whether they want to start the minigame or not */
   private void showMinigamePrompt() {
-    if (minigamePromptShown) return;
-    
-    Dialog diag =
-        new Dialog("Start Minigame", skin) {
+    Dialog dialog =
+        new Dialog("", skin) {
 
           protected void result(Object object) {
 
@@ -486,12 +482,10 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
           }
         };
 
-    diag.text(new Label("Would you like to start a minigame to take over the planet?", skin));
-    diag.button("Yes", true);
-    diag.button("No", false);
+    dialog.text(new Label("Do you want to attempt to capture this planet?", skin));
+    dialog.button("Yes", true);
+    dialog.button("No", false);
 
-    diag.show(hud.getStage());
-
-    minigamePromptShown = true;
+    dialog.show(hud.getStage());
   }
 }
