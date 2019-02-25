@@ -31,7 +31,7 @@ public class JoinScreen extends ScreenMaster {
 
     /* Animation Elements */
     private float stateTime = 0;
-    private static Texture loadingSheet;
+    private Texture[] loadTextures;
 
 
     public JoinScreen(Router router, Store store) {
@@ -41,7 +41,12 @@ public class JoinScreen extends ScreenMaster {
         stage = new Stage(new ScreenViewport());
         batch = new SpriteBatch();
 
-        loadingSheet = new Texture(Gdx.files.internal("app/assets/animations/loading_spritesheet.png"));
+        loadTextures = new Texture[store.MAX_PLAYERS];
+
+        loadTextures[0] = new Texture(Gdx.files.internal("app/assets/animations/loading1.png"));
+        loadTextures[1] = new Texture(Gdx.files.internal("app/assets/animations/loading2.png"));
+        loadTextures[2] = new Texture(Gdx.files.internal("app/assets/animations/loading3.png"));
+        loadTextures[3] = new Texture(Gdx.files.internal("app/assets/animations/loading4.png"));
 
 
         setUpHolder();
@@ -61,7 +66,7 @@ public class JoinScreen extends ScreenMaster {
 
         for(int i=0; i<store.MAX_PLAYERS; i++) {
 
-            holder.addPlayerContainer(new PlayerContainer("Player"+(i+1), WaitText.WAITING));
+            holder.addPlayerContainer(new PlayerContainer("Player"+(i+1), WaitText.WAITING, loadTextures[i]));
 
             if(i%2 != 0){
                 holder.row();
@@ -141,11 +146,11 @@ public class JoinScreen extends ScreenMaster {
         private Anim animation;
         private int padding = 20;
 
-        public PlayerContainer(String n, WaitText status) {
+        public PlayerContainer(String n, WaitText status, Texture sheet) {
             //this.setDebug(true);
             name = new Label(n, skin);
             waitText = new Label(status.toString(), skin);
-            animation = new Anim(loadingSheet);
+            animation = new Anim(sheet);
 
             this.pad(padding);
 
@@ -280,6 +285,7 @@ public class JoinScreen extends ScreenMaster {
     @Override
     public void dispose() {
         batch.dispose();
-        loadingSheet.dispose();
+        for(int i = 0; i <loadTextures.length; i++)
+        loadTextures[i].dispose();
     }
 }
