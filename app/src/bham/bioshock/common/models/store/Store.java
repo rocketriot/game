@@ -24,7 +24,7 @@ public class Store {
   private Screen currentScreen;
   /** Contains all of the information about the game board */
   private GameBoard gameBoard = new GameBoard();
-  /** A list of players **/
+  /** A list of players */
   private ArrayList<Player> players = new ArrayList<>(MAX_PLAYERS);
 
   /** The ID of the player that the client is controlling, only used client-side */
