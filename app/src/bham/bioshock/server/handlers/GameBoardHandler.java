@@ -21,7 +21,7 @@ public class GameBoardHandler {
     this.handler = handler;
   }
   
-  private void generateGridFor(GameBoard board, ArrayList<Player> players) {
+  private void generateGrid(GameBoard board, ArrayList<Player> players) {
     // Set coordinates of the players
     int last = board.GRID_SIZE - 1;
     players.get(0).setCoordinates(new Coordinates(0, 0));
@@ -43,7 +43,7 @@ public class GameBoardHandler {
     // Generate a grid when starting the game
     if (gameBoard == null) {
       gameBoard = new GameBoard(); 
-      generateGridFor(gameBoard, players);
+      generateGrid(gameBoard, players);
     }
 
     ArrayList<Serializable> response = new ArrayList<>();
