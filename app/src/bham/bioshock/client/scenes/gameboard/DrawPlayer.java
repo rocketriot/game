@@ -51,6 +51,14 @@ public class DrawPlayer extends DrawEntity {
     sprite.draw(batch);
   }
 
+  public void setupMove(Player player) {
+    ArrayList<Player.Move> boardMove = player.getBoardMove();
+    Player.Move nextMove = boardMove.get(0);
+
+    movingSpriteX = nextMove.getCoordinates().getX();
+    movingSpriteY = nextMove.getCoordinates().getY();
+  }
+
   public boolean drawMove(Player player, int PPS) {
     ArrayList<Player.Move> boardMove = player.getBoardMove();
 
@@ -60,17 +68,6 @@ public class DrawPlayer extends DrawEntity {
 
     // Get next available board move
     Player.Move nextMove = boardMove.get(0);
-
-    // If the player is at the starting position set the starting coordinates
-    if (nextMove.getDirection() == Direction.NONE) {
-      // Set moving sprite position to position of the player
-      movingSpriteX = nextMove.getCoordinates().getX();
-      movingSpriteY = nextMove.getCoordinates().getY();
-
-      // Removing starting position from move and get the next move
-      boardMove.remove(0);
-      nextMove = boardMove.get(0);
-    }
 
     float distanceToMove = 3 * Gdx.graphics.getDeltaTime();
 
@@ -85,7 +82,7 @@ public class DrawPlayer extends DrawEntity {
 
         rocketTrailX = movingSpriteX + 0.5f;
         rocketTrailY = movingSpriteY;
-        setRocketTrailAngle(rocketTrail, 0);
+        setRocketTrailAngle(0);
 
         // Has the sprite reach the next coordinate in the board move
         if (movingSprite.getY() >= nextMoveY * PPS) {
@@ -104,7 +101,7 @@ public class DrawPlayer extends DrawEntity {
 
         rocketTrailX = movingSpriteX + 0.5f;
         rocketTrailY = movingSpriteY + 1;
-        setRocketTrailAngle(rocketTrail, 180);
+        setRocketTrailAngle(180);
 
         if (movingSprite.getY() <= nextMoveY * PPS) {
           movingSprite.setX(nextMoveX * PPS);
@@ -122,7 +119,7 @@ public class DrawPlayer extends DrawEntity {
 
         rocketTrailX = movingSpriteX;
         rocketTrailY = movingSpriteY + 0.5f;
-        setRocketTrailAngle(rocketTrail, 270);
+        setRocketTrailAngle(270);
 
         if (movingSprite.getX() >= nextMoveX * PPS) {
           movingSprite.setX(nextMoveX * PPS);
@@ -140,7 +137,7 @@ public class DrawPlayer extends DrawEntity {
 
         rocketTrailX = movingSpriteX + 1;
         rocketTrailY = movingSpriteY + 0.5f;
-        setRocketTrailAngle(rocketTrail, 90);
+        setRocketTrailAngle(90);
 
         if (movingSprite.getX() <= nextMoveX * PPS) {
           movingSprite.setX(nextMoveX * PPS);
@@ -166,11 +163,11 @@ public class DrawPlayer extends DrawEntity {
     return false;
   }
 
-  private void setRocketTrailAngle(ParticleEffect particleEffect, float angle) {
+  private void setRocketTrailAngle(float angle) {
     // Align particle effect angle with world
     angle -= 90;
 
-    for (ParticleEmitter pe : particleEffect.getEmitters()) {
+    for (ParticleEmitter pe : rocketTrail.getEmitters()) {
       ParticleEmitter.ScaledNumericValue val = pe.getAngle();
       float amplitude = (val.getHighMax() - val.getHighMin()) / 2f;
       float h1 = angle + amplitude;

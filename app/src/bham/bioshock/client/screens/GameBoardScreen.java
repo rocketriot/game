@@ -21,6 +21,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.GL30;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -139,9 +140,14 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
       // Clears the path and unselects the player
       playerSelected = false;
       pathRenderer.clearPath(); 
+
+      // Sets the intial draw values
+      drawPlayer.setupMove(player);
+
+      // Removing starting position from move
+      boardMove.remove(0);
     }
 
-    
     // Draw the updated player
     boolean didChangeCoordinates = drawPlayer.drawMove(player, PPS);
     
