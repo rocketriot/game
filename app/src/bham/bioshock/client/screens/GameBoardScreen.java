@@ -341,10 +341,6 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
     drawPlanet.dispose();
     drawFuel.dispose();
     drawAsteroid.dispose();
-
-    // for (ParticleEffect e : effects) {
-    //   e.dispose();
-    // }
   }
 
   private Vector3 getMouseCoordinates(int screenX, int screenY) {
