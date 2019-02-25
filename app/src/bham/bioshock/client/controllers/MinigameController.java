@@ -11,6 +11,7 @@ import bham.bioshock.communication.Action;
 import bham.bioshock.communication.Command;
 import bham.bioshock.communication.client.ClientService;
 import bham.bioshock.minigame.PlayerTexture;
+import bham.bioshock.minigame.models.Bullet;
 import bham.bioshock.minigame.physics.SpeedVector;
 import bham.bioshock.minigame.worlds.FirstWorld;
 import java.io.Serializable;
@@ -41,6 +42,7 @@ public class MinigameController extends Controller {
     arguments.add((Serializable) localStore.getMainPlayer().getSpeedVector());
     arguments.add((Serializable) localStore.getMainPlayer().getPosition());
     arguments.add((Serializable) localStore.getMainPlayer().getDirection());
+    arguments.add((Serializable) localStore.getMainPlayer().haveGun());
     
     clientService.send(new Action(Command.MINIGAME_PLAYER_MOVE, arguments));
   }
@@ -50,9 +52,29 @@ public class MinigameController extends Controller {
     SpeedVector speed = (SpeedVector) arguments.get(1);
     Position pos = (Position) arguments.get(2);
     PlayerTexture dir = (PlayerTexture) arguments.get(3);
+    Boolean haveGun = (Boolean) arguments.get(4);
     
-    localStore.updatePlayer(playerId, speed, pos, dir);
+    localStore.updatePlayer(playerId, speed, pos, dir, haveGun);
   }
+  
+  public void bulletShot(Bullet bullet) {
+    ArrayList<Serializable> arguments = new ArrayList<>();
+    arguments.add((Serializable) bullet.getSpeedVector());
+    arguments.add((Serializable) bullet.getPos());
+    
+    clientService.send(new Action(Command.MINIGAME_BULLET, arguments));
+  }
+  
+  public void bulletCreate(ArrayList<Serializable> arguments) {
+    SpeedVector sv = (SpeedVector) arguments.get(0);
+    Position p = (Position) arguments.get(1);
+    
+    MinigameScreen screen = (MinigameScreen) store.getScreen();
+    Bullet b = new Bullet(localStore.getWorld(), p.x, p.y);  
+    b.setSpeedVector(sv);
+    screen.addBullet(b);
+  }
+  
   
   public void show() {
     // Create local store for the minigame, and create a new world

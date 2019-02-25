@@ -20,9 +20,9 @@ public class ServerHandler {
   private GameBoardHandler gameBoardHandler;
   private MinigameHandler minigameHandler;
   
-  public ServerHandler() {
+  public ServerHandler(Store store) {
     connections = new ArrayList<>();
-    store = new Store();
+    this.store = store;
     joinHandler = new JoinScreenHandler(store, this);
     gameBoardHandler = new GameBoardHandler(store, this);
     minigameHandler = new MinigameHandler(store, this);
@@ -37,30 +37,36 @@ public class ServerHandler {
   }
 
   public void sendToAll(Action action) {
-    for (ServerService s : connections) {
-      s.send(action);
+    synchronized(connections) {
+      for (ServerService s : connections) {
+        s.send(action);
+      }
     }
   }
 
   public void sendToAllExcept(Action action, UUID id) {
-    for(ServerService s : connections) {
-      if(s.Id() != id) {
-        s.send(action);        
+    synchronized(connections) {
+      for(ServerService s : connections) {
+        if(s.Id() != id) {
+          s.send(action);        
+        }
       }
     }
   }
   
   public void sendTo(UUID clientId, Action action) {
-    for(ServerService s : connections) {
-      if(s.Id() == clientId) {
-        s.send(action);
-        return;
+    synchronized(connections) {
+      for(ServerService s : connections) {
+        if(s.Id() == clientId) {
+          s.send(action);
+          return;
+        }
       }
     }
   }
 
   public void handleRequest(Action action, ServerService service) {
-    logger.debug("Server received: " + action);
+    logger.trace("Server received: " + action);
     
     try {
       switch (action.getCommand()) {
@@ -74,7 +80,7 @@ public class ServerHandler {
           joinHandler.startGame(action, gameBoardHandler);
           break;
         case GET_GAME_BOARD:
-          gameBoardHandler.getGameBoard(action);
+          gameBoardHandler.getGameBoard(action, null);
           break;
         case MOVE_PLAYER_ON_BOARD:
           gameBoardHandler.movePlayer(action);
@@ -88,8 +94,11 @@ public class ServerHandler {
         case MINIGAME_END:
           minigameHandler.endMinigame(action, service.Id());
           break;
+        case MINIGAME_BULLET:
+          minigameHandler.bulletShot(action, service.Id());
+          break;
         default:
-          System.out.println("Received unhandled command: " + action.getCommand().toString());
+          logger.error("Received unhandled command: " + action.getCommand().toString());
           break;
       }
     

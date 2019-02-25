@@ -9,6 +9,7 @@ public enum Command {
   TEST,
 
   // Creating a game
+  SERVER_FULL,
   ADD_PLAYER,
   REMOVE_PLAYER,
   START_GAME,
@@ -21,7 +22,8 @@ public enum Command {
   // Minigame
   MINIGAME_START,
   MINIGAME_PLAYER_MOVE,
-  MINIGAME_END;
+  MINIGAME_END,
+  MINIGAME_BULLET;
 
   // @formatter:on
 

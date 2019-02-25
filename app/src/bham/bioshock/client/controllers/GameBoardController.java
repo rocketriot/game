@@ -104,7 +104,10 @@ public class GameBoardController extends Controller {
   /** Player move received from the server */
   public void moveReceived(Player movingPlayer) {
     // Update the model
-    store.updatePlayer(movingPlayer);
+    Player p = store.getPlayer(movingPlayer.getId());
+    p.setCoordinates(movingPlayer.getCoordinates());
+    p.setFuel(movingPlayer.getFuel());
+    
     store.nextTurn();
   }
 
@@ -196,11 +199,4 @@ public class GameBoardController extends Controller {
     return store.getGameBoard().getGrid() != null;
   }
 
-  /** Check if it is the main player's turn */
-  public boolean isMainPlayersTurn() {
-    int turn = store.getTurn();
-    Player nextPlayer = store.getPlayers().get(turn);
-
-    return store.getMainPlayer().getId().equals(nextPlayer.getId());
-  }
 }
