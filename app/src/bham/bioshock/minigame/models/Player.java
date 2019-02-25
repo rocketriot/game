@@ -71,6 +71,7 @@ public class Player extends Entity {
 
   public void jump(float delta) {
     if (!isFlying()) {
+      SoundController.playSound("jumpSound");
       speed.apply(angleFromCenter(), JUMP_FORCE);
     }
   }
