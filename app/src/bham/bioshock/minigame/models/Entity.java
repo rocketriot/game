@@ -135,6 +135,7 @@ public abstract class Entity {
 
   public boolean checkCollision(Entity e) {
     if (collisionBoundary.collideWith(e.collisionBoundary)) {
+
       return true;
     }
     return false;
@@ -173,19 +174,61 @@ public abstract class Entity {
 
     switch (colPlace) {
       case RIGHT:
+        System.out.println("R");
         speed.stop(angleNorm + 90);
         speed.apply(angleNorm - 90, (speedVBefore - speed.getValue()) * elastic);
         break;
       case LEFT:
+        System.out.println("L");
         speed.stop(angleNorm - 90);
         speed.apply(angleNorm + 90, (speedVBefore - speed.getValue()) * elastic);
         break;
-      case UP:
+      case DOWN:
+        System.out.println("D");
         speed.stop(angleNorm);
         speed.apply(angleNorm + 180, (speedVBefore - speed.getValue()) * elastic);
-      case DOWN:
+      case UP:
+        System.out.println("U");
         speed.stop(angleNorm + 180);
         speed.apply(angleNorm, (speedVBefore - speed.getValue()) * elastic);
+      default:
+        break;
+    }
+  }
+
+  public void collideWithStatic(float elastic, CollisionBoundary c){
+    Direction colPlace = collisionBoundary.getDirectionTo(world, c);
+    double angleNorm = angleFromCenter();
+    double speedVBefore = speed.getValue();
+
+
+    switch (colPlace) {
+      case RIGHT:
+        System.out.println("r");
+        speed.stop(angleNorm + 90);
+        speed.apply(angleNorm - 90, (speedVBefore - speed.getValue()) * elastic);
+        break;
+      case LEFT:
+        System.out.println("l");
+        speed.stop(angleNorm - 90);
+        speed.apply(angleNorm + 90, (speedVBefore - speed.getValue()) * elastic);
+        break;
+      case DOWN:
+        System.out.println("bsyhx");
+        speed.stop(angleNorm);
+        speed.apply(angleNorm + 180, (speedVBefore - speed.getValue()) * elastic);
+      case UP:
+        System.out.println("asd");
+        fromGround =0 ;
+        //speed.friction(GROUND_FRICTION);
+        //double angle = angleToCenterOfGravity();
+        //speed.stop(angleFromCenter());
+       // speed.stop(angleFromCenter());
+        speed.apply(angleFromCenter(), 600);
+
+
+        //speed.apply(angleNorm, (speedVBefore - speed.getValue()) * elastic);
+
       default:
         break;
     }

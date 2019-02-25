@@ -1,15 +1,10 @@
 package bham.bioshock.minigame.models;
-
-import bham.bioshock.common.Direction;
 import bham.bioshock.common.Position;
 import bham.bioshock.minigame.physics.CollisionBoundary;
 import bham.bioshock.minigame.physics.SpeedVector;
 import bham.bioshock.minigame.worlds.World;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.math.Intersector;
-import com.badlogic.gdx.math.Rectangle;
 
 public abstract class StaticEntity {
 
@@ -32,7 +27,7 @@ public abstract class StaticEntity {
         world = w;
         fromGround = 0;
         speed = new SpeedVector();
-        rotation = 90;
+        rotation = 0;
 
     }
 
@@ -67,11 +62,12 @@ public abstract class StaticEntity {
         this.loaded = true;
         if (getTexture() != null) {
             sprite = new Sprite(getTexture());
-            sprite.setSize(getSize() / 2, getSize());
+            sprite.setSize(getSize(), getSize()/4);
+            //sprite.rotate90(true);
             sprite.setOrigin(sprite.getWidth() / 2, 0);
         }
         collisionWidth = sprite.getWidth();
-        collisionHeight = sprite.getHeight();
+        collisionHeight= sprite.getHeight();
         collisionBoundary = new CollisionBoundary(collisionWidth,collisionHeight);
         collisionBoundary.update(pos, getRotation());
     }

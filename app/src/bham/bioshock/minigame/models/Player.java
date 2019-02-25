@@ -16,7 +16,7 @@ public class Player extends Entity {
   private static Animation<TextureRegion> walkGunAnimation;
   private static TextureRegion frontTexture;
   private static TextureRegion frontGunTexture;
-  private final double JUMP_FORCE = 600;
+  private final double JUMP_FORCE = 1000;
   float animationTime;
   private PlayerTexture dir;
   private float v = 700f;
@@ -161,6 +161,6 @@ public class Player extends Entity {
 
   @Override // to be changed
   public void handleStaticCollision(StaticEntity e) {
-      collide(1, e.collisionBoundary);
+      collide(0.20f, e.collisionBoundary);
   }
 }

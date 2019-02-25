@@ -47,7 +47,7 @@ public class CollisionBoundary extends Polygon {
   public Direction getDirectionTo(World world, CollisionBoundary cb) {
     PlanetPosition pp = planetPosition(world);
     PlanetPosition pp2 = cb.planetPosition(world);
-    
+
     if (pp.fromCenter < (pp2.fromCenter + cb.height) && (pp.fromCenter + height) > pp2.fromCenter) {
       if (pp2.angle > pp.angle) {
         return Direction.RIGHT;
@@ -55,6 +55,7 @@ public class CollisionBoundary extends Polygon {
         return Direction.LEFT;
       }
     }
+
 
     if ((pp.angle - width / 2) < (pp2.angle + cb.width / 2)
         && (pp.angle + width / 2) > (pp2.angle - cb.width / 2)) {
