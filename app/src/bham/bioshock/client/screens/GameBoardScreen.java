@@ -133,22 +133,36 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
 
     // Handle move start
     if (boardMove.get(0).getDirection() == Direction.NONE) {
-      // Stops the renderer drawing the old path
+      // Clears the path and unselects the player
       playerSelected = false;
       pathRenderer.clearPath(); 
     }
 
-    drawPlayer.drawMove(player, PPS);
+    
+    // Draw the updated player
+    boolean didChangeCoordinates = drawPlayer.drawMove(player, PPS);
+    
+    // Update the players coordinates if the player has moved 1 position
+    if (didChangeCoordinates) {
+      Coordinates nextCoordinates = boardMove.get(0).getCoordinates();
+      player.setCoordinates(nextCoordinates);
 
-    // TODO: check if it removes when a different player gets fuel
-    // if (player.getId().equals(store.getMainPlayer().getId())) {
-    //   playerSelected = true;
-      
-    //   // Remove fuel from the grid
-    //   if (gameBoard.getGridPoint(player.getCoordinates()).getType().equals(GridPoint.Type.FUEL)) {
-    //    gameBoard.removeGridPoint(player.getCoordinates());
-    //   }
-    // }
+      // Remove the completed move
+      boardMove.remove(0);
+    }
+    
+    // Get the value of the grid point that the player has landed on
+    GridPoint gridPoint = gameBoard.getGridPoint(player.getCoordinates());
+
+    // Check if the grid point is fuel
+    if (gridPoint.getType() == GridPoint.Type.FUEL) {
+      // Increase the players fuel
+      Fuel fuel = (Fuel) gridPoint.getValue();
+      player.increaseFuel(fuel.getValue());
+
+      // Remove fuel from the grid
+      gameBoard.removeGridPoint(player.getCoordinates());
+    }
   }
 
   public void drawBoardObjects() {

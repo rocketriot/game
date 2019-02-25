@@ -14,9 +14,8 @@ public class DrawPlayer extends DrawEntity {
     ArrayList<Sprite> sprites = new ArrayList<>(); 
     ArrayList<Sprite> outlinedSprites = new ArrayList<>();
     Sprite movingSprite = new Sprite();
-    boolean isMoving = false;
-    float msXCoords = -1;
-    float msYCoords = -1;
+    float movingSpriteX = -1;
+    float movingSpriteY = -1;
 
     public DrawPlayer(Batch batch) {
         super(batch);
@@ -36,16 +35,7 @@ public class DrawPlayer extends DrawEntity {
       sprite.draw(batch);
     }
 
-    public void startMove(Player player, int PPS) {
-      isMoving = true;
-    }
-    
-    public void endMove(Player player, int PPS) {
-      isMoving = false;
-    }
-
-
-    public void drawMove(Player player, int PPS) {
+    public boolean drawMove(Player player, int PPS) {
       ArrayList<Player.Move> boardMove = player.getBoardMove();
 
       // Setup moving sprite
@@ -57,8 +47,9 @@ public class DrawPlayer extends DrawEntity {
 
       // If the player is at the starting position set the starting coordinates
       if (nextMove.getDirection() == Direction.NONE) {
-        msXCoords = nextMove.getCoordinates().getX();
-        msYCoords = nextMove.getCoordinates().getY();
+        // Set moving sprite position to position of the player
+        movingSpriteX = nextMove.getCoordinates().getX();
+        movingSpriteY = nextMove.getCoordinates().getY();
 
         // Removing starting position from move and get the next move
         boardMove.remove(0);
@@ -67,13 +58,14 @@ public class DrawPlayer extends DrawEntity {
 
       float distanceToMove = 3 * Gdx.graphics.getDeltaTime();
 
+      // Get coordinates of the next grid point to move to
       int nextMoveX = nextMove.getCoordinates().getX();
       int nextMoveY = nextMove.getCoordinates().getY();
 
       switch (nextMove.getDirection()) {
         case UP:
           movingSprite.setRotation(0);
-          msYCoords += distanceToMove;
+          movingSpriteY += distanceToMove;
   
           // Rocket trail coordinates
           // rtXCoords = msXCoords + 0.5f;
@@ -83,68 +75,64 @@ public class DrawPlayer extends DrawEntity {
   
           // Has the sprite reach the next coordinate in the board move
           if (movingSprite.getY() >= nextMoveY * PPS) {
-            boardMove.remove(0);
-
             movingSprite.setX(nextMoveX * PPS);
             movingSprite.setY(nextMoveY * PPS);
             movingSprite.draw(batch);
-            return;
+            
+            return true;
           }
 
           break;
 
         case DOWN:
           movingSprite.setRotation(180);
-          msYCoords -= distanceToMove;
+          movingSpriteY -= distanceToMove;
   
           // rtXCoords = msXCoords + 0.5f;
           // rtYCoords = msYCoords + 1;
           // setEmmiterAngle(rocketTrail, 180);
           if (movingSprite.getY() <= nextMoveY * PPS) {
-            boardMove.remove(0);
-
             movingSprite.setX(nextMoveX * PPS);
             movingSprite.setY(nextMoveY * PPS);
             movingSprite.draw(batch);
-            return;
+            
+            return true;
           }
 
           break;
 
         case RIGHT:
           movingSprite.setRotation(270);
-          msXCoords += distanceToMove;
+          movingSpriteX += distanceToMove;
   
           // rtXCoords = msXCoords;
           // rtYCoords = msYCoords + 0.5f;
           // setEmmiterAngle(rocketTrail, 270);
 
           if (movingSprite.getX() >= nextMoveX * PPS) {
-            boardMove.remove(0);
-
             movingSprite.setX(nextMoveX * PPS);
             movingSprite.setY(nextMoveY * PPS);
             movingSprite.draw(batch);
-            return;
+            
+            return true;
           }
 
           break;
 
         case LEFT:
           movingSprite.setRotation(90);
-          msXCoords -= distanceToMove;
+          movingSpriteX -= distanceToMove;
   
           // rtXCoords = msXCoords + 1;
           // rtYCoords = msYCoords + 0.5f;
           // setEmmiterAngle(rocketTrail, 90);
 
           if (movingSprite.getX() <= nextMoveX * PPS) {
-            boardMove.remove(0);
-
             movingSprite.setX(nextMoveX * PPS);
             movingSprite.setY(nextMoveY * PPS);
             movingSprite.draw(batch);
-            return;
+            
+            return true;
           }
 
           break;
@@ -154,9 +142,11 @@ public class DrawPlayer extends DrawEntity {
       }
         
       // rocketTrail.setPosition(rtXCoords * PPS, rtYCoords * PPS);
-      movingSprite.setX(msXCoords * PPS);
-      movingSprite.setY(msYCoords * PPS);
+      movingSprite.setX(movingSpriteX * PPS);
+      movingSprite.setY(movingSpriteY * PPS);
       movingSprite.draw(batch);
+
+      return false;
     }
 
     public void resize(int PPS) {

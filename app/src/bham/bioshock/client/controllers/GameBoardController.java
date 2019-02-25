@@ -60,10 +60,6 @@ public class GameBoardController extends Controller {
     // Handle if player doesn't have enough fuel
     if (mainPlayer.getFuel() < pathCost || pathCost == -10) return;
 
-    // Update player coordinates and fuel
-    mainPlayer.setCoordinates(destination);
-    mainPlayer.decreaseFuel(pathCost);
-
     // Get grid point the user landed on
     GridPoint gridPoint = gameBoard.getGridPoint(destination);
 
