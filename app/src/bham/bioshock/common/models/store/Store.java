@@ -44,10 +44,6 @@ public class Store {
   public GameBoard getGameBoard() {
     return gameBoard;
   }
-  
-  public void setGameBoard(GameBoard gameBoard) {
-    this.gameBoard = gameBoard;
-  }
 
   public Screen getScreen() {
     return currentScreen;
