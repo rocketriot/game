@@ -95,5 +95,10 @@ public class JoinScreenController extends Controller {
         logger.debug("Ready to start! Waiting for the board");
     }
 
+    /*might remove */
+    public void moveRocket(JoinScreen.moveMade move) {
+
+
+    }
 
 }

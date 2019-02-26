@@ -22,6 +22,7 @@ public enum Route {
   REMOVE_PLAYER     (JoinScreenController.class,    "removePlayer"),
   DISCONNECT_PLAYER (JoinScreenController.class,    "disconnectPlayer"),
   START_GAME        (JoinScreenController.class,    "start"),
+  JOIN_SCREEN_MOVE (JoinScreenController.class, "moveRocket"),
 
   MOVE_PLAYER       (GameBoardController.class,     "move"),
   MOVE_RECEIVED     (GameBoardController.class,     "moveReceived"),
