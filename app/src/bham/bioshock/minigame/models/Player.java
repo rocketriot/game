@@ -2,12 +2,12 @@ package bham.bioshock.minigame.models;
 
 import bham.bioshock.common.Position;
 import bham.bioshock.minigame.PlayerTexture;
-import bham.bioshock.minigame.physics.SpeedVector;
 import bham.bioshock.minigame.worlds.World;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Intersector.MinimumTranslationVector;
 
 public class Player extends Entity {
 
@@ -16,7 +16,7 @@ public class Player extends Entity {
   private static Animation<TextureRegion> walkGunAnimation;
   private static TextureRegion frontTexture;
   private static TextureRegion frontGunTexture;
-  private final double JUMP_FORCE = 1000;
+  private final double JUMP_FORCE = 700;
   float animationTime;
   private PlayerTexture dir;
   private float v = 700f;
@@ -24,7 +24,8 @@ public class Player extends Entity {
 
   public Player(World w, float x, float y) {
     super(w, x, y);
-    size = 150;
+    width = 150;
+    height = 150;
     animationTime = 0;
     fromGround = -25;
     update(0);
@@ -97,7 +98,7 @@ public class Player extends Entity {
 
   public TextureRegion getTexture() {
     TextureRegion region = getTexture(haveGun);
-
+    if(region == null) return null;
     if (region.isFlipX()) {
       region.flip(true, false);
     }
@@ -148,19 +149,19 @@ public class Player extends Entity {
 
   /** Collisions **/
   @Override
-  public void handleCollision(Entity e) {
+  public void handleCollision(Entity e, MinimumTranslationVector v) {
     if(e.isA(Bullet.class)) {
-      collide(.2f,e.collisionBoundary);
+      collide(e, .2f, v);
     } else if(e.isA(Player.class) || e.isA(Rocket.class)) {
-      collide(0.8f,e.collisionBoundary);
+      collide(e, 0.8f, v);
     } else if(e.isA(Gun.class)) {
       e.state = State.REMOVED;
       haveGun = true;
+    } else if(e.isA(StaticEntity.class)) {
+      collide(e, 0f, v);
+      pos.x += v.normal.x;
+      pos.y += v.normal.y;
     }
   }
 
-  @Override // to be changed
-  public void handleStaticCollision(StaticEntity e) {
-      collide(0.20f, e.collisionBoundary);
-  }
 }

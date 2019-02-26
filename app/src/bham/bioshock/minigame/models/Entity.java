@@ -4,17 +4,22 @@ import bham.bioshock.common.Direction;
 import bham.bioshock.common.Position;
 import bham.bioshock.minigame.physics.CollisionBoundary;
 import bham.bioshock.minigame.physics.SpeedVector;
+import bham.bioshock.minigame.physics.Vector;
 import bham.bioshock.minigame.worlds.World;
+import bham.bioshock.minigame.worlds.World.PlanetPosition;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Intersector.MinimumTranslationVector;
 
 public abstract class Entity {
 
   protected final double GROUND_FRICTION = 0.2;
 
-  protected int size = 50;
-
+  protected int width = 50;
+  protected int height = 50;
+  
+  protected Boolean isStatic;
   protected Position pos;
   protected boolean loaded = false;
   protected Sprite sprite;
@@ -28,16 +33,25 @@ public abstract class Entity {
   protected float collisionHeight = 50;
 
   protected State state = State.CREATED;
-
-  public Entity(World w, float x, float y) {
+  
+  public Entity(World w, float x, float y, boolean isStatic) {
+    this.isStatic = isStatic;
     pos = new Position(x, y);
     speed = new SpeedVector();
     fromGround = 0;
     world = w;
   }
-
-  public int getSize() {
-    return size;
+  
+  public Entity(World w, float x, float y) {
+    this(w, x, y, false);
+  }
+  
+  public int getWidth() {
+    return width;
+  }
+  
+  public int getHeight() {
+    return height;
   }
 
   public boolean isRemoved() {
@@ -92,7 +106,7 @@ public abstract class Entity {
     state = State.LOADED;
     if (getTexture() != null) {
       sprite = new Sprite(getTexture());
-      sprite.setSize(getSize(), getSize());
+      sprite.setSize(width, height);
       sprite.setOrigin(sprite.getWidth() / 2, 0);
     }
     collisionBoundary = new CollisionBoundary(collisionWidth, collisionHeight);
@@ -115,7 +129,7 @@ public abstract class Entity {
   }
 
   public void update(float delta) {
-    if (!loaded)
+    if (!loaded || isStatic)
       return;
     double angle = angleToCenterOfGravity();
 
@@ -133,22 +147,18 @@ public abstract class Entity {
     collisionBoundary.update(pos, getRotation());
   }
 
-  public boolean checkCollision(Entity e) {
-    if (collisionBoundary.collideWith(e.collisionBoundary)) {
-
-      return true;
+  public MinimumTranslationVector checkCollision(Entity e) {
+    MinimumTranslationVector v = new MinimumTranslationVector();
+    if (collisionBoundary.collideWith(e.collisionBoundary, v)) {
+      return v;
     }
-    return false;
+    return null;
   }
 
   /*
    * Default behaviour for the collision. Can be overwritten by the subclass
    */
-  public void handleCollision(Entity e) {
-
-  }
-
-  public void handleStaticCollision(StaticEntity e){
+  public void handleCollision(Entity e, MinimumTranslationVector v) {
 
   }
 
@@ -165,70 +175,53 @@ public abstract class Entity {
     return state.equals(s);
   }
 
-  public void collide(float elastic, CollisionBoundary c) {
+  public void collide(Entity e, float elastic, MinimumTranslationVector v) {
     if (!loaded)
       return;
-    Direction colPlace = collisionBoundary.getDirectionTo(world, c);
+    Direction colPlace;
+    Position pdelta = new Position(getX() + v.normal.x, getY() + v.normal.y);
+    PlanetPosition ppdelta = world.convert(pdelta);
+    PlanetPosition pp = world.convert(pos);
+    double angleRatio = world.angleRatio(pp.fromCenter);
+    
+    if( Math.abs(ppdelta.angle - pp.angle)*angleRatio > 
+      Math.abs(ppdelta.fromCenter - pp.fromCenter) ) { 
+     
+      if(ppdelta.angle < pp.angle ) {
+        colPlace = Direction.RIGHT;
+      } else {
+        colPlace = Direction.LEFT;
+      }
+      
+    } else {
+      
+      if(ppdelta.fromCenter < pp.fromCenter) {
+        colPlace = Direction.UP;
+      } else {
+        colPlace = Direction.DOWN;
+      }
+      
+    }
+    
     double angleNorm = angleFromCenter();
     double speedVBefore = speed.getValue();
-
+    System.out.println(colPlace);
+    
     switch (colPlace) {
       case RIGHT:
-        System.out.println("R");
         speed.stop(angleNorm + 90);
         speed.apply(angleNorm - 90, (speedVBefore - speed.getValue()) * elastic);
         break;
       case LEFT:
-        System.out.println("L");
         speed.stop(angleNorm - 90);
         speed.apply(angleNorm + 90, (speedVBefore - speed.getValue()) * elastic);
         break;
       case DOWN:
-        System.out.println("D");
-        speed.stop(angleNorm);
-        speed.apply(angleNorm + 180, (speedVBefore - speed.getValue()) * elastic);
-      case UP:
-        System.out.println("U");
         speed.stop(angleNorm + 180);
         speed.apply(angleNorm, (speedVBefore - speed.getValue()) * elastic);
-      default:
-        break;
-    }
-  }
-
-  public void collideWithStatic(float elastic, CollisionBoundary c){
-    Direction colPlace = collisionBoundary.getDirectionTo(world, c);
-    double angleNorm = angleFromCenter();
-    double speedVBefore = speed.getValue();
-
-
-    switch (colPlace) {
-      case RIGHT:
-        System.out.println("r");
-        speed.stop(angleNorm + 90);
-        speed.apply(angleNorm - 90, (speedVBefore - speed.getValue()) * elastic);
-        break;
-      case LEFT:
-        System.out.println("l");
-        speed.stop(angleNorm - 90);
-        speed.apply(angleNorm + 90, (speedVBefore - speed.getValue()) * elastic);
-        break;
-      case DOWN:
-        System.out.println("bsyhx");
+      case UP:
         speed.stop(angleNorm);
         speed.apply(angleNorm + 180, (speedVBefore - speed.getValue()) * elastic);
-      case UP:
-        System.out.println("asd");
-        fromGround =0 ;
-        //speed.friction(GROUND_FRICTION);
-        //double angle = angleToCenterOfGravity();
-        //speed.stop(angleFromCenter());
-       // speed.stop(angleFromCenter());
-        speed.apply(angleFromCenter(), 600);
-
-
-        //speed.apply(angleNorm, (speedVBefore - speed.getValue()) * elastic);
-
       default:
         break;
     }

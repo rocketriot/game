@@ -30,6 +30,10 @@ abstract public class World {
   public PlanetPosition convert(Position p) {
     return new PlanetPosition((float) getAngleTo(p.x, p.y), (float) getDistanceTo(p.x, p.y));
   }
+  
+  public double angleRatio(double r) {
+    return 180 / (Math.PI * r);
+  }
 
   public Position convert(PlanetPosition p) {
     double radians = Math.toRadians(p.angle);

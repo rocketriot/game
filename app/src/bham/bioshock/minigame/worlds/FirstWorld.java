@@ -3,7 +3,6 @@ package bham.bioshock.minigame.worlds;
 import java.util.ArrayList;
 import bham.bioshock.common.Position;
 import bham.bioshock.common.models.store.Map;
-import bham.bioshock.minigame.models.Platform;
 import bham.bioshock.minigame.models.Gun;
 import bham.bioshock.minigame.models.Rocket;
 

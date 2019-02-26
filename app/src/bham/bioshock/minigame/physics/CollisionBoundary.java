@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.Polygon;
+import com.badlogic.gdx.math.Intersector.MinimumTranslationVector;
 import bham.bioshock.common.Direction;
 import bham.bioshock.common.Position;
 import bham.bioshock.minigame.worlds.World;
@@ -15,6 +16,7 @@ public class CollisionBoundary extends Polygon {
   float width;
   float height;
   double rotation;
+  private MinimumTranslationVector collisionVector;
 
   public CollisionBoundary(float width, float height) {
     super(new float[] {0, 0, width, 0, width, height, 0, height});
@@ -36,29 +38,34 @@ public class CollisionBoundary extends Polygon {
     this.setPosition(pos.x - width/2, pos.y);
   }
 
-  public boolean collideWith(CollisionBoundary cb) {
-    return Intersector.overlapConvexPolygons(this, cb);
+  public boolean collideWith(CollisionBoundary cb, MinimumTranslationVector v) {
+    return Intersector.overlapConvexPolygons(this, cb, v);
   }
   
   public PlanetPosition planetPosition(World world) {
     return world.convert(new Position(getX(), getY()));
   }
 
-  public Direction getDirectionTo(World world, CollisionBoundary cb) {
+  public Direction getDirectionTo(World world, CollisionBoundary cb, MinimumTranslationVector v) {
+    
     PlanetPosition pp = planetPosition(world);
     PlanetPosition pp2 = cb.planetPosition(world);
-
-    if (pp.fromCenter < (pp2.fromCenter + cb.height) && (pp.fromCenter + height) > pp2.fromCenter) {
+    double angleRatio = world.angleRatio(pp.fromCenter);
+    double ppWidth = (width / 2)*angleRatio;
+    double pp2Width = (cb.width / 2)*angleRatio;
+    
+    boolean yCollide = pp.fromCenter < (pp2.fromCenter + cb.height) && (pp.fromCenter + height) > pp2.fromCenter;
+    boolean xCollide = (pp.angle - ppWidth ) < (pp2.angle + pp2Width ) && (pp.angle + ppWidth) > (pp2.angle - pp2Width);
+    
+    if(xCollide && !yCollide) {
       if (pp2.angle > pp.angle) {
         return Direction.RIGHT;
       } else {
         return Direction.LEFT;
       }
     }
-
-
-    if ((pp.angle - width / 2) < (pp2.angle + cb.width / 2)
-        && (pp.angle + width / 2) > (pp2.angle - cb.width / 2)) {
+    
+    if(!xCollide && yCollide) {
       if (pp2.fromCenter > pp.fromCenter) {
         return Direction.UP;
       } else {
