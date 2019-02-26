@@ -453,9 +453,9 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
 
     // Ensure the mouse is clicking on the board
     if (coordinates.getX() >= gridSize
-        && coordinates.getX() < 0
-        && coordinates.getY() >= gridSize
-        && coordinates.getY() < 0) return false;
+        || coordinates.getX() < 0
+        || coordinates.getY() >= gridSize
+        || coordinates.getY() < 0) return false;
 
     // Pathfind to where the mouse is located
     pathRenderer.generatePath(store.getMainPlayer().getCoordinates(), coordinates);
