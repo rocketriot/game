@@ -76,27 +76,6 @@ public class Hud implements Disposable {
   //   topBar.addActor(fuelBar);
   // }
 
-  // private void setupScoreList() {
-  //   table = new Table();
-  //   table.top();
-  //   table.setPosition(0, 0);
-  //   table.setFillParent(true);
-  //   stage.addActor(table);
-
-  //   labels = new ArrayList<>();
-
-  //   for (int i = 0; i < 4; i++) {
-  //     String pointsString = "Player" + i + ": " + "0";
-  //     labels.add(new Label(pointsString, skin));
-  //   }
-
-  //   for (Label l : labels) {
-  //     table.add(l);
-  //     table.padLeft((gameWidth - l.getPrefWidth()));
-  //     table.row();
-  //   }
-  // }
-
   // private void setupTopBar() {
   //   topBar = new HorizontalGroup();
   //   topBar.setFillParent(true);
@@ -156,39 +135,30 @@ public class Hud implements Disposable {
     
     scoreBoard.clearChildren();
 
+    // Add players to scoreboard
     for (Player player : store.getPlayers()) {;
       Player movingPlayer = store.getMovingPlayer();
       boolean isPlayersTurn = player.getId().equals(movingPlayer.getId());
+      
+      // Add the turn pointer to the player whos turn it is
+      scoreBoard.add(isPlayersTurn ? turnPointer: null)
+        .width(30)
+        .height(30)
+        .padTop(8)
+        .padRight(4);
 
-      if (isPlayersTurn) {
-        scoreBoard.add(turnPointer)
-          .width(30)
-          .height(30)
-          .padTop(8)
-          .padRight(4);
-      }
-      else {
-        scoreBoard.add()
-          .width(30)
-          .height(30)
-          .padTop(8);
-      }
-
-
+      // Add name of the user
       Label usernameLabel = new Label(player.getUsername(), skin);
       scoreBoard.add(usernameLabel)
-        .padTop(8)
-        .fillX()
-        .align(Align.left);
-
-      if (player.isCpu()) {
-        Label cpuLabel = new Label("CPU", skin);
-        scoreBoard.add(cpuLabel)
-          .padTop(8);
-      } else {
-        scoreBoard.add();
-      }
+      .padTop(8)
+      .fillX()
+      .align(Align.left);
       
+      // Specify if the player is a CPU
+      Label cpuLabel = new Label("CPU", skin);
+      scoreBoard.add(player.isCpu() ? cpuLabel : null).padTop(8);
+      
+      // Add the player's points
       Label pointsLabel = new Label(player.getPoints() + "", skin);
       scoreBoard.add(pointsLabel)
         .padTop(8)
