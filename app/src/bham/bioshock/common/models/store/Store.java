@@ -38,7 +38,7 @@ public class Store {
   /** The ID of the player that the client is controlling, only used client-side */
   private UUID mainPlayerId;
   /** The game's round */
-  private int round = 0;
+  private int round = 1;
   /** The next player's turn */
   private int turn = 0;
 
