@@ -49,10 +49,10 @@ public class JoinScreen extends ScreenMaster {
         loadTextures[3] = new Texture(Gdx.files.internal("app/assets/animations/loading4.png"));
 
         connectedTextures = new Texture[store.MAX_PLAYERS];
-        connectedTextures[0] = new Texture(Gdx.files.internal("app/assets/animations/connectedAnimationSheet1.png"));
-        connectedTextures[1] = new Texture(Gdx.files.internal("app/assets/animations/connectedAnimationSheet2.png"));
-        connectedTextures[2] = new Texture(Gdx.files.internal("app/assets/animations/connectedAnimationSheet3.png"));
-        connectedTextures[3] = new Texture(Gdx.files.internal("app/assets/animations/connectedAnimationSheet4.png"));
+        connectedTextures[0] = new Texture(Gdx.files.internal("app/assets/animations/connectedAnimSheet1.png"));
+        connectedTextures[1] = new Texture(Gdx.files.internal("app/assets/animations/connectedAnimSheet2.png"));
+        connectedTextures[2] = new Texture(Gdx.files.internal("app/assets/animations/connectedAnimSheet3.png"));
+        connectedTextures[3] = new Texture(Gdx.files.internal("app/assets/animations/connectedAnimSheet4.png"));
 
 
         setUpHolder();
@@ -102,7 +102,7 @@ public class JoinScreen extends ScreenMaster {
                 Player p = players.get(i);
                 pc.setName(p.getUsername());
                 pc.setWaitText(WaitText.CONNECTED);
-                pc.changeAnimation(connectedTextures[i], 7, 1, 1.2f);
+                pc.changeAnimation(connectedTextures[i], 4, 1, 1.9f);
             }
 
         }
@@ -151,7 +151,8 @@ public class JoinScreen extends ScreenMaster {
         private Label name;
         private Label waitText;
         private Anim animation;
-        private int padding = 20;
+        private int sidePadding = 80;
+        private int topPadding = 30;
 
         public PlayerContainer(String n, WaitText status, Texture sheet) {
             //this.setDebug(true);
@@ -159,13 +160,13 @@ public class JoinScreen extends ScreenMaster {
             waitText = new Label(status.toString(), skin);
             animation = new Anim(sheet, 26, 1, 100,100, 0.8f);
 
-            this.pad(padding);
+            this.pad(topPadding, sidePadding, topPadding, sidePadding);
 
             this.add(name);
             this.row();
-            this.add(animation).height(animation.getHeight()).width(animation.getWidth());
+            this.add(animation).height(animation.getHeight()).width(animation.getWidth()).padTop(10);
             this.row();
-            this.add(waitText);
+            this.add(waitText).padTop(10);
 
 
         }
@@ -177,7 +178,7 @@ public class JoinScreen extends ScreenMaster {
             waitText.setText(text.toString());
         }
         public void changeAnimation(Texture sheet, int cols, int rows, float frameDuration) {
-            Anim newAnimation = new Anim(sheet, cols, rows, 100, 120, frameDuration);
+            Anim newAnimation = new Anim(sheet, cols, rows, 90, 150, frameDuration);
             this.animation = newAnimation;
         }
 
