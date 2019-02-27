@@ -1,6 +1,7 @@
 package bham.bioshock.server.handlers;
 
 import bham.bioshock.common.consts.GridPoint;
+import bham.bioshock.common.consts.GridPoint.Type;
 import bham.bioshock.common.models.Coordinates;
 import bham.bioshock.common.models.GameBoard;
 import bham.bioshock.common.models.Player;
@@ -77,11 +78,11 @@ public class GameBoardHandler {
     
     HashMap<GridPoint.Type, ArrayList<ArrayList<Coordinates>>> possibleMoves = generatePossibleMoves(store);
 
-    float randomFloat = (new Random()).nextFloat();
-
-    if (randomFloat <= 0.015) {
-
-    }
+    Random random = new Random();
+    ArrayList<ArrayList<Coordinates>> pathList = possibleMoves.get(Type.EMPTY);
+    ArrayList<Coordinates> movePath = pathList.get(random.nextInt(pathList.size()));
+    player.createBoardMove(movePath);
+    player.setCoordinates(player.getBoardMove().get(player.getBoardMove().size()-1).getCoordinates());
 
     // Find all possible spaces the CPU can go
     // Probability of choosing a specific space: EMPTY <= FUEL <= PLANET
@@ -112,18 +113,23 @@ public class GameBoardHandler {
         GridPoint.Type type = gridPoint.getType();
 
         // Skip points that the CPU can't travel to i.e. Players and Asteroids
-        if (
-            type != GridPoint.Type.PLAYER ||
-                type != GridPoint.Type.ASTEROID
-        )
+        if (type == GridPoint.Type.PLAYER || type == GridPoint.Type.ASTEROID) {
           continue;
+        }
 
         // Attempt to generate path to the point
         ArrayList<Coordinates> path = pathFinder.pathfind(new Coordinates(x, y));
 
         // If it's possible to travel to that point, add path to possible moves
-        if (!path.isEmpty())
-          possibleMoves.get(type).add(path);
+        if (path.size() > 0 && path.size() <= (player.getFuel() / 10)) {
+          if (possibleMoves.get(type) == null) {
+            ArrayList<ArrayList<Coordinates>> initialArray = new ArrayList<>();
+            initialArray.add(path);
+            possibleMoves.put(type, initialArray);
+          } else {
+            possibleMoves.get(type).add(path);
+          }
+        }
       }
     }
 

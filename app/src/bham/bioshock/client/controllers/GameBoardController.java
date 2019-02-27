@@ -71,6 +71,7 @@ public class GameBoardController extends Controller {
     }
 
     mainPlayer.createBoardMove(path);
+    mainPlayer.setCoordinates(destination);
 
     // Send the updated grid to the server
     ArrayList<Serializable> arguments = new ArrayList<>();
