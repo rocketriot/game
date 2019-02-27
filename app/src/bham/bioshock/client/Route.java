@@ -41,7 +41,6 @@ public enum Route {
   MINIGAME_BULLET_SEND(MinigameController.class,     "bulletShot"),
 
   START_MUSIC       (SoundController.class,         "startMusic"),
-  STOP_MUSIC        (SoundController.class,         "stopMusic"),
   FADE_OUT          (SoundController.class,         "fadeOut"),
   MUSIC_VOLUME      (SoundController.class,         "setMusicVolume"),
   MUSIC_ENABLED     (SoundController.class,         "enableMusic"),

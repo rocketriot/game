@@ -13,26 +13,27 @@ import javax.inject.Singleton;
 @Singleton
 public class SoundController extends Controller {
 
-  /**
-   * Sound variables that contain the music used in the game
-   */
+  /** Sound variables that contain the music used in the game */
   private Sound mainMenuMusic;
   private Sound boardGameMusic;
   private Sound minigameMusic;
 
-  /**
-   * Sound variables that contain the sound effects used in the game
-   */
+  /** Sound variables that contain the sound effects used in the game */
   private Sound rocketSound;
   private static Sound menuSelectSound;
   private static Sound jumpSound;
   private static Sound laserSound;
 
+  /** Variables controlling volumes and enabling sounds */
   private float musicVolume;
   private boolean musicEnabled;
   private static float soundsVolume;
   private static boolean soundsEnabled;
 
+  /**
+   * Hashmaps that store the sound variables with their names, whether they are playing and the id
+   * if they are playing
+   */
   private HashMap<String, Sound> music = new HashMap<>();
   private HashMap<String, Long> musicIds = new HashMap<>();
   private HashMap<String, Boolean> musicPlaying = new HashMap<>();
