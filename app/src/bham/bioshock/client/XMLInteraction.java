@@ -147,7 +147,7 @@ public class XMLInteraction {
       TransformerFactory transformerFactory = TransformerFactory.newInstance();
       Transformer transformer = transformerFactory.newTransformer();
       DOMSource source = new DOMSource(document);
-      StreamResult result = new StreamResult(new File (filePath));
+      StreamResult result = new StreamResult(new File(filePath));
       transformer.setOutputProperty(OutputKeys.INDENT, "yes");
       transformer.transform(source, result);
       System.out.println("XML file updated successfully");
