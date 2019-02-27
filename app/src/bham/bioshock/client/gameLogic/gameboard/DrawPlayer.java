@@ -52,6 +52,8 @@ public class DrawPlayer extends DrawEntity {
 
     movingSpriteX = nextMove.getCoordinates().getX();
     movingSpriteY = nextMove.getCoordinates().getY();
+
+    rocketTrail.reset();
   }
 
   public boolean drawMove(Player player, int PPS) {
