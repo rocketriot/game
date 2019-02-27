@@ -1,4 +1,4 @@
-package bham.bioshock.client.scenes.gameboard;
+package bham.bioshock.client.gameLogic;
 
 import bham.bioshock.client.Assets;
 import bham.bioshock.common.models.Planet;

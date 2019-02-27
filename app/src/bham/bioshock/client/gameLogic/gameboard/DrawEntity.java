@@ -1,4 +1,4 @@
-package bham.bioshock.client.scenes.gameboard;
+package bham.bioshock.client.gameLogic;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;

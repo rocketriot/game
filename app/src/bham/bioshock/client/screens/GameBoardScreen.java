@@ -3,8 +3,12 @@ package bham.bioshock.client.screens;
 import bham.bioshock.client.Assets;
 import bham.bioshock.client.Route;
 import bham.bioshock.client.Router;
+import bham.bioshock.client.gameLogic.gameboard.DrawAsteroid;
+import bham.bioshock.client.gameLogic.gameboard.DrawFuel;
+import bham.bioshock.client.gameLogic.gameboard.DrawPlanet;
+import bham.bioshock.client.gameLogic.gameboard.DrawPlayer;
+import bham.bioshock.client.gameLogic.gameboard.PathRenderer;
 import bham.bioshock.client.scenes.Hud;
-import bham.bioshock.client.scenes.gameboard.*;
 import bham.bioshock.common.Direction;
 import bham.bioshock.common.consts.Config;
 import bham.bioshock.common.consts.GridPoint;
@@ -119,7 +123,7 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
       player.clearBoardMove();
 
       // Show minigame prompt if next to planet
-      if (gameBoard.isNextToThePlanet(player.getCoordinates())) {
+      if (gameBoard.isNextToThePlanet(player.getCoordinates()) && player.equals(store.getMainPlayer())) {
         showMinigamePrompt();
       }
 
