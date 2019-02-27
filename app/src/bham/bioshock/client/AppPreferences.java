@@ -1,7 +1,9 @@
 package bham.bioshock.client;
 
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 
+@XmlRootElement
 public class AppPreferences {
 
   private boolean music_enabled;
