@@ -93,9 +93,9 @@ public class Bullet extends Entity {
   @Override
   public void handleCollision(Entity e, MinimumTranslationVector v) {
     if (e.isA(Player.class)) {
-      collide(e, 0.2f, v);
+      collide(0.2f, v);
     } else if (e.isA(Rocket.class)) {
-      collide(e, 0.9f, v);
+      collide(0.9f, v);
     }
   }
 }

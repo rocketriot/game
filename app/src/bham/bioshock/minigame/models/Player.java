@@ -3,6 +3,7 @@ package bham.bioshock.minigame.models;
 import bham.bioshock.common.Position;
 import bham.bioshock.minigame.PlayerTexture;
 import bham.bioshock.minigame.worlds.World;
+import bham.bioshock.minigame.worlds.World.PlanetPosition;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
@@ -56,7 +57,7 @@ public class Player extends Entity {
   }
 
   public void jump(float delta) {
-    if (!isFlying()) {
+    if (!isFlying() && speed.getValueFor(angleFromCenter()) < JUMP_FORCE * 3/4 ) {
       speed.apply(angleFromCenter(), JUMP_FORCE);
     }
   }
@@ -151,16 +152,18 @@ public class Player extends Entity {
   @Override
   public void handleCollision(Entity e, MinimumTranslationVector v) {
     if(e.isA(Bullet.class)) {
-      collide(e, .2f, v);
+      collide(.2f, v);
     } else if(e.isA(Player.class) || e.isA(Rocket.class)) {
-      collide(e, 0.8f, v);
+      collide(0.8f, v);
     } else if(e.isA(Gun.class)) {
       e.state = State.REMOVED;
       haveGun = true;
     } else if(e.isA(StaticEntity.class)) {
-      collide(e, 0f, v);
+      super.onGround = true;
       pos.x += v.normal.x;
       pos.y += v.normal.y;
+      
+      collide(0f, v);
     }
   }
 

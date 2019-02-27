@@ -10,7 +10,6 @@ import bham.bioshock.common.consts.Config;
 import bham.bioshock.common.models.store.Map;
 import bham.bioshock.common.models.store.MinigameStore;
 import bham.bioshock.minigame.models.*;
-import bham.bioshock.minigame.Clock.TimeUpdateEvent;
 import bham.bioshock.common.models.store.Store;
 import bham.bioshock.minigame.models.Bullet;
 import bham.bioshock.minigame.models.Entity;
@@ -33,7 +32,6 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
-import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Intersector.MinimumTranslationVector;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -56,11 +54,9 @@ public class Renderer {
   private double camRotation;
   private final int GAME_WORLD_WIDTH = Config.GAME_WORLD_WIDTH;
   private final int GAME_WORLD_HEIGHT = Config.GAME_WORLD_HEIGHT;
-  private Circle mainPlanet;
   private Store store;
   private Router router;
-  private static boolean DEBUG_MODE = true;
-  private Clock clock;
+  private static boolean DEBUG_MODE = false;
   private MinigameStore minigameStore;
   private boolean shooting;
   private boolean firstRender = true;
@@ -151,7 +147,7 @@ public class Renderer {
     if (!firstRender) {
       handleCollisions();
     }
-
+    
     cam.position.lerp(lerpTarget.set(mainPlayer.getX(), mainPlayer.getY(), 0), 3f * delta);
 
     double rotation = -world.getAngleTo(cam.position.x, cam.position.y);
@@ -178,7 +174,7 @@ public class Renderer {
 
     // Draw the ui
     this.batch.setProjectionMatrix(hud.stage.getCamera().combined);
-    hud.getStage().act(Gdx.graphics.getDeltaTime());
+    hud.getStage().act(delta);
     hud.updateHud();
     hud.getStage().draw();
 
@@ -202,6 +198,10 @@ public class Renderer {
   }
 
   public void handleCollisions() {
+    for (Entity e : entities) {
+      e.resetColision();
+    }
+    
     // Check collisions between any two entities
     for (Entity e1 : entities) {
       for (Entity e2 : entities) {

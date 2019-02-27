@@ -11,6 +11,7 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Intersector.MinimumTranslationVector;
+import com.badlogic.gdx.math.Polygon;
 
 public abstract class Entity {
 
@@ -32,6 +33,7 @@ public abstract class Entity {
   protected float collisionWidth = 50;
   protected float collisionHeight = 50;
 
+  protected boolean onGround;
   protected State state = State.CREATED;
   
   public Entity(World w, float x, float y, boolean isStatic) {
@@ -40,6 +42,7 @@ public abstract class Entity {
     speed = new SpeedVector();
     fromGround = 0;
     world = w;
+    onGround = false;
   }
   
   public Entity(World w, float x, float y) {
@@ -71,7 +74,7 @@ public abstract class Entity {
   }
 
   public boolean isFlying() {
-    return distanceFromGround() > 10;
+    return distanceFromGround() > 10 && !onGround;
   }
 
   public boolean isA(Class<? extends Entity> c) {
@@ -135,11 +138,10 @@ public abstract class Entity {
 
     pos.y += speed.dY() * delta;
     pos.x += speed.dX() * delta;
-
+    
     if (isFlying()) {
       speed.apply(angle, world.getGravity() * delta);
-    }
-    if (!isFlying()) {
+    } else {
       speed.friction(GROUND_FRICTION);
       speed.stop(angle);
     }
@@ -147,20 +149,22 @@ public abstract class Entity {
     collisionBoundary.update(pos, getRotation());
   }
 
-  public MinimumTranslationVector checkCollision(Entity e) {
+  public MinimumTranslationVector checkCollision(Polygon p) {
     MinimumTranslationVector v = new MinimumTranslationVector();
-    if (collisionBoundary.collideWith(e.collisionBoundary, v)) {
+    if (collisionBoundary.collideWith(p, v)) {
       return v;
     }
     return null;
+  }
+  
+  public MinimumTranslationVector checkCollision(Entity e) {
+    return checkCollision(e.collisionBoundary);
   }
 
   /*
    * Default behaviour for the collision. Can be overwritten by the subclass
    */
-  public void handleCollision(Entity e, MinimumTranslationVector v) {
-
-  }
+  public void handleCollision(Entity e, MinimumTranslationVector v) {}
 
   public CollisionBoundary collisionBoundary() {
     return collisionBoundary;
@@ -174,18 +178,27 @@ public abstract class Entity {
   public boolean is(State s) {
     return state.equals(s);
   }
+  
+  public void resetColision() {
+    this.onGround = false;
+  }
+  
+  public void handleCollision(MinimumTranslationVector v) {
+    collide(0, v);
+  }
 
-  public void collide(Entity e, float elastic, MinimumTranslationVector v) {
-    if (!loaded)
-      return;
+
+  public void collide(float elastic, MinimumTranslationVector v) {
+    if (!loaded) return;
+    
     Direction colPlace;
     Position pdelta = new Position(getX() + v.normal.x, getY() + v.normal.y);
     PlanetPosition ppdelta = world.convert(pdelta);
     PlanetPosition pp = world.convert(pos);
     double angleRatio = world.angleRatio(pp.fromCenter);
     
-    if( Math.abs(ppdelta.angle - pp.angle)*angleRatio > 
-      Math.abs(ppdelta.fromCenter - pp.fromCenter) ) { 
+    if( Math.abs(ppdelta.angle - pp.angle) > 
+      Math.abs(ppdelta.fromCenter - pp.fromCenter)*angleRatio ) { 
      
       if(ppdelta.angle < pp.angle ) {
         colPlace = Direction.RIGHT;
@@ -200,12 +213,10 @@ public abstract class Entity {
       } else {
         colPlace = Direction.DOWN;
       }
-      
     }
     
     double angleNorm = angleFromCenter();
     double speedVBefore = speed.getValue();
-    System.out.println(colPlace);
     
     switch (colPlace) {
       case RIGHT:
@@ -231,5 +242,6 @@ public abstract class Entity {
   public enum State {
     CREATED, LOADED, REMOVED, REMOVING,
   }
+
 
 }

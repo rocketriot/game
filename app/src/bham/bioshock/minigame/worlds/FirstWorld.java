@@ -18,7 +18,7 @@ public class FirstWorld extends World {
   private Map map = new Map(this);
   
   public FirstWorld() {
-    playerPositions[0] = new Position(-2000, 0);
+    playerPositions[0] = new Position(-2300, 0);
     playerPositions[1] = new Position(0, -2000);
     playerPositions[2] = new Position(2000, 0);
     playerPositions[3] = new Position(0, 2000);

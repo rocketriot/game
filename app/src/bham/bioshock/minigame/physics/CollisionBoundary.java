@@ -38,8 +38,8 @@ public class CollisionBoundary extends Polygon {
     this.setPosition(pos.x - width/2, pos.y);
   }
 
-  public boolean collideWith(CollisionBoundary cb, MinimumTranslationVector v) {
-    return Intersector.overlapConvexPolygons(this, cb, v);
+  public boolean collideWith(Polygon p, MinimumTranslationVector v) {
+    return Intersector.overlapConvexPolygons(this, p, v);
   }
   
   public PlanetPosition planetPosition(World world) {
