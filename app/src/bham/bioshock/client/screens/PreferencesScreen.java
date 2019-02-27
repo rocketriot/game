@@ -31,11 +31,22 @@ public class PreferencesScreen extends ScreenMaster {
 
   private Table table;
 
+  // variables to keep track of current preferences
+  private boolean musicEnabled;
+  private float musicVolume;
+  private boolean soundsEnabled;
+  private float soundsVolume;
+
   public PreferencesScreen(Router router, AppPreferences preferences) {
     super(router);
     this.preferences = preferences;
     stage = new Stage(new ScreenViewport());
     batch = stage.getBatch();
+
+    musicEnabled = preferences.getMusicEnabled();
+    musicVolume = preferences.getMusicVolume();
+    soundsEnabled = preferences.getSoundsEnabled();
+    soundsVolume = preferences.getSoundsVolume();
   }
 
   @Override
@@ -45,6 +56,9 @@ public class PreferencesScreen extends ScreenMaster {
 
     drawButtons();
     Gdx.input.setInputProcessor(stage);
+    if (musicEnabled) {
+      router.call(Route.START_MUSIC, "mainMenu");
+    }
   }
 
   @Override
@@ -56,55 +70,54 @@ public class PreferencesScreen extends ScreenMaster {
 
     // sound on or off
     final CheckBox musicCheckBox = new CheckBox(null, skin);
-    musicCheckBox.setChecked(preferences.getMusicEnabled());
+    musicCheckBox.setChecked(musicEnabled);
     musicCheckBox.addListener(
         new EventListener() {
           @Override
           public boolean handle(Event event) {
-            router.call(Route.MUSIC_ENABLED, musicCheckBox.isChecked());
-            preferences.setMusicEnabled(musicCheckBox.isChecked());
-
-            if (musicCheckBox.isChecked()) {
-              router.call(Route.START_MUSIC, "mainMenu");
-            }
-
+            musicEnabled = musicCheckBox.isChecked();
+            router.call(Route.MUSIC_ENABLED, musicEnabled);
+            preferences.setMusicEnabled(musicEnabled);
             return false;
           }
         });
 
     final CheckBox soundCheckBox = new CheckBox(null, skin);
-    soundCheckBox.setChecked(preferences.getSoundsEnabled());
+    soundCheckBox.setChecked(soundsEnabled);
     soundCheckBox.addListener(
         new EventListener() {
           @Override
           public boolean handle(Event event) {
-            router.call(Route.SOUNDS_ENABLED, soundCheckBox.isChecked());
-            preferences.setSoundsEnabled(soundCheckBox.isChecked());
+            soundsEnabled = soundCheckBox.isChecked();
+            router.call(Route.SOUNDS_ENABLED, soundsEnabled);
+            preferences.setSoundsEnabled(soundsEnabled);
             return false;
           }
         });
 
     // volume control
     final Slider musicVolumeSlider = new Slider(0f, 1f, 0.1f, false, skin);
-    musicVolumeSlider.setValue(preferences.getMusicVolume());
+    musicVolumeSlider.setValue(musicVolume);
     musicVolumeSlider.addListener(
         new EventListener() {
           @Override
           public boolean handle(Event event) {
-            router.call(Route.MUSIC_VOLUME, musicVolumeSlider.getValue());
-            preferences.setMusicVolume(musicVolumeSlider.getValue());
+            musicVolume = musicVolumeSlider.getValue();
+            router.call(Route.MUSIC_VOLUME, musicVolume);
+            preferences.setMusicVolume(musicVolume);
             return false;
           }
         });
 
     final Slider soundVolumeSlider = new Slider(0f, 1f, 0.1f, false, skin);
-    soundVolumeSlider.setValue(preferences.getSoundsVolume());
+    soundVolumeSlider.setValue(soundsVolume);
     soundVolumeSlider.addListener(
         new EventListener() {
           @Override
           public boolean handle(Event event) {
-            router.call(Route.SOUNDS_VOLUME, soundVolumeSlider.getValue());
-            preferences.setSoundsVolume(soundVolumeSlider.getValue());
+            soundsVolume = soundVolumeSlider.getValue();
+            router.call(Route.SOUNDS_VOLUME, soundsVolume);
+            preferences.setSoundsVolume(soundsVolume);
             return false;
           }
         });
@@ -155,7 +168,7 @@ public class PreferencesScreen extends ScreenMaster {
       @Override
       public void changed(ChangeEvent event, Actor actor) {
         SoundController.playSound("menuSelect");
-        //xmlInteraction.preferencesToXML(musicCheckBox.isChecked(), );
+        xmlInteraction.preferencesToXML(musicEnabled, musicVolume, soundsEnabled, soundsVolume);
         router.back();
       }
     });
