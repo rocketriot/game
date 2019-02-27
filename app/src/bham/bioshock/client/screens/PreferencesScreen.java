@@ -57,7 +57,7 @@ public class PreferencesScreen extends ScreenMaster {
           @Override
           public boolean handle(Event event) {
             router.call(Route.MUSIC_ENABLED, musicCheckBox.isChecked());
-            preferences.setPrefMusicEnabled(musicCheckBox.isChecked());
+            preferences.setMusicEnabled(musicCheckBox.isChecked());
 
             if (musicCheckBox.isChecked()){
               router.call(Route.START_MUSIC, "mainMenu");
@@ -68,13 +68,13 @@ public class PreferencesScreen extends ScreenMaster {
         });
 
     final CheckBox soundCheckBox = new CheckBox(null, skin);
-    soundCheckBox.setChecked(preferences.getSoundEnabled());
+    soundCheckBox.setChecked(preferences.getSoundsEnabled());
     soundCheckBox.addListener(
         new EventListener() {
           @Override
           public boolean handle(Event event) {
             router.call(Route.SOUNDS_ENABLED, soundCheckBox.isChecked());
-            preferences.setPrefSoundEnabled(soundCheckBox.isChecked());
+            preferences.setSoundsEnabled(soundCheckBox.isChecked());
             return false;
           }
         });
@@ -87,19 +87,19 @@ public class PreferencesScreen extends ScreenMaster {
           @Override
           public boolean handle(Event event) {
             router.call(Route.MUSIC_VOLUME, musicVolumeSlider.getValue());
-            preferences.setPrefMusicVolume(musicVolumeSlider.getValue());
+            preferences.setMusicVolume(musicVolumeSlider.getValue());
             return false;
           }
         });
 
     final Slider soundVolumeSlider = new Slider(0f, 1f, 0.1f, false, skin);
-    soundVolumeSlider.setValue(preferences.getSoundVolume());
+    soundVolumeSlider.setValue(preferences.getSoundsVolume());
     soundVolumeSlider.addListener(
         new EventListener() {
           @Override
           public boolean handle(Event event) {
             router.call(Route.SOUNDS_VOLUME, soundVolumeSlider.getValue());
-            preferences.setPrefSoundVolume(soundVolumeSlider.getValue());
+            preferences.setSoundsVolume(soundVolumeSlider.getValue());
             return false;
           }
         });
