@@ -59,6 +59,7 @@ public class XMLInteraction {
           String soundsVolumeString = element.getElementsByTagName("sounds_volume").item(0)
               .getTextContent();
 
+          /** BUG IS HERE*/
           // turn the strings into the types we want
           if (musicEnabledString.equals("1")) {
             musicEnabled = true;
