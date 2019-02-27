@@ -59,7 +59,7 @@ public class PreferencesScreen extends ScreenMaster {
             router.call(Route.MUSIC_ENABLED, musicCheckBox.isChecked());
             preferences.setMusicEnabled(musicCheckBox.isChecked());
 
-            if (musicCheckBox.isChecked()){
+            if (musicCheckBox.isChecked()) {
               router.call(Route.START_MUSIC, "mainMenu");
             }
 
@@ -133,11 +133,14 @@ public class PreferencesScreen extends ScreenMaster {
   }
 
   @Override
-  public void pause() {}
+  public void pause() {
+  }
 
   @Override
-  public void resume() {}
+  public void resume() {
+  }
 
   @Override
-  public void hide() {}
+  public void hide() {
+  }
 }
