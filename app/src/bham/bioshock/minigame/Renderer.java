@@ -10,7 +10,6 @@ import bham.bioshock.common.consts.Config;
 import bham.bioshock.common.models.store.Map;
 import bham.bioshock.common.models.store.MinigameStore;
 import bham.bioshock.minigame.models.*;
-import bham.bioshock.minigame.Clock.TimeUpdateEvent;
 import bham.bioshock.common.models.store.Store;
 import bham.bioshock.minigame.models.Bullet;
 import bham.bioshock.minigame.models.Entity;
@@ -33,7 +32,7 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
-import com.badlogic.gdx.math.Circle;
+import com.badlogic.gdx.math.Intersector.MinimumTranslationVector;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
@@ -43,7 +42,6 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 public class Renderer {
   private Player mainPlayer;
   private ArrayList<Entity> entities;
-  private ArrayList<StaticEntity> staticEntities;
 
   ShapeRenderer shapeRenderer;
   private OrthographicCamera cam;
@@ -56,11 +54,9 @@ public class Renderer {
   private double camRotation;
   private final int GAME_WORLD_WIDTH = Config.GAME_WORLD_WIDTH;
   private final int GAME_WORLD_HEIGHT = Config.GAME_WORLD_HEIGHT;
-  private Circle mainPlanet;
   private Store store;
   private Router router;
-  private static boolean DEBUG_MODE = true;
-  private Clock clock;
+  private static boolean DEBUG_MODE = false;
   private MinigameStore minigameStore;
   private boolean shooting;
   private boolean firstRender = true;
@@ -77,10 +73,9 @@ public class Renderer {
 
     shapeRenderer = new ShapeRenderer();
     entities = new ArrayList<Entity>();
-    staticEntities = new ArrayList<StaticEntity>();
 
     world = minigameStore.getWorld();
-    staticEntities.addAll(world.getMap().getPlatforms());
+    entities.addAll(world.getMap().getPlatforms());
     entities.addAll(minigameStore.getPlayers());
     entities.addAll(minigameStore.getRockets());
     entities.addAll(minigameStore.getGuns());
@@ -124,11 +119,7 @@ public class Renderer {
     for (Entity e : entities) {
       e.load();
     }
-
-    for (StaticEntity e : staticEntities) {
-      e.load();
-    }
-
+    
     Gdx.input.setInputProcessor(new InputAdapter() {
       @Override
       public boolean keyDown(int keyCode) {
@@ -156,7 +147,7 @@ public class Renderer {
     if (!firstRender) {
       handleCollisions();
     }
-
+    
     cam.position.lerp(lerpTarget.set(mainPlayer.getX(), mainPlayer.getY(), 0), 3f * delta);
 
     double rotation = -world.getAngleTo(cam.position.x, cam.position.y);
@@ -183,7 +174,7 @@ public class Renderer {
 
     // Draw the ui
     this.batch.setProjectionMatrix(hud.stage.getCamera().combined);
-    hud.getStage().act(Gdx.graphics.getDeltaTime());
+    hud.getStage().act(delta);
     hud.updateHud();
     hud.getStage().draw();
 
@@ -204,24 +195,20 @@ public class Renderer {
     for (Entity e : entities) {
       e.drawDebug(shapeRenderer);
     }
-    for (StaticEntity e : staticEntities) {
-      e.collisionBoundary().draw(shapeRenderer);
-    }
   }
 
   public void handleCollisions() {
+    for (Entity e : entities) {
+      e.resetColision();
+    }
+    
     // Check collisions between any two entities
-    for (Entity e1 : entities)
+    for (Entity e1 : entities) {
       for (Entity e2 : entities) {
-        if (!e1.equals(e2) && e1.checkCollision(e2)) {
-          e1.handleCollision(e2);
+        MinimumTranslationVector collision = e1.checkCollision(e2);
+        if (!e1.equals(e2) && collision != null) {
+          e1.handleCollision(e2, collision);
         }
-      }
-
-    for (StaticEntity e1 : staticEntities) {
-      for (Entity e2 : entities) {
-        if (e1.checkCollision(e2))
-          e2.handleStaticCollision(e1);
       }
     }
   }
@@ -230,7 +217,7 @@ public class Renderer {
   public void createBullet() {
     Player main = minigameStore.getMainPlayer();
     PlanetPosition pp = world.convert(main.getPosition());
-    pp.fromCenter += main.getSize() / 2;
+    pp.fromCenter += main.getHeight() / 2;
     Position bulletPos = world.convert(pp);
 
     Bullet b = new Bullet(minigameStore.getWorld(), bulletPos.x, bulletPos.y);
@@ -246,8 +233,6 @@ public class Renderer {
     entities.add(b);
   }
 
-  // change
-
   public void drawEntities() {
     entities.removeIf(e -> e.isRemoved());
     for (Entity e : entities) {
@@ -257,14 +242,6 @@ public class Renderer {
       sprite.setRotation((float) e.getRotation());
       sprite.draw(batch);
       e.update(Gdx.graphics.getDeltaTime());
-    }
-    for (StaticEntity e : staticEntities) {
-      Sprite sprite = e.getSprite();
-      sprite.setRegion(e.getTexture());
-      sprite.setPosition(e.getX() - (e.collisionWidth / 2), e.getY());
-      sprite.setRotation((float) e.getRotation());
-
-      sprite.draw(batch);
     }
   }
 
@@ -291,7 +268,6 @@ public class Renderer {
       // Send a move to the server
       router.call(Route.MINIGAME_MOVE);
     }
-
   }
 
   public void resize(int width, int height) {

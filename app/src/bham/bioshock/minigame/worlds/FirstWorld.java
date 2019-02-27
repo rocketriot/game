@@ -3,7 +3,6 @@ package bham.bioshock.minigame.worlds;
 import java.util.ArrayList;
 import bham.bioshock.common.Position;
 import bham.bioshock.common.models.store.Map;
-import bham.bioshock.minigame.models.Platform;
 import bham.bioshock.minigame.models.Gun;
 import bham.bioshock.minigame.models.Rocket;
 
@@ -19,7 +18,7 @@ public class FirstWorld extends World {
   private Map map = new Map(this);
   
   public FirstWorld() {
-    playerPositions[0] = new Position(-2000, 0);
+    playerPositions[0] = new Position(-2300, 0);
     playerPositions[1] = new Position(0, -2000);
     playerPositions[2] = new Position(2000, 0);
     playerPositions[3] = new Position(0, 2000);
