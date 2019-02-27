@@ -43,6 +43,7 @@ public class PreferencesScreen extends ScreenMaster {
     stage = new Stage(new ScreenViewport());
     batch = stage.getBatch();
 
+    musicEnabled = preferences.getMusicEnabled();
     musicVolume = preferences.getMusicVolume();
     soundsEnabled = preferences.getSoundsEnabled();
     soundsVolume = preferences.getSoundsVolume();
