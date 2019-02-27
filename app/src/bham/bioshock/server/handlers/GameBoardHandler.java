@@ -113,7 +113,7 @@ public class GameBoardHandler {
         GridPoint.Type type = gridPoint.getType();
 
         // Skip points that the CPU can't travel to i.e. Players and Asteroids
-        if (type == GridPoint.Type.PLAYER || type == GridPoint.Type.ASTEROID) {
+        if (type == GridPoint.Type.PLAYER || type == GridPoint.Type.ASTEROID || type == Type.PLANET) {
           continue;
         }
 
