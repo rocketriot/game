@@ -3,6 +3,11 @@ package bham.bioshock.client;
 import java.io.File;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -73,6 +78,7 @@ public class XMLInteraction {
     } catch (Exception e) {
       e.printStackTrace();
     }
+    System.out.println("XML file read successfully");
     return new AppPreferences(musicEnabled, musicVolume, soundsEnabled, soundsVolume);
   }
 
@@ -86,7 +92,8 @@ public class XMLInteraction {
    */
   public void preferencesToXML(boolean musicEnabled, float musicVolume, boolean soundsEnabled,
       float soundsVolume) {
-    File xmlFile = new File("app/assets/Preferences/Preferences.XML");
+    String filePath = "app/assets/Preferences/Preferences.XML";
+    File xmlFile = new File(filePath);
 
     String musicEnabledString;
     String musicVolumeString;
@@ -113,11 +120,11 @@ public class XMLInteraction {
     try {
       // get the XML file as a document in memory
       documentBuilder = dbFactory.newDocumentBuilder();
-      Document document = documentBuilder.newDocument();
+      Document document = documentBuilder.parse(xmlFile);
       document.getDocumentElement().normalize();
 
+      // write the changes to the document
       NodeList nodeList = document.getElementsByTagName("sound");
-
       for (int i = 0; i < nodeList.getLength(); i++) {
         Element element = (Element) nodeList.item(i);
 
@@ -134,6 +141,16 @@ public class XMLInteraction {
         Node sounds_volume = element.getElementsByTagName("sounds_volume").item(0).getFirstChild();
         sounds_volume.setNodeValue(soundsVolumeString);
       }
+
+      // write the updated document to file or console
+      document.getDocumentElement().normalize();
+      TransformerFactory transformerFactory = TransformerFactory.newInstance();
+      Transformer transformer = transformerFactory.newTransformer();
+      DOMSource source = new DOMSource(document);
+      StreamResult result = new StreamResult(new File (filePath));
+      transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+      transformer.transform(source, result);
+      System.out.println("XML file updated successfully");
 
     } catch (Exception e) {
       e.printStackTrace();
