@@ -4,10 +4,10 @@
 
 <preferences>
   <sound>
-    <music_on>1</music_on>
+    <music_enabled>1</music_enabled>
     <music_volume>100</music_volume>
 
-    <effects_on>1</effects_on>
-    <effects_volume>100</effects_volume>
+    <sounds_enabled>1</sounds_enabled>
+    <sounds_volume>100</sounds_volume>
   </sound>
 </preferences>
