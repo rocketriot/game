@@ -2,7 +2,6 @@ package bham.bioshock.client.controllers;
 
 import bham.bioshock.client.AppPreferences;
 import bham.bioshock.client.screens.PreferencesScreen;
-import bham.bioshock.server.Server;
 import com.google.inject.Inject;
 import bham.bioshock.client.BoardGame;
 import bham.bioshock.client.Router;

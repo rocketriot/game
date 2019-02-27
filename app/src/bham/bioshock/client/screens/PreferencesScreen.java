@@ -3,7 +3,10 @@ package bham.bioshock.client.screens;
 import bham.bioshock.client.AppPreferences;
 import bham.bioshock.client.Route;
 import bham.bioshock.client.Router;
+import bham.bioshock.client.XMLInteraction;
+import bham.bioshock.client.controllers.SoundController;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Event;
 import com.badlogic.gdx.scenes.scene2d.EventListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -11,11 +14,13 @@ import com.badlogic.gdx.scenes.scene2d.ui.CheckBox;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Slider;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
 public class PreferencesScreen extends ScreenMaster {
 
   private AppPreferences preferences;
+  private XMLInteraction xmlInteraction = new XMLInteraction();
 
   // labels
   private Label soundVolLabel;
@@ -142,5 +147,17 @@ public class PreferencesScreen extends ScreenMaster {
 
   @Override
   public void hide() {
+  }
+
+  @Override
+  protected void setPrevious(){
+    backButton.addListener(new ChangeListener() {
+      @Override
+      public void changed(ChangeEvent event, Actor actor) {
+        SoundController.playSound("menuSelect");
+        //xmlInteraction.preferencesToXML(musicCheckBox.isChecked(), );
+        router.back();
+      }
+    });
   }
 }
