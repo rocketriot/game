@@ -16,7 +16,7 @@ public class Player extends Entity {
   private static Animation<TextureRegion> walkGunAnimation;
   private static TextureRegion frontTexture;
   private static TextureRegion frontGunTexture;
-  private final double JUMP_FORCE = 1000;
+  private final double JUMP_FORCE = 700;
   float animationTime;
   private PlayerTexture dir;
   private float v = 700f;
