@@ -66,14 +66,14 @@ public class XMLInteraction {
           } else {
             musicEnabled = false;
           }
-          musicVolume = (float) (Integer.parseInt(musicVolumeString) / 100);
+          musicVolume = Float.parseFloat(musicVolumeString) / 100;
 
           if (soundsEnabledString.equals("1")) {
             soundsEnabled = true;
           } else {
             soundsEnabled = false;
           }
-          soundsVolume = (float) (Integer.parseInt(soundsVolumeString) / 100);
+          soundsVolume = Float.parseFloat(soundsVolumeString) / 100;
         }
       }
     } catch (Exception e) {
