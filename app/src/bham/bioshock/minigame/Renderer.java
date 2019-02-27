@@ -147,6 +147,7 @@ public class Renderer {
     clock.update(delta);
     batch.setProjectionMatrix(cam.combined);
     shapeRenderer.setProjectionMatrix(cam.combined);
+
     if (!firstRender) {
       handleCollisions();
     }

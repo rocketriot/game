@@ -1,6 +1,4 @@
 package bham.bioshock.minigame.models;
-
-import bham.bioshock.client.controllers.SoundController;
 import bham.bioshock.common.Position;
 import bham.bioshock.minigame.PlayerTexture;
 import bham.bioshock.minigame.worlds.World;
@@ -24,6 +22,8 @@ public class Player extends Entity {
   private PlayerTexture dir;
   private float v = 700f;
   private boolean haveGun = false;
+  private float health = 0;
+  private float kills = 0;
 
   public Player(World w, float x, float y) {
     super(w, x, y);
@@ -169,4 +169,20 @@ public class Player extends Entity {
     }
   }
 
+
+  public void setHealth(float newHealth){
+    this.health = newHealth;
+  }
+
+  public float getHealth(){
+    return this.health;
+  }
+
+  public void addKills(float addedKills){
+    this.kills += addedKills;
+  }
+
+  public float getKills(){
+    return this.kills;
+  }
 }
