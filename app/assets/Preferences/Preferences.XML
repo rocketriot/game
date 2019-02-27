@@ -2,10 +2,12 @@
 
 <!-- An XML Document to store user preferences. These can be loaded into the game so that they can be stored after the game ends. -->
 
-<apppreferences>
-  <music_enabled>1</music_enabled>
-  <music_volume>100</music_volume>
+<preferences>
+  <sound>
+    <music_enabled>1</music_enabled>
+    <music_volume>100</music_volume>
 
-  <sounds_enabled>1</sounds_enabled>
-  <sounds_volume>100</sounds_volume>
-</apppreferences>
+    <sounds_enabled>1</sounds_enabled>
+    <sounds_volume>100</sounds_volume>
+  </sound>
+</preferences>

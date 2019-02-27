@@ -1,7 +1,9 @@
 package bham.bioshock.client.controllers;
 
+import bham.bioshock.client.AppPreferences;
 import bham.bioshock.client.BoardGame;
 import bham.bioshock.client.Router;
+import bham.bioshock.client.XMLInteraction;
 import bham.bioshock.common.models.store.Store;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
@@ -33,6 +35,10 @@ public class SoundController extends Controller {
   private static float soundsVolume;
   private static boolean soundsEnabled;
 
+  /**Variables to do with interacting with the preferences file */
+  private AppPreferences preferences;
+  private XMLInteraction xmlInteraction = new XMLInteraction();
+
   /**
    * Hashmaps that store the sound variables with their names, whether they are playing and the id
    * if they are playing
@@ -58,10 +64,12 @@ public class SoundController extends Controller {
     jumpSound = Gdx.audio.newSound(Gdx.files.internal("app/assets/music/JumpSound.wav"));
     laserSound = Gdx.audio.newSound(Gdx.files.internal("app/assets/music/LaserSound.mp3"));
 
-    musicVolume = 0.4f;
-    musicEnabled = true;
-    soundsEnabled = true;
-    soundsVolume = 0.4f;
+    preferences = xmlInteraction.XMLtoPreferences();
+
+    musicEnabled = preferences.getMusicEnabled();
+    musicVolume = preferences.getMusicVolume();
+    soundsEnabled = preferences.getSoundsEnabled();
+    soundsVolume = preferences.getSoundsVolume();
 
     addMusic();
     addSounds();

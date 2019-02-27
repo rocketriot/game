@@ -1,9 +1,5 @@
 package bham.bioshock.client;
 
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-
-@XmlRootElement
 public class AppPreferences {
 
   private boolean music_enabled;
@@ -11,11 +7,12 @@ public class AppPreferences {
   private float sounds_volume;
   private boolean sounds_enabled;
 
-  public AppPreferences(boolean music_enabled, float music_volume, boolean sounds_enabled, float sounds_volume){
+  public AppPreferences(boolean music_enabled, float music_volume, boolean sounds_enabled,
+      float sounds_volume) {
     this.music_enabled = music_enabled;
     this.music_volume = music_volume;
     this.sounds_enabled = sounds_enabled;
-    this.music_volume = music_volume;
+    this.sounds_volume = sounds_volume;
   }
 
   public boolean getSoundsEnabled() {
@@ -34,22 +31,18 @@ public class AppPreferences {
     return sounds_volume;
   }
 
-  @XmlElement(name = "music_enabled")
   public void setMusicEnabled(boolean enabled) {
     music_enabled = enabled;
   }
 
-  @XmlElement(name = "music_volume")
   public void setMusicVolume(float volume) {
     music_volume = volume;
   }
 
-  @XmlElement(name = "sounds_enabled")
   public void setSoundsEnabled(boolean enabled) {
     sounds_enabled = enabled;
   }
 
-  @XmlElement(name = "sounds_volume")
   public void setSoundsVolume(float volume) {
     sounds_volume = volume;
   }
