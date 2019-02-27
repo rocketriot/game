@@ -39,7 +39,7 @@ public class Router {
       for(Method m : c.getDeclaredMethods())
       {
         String name = m.getName();
-        if(name.startsWith(method)) {
+        if(name.equals(method)) {
           if(arg != null) {
             Object[] args = new Object[1];
             args[0] = arg;

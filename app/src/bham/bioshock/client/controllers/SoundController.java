@@ -6,73 +6,234 @@ import bham.bioshock.common.models.store.Store;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
 
+import java.util.HashMap;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
 @Singleton
 public class SoundController extends Controller {
 
-    private Sound mainMenuMusic;
-    private Sound menuSelect;
-    private float musicVolume;
-    private boolean musicEnabled;
-    private long menuMusicID;
-    private boolean menuPlaying;
-    private float soundsVolume;
-    private boolean soundsEnabled;
+  /** Sound variables that contain the music used in the game */
+  private Sound mainMenuMusic;
+  private Sound boardGameMusic;
+  private Sound minigameMusic;
 
-    @Inject
-    public SoundController(Store store, Router router, BoardGame game) {
-        super(store, router, game);
-        mainMenuMusic = Gdx.audio.newSound(Gdx.files.internal("app/assets/music/MainMenuMusic.mp3"));
-        menuSelect = Gdx.audio.newSound(Gdx.files.internal("app/assets/music/MenuSelect.wav"));
+  /** Sound variables that contain the sound effects used in the game */
+  private Sound rocketSound;
+  private static Sound menuSelectSound;
+  private static Sound jumpSound;
+  private static Sound laserSound;
 
-        menuPlaying = false;
-        musicVolume = 0.4f;
-        musicEnabled = true;
-        soundsEnabled = true;
-        soundsVolume = 0.4f;
+  private float musicVolume;
+  private boolean musicEnabled;
+  private static float soundsVolume;
+  private static boolean soundsEnabled;
+
+  private HashMap<String, Sound> music = new HashMap<>();
+  private HashMap<String, Long> musicIds = new HashMap<>();
+  private HashMap<String, Boolean> musicPlaying = new HashMap<>();
+  private static HashMap<String, Sound> sounds = new HashMap<>();
+  private HashMap<String, Boolean> soundsPlaying = new HashMap<>();
+  private HashMap<String, Long> soundsIds = new HashMap<>();
+
+  @Inject
+  public SoundController(Store store, Router router, BoardGame game) {
+    super(store, router, game);
+
+    mainMenuMusic = Gdx.audio.newSound(Gdx.files.internal("app/assets/music/MainMenuMusic.mp3"));
+    boardGameMusic = Gdx.audio.newSound(Gdx.files.internal("app/assets/music/GameBoardMusic.mp3"));
+    minigameMusic = Gdx.audio.newSound(Gdx.files.internal("app/assets/music/MinigameMusic.mp3"));
+
+    menuSelectSound = Gdx.audio.newSound(Gdx.files.internal("app/assets/music/MenuSelect.wav"));
+    rocketSound = Gdx.audio.newSound(Gdx.files.internal("app/assets/music/RocketSound.wav"));
+    jumpSound = Gdx.audio.newSound(Gdx.files.internal("app/assets/music/JumpSound.wav"));
+    laserSound = Gdx.audio.newSound(Gdx.files.internal("app/assets/music/LaserSound.mp3"));
+
+    musicVolume = 0.4f;
+    musicEnabled = true;
+    soundsEnabled = true;
+    soundsVolume = 0.4f;
+
+    addMusic();
+    addSounds();
+  }
+
+  /**
+   * Method to start a specified music
+   *
+   * @param music The name of the music that you want to start
+   */
+  public void startMusic(String music) {
+    if (!musicPlaying.get(music) && musicEnabled) {
+      long id = this.music.get(music).loop(musicVolume);
+      musicIds.put(music, id);
+
+      if (musicPlaying.keySet().contains(music)) {
+        musicPlaying.replace(music, true);
+      } else {
+        musicPlaying.put(music, true);
+      }
     }
+  }
 
-    public void startMenuMusic() {
-        if (!menuPlaying && musicEnabled) {
-            menuMusicID = mainMenuMusic.loop();
-            menuPlaying = true;
+  /**
+   * Method to stop a specified music
+   *
+   * @param music The name of the music that you want to stop
+   */
+  public void stopMusic(String music) {
+    if (musicPlaying.get(music)) {
+      this.music.get(music).stop();
+      musicPlaying.replace(music, false);
+      musicIds.remove(music);
+    }
+  }
+
+  /**
+   * Method to adjust the overall music volume of the game
+   *
+   * @param volume The volume you want to set the music to
+   */
+  public void setMusicVolume(float volume) {
+    if (volume != musicVolume) {
+      musicVolume = volume;
+
+      for (String key : musicPlaying.keySet()) {
+        if (musicPlaying.get(key)) {
+          adjustCurrentVolume(key, musicIds.get(key), musicVolume);
         }
+      }
     }
+  }
 
-    public void setMusicVolume(float volume) {
-        musicVolume = volume;
-        mainMenuMusic.setVolume(menuMusicID, musicVolume);
+  /**
+   * Method to adjust the volume of a music track while it is playing
+   *
+   * @param music The name of the music you want to adjust
+   * @param id The ID of the music that you want to adjust
+   * @param volume The volume you want to set the music to
+   */
+  public void adjustCurrentVolume(String music, long id, float volume) {
+    this.music.get(music).setVolume(id, volume);
+  }
+
+  /**
+   * Method to enable music to be played in the game
+   *
+   * @param enable Whether the music is enabled or not
+   */
+  public void enableMusic(Boolean enable) {
+    musicEnabled = enable;
+
+    if (!musicEnabled) {
+      for (String key : music.keySet()) {
+        stopMusic(key);
+      }
     }
+  }
 
-    public void enableMusic(Boolean enable) {
-        musicEnabled = enable;
+  /**
+   * Method to fade out music so that another can start in a better sounding way
+   *
+   * @param music The name of the music that you want to fade out
+   */
+  public void fadeOut(String music) throws InterruptedException {
+    if (musicPlaying.get(music)) {
+      int fadeTime = 30;
+      float currentVolume = musicVolume;
+      float step = currentVolume / fadeTime;
 
-        if (!enable) {
-            menuPlaying = false;
-            stopMainMusic();
-        } else {
-            startMenuMusic();
-        }
+      for (int i = 0; i < fadeTime; i++) {
+        currentVolume -= step;
+        adjustCurrentVolume(music, musicIds.get(music), currentVolume);
+        Thread.sleep(100);
+      }
+      stopMusic(music);
     }
+  }
 
-    public void stopMainMusic() {
-        mainMenuMusic.stop();
+  /**
+   * Method to play a sound that does not need to loop
+   *
+   * @param sound The name of the sound
+   */
+  public static void playSound(String sound){
+    if (soundsEnabled){
+      sounds.get(sound).play(soundsVolume);
     }
+  }
 
-    public void selectSound() {
-        if (soundsEnabled) {
-            menuSelect.play(soundsVolume);
-        }
+  /**
+   * Method to loop a sound effect
+   *
+   * @param sound The sound to loop
+   */
+  public void loopSound(String sound) {
+    if (soundsEnabled) {
+      long id = sounds.get(sound).loop(soundsVolume);
+      soundsIds.put(sound, id);
+
+      if (soundsPlaying.keySet().contains(music)) {
+        soundsPlaying.replace(sound, true);
+      } else {
+        soundsPlaying.put(sound, true);
+      }
     }
+  }
 
-    public void setSoundsVolume(float volume) {
-        soundsVolume = volume;
+  /**
+   * Method to stop a looping sound
+   *
+   * @param sound The looping sound to stop
+   */
+  public void stopSound(String sound) {
+    if (soundsPlaying.get(sound)) {
+      sounds.get(sound).stop();
+      soundsPlaying.replace(sound, false);
+      soundsPlaying.remove(sound);
     }
+  }
 
-    public void enableSounds(Boolean enable) {
-        soundsEnabled = enable;
-    }
+  /**
+   * Method to set the overall volume for sounds in a game
+   *
+   * @param volume The volume to set the sounds to
+   */
+  public void setSoundsVolume(float volume) {
+    soundsVolume = volume;
+  }
 
+  /**
+   * Method to enable sounds to be played in the game
+   *
+   * @param enable Whether sounds should be enabled or not
+   */
+  public void enableSounds(Boolean enable) {
+    soundsEnabled = enable;
+  }
+
+  /**
+   * Method to add music tracks to the hashmap of music, as well as add them to the hashmap that
+   * holds whether the music is playing or not
+   */
+  private void addMusic() {
+    music.put("mainMenu", mainMenuMusic);
+    musicPlaying.put("mainMenu", false);
+    music.put("boardGame", boardGameMusic);
+    musicPlaying.put("boardGame", false);
+    music.put("minigame", minigameMusic);
+    musicPlaying.put("minigame", false);
+  }
+
+  /**
+   * Method to add sounds to the hashmap of sounds and whether the sounds are playing or not if the
+   * sound effect is one to be looped
+   */
+  private void addSounds() {
+    sounds.put("menuSelect", menuSelectSound);
+    sounds.put("rocket", rocketSound);
+    soundsPlaying.put("rocket", false);
+    sounds.put("jumpSound", jumpSound);
+    sounds.put("laserSound", laserSound);
+  }
 }

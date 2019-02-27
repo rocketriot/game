@@ -1,6 +1,7 @@
 package bham.bioshock.minigame;
 
 import bham.bioshock.client.scenes.MinigameHud;
+
 import bham.bioshock.client.screens.StatsContainer;
 import java.util.ArrayList;
 import bham.bioshock.client.Route;
@@ -21,7 +22,6 @@ import bham.bioshock.minigame.worlds.World;
 import bham.bioshock.minigame.worlds.World.PlanetPosition;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.graphics.Color;
@@ -63,6 +63,7 @@ public class Renderer {
   private MinigameHud hud;
   private InputMultiplexer inputMultiplexer;
   private World world;
+  private Clock clock;
 
 
   public Renderer(Store store, Router router) {
@@ -81,6 +82,8 @@ public class Renderer {
     entities.addAll(minigameStore.getGuns());
     shooting = false;
 
+    world = minigameStore.getWorld();
+
     cam = new OrthographicCamera();
     cam.position.set(mainPlayer.getX(), mainPlayer.getY(), 0);
     camRotation = 0;
@@ -89,6 +92,7 @@ public class Renderer {
     batch = new SpriteBatch();
     backgroundBatch = new SpriteBatch();
 
+    clock = new Clock();
     setupUI();
     loadSprites();
 
@@ -114,8 +118,6 @@ public class Renderer {
 
     background = new Sprite(new Texture(Gdx.files.internal("app/assets/backgrounds/game.png")));
 
-    mainPlayer.load();
-
     for (Entity e : entities) {
       e.load();
     }
@@ -123,7 +125,7 @@ public class Renderer {
     Gdx.input.setInputProcessor(new InputAdapter() {
       @Override
       public boolean keyDown(int keyCode) {
-        if (Keys.SPACE == keyCode && !shooting && mainPlayer.haveGun()) {
+        if (Input.Keys.SPACE == keyCode && !shooting && mainPlayer.haveGun()) {
           createBullet();
           shooting = true;
         }
@@ -132,7 +134,7 @@ public class Renderer {
 
       @Override
       public boolean keyUp(int keyCode) {
-        if (Keys.SPACE == keyCode) {
+        if (Input.Keys.SPACE == keyCode) {
           shooting = false;
         }
         return true;
@@ -142,6 +144,7 @@ public class Renderer {
   }
 
   public void render(float delta) {
+    clock.update(delta);
     batch.setProjectionMatrix(cam.combined);
     shapeRenderer.setProjectionMatrix(cam.combined);
     if (!firstRender) {
@@ -218,12 +221,20 @@ public class Renderer {
     Player main = minigameStore.getMainPlayer();
     PlanetPosition pp = world.convert(main.getPosition());
     pp.fromCenter += main.getHeight() / 2;
+
+    if(main.getDirection().equals(PlayerTexture.LEFT)) {
+      pp.angle -= 2;
+    } else if(main.getDirection().equals(PlayerTexture.RIGHT)) {
+      pp.angle += 2;
+    }
+
     Position bulletPos = world.convert(pp);
 
     Bullet b = new Bullet(minigameStore.getWorld(), bulletPos.x, bulletPos.y);
     // First synchronise the bullet with the player
     b.setSpeedVector((SpeedVector) main.getSpeedVector().clone());
-    b.setSpeed((float) main.getSpeedVector().getSpeedAngle(), Bullet.launchSpeed);
+    // Apply bullet speed
+    b.setSpeed((float) main.getSpeedVector().getSpeedAngle(), Bullet.launchSpeed);    
     router.call(Route.MINIGAME_BULLET_SEND, b);
     addBullet(b);
   }
@@ -264,6 +275,10 @@ public class Renderer {
       mainPlayer.jump(dt);
     }
 
+    if(Gdx.input.isKeyJustPressed(Input.Keys.SPACE) && mainPlayer.haveGun()) {
+      createBullet();
+    }
+    
     if (moveMade) {
       // Send a move to the server
       router.call(Route.MINIGAME_MOVE);
