@@ -1,10 +1,13 @@
 <?xml version="1.0"?>
 
-<!-- An XML Document to store user preferences. These can be loaded into the game so that they can be stored after the game ends. --> 
+<!-- An XML Document to store user preferences. These can be loaded into the game so that they can be stored after the game ends. -->
 
-<sound>
-	<sound_on>1</sound_on>
-	<volume>100</volume>
+<preferences>
+  <sound>
+    <music_on>1</music_on>
+    <music_volume>100</music_volume>
 
-	<players>4</players>
-</sound>
+    <effects_on>1</effects_on>
+    <effects_volume>100</effects_volume>
+  </sound>
+</preferences>
