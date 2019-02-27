@@ -48,7 +48,7 @@ public class JoinScreenController extends Controller {
         // Create connection to the server
         try {
             connectToServer(player);
-            setScreen(new JoinScreen(router, store));
+            setScreen(new JoinScreen(router, store, player));
 
         } catch (ConnectException e) {
             // No server started
@@ -96,7 +96,7 @@ public class JoinScreenController extends Controller {
     }
 
     /*might remove */
-    public void moveRocket(JoinScreen.moveMade move) {
+    public void moveRocket(JoinScreen.MoveMade move) {
 
 
     }

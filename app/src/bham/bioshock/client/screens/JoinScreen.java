@@ -8,6 +8,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
@@ -35,20 +36,27 @@ public class JoinScreen extends ScreenMaster {
     private Texture[] loadTextures;
     private Texture[] connectedTextures;
 
-    private boolean mainPlayerSet = false;
     private int mainPlayerIndex = 0;
-    private int rocketX;
-    private int rocketY;
-    private float rocketSpeed = 0.5f;
+    private float rocketX = 50;
+    private float rocketY = 50;
+    private float rocketSpeed = 50f;
+    private int rocketWidth = 50;
+    private int rocketHeight = 100;
     private Animation mainPlayerAnimation;
 
+    private Player mainPlayer;
+    private boolean mainPlayerSet;
 
-    public JoinScreen(Router router, Store store) {
+
+    public JoinScreen(Router router, Store store, Player mainPlayer) {
         super(router);
         this.store = store;
+        this.mainPlayer = mainPlayer;
 
         stage = new Stage(new ScreenViewport());
         batch = new SpriteBatch();
+
+        mainPlayerSet = false;
 
         loadTextures = new Texture[store.MAX_PLAYERS];
         loadTextures[0] = new Texture(Gdx.files.internal("app/assets/animations/loading1.png"));
@@ -69,10 +77,26 @@ public class JoinScreen extends ScreenMaster {
 
     }
 
-    public enum moveMade {
+
+
+    private void setUpMovingRocket(PlayerContainer container, int playerIndex) {
+        /*set the main players rocket to be moveable */
+        //mainPlayerAnimation = container.getAnimation().getAnimation();
+        mainPlayerAnimation = (new Anim(connectedTextures[mainPlayerIndex], 1,4,rocketWidth,rocketHeight,1f).getAnimation());
+        //change the image inside the container to a static image */
+        container.changeAnimation(new Texture(Gdx.files.internal("app/assets/entities/asteroids/1.png")),1,1,100,100,1f);
+        /* get the x and y position of the rocket */
+        Vector2 pos = getStageLocation(container.getAnimation());
+        rocketX = (int) pos.x;
+        rocketY = (int) pos.y;
+
+
+    }
+
+    public enum MoveMade {
         LEFT("LEFT"), RIGHT("RIGHT"), UP("UP"), DOWN("DOWN");
         final String text;
-        moveMade(String text) {
+        MoveMade(String text) {
             this.text = text;
         }
     }
@@ -115,23 +139,25 @@ public class JoinScreen extends ScreenMaster {
             PlayerContainer pc = holder.getPlayerContainer(i);
             if(players.size() > i) {
                 Player p = players.get(i);
-
                 pc.setName(p.getUsername());
                 pc.setWaitText(WaitText.CONNECTED);
-                pc.changeAnimation(connectedTextures[i], 4, 1, 1.9f);
-                if(mainPlayerSet == false && p == store.getMainPlayer()) {
-                    System.out.println("main player is "+p.getUsername());
-                    mainPlayerIndex = i;
-                    setUpMovingRocket(pc, i);
-                    mainPlayerSet = true;
+                if(!(p.getId().equals(mainPlayer.getId()))) {
+                    pc.changeAnimation(connectedTextures[i], 4, 1, rocketWidth,rocketHeight,1.9f);
+                } else {
+                    if(!mainPlayerSet) {
+                        mainPlayerAnimation = (new Anim(connectedTextures[i], 4,1,rocketWidth,rocketHeight,1f).getAnimation());
+                        //change the image inside the container to a static image */
+                        pc.changeAnimation(new Texture(Gdx.files.internal("app/assets/entities/asteroids/1.png")),1,1,100,100,1f);
+                        mainPlayerSet = true;
+                    }
                 }
+
             }
 
         }
 
         updateRocketPosition();
-
-
+        drawRocket();
     }
 
     public enum WaitText {
@@ -192,7 +218,7 @@ public class JoinScreen extends ScreenMaster {
             this.row();
             this.add(waitText).padTop(10);
 
-
+            System.out.println("LOCATION: "+getStageLocation(name));
         }
 
         public void setName(String n) {
@@ -201,8 +227,8 @@ public class JoinScreen extends ScreenMaster {
         public void setWaitText(WaitText text) {
             waitText.setText(text.toString());
         }
-        public void changeAnimation(Texture sheet, int cols, int rows, float frameDuration) {
-            Anim newAnimation = new Anim(sheet, cols, rows, 90, 150, frameDuration);
+        public void changeAnimation(Texture sheet, int cols, int rows, int width, int height, float frameDuration) {
+            Anim newAnimation = new Anim(sheet, cols, rows, width, height, frameDuration);
             this.animation = newAnimation;
         }
 
@@ -336,48 +362,42 @@ public class JoinScreen extends ScreenMaster {
         return actor.localToStageCoordinates(new Vector2(0, 0));
     }
 
-    private void setUpMovingRocket(PlayerContainer container, int playerIndex) {
-        /*set the main players rocket to be moveable */
-        mainPlayerAnimation = container.getAnimation().getAnimation();
-        //change the image inside the container to a static image */
-        container.changeAnimation(new Texture(Gdx.files.internal("app/assets/entities/asteroids/1.png")),1,1,1f);
-        /* get the x and y position of the rocket */
-        Vector2 pos = getStageLocation(container.getAnimation());
-        rocketX = (int) pos.x;
-        rocketY = (int) pos.y;
-    }
+
 
     private void drawRocket() {
-        batch.begin();
-        batch.draw((TextureRegion)mainPlayerAnimation.getKeyFrame(stateTime, true), rocketX, rocketY, 90, 150);
-        batch.end();
+        if(mainPlayerSet) {
+            batch.begin();
+            batch.draw((TextureRegion)mainPlayerAnimation.getKeyFrame(stateTime, true), rocketX, rocketY, rocketWidth, rocketHeight);
+            batch.end();
+        }
+
     }
 
     public void updateRocketPosition() {
         float dt = Gdx.graphics.getDeltaTime();
         boolean moveMade = false;
-        moveMade move = JoinScreen.moveMade.UP;
+        MoveMade move = MoveMade.UP;
 
 
         if (Gdx.input.isKeyPressed(Input.Keys.LEFT) || Gdx.input.isKeyPressed(Input.Keys.A)) {
             moveMade = true;
-            move = JoinScreen.moveMade.LEFT;
-            System.out.print("LEFT CLICKED");
+            move = MoveMade.LEFT;
+
         }
 
         if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) || Gdx.input.isKeyPressed(Input.Keys.D)) {
             moveMade = true;
-            move = JoinScreen.moveMade.RIGHT;
+            move = MoveMade.RIGHT;
         }
 
         if (Gdx.input.isKeyPressed(Input.Keys.UP) || Gdx.input.isKeyPressed(Input.Keys.W)) {
             moveMade = true;
-            move = JoinScreen.moveMade.UP;
+            move = MoveMade.UP;
         }
 
         if (Gdx.input.isKeyPressed(Input.Keys.DOWN) || Gdx.input.isKeyPressed(Input.Keys.S)) {
             moveMade = true;
-            move = JoinScreen.moveMade.DOWN;
+            move = MoveMade.DOWN;
         }
 
         if (moveMade) {
@@ -386,7 +406,7 @@ public class JoinScreen extends ScreenMaster {
         }
     }
 
-    public void movePlayer(moveMade move) {
+    public void movePlayer(MoveMade move) {
         switch (move) {
             case LEFT:
                 rocketX -= Gdx.graphics.getDeltaTime() * rocketSpeed;
@@ -401,7 +421,28 @@ public class JoinScreen extends ScreenMaster {
                 rocketY -= Gdx.graphics.getDeltaTime() * rocketSpeed;
                 break;
         }
-        drawRocket();
+
+        Vector2 pos = checkBounds(rocketX, rocketY);
+        rocketX = pos.x;
+        rocketY = pos.y;
+    }
+
+    private Vector2 checkBounds(float rX, float  rY) {
+        Vector2 pos = new Vector2(rX,rY);
+        if(rX < 0) {
+            pos.x = 0;
+        }
+        if(rX > stage.getWidth()) {
+            pos.x = stage.getWidth();
+        }
+        if(rY < 0) {
+            pos.y = 0;
+        }
+        if(rY > stage.getHeight()) {
+            pos.y = stage.getHeight();
+        }
+        return pos;
+
     }
 
     @Override
