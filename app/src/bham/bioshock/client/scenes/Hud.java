@@ -83,7 +83,6 @@ public class Hud implements Disposable {
     topBar = new HorizontalGroup();
     topBar.setFillParent(true);
     topBar.top();
-
     // Adds widgets to the topBar
     optionsMenu = new SelectBox(skin);
     String[] menuOptions = {"Options Menu", "Settings", "Quit to main menu", "Quit to Desktop"};

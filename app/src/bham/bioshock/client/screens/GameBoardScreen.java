@@ -148,8 +148,8 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
 
     // Update the players coordinates if the player has moved 1 position
     if (didChangeCoordinates) {
-      Coordinates nextCoordinates = boardMove.get(0).getCoordinates();
-      player.setCoordinates(nextCoordinates);
+      //Coordinates nextCoordinates = boardMove.get(0).getCoordinates();
+      //player.setCoordinates(nextCoordinates);
 
       // Remove the completed move
       boardMove.remove(0);
