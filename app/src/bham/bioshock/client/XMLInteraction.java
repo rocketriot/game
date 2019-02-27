@@ -16,7 +16,7 @@ public class XMLInteraction {
    *
    * @return The AppPreferences object with values from the XML file
    */
-  public AppPreferences XMLtoPreferences() {
+  public AppPreferences xmlToPreferences() {
 
     boolean musicEnabled = false;
     float musicVolume = 0f;
@@ -24,14 +24,14 @@ public class XMLInteraction {
     float soundsVolume = 0f;
 
 
-    File XMLfile = new File("app/assets/Preferences/Preferences.XML");
+    File xmlFile = new File("app/assets/Preferences/Preferences.XML");
     DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
     DocumentBuilder documentBuilder;
 
     // get the XML file as a document in memory
     try {
       documentBuilder = dbFactory.newDocumentBuilder();
-      Document document = documentBuilder.parse(XMLfile);
+      Document document = documentBuilder.parse(xmlFile);
       document.getDocumentElement().normalize();
       NodeList nodeList = document.getElementsByTagName("sound");
 
@@ -76,7 +76,10 @@ public class XMLInteraction {
     } catch (Exception e) {
       e.printStackTrace();
     }
-
     return new AppPreferences(musicEnabled, musicVolume, soundsEnabled, soundsVolume);
+  }
+
+  public void preferencesToXML(){
+
   }
 }

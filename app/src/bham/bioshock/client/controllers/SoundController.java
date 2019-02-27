@@ -64,7 +64,7 @@ public class SoundController extends Controller {
     jumpSound = Gdx.audio.newSound(Gdx.files.internal("app/assets/music/JumpSound.wav"));
     laserSound = Gdx.audio.newSound(Gdx.files.internal("app/assets/music/LaserSound.mp3"));
 
-    preferences = xmlInteraction.XMLtoPreferences();
+    preferences = xmlInteraction.xmlToPreferences();
 
     musicEnabled = preferences.getMusicEnabled();
     musicVolume = preferences.getMusicVolume();

@@ -27,7 +27,7 @@ public class PreferencesController extends Controller {
   }
 
   public void show() {
-    preferences = xmlInteraction.XMLtoPreferences();
+    preferences = xmlInteraction.xmlToPreferences();
     setScreen(new PreferencesScreen(router, preferences));
   }
 }
