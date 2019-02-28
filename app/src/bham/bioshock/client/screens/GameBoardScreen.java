@@ -3,11 +3,8 @@ package bham.bioshock.client.screens;
 import bham.bioshock.client.Assets;
 import bham.bioshock.client.Route;
 import bham.bioshock.client.Router;
-import bham.bioshock.client.gameLogic.gameboard.DrawAsteroid;
-import bham.bioshock.client.gameLogic.gameboard.DrawFuel;
-import bham.bioshock.client.gameLogic.gameboard.DrawPlanet;
-import bham.bioshock.client.gameLogic.gameboard.DrawPlayer;
-import bham.bioshock.client.gameLogic.gameboard.PathRenderer;
+import bham.bioshock.client.gameLogic.gameboard.*;
+import bham.bioshock.client.controllers.SoundController;
 import bham.bioshock.client.scenes.Hud;
 import bham.bioshock.common.Direction;
 import bham.bioshock.common.consts.Config;
@@ -336,7 +333,10 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
 
   private void handleKeyPress() {
     // Unselect player on ESC
-    if (Gdx.input.isKeyPressed(Input.Keys.ESCAPE)) playerSelected = false;
+    if (Gdx.input.isKeyPressed(Input.Keys.ESCAPE)) {
+      playerSelected = false;
+      pathRenderer.clearPath();
+    }
 
     // Move camera with WASD
     if (Gdx.input.isKeyPressed(Input.Keys.W)) camera.translate(0f, CAMERA_MOVE_SPEED);
@@ -497,8 +497,10 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
 
             if (object.equals(true)) {
               System.out.println("Starting minigame");
+              SoundController.playSound("menuSelect");
               router.call(Route.START_MINIGAME);
             } else {
+              SoundController.playSound("menuSelect");
               System.out.println("Minigame not started");
             }
           }

@@ -36,10 +36,10 @@ public class PreferencesController extends Controller {
   public void show() {
     preferences = readPreferences();
     setScreen(new PreferencesScreen(router, preferences));
-}
+  }
 
   private AppPreferences readPreferences() {
-    //reader.printNodes("sound");
+    // reader.printNodes("sound");
     return new AppPreferences();
   }
 }

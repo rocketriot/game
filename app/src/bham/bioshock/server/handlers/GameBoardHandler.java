@@ -5,10 +5,12 @@ import bham.bioshock.common.consts.GridPoint.Type;
 import bham.bioshock.common.models.Coordinates;
 import bham.bioshock.common.models.GameBoard;
 import bham.bioshock.common.models.Player;
+import bham.bioshock.common.models.Player.Move;
 import bham.bioshock.common.models.store.Store;
 import bham.bioshock.common.pathfinding.AStarPathfinding;
 import bham.bioshock.communication.Action;
 import bham.bioshock.communication.Command;
+import bham.bioshock.communication.server.BoardAi;
 import bham.bioshock.communication.server.ServerHandler;
 
 import java.io.Serializable;
@@ -27,18 +29,36 @@ public class GameBoardHandler {
     this.store = store;
     this.handler = handler;
   }
+  
+  private void generateGrid(GameBoard board, ArrayList<Player> players) {
+    // Set coordinates of the players
+    int last = board.GRID_SIZE - 1;
+    players.get(0).setCoordinates(new Coordinates(0, 0));
+    players.get(1).setCoordinates(new Coordinates(0, last));
+    players.get(2).setCoordinates(new Coordinates(last, last));
+    players.get(3).setCoordinates(new Coordinates(last, 0));
+
+    board.generateGrid();
+  }
 
   /** Adds a player to the server and sends the player to all the clients */
-  public void getGameBoard(Action action) {
+  public void getGameBoard(Action action, ArrayList<Player> additionalPlayers) {
+    ArrayList<Player> players = store.getPlayers();
+    if(additionalPlayers != null) {
+      players.addAll(additionalPlayers);
+    }
+    
     GameBoard gameBoard = store.getGameBoard();
-
     // Generate a grid when starting the game
-    if (gameBoard.getGrid() == null)
-      store.generateGrid();
+
+    if (gameBoard == null) {
+      gameBoard = new GameBoard(); 
+      generateGrid(gameBoard, players);
+    }
 
     ArrayList<Serializable> response = new ArrayList<>();
     response.add(gameBoard);
-    for (Player p : store.getPlayers()) {
+    for (Player p : players) {
       response.add(p);
     }
 
@@ -54,85 +74,37 @@ public class GameBoardHandler {
 
     // Update the store
     store.setGameBoard(gameBoard);
-    store.updatePlayer(movingPlayer);
+    Player p = store.getPlayer(movingPlayer.getId());
+    p.setCoordinates(movingPlayer.getCoordinates());
+    p.setFuel(movingPlayer.getFuel());
 
     // Send out new game board and moving player to players
     ArrayList<Serializable> response = new ArrayList<>();
     response.add(gameBoard);
     response.add(movingPlayer);
+    
     handler.sendToAll(new Action(Command.MOVE_PLAYER_ON_BOARD, response));
+
+    // Sleeps the server for the duration of the move animation
+    // This shouldn't cause any problems as nothing should happen during a move
+    // Message Rob if this is causing problems as I can refactor this to work slightly differently
+    int deltaTime = calculateMoveTime(p.getBoardMove());
+    try {
+      Thread.sleep(deltaTime);
+    } catch (InterruptedException e) {
+      e.printStackTrace();
+    }
 
     store.nextTurn();
 
     // Handle if the next player is a CPU
-    if (store.getMovingPlayer().isCpu())
-      moveCpuPlayer();
+    movingPlayer = store.getMovingPlayer();
+    if (movingPlayer.isCpu())
+      new BoardAi(store, this).run();
   }
 
-  /** Handle movement if the next player is a CPU */
-  private void moveCpuPlayer() {
-    // Get values from store
-    GameBoard gameBoard = store.getGameBoard();
-    GridPoint[][] grid = gameBoard.getGrid();
-    Player player = store.getMovingPlayer();
-    
-    HashMap<GridPoint.Type, ArrayList<ArrayList<Coordinates>>> possibleMoves = generatePossibleMoves(store);
-
-    Random random = new Random();
-    ArrayList<ArrayList<Coordinates>> pathList = possibleMoves.get(Type.EMPTY);
-    ArrayList<Coordinates> movePath = pathList.get(random.nextInt(pathList.size()));
-    player.createBoardMove(movePath);
-    player.setCoordinates(player.getBoardMove().get(player.getBoardMove().size()-1).getCoordinates());
-
-    // Find all possible spaces the CPU can go
-    // Probability of choosing a specific space: EMPTY <= FUEL <= PLANET
-
-    // Setup action arguments
-    ArrayList<Serializable> arguments = new ArrayList<>();
-    arguments.add(gameBoard);
-    arguments.add(player);
-
-    Action action = new Action(Command.MOVE_PLAYER_ON_BOARD, arguments);
-    movePlayer(action);
-  }
-
-  /** Generate all possible moves that a CPU could take */
-  private HashMap<GridPoint.Type, ArrayList<ArrayList<Coordinates>>> generatePossibleMoves(Store store) {
-    GameBoard gameBoard = store.getGameBoard();
-    GridPoint[][] grid = gameBoard.getGrid();
-    Player player = store.getMovingPlayer();
-
-    // Setup pathfinding
-    AStarPathfinding pathFinder = new AStarPathfinding(grid, player.getCoordinates(), gameBoard.GRID_SIZE, gameBoard.GRID_SIZE, store.getPlayers());
-    HashMap<GridPoint.Type, ArrayList<ArrayList<Coordinates>>> possibleMoves = new HashMap<>();
-
-    // Loop through all points available on the grid
-    for (int x = 0; x < gameBoard.GRID_SIZE; x++) {
-      for (int y = 0; y < gameBoard.GRID_SIZE; y++) {
-        GridPoint gridPoint = grid[x][y];
-        GridPoint.Type type = gridPoint.getType();
-
-        // Skip points that the CPU can't travel to i.e. Players and Asteroids
-        if (type == GridPoint.Type.PLAYER || type == GridPoint.Type.ASTEROID || type == Type.PLANET) {
-          continue;
-        }
-
-        // Attempt to generate path to the point
-        ArrayList<Coordinates> path = pathFinder.pathfind(new Coordinates(x, y));
-
-        // If it's possible to travel to that point, add path to possible moves
-        if (path.size() > 0 && path.size() <= (player.getFuel() / 10)) {
-          if (possibleMoves.get(type) == null) {
-            ArrayList<ArrayList<Coordinates>> initialArray = new ArrayList<>();
-            initialArray.add(path);
-            possibleMoves.put(type, initialArray);
-          } else {
-            possibleMoves.get(type).add(path);
-          }
-        }
-      }
-    }
-
-    return possibleMoves;
+  private int calculateMoveTime(ArrayList<Move> boardMove) {
+    // Players move 3 tiles per second
+    return (boardMove.size() * 1000)/3;
   }
 }
