@@ -5,15 +5,18 @@ import bham.bioshock.client.XMLInteraction;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Container;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import java.util.ArrayList;
 
 public class HowToScreen extends ScreenMaster {
 
   private Table textTable;
   private XMLInteraction xmlInteraction = new XMLInteraction();
+  private ArrayList<String> descriptionFromFile = new ArrayList<>();
 
   public HowToScreen(Router router) {
     super(router);
@@ -24,22 +27,22 @@ public class HowToScreen extends ScreenMaster {
   }
 
   private void assemble() {
-//    // create container
-//    Container<Table> tableContainer = new Container<>();
-//            float container_width = screen_width*0.1f;
-//            float container_height = screen_height*0.9f;
-//            tableContainer.setSize(container_width, container_height);
-//            tableContainer.setPosition((screen_width - container_width)/2.0f, (screen_height-container_height)/2.0f);
-//
-//    // create table
-//    textTable = new Table(skin);
-//    textTable.setFillParent(true);
-//
-//    // contents
-//    Label l1 = new Label("How to PLay", skin);
-//    Label l2 = new Label("Controls", skin);
-//
-//    // game desciption text is read from the XML file
+    // create container
+    Container<Table> tableContainer = new Container<>();
+            float container_width = screen_width*0.1f;
+            float container_height = screen_height*0.9f;
+            tableContainer.setSize(container_width, container_height);
+            tableContainer.setPosition((screen_width - container_width)/2.0f, (screen_height-container_height)/2.0f);
+
+    // create table
+    textTable = new Table(skin);
+    textTable.setFillParent(true);
+
+    // contents
+    Label l1 = new Label("How to PLay", skin);
+    Label l2 = new Label("Controls", skin);
+
+    // game desciption text is read from the XML file
 //    String game_desc = reader.getTag("game_desc");
 //    Label game_desc_label = new Label(game_desc, skin);
 //    game_desc_label.setWrap(true);

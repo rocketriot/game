@@ -1,6 +1,7 @@
 package bham.bioshock.client;
 
 import java.io.File;
+import java.util.ArrayList;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.OutputKeys;
@@ -155,6 +156,50 @@ public class XMLInteraction {
     } catch (Exception e) {
       e.printStackTrace();
     }
+  }
 
+  /**
+   * Method to get the game description and things needed from the game_desc file to use in the
+   * HowToScreen
+   *
+   * @return The arraylist containing the strings from the XML file
+   */
+  public ArrayList<String> XMLtoDescription() {
+    ArrayList<String> readText = new ArrayList<>();
+    File xmlFile = new File("app/assets/XML/game_desc.xml");
+    DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+    DocumentBuilder documentBuilder;
+
+    try {
+      // get the XML file as a document in memory
+      documentBuilder = dbFactory.newDocumentBuilder();
+      Document document = documentBuilder.parse(xmlFile);
+      document.getDocumentElement().normalize();
+      NodeList nodeList = document.getElementsByTagName("how_to");
+
+      // go through all the nodes in the document
+      for (int i = 0; i < nodeList.getLength(); i++) {
+        Node node = nodeList.item(i);
+
+        // if we have found the element node we want
+        if (node.getNodeType() == Node.ELEMENT_NODE) {
+
+          // get the node as an element
+          Element element = (Element) node;
+
+          // get the strings stored in the document and add to the arraylist
+          String gameDescription = element.getElementsByTagName("game_desc").item(0)
+              .getTextContent();
+          readText.add(gameDescription);
+
+          String gameControls = element.getElementsByTagName("game_controls").item(0)
+              .getTextContent();
+          readText.add(gameControls);
+        }
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+    return readText;
   }
 }
