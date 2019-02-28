@@ -4,6 +4,10 @@ import bham.bioshock.client.Route;
 import bham.bioshock.client.Router;
 import bham.bioshock.common.models.Player;
 import bham.bioshock.common.models.store.Store;
+import bham.bioshock.minigame.models.Entity;
+import bham.bioshock.minigame.worlds.FirstWorld;
+import bham.bioshock.minigame.worlds.JoinScreenWorld;
+import bham.bioshock.minigame.worlds.World;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Texture;
@@ -42,10 +46,13 @@ public class JoinScreen extends ScreenMaster {
     private float rocketSpeed = 50f;
     private int rocketWidth = 50;
     private int rocketHeight = 100;
+    private float rocketRotation = 0;
     private Animation mainPlayerAnimation;
 
     private Player mainPlayer;
     private boolean mainPlayerSet;
+
+    private RocketAnimation rocketAnimation;
 
 
     public JoinScreen(Router router, Store store, Player mainPlayer) {
@@ -78,20 +85,6 @@ public class JoinScreen extends ScreenMaster {
     }
 
 
-
-    private void setUpMovingRocket(PlayerContainer container, int playerIndex) {
-        /*set the main players rocket to be moveable */
-        //mainPlayerAnimation = container.getAnimation().getAnimation();
-        mainPlayerAnimation = (new Anim(connectedTextures[mainPlayerIndex], 1,4,rocketWidth,rocketHeight,1f).getAnimation());
-        //change the image inside the container to a static image */
-        container.changeAnimation(new Texture(Gdx.files.internal("app/assets/entities/asteroids/1.png")),1,1,100,100,1f);
-        /* get the x and y position of the rocket */
-        Vector2 pos = getStageLocation(container.getAnimation());
-        rocketX = (int) pos.x;
-        rocketY = (int) pos.y;
-
-
-    }
 
     public enum MoveMade {
         LEFT("LEFT"), RIGHT("RIGHT"), UP("UP"), DOWN("DOWN");
@@ -145,7 +138,10 @@ public class JoinScreen extends ScreenMaster {
                     pc.changeAnimation(connectedTextures[i], 4, 1, rocketWidth,rocketHeight,1.9f);
                 } else {
                     if(!mainPlayerSet) {
-                        mainPlayerAnimation = (new Anim(connectedTextures[i], 4,1,rocketWidth,rocketHeight,1f).getAnimation());
+                        //TESTING
+                        System.out.println("creating rocket animation...");
+                        rocketAnimation = new RocketAnimation(new JoinScreenWorld(), rocketX,rocketY, i);
+                        //mainPlayerAnimation = (new StaticAnimation(connectedTextures[i], 4,1,rocketWidth,rocketHeight,1f).getAnimation());
                         //change the image inside the container to a static image */
                         pc.changeAnimation(new Texture(Gdx.files.internal("app/assets/entities/asteroids/1.png")),1,1,100,100,1f);
                         mainPlayerSet = true;
@@ -200,7 +196,7 @@ public class JoinScreen extends ScreenMaster {
 
         private Label name;
         private Label waitText;
-        private Anim animation;
+        private StaticAnimation animation;
         private int sidePadding = 80;
         private int topPadding = 30;
 
@@ -208,7 +204,7 @@ public class JoinScreen extends ScreenMaster {
             //this.setDebug(true);
             name = new Label(n, skin);
             waitText = new Label(status.toString(), skin);
-            animation = new Anim(sheet, 26, 1, 100,100, 0.8f);
+            animation = new StaticAnimation(sheet, 26, 1, 100,100, 0.8f);
 
             this.pad(topPadding, sidePadding, topPadding, sidePadding);
 
@@ -228,12 +224,12 @@ public class JoinScreen extends ScreenMaster {
             waitText.setText(text.toString());
         }
         public void changeAnimation(Texture sheet, int cols, int rows, int width, int height, float frameDuration) {
-            Anim newAnimation = new Anim(sheet, cols, rows, width, height, frameDuration);
+            StaticAnimation newAnimation = new StaticAnimation(sheet, cols, rows, width, height, frameDuration);
             this.animation = newAnimation;
         }
 
 
-        public Anim getAnimation() {
+        public StaticAnimation getAnimation() {
             return animation;
         }
 
@@ -250,20 +246,22 @@ public class JoinScreen extends ScreenMaster {
         }
     }
 
-    public class Anim extends Image {
 
-        private float frameDuration = 0.8f;
+
+    public class StaticAnimation extends Image {
+
+        private float frameDuration;
         private int cols;
         private int rows;
 
-        private int width = 100;
-        private int height = 100;
+        private int width;
+        private int height;
 
         private Animation<TextureRegion> animation;
 
         private TextureRegion[] textureRegion;
 
-        public Anim(Texture sheet, int cols, int rows, int width, int height, float frameDuration) {
+        public StaticAnimation(Texture sheet, int cols, int rows, int width, int height, float frameDuration) {
 
             this.cols = cols;
             this.rows = rows;
@@ -301,7 +299,9 @@ public class JoinScreen extends ScreenMaster {
         public Animation<TextureRegion> getAnimation() {
             return animation;
         }
+
     }
+
 
     public class ButtonsContainer extends Table {
         ButtonsContainer() {
@@ -367,10 +367,14 @@ public class JoinScreen extends ScreenMaster {
     private void drawRocket() {
         if(mainPlayerSet) {
             batch.begin();
-            batch.draw((TextureRegion)mainPlayerAnimation.getKeyFrame(stateTime, true), rocketX, rocketY, rocketWidth, rocketHeight);
+                    Sprite sprite = rocketAnimation.getSprite();
+                    sprite.setRegion(rocketAnimation.getTexture());
+                    sprite.setPosition(rocketAnimation.getX() - (rocketAnimation.getWidth() / 2), rocketAnimation.getY());
+                    sprite.setRotation((float) rocketAnimation.getRotation());
+                    sprite.draw(batch);
+                    rocketAnimation.update(Gdx.graphics.getDeltaTime());
             batch.end();
         }
-
     }
 
     public void updateRocketPosition() {
@@ -402,30 +406,11 @@ public class JoinScreen extends ScreenMaster {
 
         if (moveMade) {
             // Send a move to the controller
-            movePlayer(move);
+            rocketAnimation.rocketMove(move);
         }
     }
 
-    public void movePlayer(MoveMade move) {
-        switch (move) {
-            case LEFT:
-                rocketX -= Gdx.graphics.getDeltaTime() * rocketSpeed;
-                break;
-            case RIGHT:
-                rocketX += Gdx.graphics.getDeltaTime() * rocketSpeed;
-                break;
-            case UP:
-                rocketY += Gdx.graphics.getDeltaTime() * rocketSpeed;
-                break;
-            case DOWN:
-                rocketY -= Gdx.graphics.getDeltaTime() * rocketSpeed;
-                break;
-        }
 
-        Vector2 pos = checkBounds(rocketX, rocketY);
-        rocketX = pos.x;
-        rocketY = pos.y;
-    }
 
     private Vector2 checkBounds(float rX, float  rY) {
         Vector2 pos = new Vector2(rX,rY);
@@ -452,5 +437,71 @@ public class JoinScreen extends ScreenMaster {
             loadTextures[i].dispose();
             connectedTextures[i].dispose();
         }
+    }
+
+    private class RocketAnimation extends Entity {
+
+        private Animation mainPlayerAnimation;
+
+
+        private float frameDuration = 1.5f;
+
+        public RocketAnimation(World w, float x, float y, int mainPlayerIndex) {
+            super(w, x, y);
+            setSpeed(0, rocketSpeed);
+            setRotation(rocketRotation);
+
+
+
+            mainPlayerAnimation = (new StaticAnimation(connectedTextures[mainPlayerIndex],4,1,rocketWidth, rocketHeight, frameDuration)).getAnimation();
+            load();
+
+            sprite.setRegionWidth(rocketWidth);
+            sprite.setRegionHeight(rocketHeight);
+        }
+
+        public int getWidth() {
+            return rocketWidth;
+        }
+        public int getHeight() {
+            return rocketHeight;
+        }
+
+        @Override
+        public boolean isFlying() {
+            return true;
+        }
+
+        @Override
+        public TextureRegion getTexture() {
+            return (TextureRegion) mainPlayerAnimation.getKeyFrame(stateTime, true);
+        }
+
+        @Override
+        public void update(float delta) {
+            if (!loaded)
+                return;
+            double angle = angleToCenterOfGravity();
+
+            collisionBoundary.update(pos, getRotation());
+        }
+
+        public void rocketMove(MoveMade move) {
+            switch (move) {
+                case LEFT:
+                    pos.x -= Gdx.graphics.getDeltaTime() * rocketSpeed;
+                    break;
+                case RIGHT:
+                    pos.x += Gdx.graphics.getDeltaTime() * rocketSpeed;
+                    break;
+                case UP:
+                    pos.y += Gdx.graphics.getDeltaTime() * rocketSpeed;
+                    break;
+                case DOWN:
+                    pos.y -= Gdx.graphics.getDeltaTime() * rocketSpeed;
+                    break;
+            }
+        }
+
     }
 }
