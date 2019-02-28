@@ -13,7 +13,7 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 public class HowToScreen extends ScreenMaster {
 
   private Table textTable;
-  private XMLInteraction reader;
+  private XMLInteraction xmlInteraction = new XMLInteraction();
 
   public HowToScreen(Router router) {
     super(router);
@@ -21,21 +21,16 @@ public class HowToScreen extends ScreenMaster {
     stage = new Stage(new ScreenViewport());
     batch = new SpriteBatch();
 
-//    readXML();
   }
 
-//  private void readXML() {
-//    reader = new XMLInteraction("app/assets/XML/game_desc.xml");
-//  }
-//
-//  private void assemble() {
+  private void assemble() {
 //    // create container
-//    /*Container<Table> tableContainer = new Container<>();
+//    Container<Table> tableContainer = new Container<>();
 //            float container_width = screen_width*0.1f;
 //            float container_height = screen_height*0.9f;
 //            tableContainer.setSize(container_width, container_height);
 //            tableContainer.setPosition((screen_width - container_width)/2.0f, (screen_height-container_height)/2.0f);
-//    */
+//
 //    // create table
 //    textTable = new Table(skin);
 //    textTable.setFillParent(true);
@@ -66,12 +61,12 @@ public class HowToScreen extends ScreenMaster {
 //    textTable.add(scrollPane2).width(screen_width*0.6f);
 //
 //    stage.addActor(textTable);
-//  }
+  }
 
   @Override
   public void show() {
     super.show();
-//    assemble();
+    assemble();
     Gdx.input.setInputProcessor(stage);
   }
 
