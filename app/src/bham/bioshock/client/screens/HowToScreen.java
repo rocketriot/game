@@ -11,19 +11,20 @@ import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class HowToScreen extends ScreenMaster {
 
   private Table textTable;
   private XMLInteraction xmlInteraction = new XMLInteraction();
-  private ArrayList<String> descriptionFromFile = new ArrayList<>();
+  private HashMap<String, String> descriptionFromFile = new HashMap<>();
 
   public HowToScreen(Router router) {
     super(router);
 
     stage = new Stage(new ScreenViewport());
     batch = new SpriteBatch();
-
+    descriptionFromFile = xmlInteraction.xmlToDescription();
   }
 
   private void assemble() {
@@ -42,28 +43,28 @@ public class HowToScreen extends ScreenMaster {
     Label l1 = new Label("How to PLay", skin);
     Label l2 = new Label("Controls", skin);
 
-    // game desciption text is read from the XML file
-//    String game_desc = reader.getTag("game_desc");
-//    Label game_desc_label = new Label(game_desc, skin);
-//    game_desc_label.setWrap(true);
-//
-//
-//    String controls = reader.getTag("game_controls");
-//    Label controls_desc_label = new Label(controls, skin);
-//    controls_desc_label.setWrap(true);
-//
-//    ScrollPane scrollPane1 = new ScrollPane(game_desc_label, skin);
-//    ScrollPane scrollPane2 = new ScrollPane(controls_desc_label, skin);
-//
-//    textTable.add(l1).padBottom(20);
-//    textTable.row();
-//    textTable.add(scrollPane1).width(screen_width*0.6f);
-//    textTable.row();
-//    textTable.add(l2).padBottom(20);
-//    textTable.row();
-//    textTable.add(scrollPane2).width(screen_width*0.6f);
-//
-//    stage.addActor(textTable);
+    // game description text is read from the XML file
+    String game_desc = descriptionFromFile.get("Game Description");
+    Label game_desc_label = new Label(game_desc, skin);
+    game_desc_label.setWrap(true);
+
+
+    String controls = descriptionFromFile.get("Game Controls");
+    Label controls_desc_label = new Label(controls, skin);
+    controls_desc_label.setWrap(true);
+
+    ScrollPane scrollPane1 = new ScrollPane(game_desc_label, skin);
+    ScrollPane scrollPane2 = new ScrollPane(controls_desc_label, skin);
+
+    textTable.add(l1).padBottom(20);
+    textTable.row();
+    textTable.add(scrollPane1).width(screen_width*0.6f);
+    textTable.row();
+    textTable.add(l2).padBottom(20);
+    textTable.row();
+    textTable.add(scrollPane2).width(screen_width*0.6f);
+
+    stage.addActor(textTable);
   }
 
   @Override

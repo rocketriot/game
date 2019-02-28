@@ -2,6 +2,7 @@ package bham.bioshock.client;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.OutputKeys;
@@ -164,8 +165,8 @@ public class XMLInteraction {
    *
    * @return The arraylist containing the strings from the XML file
    */
-  public ArrayList<String> XMLtoDescription() {
-    ArrayList<String> readText = new ArrayList<>();
+  public HashMap<String, String> xmlToDescription() {
+    HashMap<String, String> readText = new HashMap<>();
     File xmlFile = new File("app/assets/XML/game_desc.xml");
     DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
     DocumentBuilder documentBuilder;
@@ -190,11 +191,11 @@ public class XMLInteraction {
           // get the strings stored in the document and add to the arraylist
           String gameDescription = element.getElementsByTagName("game_desc").item(0)
               .getTextContent();
-          readText.add(gameDescription);
+          readText.put("Game Description", gameDescription);
 
           String gameControls = element.getElementsByTagName("game_controls").item(0)
               .getTextContent();
-          readText.add(gameControls);
+          readText.put("Game Controls", gameControls);
         }
       }
     } catch (Exception e) {
