@@ -4,6 +4,8 @@ import bham.bioshock.client.scenes.MinigameHud;
 
 import bham.bioshock.client.screens.StatsContainer;
 import java.util.ArrayList;
+import java.util.Collection;
+
 import bham.bioshock.client.Route;
 import bham.bioshock.client.Router;
 import bham.bioshock.common.Position;
@@ -17,6 +19,8 @@ import bham.bioshock.minigame.models.Entity;
 import bham.bioshock.minigame.models.Gun;
 import bham.bioshock.minigame.models.Player;
 import bham.bioshock.minigame.models.Rocket;
+import bham.bioshock.minigame.objectives.KillThemAll;
+import bham.bioshock.minigame.objectives.Objective;
 import bham.bioshock.minigame.physics.SpeedVector;
 import bham.bioshock.minigame.worlds.World;
 import bham.bioshock.minigame.worlds.World.PlanetPosition;
@@ -38,6 +42,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import static sun.audio.AudioPlayer.player;
 
 public class Renderer {
   private Player mainPlayer;
@@ -64,12 +69,14 @@ public class Renderer {
   private InputMultiplexer inputMultiplexer;
   private World world;
   private Clock clock;
+  private Objective objective;
 
 
   public Renderer(Store store, Router router) {
     this.store = store;
     this.minigameStore = store.getMinigameStore();
     this.router = router;
+    this.objective = new KillThemAll(minigameStore.getPlayers(),mainPlayer);
     mainPlayer = minigameStore.getMainPlayer();
 
     shapeRenderer = new ShapeRenderer();
@@ -231,7 +238,7 @@ public class Renderer {
 
     Position bulletPos = world.convert(pp);
 
-    Bullet b = new Bullet(minigameStore.getWorld(), bulletPos.x, bulletPos.y);
+    Bullet b = new Bullet(minigameStore.getWorld(), bulletPos.x, bulletPos.y, main);
     // First synchronise the bullet with the player
     b.setSpeedVector((SpeedVector) main.getSpeedVector().clone());
     // Apply bullet speed
@@ -289,7 +296,6 @@ public class Renderer {
   public void resize(int width, int height) {
     stage.getViewport().update(width, height, true);
   }
-
 
 }
 

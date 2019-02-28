@@ -32,6 +32,11 @@ public class Rocket extends Entity {
     return texture;
   }
 
+  @Override
+  public Player getShooter() {
+    return null;
+  }
+
   public void load() {
     texture = new TextureRegion(textures.get(color));
     super.load();

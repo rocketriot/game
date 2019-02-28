@@ -22,6 +22,11 @@ public class Platform extends StaticEntity {
        return texture;
     }
 
+    @Override
+    public Player getShooter() {
+        return null;
+    }
+
     public void load() {
         texture = new TextureRegion( new Texture(Gdx.files.internal("app/assets/minigame/platform.png")));
         super.load();

@@ -23,7 +23,8 @@ public class Player extends Entity {
   private float v = 700f;
   private boolean haveGun = false;
   private float health = 0;
-  private float kills = 0;
+  private int kills = 0;
+  public boolean isDead = false;
 
   public Player(World w, float x, float y) {
     super(w, x, y);
@@ -111,6 +112,11 @@ public class Player extends Entity {
     return region;
   }
 
+  @Override
+  public Player getShooter() {
+    return null;
+  }
+
   private TextureRegion getTexture(boolean withGun) {
     if (withGun && dir.equals(PlayerTexture.FRONT)) {
       return frontGunTexture;
@@ -155,6 +161,12 @@ public class Player extends Entity {
   public void handleCollision(Entity e, MinimumTranslationVector v) {
     if(e.isA(Bullet.class)) {
       collide(.2f, v);
+      health -= 3;
+      if(health<=0) {
+        e.getShooter().addKills(1);
+        this.isDead = true;
+      }
+
     } else if(e.isA(Player.class) || e.isA(Rocket.class)) {
       collide(0.8f, v);
     } else if(e.isA(Gun.class)) {
@@ -169,7 +181,6 @@ public class Player extends Entity {
     }
   }
 
-
   public void setHealth(float newHealth){
     this.health = newHealth;
   }
@@ -178,7 +189,7 @@ public class Player extends Entity {
     return this.health;
   }
 
-  public void addKills(float addedKills){
+  public void addKills(int addedKills){
     this.kills += addedKills;
   }
 

@@ -71,7 +71,7 @@ public class MinigameController extends Controller {
     Position p = (Position) arguments.get(1);
     
     MinigameScreen screen = (MinigameScreen) store.getScreen();
-    Bullet b = new Bullet(localStore.getWorld(), p.x, p.y);  
+    Bullet b = new Bullet(localStore.getWorld(), p.x, p.y,localStore.getMainPlayer());
     b.setSpeedVector(sv);
     screen.addBullet(b);
   }

@@ -15,9 +15,11 @@ public class Bullet extends Entity {
   static Animation<TextureRegion> splash;
   static int FRAMES = 5;
   private float animationTime = 0;
+  private Player shooter;
 
-  public Bullet(World w, float x, float y) {
+  public Bullet(World w, float x, float y,Player shooter) {
     super(w, x, y);
+    this.shooter = shooter;
     rotation = 0;
     fromGround = -10;
     collisionHeight = getHeight() / 2;
@@ -88,6 +90,8 @@ public class Bullet extends Entity {
 
     splash = new Animation<TextureRegion>(0.03f, frames);
   }
+
+  public Player getShooter(){return this.shooter;}
 
   /** Collisions **/
   @Override
