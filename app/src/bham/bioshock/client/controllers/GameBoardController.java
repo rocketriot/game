@@ -99,8 +99,6 @@ public class GameBoardController extends Controller {
     Player p = store.getPlayer(movingPlayer.getId());
     p.setCoordinates(movingPlayer.getCoordinates());
     p.setFuel(movingPlayer.getFuel());
-    
-    store.nextTurn();
   }
 
   public void miniGameWon(Player player, Planet planet) {
