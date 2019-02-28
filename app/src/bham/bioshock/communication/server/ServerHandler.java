@@ -20,9 +20,9 @@ public class ServerHandler {
   private GameBoardHandler gameBoardHandler;
   private MinigameHandler minigameHandler;
   
-  public ServerHandler() {
+  public ServerHandler(Store store) {
     connections = new ArrayList<>();
-    store = new Store();
+    this.store = store;
     joinHandler = new JoinScreenHandler(store, this);
     gameBoardHandler = new GameBoardHandler(store, this);
     minigameHandler = new MinigameHandler(store, this);
@@ -80,7 +80,7 @@ public class ServerHandler {
           joinHandler.startGame(action, gameBoardHandler);
           break;
         case GET_GAME_BOARD:
-          gameBoardHandler.getGameBoard(action);
+          gameBoardHandler.getGameBoard(action, null);
           break;
         case MOVE_PLAYER_ON_BOARD:
           gameBoardHandler.movePlayer(action);
