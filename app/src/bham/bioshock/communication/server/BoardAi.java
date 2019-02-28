@@ -27,11 +27,6 @@ public class BoardAi extends Thread {
 
   @Override
   public void run() {
-    try {
-      Thread.sleep(5000);
-    } catch (InterruptedException e) {
-      e.printStackTrace();
-    }
     moveCpuPlayer();
   }
 
@@ -84,6 +79,9 @@ public class BoardAi extends Thread {
 
         // Skip points that the CPU can't travel to i.e. Players and Asteroids
         if (type == GridPoint.Type.PLAYER || type == GridPoint.Type.ASTEROID || type == Type.PLANET) {
+          continue;
+          // Skips points the CPU doesn't have fuel to move to
+        } else if ((Math.abs(x - player.getCoordinates().getX()) + Math.abs(y - player.getCoordinates().getY())) >= (player.getFuel() / 10)) {
           continue;
         }
 
