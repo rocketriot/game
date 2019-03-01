@@ -127,7 +127,9 @@ public class Hud implements Disposable {
         new ChangeListener() {
           @Override
           public void changed(ChangeEvent event, Actor actor) {
-            router.call(Route.SKIP_TURN);
+            if (store.getMovingPlayer().equals(store.getMainPlayer())) {
+              router.call(Route.END_TURN);
+            }
           }
         });
   }

@@ -88,23 +88,27 @@ public class GameBoardHandler {
     // Sleeps the server for the duration of the move animation
     // This shouldn't cause any problems as nothing should happen during a move
     // Message Rob if this is causing problems as I can refactor this to work slightly differently
-    int deltaTime = calculateMoveTime(p.getBoardMove());
-    try {
-      Thread.sleep(deltaTime);
-    } catch (InterruptedException e) {
-      e.printStackTrace();
+    if (movingPlayer.isCpu()) {
+      int deltaTime = calculateMoveTime(p.getBoardMove());
+      try {
+        Thread.sleep(deltaTime);
+        endTurn();
+      } catch (InterruptedException e) {
+        e.printStackTrace();
+      }
     }
-
-    store.nextTurn();
-
-    // Handle if the next player is a CPU
-    movingPlayer = store.getMovingPlayer();
-    if (movingPlayer.isCpu())
-      new BoardAi(store, this).run();
   }
 
   private int calculateMoveTime(ArrayList<Move> boardMove) {
-    // Players move 3 tiles per second
-    return (boardMove.size() * 1000)/3;
+    // Players move 3 tiles per second + 500 to prevent race condition
+    return (boardMove.size() * 1000)/3 + 500;
+  }
+
+  public void endTurn() {
+    store.nextTurn();
+    // Handle if the next player is a CPU
+    Player movingPlayer = store.getMovingPlayer();
+    if (movingPlayer.isCpu())
+      new BoardAi(store, this).run();
   }
 }

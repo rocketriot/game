@@ -119,9 +119,14 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
     if (boardMove.size() == 0) {
       player.clearBoardMove();
 
-      // Show minigame prompt if next to planet
-      if (gameBoard.isNextToThePlanet(player.getCoordinates()) && player.equals(store.getMainPlayer())) {
-        showMinigamePrompt();
+      if (store.getMovingPlayer().equals(store.getMainPlayer())) {
+        // Show minigame prompt if next to planet
+        if (gameBoard.isNextToThePlanet(player.getCoordinates()) && player
+            .equals(store.getMainPlayer())) {
+          showMinigamePrompt();
+        } else {
+          router.call(Route.END_TURN);
+        }
       }
 
       return;
@@ -502,6 +507,8 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
             } else {
               SoundController.playSound("menuSelect");
               System.out.println("Minigame not started");
+              // Ends the turn
+              router.call(Route.END_TURN);
             }
           }
         };

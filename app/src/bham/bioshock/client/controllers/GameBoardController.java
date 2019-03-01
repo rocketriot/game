@@ -84,13 +84,9 @@ public class GameBoardController extends Controller {
     clientService.send(new Action(Command.MOVE_PLAYER_ON_BOARD, arguments));
   }
 
-  /** Skips a players turn by sending a move with the same coordinates */
-  public void skipTurn() {
-    // TODO TEMP SOLUTION
-    ArrayList<Serializable> arguments = new ArrayList<>();
-    arguments.add(store.getGameBoard());
-    arguments.add(store.getMainPlayer());
-    clientService.send(new Action(Command.MOVE_PLAYER_ON_BOARD, arguments));
+  /** Ends the players turn */
+  public void endTurn() {
+    clientService.send(new Action(Command.END_TURN));
   }
 
   /** Player move received from the server */
