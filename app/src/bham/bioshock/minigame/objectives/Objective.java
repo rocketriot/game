@@ -14,7 +14,6 @@ public abstract class Objective {
     this.players = players;
     this.mainPlayer = mainPlayer;
     initialiseHealth();
-    players.add(mainPlayer);
   }
 
   public abstract Player getWinner();

@@ -216,9 +216,8 @@ public class Renderer {
     // Check collisions between any two entities
     for (Entity e1 : entities) {
       for (Entity e2 : entities) {
-        MinimumTranslationVector collision = e1.checkCollision(e2);
-        if (!e1.equals(e2) && collision != null) {
-          e1.handleCollision(e2, collision);
+        if(!e1.equals(e2)) {
+          e1.handleCollision(e2);          
         }
       }
     }
@@ -227,7 +226,7 @@ public class Renderer {
 
   public void createBullet() {
     Player main = minigameStore.getMainPlayer();
-    PlanetPosition pp = world.convert(main.getPosition());
+    PlanetPosition pp = world.convert(main.getPos());
     pp.fromCenter += main.getHeight() / 2;
 
     if(main.getDirection().equals(PlayerTexture.LEFT)) {

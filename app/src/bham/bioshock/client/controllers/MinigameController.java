@@ -41,7 +41,7 @@ public class MinigameController extends Controller {
     ArrayList<Serializable> arguments = new ArrayList<>();
     arguments.add((Serializable) store.getMainPlayer().getId());
     arguments.add((Serializable) localStore.getMainPlayer().getSpeedVector());
-    arguments.add((Serializable) localStore.getMainPlayer().getPosition());
+    arguments.add((Serializable) localStore.getMainPlayer().getPos());
     arguments.add((Serializable) localStore.getMainPlayer().getDirection());
     arguments.add((Serializable) localStore.getMainPlayer().haveGun());
     
