@@ -15,7 +15,8 @@ public class Rocket extends Entity {
   public Rocket(World w, float _x, float _y, int _color) {
     super(w, _x, _y);
     color = _color;
-    size = 400;
+    width = 400;
+    height = 400;
     collisionHeight = 400;
     collisionWidth = 200;
   }
@@ -37,8 +38,4 @@ public class Rocket extends Entity {
     sprite.setOrigin(sprite.getWidth() / 2, 0);
   }
   
-  @Override
-  public void handleCollision(Entity e) {
-
-  }
 }

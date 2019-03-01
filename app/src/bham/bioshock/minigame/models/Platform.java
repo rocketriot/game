@@ -6,19 +6,25 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
-import java.util.HashMap;
+public class Platform extends StaticEntity {
 
-public class Platform extends Entity {
-
-    private Integer color;
-    private static HashMap<Integer, Texture> textures = new HashMap<>();
+    private TextureRegion texture;
 
     public Platform(World w, float x, float y) {
-        super(w, x, y);
+        super(w ,x, y);
+        width = 100;
+        height = 50;
+        collisionWidth = 100;
+        collisionHeight = 50;
     }
 
     public TextureRegion getTexture() {
-       return null;
+       return texture;
+    }
+
+    public void load() {
+        texture = new TextureRegion( new Texture(Gdx.files.internal("app/assets/minigame/platform.png")));
+        super.load();
     }
 
 

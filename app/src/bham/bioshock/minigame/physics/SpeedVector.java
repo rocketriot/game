@@ -62,6 +62,11 @@ public class SpeedVector extends Sendable {
     dx -= round(v.dx * u);
     dy -= round(v.dy * u);
   }
+  
+  public double getValueFor(double angle) {
+    Vector v = stopVector(angle);
+    return Math.sqrt(v.dx * v.dx + v.dy * v.dy);
+  }
 
   private Vector stopVector(double angleDegrees) {
     double angle = Math.toRadians(angleDegrees);
