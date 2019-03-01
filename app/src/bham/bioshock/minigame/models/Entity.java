@@ -103,7 +103,6 @@ public abstract class Entity {
 
 
   public abstract TextureRegion getTexture();
-  public abstract Player getShooter();
 
   public void load() {
     this.loaded = true;

@@ -20,11 +20,6 @@ public class Gun extends Entity {
     return texture;
   }
 
-  @Override
-  public Player getShooter() {
-    return null;
-  }
-
   public static void loadTextures() {
     texture = new TextureRegion(new Texture(Gdx.files.internal("app/assets/minigame/gun.png")));
   }

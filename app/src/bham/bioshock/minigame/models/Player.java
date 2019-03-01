@@ -112,10 +112,6 @@ public class Player extends Entity {
     return region;
   }
 
-  @Override
-  public Player getShooter() {
-    return null;
-  }
 
   private TextureRegion getTexture(boolean withGun) {
     if (withGun && dir.equals(PlayerTexture.FRONT)) {
@@ -163,7 +159,8 @@ public class Player extends Entity {
       collide(.2f, v);
       health -= 3;
       if(health<=0) {
-        e.getShooter().addKills(1);
+        Bullet b = (Bullet)e;
+        b.getShooter().addKills(1);
         this.isDead = true;
       }
 
