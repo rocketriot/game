@@ -19,7 +19,7 @@ public class Gun extends Entity {
   public TextureRegion getTexture() {
     return texture;
   }
-  
+
   public static void loadTextures() {
     texture = new TextureRegion(new Texture(Gdx.files.internal("app/assets/minigame/gun.png")));
   }
