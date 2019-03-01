@@ -1,4 +1,5 @@
 package bham.bioshock.minigame.models;
+import bham.bioshock.client.controllers.SoundController;
 import bham.bioshock.common.Position;
 import bham.bioshock.minigame.PlayerTexture;
 import bham.bioshock.minigame.worlds.World;

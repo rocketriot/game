@@ -35,8 +35,9 @@ public class SoundController extends Controller {
   private static float soundsVolume;
   private static boolean soundsEnabled;
 
-  /**Variables to do with interacting with the preferences file */
+  /** Variables to do with interacting with the preferences file */
   private AppPreferences preferences;
+
   private XMLInteraction xmlInteraction = new XMLInteraction();
 
   /**
@@ -156,7 +157,7 @@ public class SoundController extends Controller {
    */
   public void fadeOut(String music) throws InterruptedException {
     if (musicPlaying.get(music)) {
-      int fadeTime = 30;
+      int fadeTime = 20;
       float currentVolume = musicVolume;
       float step = currentVolume / fadeTime;
 
@@ -186,16 +187,14 @@ public class SoundController extends Controller {
    * @param sound The sound to loop
    */
   public void loopSound(String sound) {
-    if (soundsEnabled) {
-      if (!soundsPlaying.get(sound)) {
-        long id = sounds.get(sound).loop(soundsVolume);
-        soundsIds.put(sound, id);
+    if (soundsEnabled && !soundsPlaying.get(sound)) {
+      long id = sounds.get(sound).loop(soundsVolume);
+      soundsIds.put(sound, id);
 
-        if (soundsPlaying.keySet().contains(music)) {
-          soundsPlaying.replace(sound, true);
-        } else {
-          soundsPlaying.put(sound, true);
-        }
+      if (soundsPlaying.keySet().contains(music)) {
+        soundsPlaying.replace(sound, true);
+      } else {
+        soundsPlaying.put(sound, true);
       }
     }
   }
@@ -206,10 +205,10 @@ public class SoundController extends Controller {
    * @param sound The looping sound to stop
    */
   public void stopSound(String sound) {
-    if (soundsPlaying.get(sound)) {
+    if (soundsPlaying.get(sound) && soundsIds.get(sound) != null) {
       sounds.get(sound).stop();
       soundsPlaying.replace(sound, false);
-      soundsPlaying.remove(sound);
+      soundsIds.remove(sound);
     }
   }
 
