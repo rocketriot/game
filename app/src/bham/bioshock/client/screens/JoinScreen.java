@@ -2,6 +2,7 @@ package bham.bioshock.client.screens;
 
 import bham.bioshock.client.Route;
 import bham.bioshock.client.Router;
+import bham.bioshock.common.Position;
 import bham.bioshock.common.models.Player;
 import bham.bioshock.common.models.store.Store;
 import bham.bioshock.minigame.models.Entity;
@@ -40,14 +41,12 @@ public class JoinScreen extends ScreenMaster {
     private Texture[] loadTextures;
     private Texture[] connectedTextures;
 
-    private int mainPlayerIndex = 0;
     private float rocketX = 50;
     private float rocketY = 50;
-    private float rocketSpeed = 50f;
+    private float rocketSpeed = 100f;
     private int rocketWidth = 50;
     private int rocketHeight = 100;
     private float rocketRotation = 0;
-    private Animation mainPlayerAnimation;
 
     private Player mainPlayer;
     private boolean mainPlayerSet;
@@ -412,18 +411,18 @@ public class JoinScreen extends ScreenMaster {
 
 
 
-    private Vector2 checkBounds(float rX, float  rY) {
-        Vector2 pos = new Vector2(rX,rY);
-        if(rX < 0) {
+    private Position checkBounds(float rX, float  rY) {
+        Position pos = new Position(rX,rY);
+        if(rX <= 0) {
             pos.x = 0;
         }
-        if(rX > stage.getWidth()) {
+        if(rX >= stage.getWidth()) {
             pos.x = stage.getWidth();
         }
-        if(rY < 0) {
+        if(rY <= 0) {
             pos.y = 0;
         }
-        if(rY > stage.getHeight()) {
+        if(rY >= stage.getHeight()) {
             pos.y = stage.getHeight();
         }
         return pos;
@@ -501,6 +500,10 @@ public class JoinScreen extends ScreenMaster {
                     pos.y -= Gdx.graphics.getDeltaTime() * rocketSpeed;
                     break;
             }
+            System.out.println(pos.x + " " + pos.y);
+            Position bounds = checkBounds(pos.x, pos.y);
+            pos = bounds;
+
         }
 
     }
