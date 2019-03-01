@@ -76,7 +76,6 @@ public class Renderer {
     this.store = store;
     this.minigameStore = store.getMinigameStore();
     this.router = router;
-    this.objective = new KillThemAll(minigameStore.getPlayers(),mainPlayer);
     mainPlayer = minigameStore.getMainPlayer();
 
     shapeRenderer = new ShapeRenderer();
@@ -89,7 +88,17 @@ public class Renderer {
     entities.addAll(minigameStore.getGuns());
     shooting = false;
 
+
     world = minigameStore.getWorld();
+
+    //test
+    this.objective = new KillThemAll(minigameStore.getPlayers(),mainPlayer);
+    Player second = new Player(world,-2310, 0);
+    entities.add(second);
+    System.out.println(mainPlayer.getPosition().x);
+    System.out.println(mainPlayer.getPosition().y);
+    //
+
 
     cam = new OrthographicCamera();
     cam.position.set(mainPlayer.getX(), mainPlayer.getY(), 0);
@@ -127,6 +136,7 @@ public class Renderer {
 
     for (Entity e : entities) {
       e.load();
+      e.setObjective(objective);
     }
     
     Gdx.input.setInputProcessor(new InputAdapter() {
@@ -158,7 +168,8 @@ public class Renderer {
     if (!firstRender) {
       handleCollisions();
     }
-    
+
+
     cam.position.lerp(lerpTarget.set(mainPlayer.getX(), mainPlayer.getY(), 0), 3f * delta);
 
     double rotation = -world.getAngleTo(cam.position.x, cam.position.y);
@@ -238,7 +249,7 @@ public class Renderer {
 
     Position bulletPos = world.convert(pp);
 
-    Bullet b = new Bullet(minigameStore.getWorld(), bulletPos.x, bulletPos.y, main);
+    Bullet b = new Bullet(minigameStore.getWorld(), bulletPos.x, bulletPos.y, mainPlayer);
     // First synchronise the bullet with the player
     b.setSpeedVector((SpeedVector) main.getSpeedVector().clone());
     // Apply bullet speed

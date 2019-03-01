@@ -16,7 +16,7 @@ public class FirstWorld extends World {
   ArrayList<Gun> guns = new ArrayList<>();
   Position gravityCenter = new Position(0, 0);
   private Map map = new Map(this);
-  
+
   public FirstWorld() {
     playerPositions[0] = new Position(-2300, 0);
     playerPositions[1] = new Position(0, -2000);
@@ -61,5 +61,5 @@ public class FirstWorld extends World {
 
   @Override
   public Map getMap(){return map;}
-  
+
 }

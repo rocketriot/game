@@ -2,6 +2,7 @@ package bham.bioshock.minigame.models;
 
 import bham.bioshock.common.Direction;
 import bham.bioshock.common.Position;
+import bham.bioshock.minigame.objectives.Objective;
 import bham.bioshock.minigame.physics.CollisionBoundary;
 import bham.bioshock.minigame.physics.SpeedVector;
 import bham.bioshock.minigame.physics.Vector;
@@ -35,6 +36,7 @@ public abstract class Entity {
 
   protected boolean onGround;
   protected State state = State.CREATED;
+  private Objective objective = null;
   
   public Entity(World w, float x, float y, boolean isStatic) {
     this.isStatic = isStatic;
@@ -101,7 +103,8 @@ public abstract class Entity {
     return world.getAngleTo(getX(), getY());
   }
 
-
+  public Objective getObjective(){return this.objective;}
+  public void setObjective(Objective o){this.objective = objective;}
   public abstract TextureRegion getTexture();
 
   public void load() {

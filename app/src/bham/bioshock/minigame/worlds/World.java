@@ -5,6 +5,7 @@ import bham.bioshock.common.Position;
 import bham.bioshock.common.models.store.Map;
 import bham.bioshock.minigame.models.Gun;
 import bham.bioshock.minigame.models.Rocket;
+import bham.bioshock.minigame.objectives.Objective;
 import bham.bioshock.minigame.physics.Vector;
 
 abstract public class World {

@@ -22,8 +22,6 @@ public class Player extends Entity {
   private PlayerTexture dir;
   private float v = 700f;
   private boolean haveGun = false;
-  private float health = 0;
-  private int kills = 0;
   public boolean isDead = false;
 
   public Player(World w, float x, float y) {
@@ -157,13 +155,7 @@ public class Player extends Entity {
   public void handleCollision(Entity e, MinimumTranslationVector v) {
     if(e.isA(Bullet.class)) {
       collide(.2f, v);
-      health -= 3;
-      if(health<=0) {
-        Bullet b = (Bullet)e;
-        b.getShooter().addKills(1);
-        this.isDead = true;
-      }
-
+      e.getObjective().gotShot(this);
     } else if(e.isA(Player.class) || e.isA(Rocket.class)) {
       collide(0.8f, v);
     } else if(e.isA(Gun.class)) {
@@ -178,19 +170,4 @@ public class Player extends Entity {
     }
   }
 
-  public void setHealth(float newHealth){
-    this.health = newHealth;
-  }
-
-  public float getHealth(){
-    return this.health;
-  }
-
-  public void addKills(int addedKills){
-    this.kills += addedKills;
-  }
-
-  public float getKills(){
-    return this.kills;
-  }
 }

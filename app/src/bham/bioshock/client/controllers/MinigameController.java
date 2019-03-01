@@ -13,6 +13,8 @@ import bham.bioshock.communication.Command;
 import bham.bioshock.communication.client.ClientService;
 import bham.bioshock.minigame.PlayerTexture;
 import bham.bioshock.minigame.models.Bullet;
+import bham.bioshock.minigame.objectives.KillThemAll;
+import bham.bioshock.minigame.objectives.Objective;
 import bham.bioshock.minigame.physics.SpeedVector;
 import bham.bioshock.minigame.worlds.FirstWorld;
 import java.io.Serializable;
@@ -80,8 +82,8 @@ public class MinigameController extends Controller {
   public void show() {
     // Create local store for the minigame, and create a new world
     MinigameStore localStore = new MinigameStore();
-
-    localStore.seed(store, new FirstWorld());
+    Objective objective = new KillThemAll();
+    localStore.seed(store, new FirstWorld(), objective);
 
     store.setMinigameStore(localStore);
 
