@@ -83,8 +83,8 @@ public class MinigameController extends Controller {
     localStore.seed(store, new FirstWorld());
     store.setMinigameStore(localStore);
     router.call(Route.FADE_OUT, "boardGame");
-    setScreen(new MinigameScreen(store, router));
     router.call(Route.START_MUSIC, "minigame");
+    setScreen(new MinigameScreen(store, router));
   }
 
   public void sendEnd(){
