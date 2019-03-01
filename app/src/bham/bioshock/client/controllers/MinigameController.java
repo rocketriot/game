@@ -5,6 +5,7 @@ import bham.bioshock.client.Route;
 import bham.bioshock.client.Router;
 import bham.bioshock.client.screens.MinigameScreen;
 import bham.bioshock.common.Position;
+import bham.bioshock.common.models.store.Map;
 import bham.bioshock.common.models.store.MinigameStore;
 import bham.bioshock.common.models.store.Store;
 import bham.bioshock.communication.Action;
@@ -70,7 +71,7 @@ public class MinigameController extends Controller {
     Position p = (Position) arguments.get(1);
     
     MinigameScreen screen = (MinigameScreen) store.getScreen();
-    Bullet b = new Bullet(localStore.getWorld(), p.x, p.y);  
+    Bullet b = new Bullet(localStore.getWorld(), p.x, p.y,localStore.getMainPlayer());
     b.setSpeedVector(sv);
     screen.addBullet(b);
   }
@@ -79,10 +80,13 @@ public class MinigameController extends Controller {
   public void show() {
     // Create local store for the minigame, and create a new world
     MinigameStore localStore = new MinigameStore();
+
     localStore.seed(store, new FirstWorld());
-    
+
     store.setMinigameStore(localStore);
 
+    router.call(Route.FADE_OUT, "boardGame");
+    router.call(Route.START_MUSIC, "minigame");
     setScreen(new MinigameScreen(store, router));
   }
 

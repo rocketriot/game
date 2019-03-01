@@ -2,6 +2,7 @@ package bham.bioshock.client.screens;
 
 import bham.bioshock.client.Route;
 import bham.bioshock.client.Router;
+import bham.bioshock.client.controllers.SoundController;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.files.FileHandle;
@@ -98,7 +99,7 @@ public abstract class ScreenMaster implements Screen {
     backButton.addListener(new ChangeListener() {
       @Override
       public void changed(ChangeEvent event, Actor actor) {
-        router.call(Route.SELECT_SOUND);
+        SoundController.playSound("menuSelect");
         router.back();
       }
     });

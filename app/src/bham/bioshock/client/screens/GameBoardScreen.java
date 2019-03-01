@@ -2,6 +2,7 @@ package bham.bioshock.client.screens;
 
 import bham.bioshock.client.Route;
 import bham.bioshock.client.Router;
+import bham.bioshock.client.controllers.SoundController;
 import bham.bioshock.client.scenes.Hud;
 import bham.bioshock.common.Direction;
 import bham.bioshock.common.consts.Config;
@@ -647,8 +648,10 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
 
             if (object.equals(true)) {
               System.out.println("Starting minigame");
+              SoundController.playSound("menuSelect");
               router.call(Route.START_MINIGAME);
             } else {
+              SoundController.playSound("menuSelect");
               System.out.println("Minigame not started");
             }
           }

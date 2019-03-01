@@ -1,16 +1,15 @@
 package bham.bioshock.common.models.store;
 
 import bham.bioshock.client.AppPreferences;
-
 import java.util.HashMap;
-
+import java.util.Map.Entry;
 import bham.bioshock.common.models.Coordinates;
 import bham.bioshock.common.models.GameBoard;
 import bham.bioshock.common.models.Player;
 import com.badlogic.gdx.Screen;
 import com.google.inject.Singleton;
-
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.UUID;
 
 /** Stores all of the models */
@@ -24,12 +23,9 @@ public class Store {
   private AppPreferences preferences;
   private Screen currentScreen;
   /** Contains all of the information about the game board */
-  private GameBoard gameBoard = new GameBoard();
+  private GameBoard gameBoard = null;
   /** A list of players */
   private ArrayList<Player> players = new ArrayList<>(MAX_PLAYERS);
-
-  /** A hash map of players to their userID */
-  private HashMap<UUID, Player> playersMap = new HashMap<>();
 
   /** The ID of the player that the client is controlling, only used client-side */
   private UUID mainPlayerId;
@@ -45,17 +41,6 @@ public class Store {
     return preferences;
   }
 
-  public void generateGrid() {
-    // Set coordinates of the players
-    int last = gameBoard.GRID_SIZE - 1;
-    players.get(0).setCoordinates(new Coordinates(0, 0));
-    players.get(1).setCoordinates(new Coordinates(0, last));
-    players.get(2).setCoordinates(new Coordinates(last, last));
-    players.get(3).setCoordinates(new Coordinates(last, 0));
-
-    gameBoard.generateGrid();
-  }
-
   public GameBoard getGameBoard() {
     return gameBoard;
   }
@@ -65,12 +50,12 @@ public class Store {
   }
 
   public boolean isMainPlayer(UUID id) {
-    if(mainPlayerId == null) {
+    if (mainPlayerId == null) {
       return false;
     }
     return mainPlayerId.equals(id);
   }
-  
+
   public void setGameBoard(GameBoard gameBoard) {
     this.gameBoard = gameBoard;
   }
@@ -83,40 +68,25 @@ public class Store {
     return players;
   }
 
-  public HashMap<UUID, Player> getPlayersMap() { return playersMap; }
-
   public Player getPlayer(UUID id) {
-    return playersMap.get(id);
+    return players.stream().filter(p -> p.getId().equals(id)).findAny().orElse(null);
   }
 
-  public void setPlayers(ArrayList<Player> players) {
+  public void setPlayers(ArrayList<Player> ps) {
     this.players.clear();
-    this.playersMap.clear();
-    this.players = players;
-    for(Player p : players) {
-      playersMap.put(p.getId(), p);
-    }
+    players = ps;
   }
 
   public void addPlayer(Player player) {
-    playersMap.put(player.getId(), player);
     players.add(player);
   }
 
   public void removePlayer(UUID id) {
     players.removeIf(p -> p.getId().equals(id));
-    playersMap.remove(id);
   }
 
   public void removeAllPlayers() {
     players.clear();
-    playersMap.clear();
-  }
-
-  public void updatePlayer(Player updatingPlayer) {
-    for (int i = 0; i < players.size(); i++) {
-      if (players.get(i).getId().equals(updatingPlayer.getId())) players.set(i, updatingPlayer);
-    }
   }
 
   public Player getMainPlayer() {
@@ -137,7 +107,7 @@ public class Store {
 
   /** Get's the player who's turn it is */
   public Player getMovingPlayer() {
-    return players.get(turn);
+    return players.get(turn % players.size());
   }
 
   /** After a player has finished their turn, set the next turn */
@@ -148,7 +118,9 @@ public class Store {
       turn = 0;
 
       // Increase player's fuel after each round
-      for (Player player : players) player.increaseFuel(30.0f);
+      for (Player p : players) {
+        p.increaseFuel(30.0f);
+      }
     }
   }
 
@@ -158,10 +130,12 @@ public class Store {
   public void setMinigameStore(MinigameStore store) {
     this.minigameStore = store;
   }
+
   public MinigameStore getMinigameStore() {
     return this.minigameStore;
   }
-  public void resetMinigameStore(){
+
+  public void resetMinigameStore() {
     minigameStore = null;
   }
 }

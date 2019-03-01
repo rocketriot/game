@@ -1,5 +1,6 @@
 package bham.bioshock.server.handlers;
 
+import bham.bioshock.common.models.Coordinates;
 import bham.bioshock.common.models.GameBoard;
 import bham.bioshock.common.models.Player;
 import bham.bioshock.common.models.store.Store;
@@ -19,17 +20,35 @@ public class GameBoardHandler {
     this.store = store;
     this.handler = handler;
   }
+  
+  private void generateGrid(GameBoard board, ArrayList<Player> players) {
+    // Set coordinates of the players
+    int last = board.GRID_SIZE - 1;
+    players.get(0).setCoordinates(new Coordinates(0, 0));
+    players.get(1).setCoordinates(new Coordinates(0, last));
+    players.get(2).setCoordinates(new Coordinates(last, last));
+    players.get(3).setCoordinates(new Coordinates(last, 0));
+
+    board.generateGrid();
+  }
 
   /** Adds a player to the server and sends the player to all the clients */
-  public void getGameBoard(Action action) {
+  public void getGameBoard(Action action, ArrayList<Player> additionalPlayers) {
+    ArrayList<Player> players = store.getPlayers();
+    if(additionalPlayers != null) {
+      players.addAll(additionalPlayers);
+    }
+    
     GameBoard gameBoard = store.getGameBoard();
-
     // Generate a grid when starting the game
-    if (gameBoard.getGrid() == null) store.generateGrid();
+    if (gameBoard == null) {
+      gameBoard = new GameBoard(); 
+      generateGrid(gameBoard, players);
+    }
 
     ArrayList<Serializable> response = new ArrayList<>();
     response.add(gameBoard);
-    for (Player p : store.getPlayers()) {
+    for (Player p : players) {
       response.add(p);
     }
 
@@ -45,12 +64,15 @@ public class GameBoardHandler {
 
     // Update the store
     store.setGameBoard(gameBoard);
-    store.updatePlayer(movingPlayer);
+    Player p = store.getPlayer(movingPlayer.getId());
+    p.setCoordinates(movingPlayer.getCoordinates());
+    p.setFuel(movingPlayer.getFuel());
 
     // Send out new game board and moving player to players
     ArrayList<Serializable> response = new ArrayList<>();
     response.add(gameBoard);
     response.add(movingPlayer);
+    
     handler.sendToAll(new Action(Command.MOVE_PLAYER_ON_BOARD, response));
 
     store.nextTurn();

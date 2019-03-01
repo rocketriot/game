@@ -1,13 +1,14 @@
 package bham.bioshock.minigame.models;
-
 import bham.bioshock.common.Position;
 import bham.bioshock.minigame.PlayerTexture;
-import bham.bioshock.minigame.physics.SpeedVector;
 import bham.bioshock.minigame.worlds.World;
+import bham.bioshock.minigame.worlds.World.PlanetPosition;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Intersector.MinimumTranslationVector;
 
 public class Player extends Entity {
 
@@ -21,10 +22,14 @@ public class Player extends Entity {
   private PlayerTexture dir;
   private float v = 700f;
   private boolean haveGun = false;
+  private float health = 0;
+  private int kills = 0;
+  public boolean isDead = false;
 
   public Player(World w, float x, float y) {
     super(w, x, y);
-    size = 150;
+    width = 150;
+    height = 150;
     animationTime = 0;
     fromGround = -25;
     update(0);
@@ -55,7 +60,7 @@ public class Player extends Entity {
   }
 
   public void jump(float delta) {
-    if (!isFlying()) {
+    if (!isFlying() && speed.getValueFor(angleFromCenter()) < JUMP_FORCE * 3/4 ) {
       speed.apply(angleFromCenter(), JUMP_FORCE);
     }
   }
@@ -97,7 +102,7 @@ public class Player extends Entity {
 
   public TextureRegion getTexture() {
     TextureRegion region = getTexture(haveGun);
-
+    if(region == null) return null;
     if (region.isFlipX()) {
       region.flip(true, false);
     }
@@ -106,6 +111,7 @@ public class Player extends Entity {
     }
     return region;
   }
+
 
   private TextureRegion getTexture(boolean withGun) {
     if (withGun && dir.equals(PlayerTexture.FRONT)) {
@@ -148,14 +154,43 @@ public class Player extends Entity {
 
   /** Collisions **/
   @Override
-  public void handleCollision(Entity e) {
+  public void handleCollision(Entity e, MinimumTranslationVector v) {
     if(e.isA(Bullet.class)) {
-      collide(e, 0.2f);      
+      collide(.2f, v);
+      health -= 3;
+      if(health<=0) {
+        Bullet b = (Bullet)e;
+        b.getShooter().addKills(1);
+        this.isDead = true;
+      }
+
     } else if(e.isA(Player.class) || e.isA(Rocket.class)) {
-      collide(e, 0.8f);
+      collide(0.8f, v);
     } else if(e.isA(Gun.class)) {
       e.state = State.REMOVED;
       haveGun = true;
+    } else if(e.isA(StaticEntity.class)) {
+      super.onGround = true;
+      pos.x += v.normal.x;
+      pos.y += v.normal.y;
+      
+      collide(0f, v);
     }
+  }
+
+  public void setHealth(float newHealth){
+    this.health = newHealth;
+  }
+
+  public float getHealth(){
+    return this.health;
+  }
+
+  public void addKills(int addedKills){
+    this.kills += addedKills;
+  }
+
+  public float getKills(){
+    return this.kills;
   }
 }

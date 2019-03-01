@@ -2,11 +2,13 @@ package bham.bioshock.minigame.worlds;
 
 import java.util.ArrayList;
 import bham.bioshock.common.Position;
+import bham.bioshock.common.models.store.Map;
 import bham.bioshock.minigame.models.Gun;
 import bham.bioshock.minigame.models.Rocket;
 import bham.bioshock.minigame.physics.Vector;
 
 abstract public class World {
+
 
   public double getAngleTo(double x, double y) {
     double worldX = gravityCenter().x;
@@ -27,6 +29,10 @@ abstract public class World {
 
   public PlanetPosition convert(Position p) {
     return new PlanetPosition((float) getAngleTo(p.x, p.y), (float) getDistanceTo(p.x, p.y));
+  }
+  
+  public double angleRatio(double r) {
+    return 180 / (Math.PI * r);
   }
 
   public Position convert(PlanetPosition p) {
@@ -50,6 +56,7 @@ abstract public class World {
 
   abstract public ArrayList<Gun> getGuns();
 
+  abstract public Map getMap();
 
   public class PlanetPosition {
     public float angle;
