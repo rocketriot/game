@@ -7,6 +7,7 @@ import bham.bioshock.minigame.physics.SpeedVector;
 import bham.bioshock.minigame.physics.Vector;
 import bham.bioshock.minigame.worlds.World;
 import bham.bioshock.minigame.worlds.World.PlanetPosition;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -164,14 +165,14 @@ public abstract class Entity {
   /*
    * Default behaviour for the collision. Can be overwritten by the subclass
    */
-  public void handleCollision(Entity e, MinimumTranslationVector v) {}
+  public void handleCollision(Entity e) {}
 
   public CollisionBoundary collisionBoundary() {
     return collisionBoundary;
   }
 
   public void drawDebug(ShapeRenderer shapeRenderer) {
-    collisionBoundary().draw(shapeRenderer);
+    collisionBoundary().draw(shapeRenderer, Color.WHITE);
     speed.draw(shapeRenderer, pos);
   }
 
@@ -182,11 +183,7 @@ public abstract class Entity {
   public void resetColision() {
     this.onGround = false;
   }
-  
-  public void handleCollision(MinimumTranslationVector v) {
-    collide(0, v);
-  }
-
+ 
 
   public void collide(float elastic, MinimumTranslationVector v) {
     if (!loaded) return;
@@ -241,7 +238,6 @@ public abstract class Entity {
   public enum State {
     CREATED, LOADED, REMOVED, REMOVING,
   }
-
 
 }
 

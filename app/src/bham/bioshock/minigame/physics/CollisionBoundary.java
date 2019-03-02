@@ -25,17 +25,17 @@ public class CollisionBoundary extends Polygon {
     this.setOrigin(width / 2, 0);
   }
 
-  public void draw(ShapeRenderer shapeRenderer) {
+  public void draw(ShapeRenderer shapeRenderer, Color c) {
     shapeRenderer.begin(ShapeType.Line);
-    shapeRenderer.setColor(Color.BLACK);
+    shapeRenderer.setColor(c);
     shapeRenderer.polygon(getTransformedVertices());
     shapeRenderer.end();
-  }
+  }  
 
   public void update(Position pos, double rotation) {
     this.rotation = rotation;
     this.setRotation((float) rotation);
-    this.setPosition(pos.x - width / 2, pos.y);
+    this.setPosition((pos.x - width / 2), pos.y );
   }
 
   public boolean collideWith(Polygon p, MinimumTranslationVector v) {

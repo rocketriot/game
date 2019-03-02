@@ -1,9 +1,9 @@
 package bham.bioshock.client.screens;
 
 import bham.bioshock.client.Router;
-import bham.bioshock.common.models.store.Map;
 import bham.bioshock.common.models.store.MinigameStore;
 import bham.bioshock.common.models.store.Store;
+import bham.bioshock.minigame.MapSeeder;
 import bham.bioshock.minigame.Renderer;
 import bham.bioshock.minigame.models.Bullet;
 import com.badlogic.gdx.Screen;

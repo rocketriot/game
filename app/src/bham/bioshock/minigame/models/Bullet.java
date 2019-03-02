@@ -95,10 +95,16 @@ public class Bullet extends Entity {
 
   /** Collisions **/
   @Override
-  public void handleCollision(Entity e, MinimumTranslationVector v) {
+  public void handleCollision(Entity e) {    
     if (e.isA(Player.class)) {
+      MinimumTranslationVector v = checkCollision(e);
+      if(v == null) return;
+      
       collide(0.2f, v);
     } else if (e.isA(Rocket.class)) {
+      MinimumTranslationVector v = checkCollision(e);
+      if(v == null) return;
+      
       collide(0.9f, v);
     }
   }
