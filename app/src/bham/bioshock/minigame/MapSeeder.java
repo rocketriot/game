@@ -19,15 +19,15 @@ public class MapSeeder {
   }
 
   public void seed() {
-    platforms.add(new Platform(world, -2050, 200));
-    platforms.add(new Platform(world, -2050, 600));
-    platforms.add(new Platform(world, -2100, 300));
-    platforms.add(new Platform(world, -2250, 900));
-    platforms.add(new Platform(world, -2450, 1100));
-    platforms.add(new Platform(world, -2550, 1300));
-    platforms.add(new Platform(world, -2550, 1400));
-    platforms.add(new Platform(world, -2050, 1600));
-    platforms.add(new Platform(world, -2050, 1400));
+    platforms.add(new Platform(world, -2050, 200, 200, 20));
+    platforms.add(new Platform(world, -2050, 600, 200, 50));
+    platforms.add(new Platform(world, -2100, 300, 10, 50));
+    platforms.add(new Platform(world, -2250, 900, 500, 5));
+    platforms.add(new Platform(world, -2450, 1100, 100, 50));
+    platforms.add(new Platform(world, -2550, 1300, 200, 50));
+    platforms.add(new Platform(world, -2550, 1400, 300, 25));
+    platforms.add(new Platform(world, -2050, 1600, 300, 50));
+    platforms.add(new Platform(world, -2050, 1400, 100, 100));
   }
 
   public ArrayList<Platform> getPlatforms() {

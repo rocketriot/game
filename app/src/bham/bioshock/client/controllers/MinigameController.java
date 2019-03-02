@@ -10,7 +10,6 @@ import bham.bioshock.common.models.store.Store;
 import bham.bioshock.communication.Action;
 import bham.bioshock.communication.Command;
 import bham.bioshock.communication.client.ClientService;
-import bham.bioshock.minigame.Map;
 import bham.bioshock.minigame.PlayerTexture;
 import bham.bioshock.minigame.models.Bullet;
 import bham.bioshock.minigame.physics.SpeedVector;

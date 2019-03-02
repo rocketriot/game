@@ -107,7 +107,6 @@ public class Player extends Entity {
   
   public void load() {
     super.load();
-    collisionBoundary.offsetX(fromGround);
     legs = new CollisionBoundary(collisionWidth+10, collisionHeight / 10);
     legs.update(pos, getRotation());
   }

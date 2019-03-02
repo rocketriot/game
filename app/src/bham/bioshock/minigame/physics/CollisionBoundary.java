@@ -15,8 +15,6 @@ public class CollisionBoundary extends Polygon {
 
   float width;
   float height;
-  float offsetX = 0;
-  float offsetY = 0;
   double rotation;
   private MinimumTranslationVector collisionVector;
 
@@ -37,7 +35,7 @@ public class CollisionBoundary extends Polygon {
   public void update(Position pos, double rotation) {
     this.rotation = rotation;
     this.setRotation((float) rotation);
-    this.setPosition((pos.x - width / 2) + offsetX, pos.y + offsetY);
+    this.setPosition((pos.x - width / 2), pos.y );
   }
 
   public boolean collideWith(Polygon p, MinimumTranslationVector v) {
@@ -76,12 +74,5 @@ public class CollisionBoundary extends Polygon {
     }
 
     return Direction.NONE;
-  }
-
-  public void offsetX(float offsetX) {
-    this.offsetX = offsetX;
-  }
-  public void offsetY(float offsetY) {
-    this.offsetY = offsetY;
   }
 }

@@ -1,11 +1,9 @@
 package bham.bioshock.minigame;
 
 import bham.bioshock.client.scenes.MinigameHud;
-
 import bham.bioshock.client.screens.StatsContainer;
 import java.util.ArrayList;
 import java.util.Collection;
-
 import bham.bioshock.client.Route;
 import bham.bioshock.client.Router;
 import bham.bioshock.common.Position;
@@ -75,7 +73,7 @@ public class Renderer {
     this.store = store;
     this.minigameStore = store.getMinigameStore();
     this.router = router;
-    this.objective = new KillThemAll(minigameStore.getPlayers(),mainPlayer);
+    this.objective = new KillThemAll(minigameStore.getPlayers(), mainPlayer);
     mainPlayer = minigameStore.getMainPlayer();
 
     shapeRenderer = new ShapeRenderer();
@@ -127,7 +125,7 @@ public class Renderer {
     for (Entity e : entities) {
       e.load();
     }
-    
+
     Gdx.input.setInputProcessor(new InputAdapter() {
       @Override
       public boolean keyDown(int keyCode) {
@@ -157,7 +155,7 @@ public class Renderer {
     if (!firstRender) {
       handleCollisions();
     }
-    
+
     cam.position.lerp(lerpTarget.set(mainPlayer.getX(), mainPlayer.getY(), 0), 3f * delta);
 
     double rotation = -world.getAngleTo(cam.position.x, cam.position.y);
@@ -189,6 +187,7 @@ public class Renderer {
     hud.getStage().draw();
 
     updatePosition();
+
     firstRender = false;
   }
 
@@ -211,12 +210,12 @@ public class Renderer {
     for (Entity e : entities) {
       e.resetColision();
     }
-    
+
     // Check collisions between any two entities
     for (Entity e1 : entities) {
       for (Entity e2 : entities) {
-        if(!e1.equals(e2)) {
-          e1.handleCollision(e2);          
+        if (!e1.equals(e2)) {
+          e1.handleCollision(e2);
         }
       }
     }
@@ -228,9 +227,9 @@ public class Renderer {
     PlanetPosition pp = world.convert(main.getPos());
     pp.fromCenter += main.getHeight() / 2;
 
-    if(main.getDirection().equals(PlayerTexture.LEFT)) {
+    if (main.getDirection().equals(PlayerTexture.LEFT)) {
       pp.angle -= 2;
-    } else if(main.getDirection().equals(PlayerTexture.RIGHT)) {
+    } else if (main.getDirection().equals(PlayerTexture.RIGHT)) {
       pp.angle += 2;
     }
 
@@ -240,7 +239,7 @@ public class Renderer {
     // First synchronise the bullet with the player
     b.setSpeedVector((SpeedVector) main.getSpeedVector().clone());
     // Apply bullet speed
-    b.setSpeed((float) main.getSpeedVector().getSpeedAngle(), Bullet.launchSpeed);    
+    b.setSpeed((float) main.getSpeedVector().getSpeedAngle(), Bullet.launchSpeed);
     router.call(Route.MINIGAME_BULLET_SEND, b);
     addBullet(b);
   }
@@ -281,10 +280,10 @@ public class Renderer {
       mainPlayer.jump(dt);
     }
 
-    if(Gdx.input.isKeyJustPressed(Input.Keys.SPACE) && mainPlayer.haveGun()) {
+    if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE) && mainPlayer.haveGun()) {
       createBullet();
     }
-    
+
     if (moveMade) {
       // Send a move to the server
       router.call(Route.MINIGAME_MOVE);
