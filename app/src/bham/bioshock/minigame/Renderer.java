@@ -10,7 +10,6 @@ import bham.bioshock.client.Route;
 import bham.bioshock.client.Router;
 import bham.bioshock.common.Position;
 import bham.bioshock.common.consts.Config;
-import bham.bioshock.common.models.store.Map;
 import bham.bioshock.common.models.store.MinigameStore;
 import bham.bioshock.minigame.models.*;
 import bham.bioshock.common.models.store.Store;
@@ -83,7 +82,7 @@ public class Renderer {
     entities = new ArrayList<Entity>();
 
     world = minigameStore.getWorld();
-    entities.addAll(world.getMap().getPlatforms());
+    entities.addAll(world.getPlatforms());
     entities.addAll(minigameStore.getPlayers());
     entities.addAll(minigameStore.getRockets());
     entities.addAll(minigameStore.getGuns());

@@ -2,8 +2,9 @@ package bham.bioshock.minigame.worlds;
 
 import java.util.ArrayList;
 import bham.bioshock.common.Position;
-import bham.bioshock.common.models.store.Map;
+import bham.bioshock.minigame.MapSeeder;
 import bham.bioshock.minigame.models.Gun;
+import bham.bioshock.minigame.models.Platform;
 import bham.bioshock.minigame.models.Rocket;
 import bham.bioshock.minigame.physics.Vector;
 
@@ -56,7 +57,7 @@ abstract public class World {
 
   abstract public ArrayList<Gun> getGuns();
 
-  abstract public Map getMap();
+  abstract public ArrayList<Platform> getPlatforms();
 
   public class PlanetPosition {
     public float angle;
