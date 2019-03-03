@@ -4,6 +4,7 @@ import bham.bioshock.client.AppPreferences;
 
 import java.util.HashMap;
 
+import bham.bioshock.client.screens.JoinScreen;
 import bham.bioshock.common.models.Coordinates;
 import bham.bioshock.common.models.GameBoard;
 import bham.bioshock.common.models.Player;
@@ -40,6 +41,9 @@ public class Store {
 
   /** Minigame World */
   private MinigameStore minigameStore;
+
+  /** Join Screen */
+  private JoinScreenStore joinScreenStore;
 
   public AppPreferences getPreferences() {
     return preferences;
@@ -163,5 +167,13 @@ public class Store {
   }
   public void resetMinigameStore(){
     minigameStore = null;
+  }
+
+  public JoinScreenStore getJoinScreenStore() {
+    return joinScreenStore;
+  }
+
+  public void setJoinScreenStore(JoinScreenStore joinScreenStore) {
+    this.joinScreenStore = joinScreenStore;
   }
 }

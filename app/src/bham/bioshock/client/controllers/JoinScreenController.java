@@ -7,6 +7,7 @@ import bham.bioshock.client.Router;
 import bham.bioshock.client.screens.JoinScreen;
 import bham.bioshock.common.Position;
 import bham.bioshock.common.models.Player;
+import bham.bioshock.common.models.store.JoinScreenStore;
 import bham.bioshock.common.models.store.Store;
 import bham.bioshock.communication.Action;
 import bham.bioshock.communication.Command;
@@ -47,6 +48,7 @@ public class JoinScreenController extends Controller {
         // Save player to the store
         store.setMainPlayer(player);
 
+        store.setJoinScreenStore(new JoinScreenStore());
         // Create connection to the server
         try {
             connectToServer(player);
@@ -103,7 +105,8 @@ public class JoinScreenController extends Controller {
 
         ArrayList<Serializable> arguments = new ArrayList<>();
         arguments.add((Serializable) playerId);
-        arguments.add((Serializable) ((JoinScreen)game.getScreen()).getRocket(playerId).getPosition());
+        arguments.add((Serializable) ((JoinScreen)game.getScreen()).getMainPlayerAnimation().getPosition());
+        //arguments.add((Serializable) ((JoinScreen)game.getScreen()).getRocket(playerId).getPosition());
 
         clientService = commClient.connect(store.getPlayer(playerId).getUsername());
         clientService.send(new Action(Command.JOIN_SCREEN_MOVE, arguments));
@@ -112,7 +115,8 @@ public class JoinScreenController extends Controller {
     public void updateRocket(ArrayList<Serializable> arguments) {
         UUID id = (UUID) arguments.get(0);
         Position pos = (Position) arguments.get(1);
-        ((JoinScreen)game.getScreen()).updateRocket(pos, id);
+
+        store.getJoinScreenStore().updateRocket(pos, id);
     }
 
 }
