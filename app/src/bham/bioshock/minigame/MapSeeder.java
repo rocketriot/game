@@ -7,7 +7,7 @@ import com.badlogic.gdx.math.Rectangle;
 import java.util.ArrayList;
 
 /**
- * The type Map seeder.
+ * The Map Seeder.
  */
 public class MapSeeder {
 
@@ -17,14 +17,23 @@ public class MapSeeder {
   private World world;
 
   /**
-   * Platforms
+   * List of all the platforms in the world
    */
   private ArrayList<Platform> platforms = new ArrayList<>();
 
+  /**
+   * Instantiates a new Map seeder.
+   *
+   * @param w the w
+   */
   public MapSeeder(World w) {
     this.world = w;
   }
 
+  /**
+   * Method to seed the world - generate a random number of both high and low platform frequency
+   * areas which in themselves have varying numbers and sizes of platforms
+   */
   public void seed() {
     platforms.add(new Platform(world, -2050, 200, 200, 20));
     platforms.add(new Platform(world, -2050, 600, 200, 50));
@@ -37,14 +46,35 @@ public class MapSeeder {
     platforms.add(new Platform(world, -2050, 1400, 100, 100));
   }
 
+  /**
+   * Method to generate a high frequency platform area on the world
+   *
+   * @param minX the minimum X value of the area
+   * @param maxX the maximum X value of the area
+   * @param minY the minimum Y value of the area
+   * @param maxY the maximum Y value of the area
+   */
   public void generateHighFreq(float minX, float maxX, float minY, float maxY) {
 
   }
 
+  /**
+   * Method to generate a low frequency platform area on the world
+   *
+   * @param minX the minimum X value of the area
+   * @param maxX the maximum X value of the area
+   * @param minY the minimum Y value of the area
+   * @param maxY the maximum Y value of the area
+   */
   public void generateLowFreq(float minX, float maxX, float minY, float maxY) {
 
   }
 
+  /**
+   * Gets a list of the platforms in the world.
+   *
+   * @return the list of platforms
+   */
   public ArrayList<Platform> getPlatforms() {
     return platforms;
   }
