@@ -17,6 +17,9 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
+/**
+ * The type Preferences screen.
+ */
 public class PreferencesScreen extends ScreenMaster {
 
   private AppPreferences preferences;
@@ -44,6 +47,12 @@ public class PreferencesScreen extends ScreenMaster {
   private boolean soundsEnabled;
   private float soundsVolume;
 
+  /**
+   * Instantiates a new Preferences screen.
+   *
+   * @param router the router
+   * @param preferences the passed current user preferences
+   */
   public PreferencesScreen(Router router, AppPreferences preferences) {
     super(router);
     this.preferences = preferences;

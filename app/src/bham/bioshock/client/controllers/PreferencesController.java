@@ -8,10 +8,13 @@ import bham.bioshock.client.Router;
 import bham.bioshock.client.XMLInteraction;
 import bham.bioshock.common.models.store.Store;
 
+/**
+ * The type Preferences controller.
+ */
 public class PreferencesController extends Controller {
 
   /**
-   * Store the current state of the BoardGame
+   * Store the current BoardGame
    */
   BoardGame game;
 
@@ -30,6 +33,13 @@ public class PreferencesController extends Controller {
    */
   private AppPreferences preferences;
 
+  /**
+   * Instantiates a new Preferences controller.
+   *
+   * @param store the store
+   * @param router the router
+   * @param game the current BoardGame
+   */
   @Inject
   public PreferencesController(Store store, Router router, BoardGame game) {
     super(store, router, game);

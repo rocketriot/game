@@ -12,30 +12,41 @@ import java.util.HashMap;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+/**
+ * The type Sound controller.
+ */
 @Singleton
 public class SoundController extends Controller {
 
-  /** Sound variables that contain the music used in the game */
+  /**
+   * Sound variables that contain the music used in the game
+   */
   private Sound mainMenuMusic;
 
   private Sound boardGameMusic;
   private Sound minigameMusic;
 
-  /** Sound variables that contain the sound effects used in the game */
+  /**
+   * Sound variables that contain the sound effects used in the game
+   */
   private Sound rocketSound;
 
   private static Sound menuSelectSound;
   private static Sound jumpSound;
   private static Sound laserSound;
 
-  /** Variables controlling volumes and enabling sounds */
+  /**
+   * Variables controlling volumes and enabling sounds
+   */
   private float musicVolume;
 
   private boolean musicEnabled;
   private static float soundsVolume;
   private static boolean soundsEnabled;
 
-  /** Variables to do with interacting with the preferences file */
+  /**
+   * Variables to do with interacting with the preferences file
+   */
   private AppPreferences preferences;
 
   private XMLInteraction xmlInteraction = new XMLInteraction();
@@ -52,6 +63,13 @@ public class SoundController extends Controller {
   private HashMap<String, Boolean> soundsPlaying = new HashMap<>();
   private HashMap<String, Long> soundsIds = new HashMap<>();
 
+  /**
+   * Instantiates a new Sound controller.
+   *
+   * @param store the store
+   * @param router the router
+   * @param game the current BoardGame
+   */
   @Inject
   public SoundController(Store store, Router router, BoardGame game) {
     super(store, router, game);
@@ -154,6 +172,7 @@ public class SoundController extends Controller {
    * Method to fade out music so that another can start in a better sounding way
    *
    * @param music The name of the music that you want to fade out
+   * @throws InterruptedException the interrupted exception
    */
   public void fadeOut(String music) throws InterruptedException {
     if (musicPlaying.get(music)) {
