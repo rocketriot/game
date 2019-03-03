@@ -28,6 +28,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
 import java.util.ArrayList;
+import java.util.UUID;
 
 
 public class JoinScreen extends ScreenMaster {
@@ -504,7 +505,19 @@ public class JoinScreen extends ScreenMaster {
             Position bounds = checkBounds(pos.x, pos.y);
             pos = bounds;
 
+            router.call(Route.JOIN_SCREEN_MOVE, pos);
+
         }
 
     }
+
+    /**
+     *
+     * @param pos position of a player
+     * @param playerID the id of a player that will be moved
+     */
+    public void updateRocket(Position pos, UUID playerID) {
+
+    }
+
 }
