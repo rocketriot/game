@@ -37,5 +37,4 @@ public class Platform extends StaticEntity {
         super.load();
     }
 
-
 }
