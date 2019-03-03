@@ -13,12 +13,20 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+/**
+ * The type How to screen.
+ */
 public class HowToScreen extends ScreenMaster {
 
   private Table textTable;
   private XMLInteraction xmlInteraction = new XMLInteraction();
   private HashMap<String, String> descriptionFromFile = new HashMap<>();
 
+  /**
+   * Instantiates a new How to screen.
+   *
+   * @param router the router
+   */
   public HowToScreen(Router router) {
     super(router);
 
@@ -30,10 +38,11 @@ public class HowToScreen extends ScreenMaster {
   private void assemble() {
     // create container
     Container<Table> tableContainer = new Container<>();
-            float container_width = screen_width*0.1f;
-            float container_height = screen_height*0.9f;
-            tableContainer.setSize(container_width, container_height);
-            tableContainer.setPosition((screen_width - container_width)/2.0f, (screen_height-container_height)/2.0f);
+    float container_width = screen_width * 0.1f;
+    float container_height = screen_height * 0.9f;
+    tableContainer.setSize(container_width, container_height);
+    tableContainer.setPosition((screen_width - container_width) / 2.0f,
+        (screen_height - container_height) / 2.0f);
 
     // create table
     textTable = new Table(skin);
@@ -48,7 +57,6 @@ public class HowToScreen extends ScreenMaster {
     Label game_desc_label = new Label(game_desc, skin);
     game_desc_label.setWrap(true);
 
-
     String controls = descriptionFromFile.get("Game Controls");
     Label controls_desc_label = new Label(controls, skin);
     controls_desc_label.setWrap(true);
@@ -58,11 +66,11 @@ public class HowToScreen extends ScreenMaster {
 
     textTable.add(l1).padBottom(20);
     textTable.row();
-    textTable.add(scrollPane1).width(screen_width*0.6f);
+    textTable.add(scrollPane1).width(screen_width * 0.6f);
     textTable.row();
     textTable.add(l2).padBottom(20);
     textTable.row();
-    textTable.add(scrollPane2).width(screen_width*0.6f);
+    textTable.add(scrollPane2).width(screen_width * 0.6f);
 
     stage.addActor(textTable);
   }
@@ -80,11 +88,14 @@ public class HowToScreen extends ScreenMaster {
   }
 
   @Override
-  public void pause() {}
+  public void pause() {
+  }
 
   @Override
-  public void resume() {}
+  public void resume() {
+  }
 
   @Override
-  public void hide() {}
+  public void hide() {
+  }
 }
