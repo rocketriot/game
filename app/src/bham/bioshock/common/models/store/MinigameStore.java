@@ -94,6 +94,8 @@ public class MinigameStore {
     return currentWorld.getPlanetRadius();
   }
 
+  public Objective getObjective(){return this.objective;}
+
   public void setSkin(Skin skin) { this.skin = skin; }
 
   public Skin getSkin() {

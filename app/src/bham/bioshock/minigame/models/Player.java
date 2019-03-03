@@ -155,7 +155,7 @@ public class Player extends Entity {
   public void handleCollision(Entity e, MinimumTranslationVector v) {
     if(e.isA(Bullet.class)) {
       collide(.2f, v);
-      e.getObjective().gotShot(this);
+      getObjective().gotShot(this, ((Bullet) e).getShooter());
     } else if(e.isA(Player.class) || e.isA(Rocket.class)) {
       collide(0.8f, v);
     } else if(e.isA(Gun.class)) {

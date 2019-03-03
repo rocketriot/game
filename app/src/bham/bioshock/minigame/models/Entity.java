@@ -104,7 +104,7 @@ public abstract class Entity {
   }
 
   public Objective getObjective(){return this.objective;}
-  public void setObjective(Objective o){this.objective = objective;}
+  public void setObjective(Objective o){this.objective = o;}
   public abstract TextureRegion getTexture();
 
   public void load() {

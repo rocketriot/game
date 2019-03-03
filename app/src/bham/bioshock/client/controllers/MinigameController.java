@@ -82,7 +82,9 @@ public class MinigameController extends Controller {
   public void show() {
     // Create local store for the minigame, and create a new world
     MinigameStore localStore = new MinigameStore();
+    // for testing
     Objective objective = new KillThemAll();
+
     localStore.seed(store, new FirstWorld(), objective);
 
     store.setMinigameStore(localStore);

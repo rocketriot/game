@@ -92,13 +92,13 @@ public class Renderer {
     world = minigameStore.getWorld();
 
     //test
-    this.objective = new KillThemAll(minigameStore.getPlayers(),mainPlayer);
     Player second = new Player(world,-2310, 0);
     entities.add(second);
     System.out.println(mainPlayer.getPosition().x);
     System.out.println(mainPlayer.getPosition().y);
     //
 
+    this.objective = minigameStore.getObjective();
 
     cam = new OrthographicCamera();
     cam.position.set(mainPlayer.getX(), mainPlayer.getY(), 0);
@@ -162,6 +162,20 @@ public class Renderer {
 
   public void render(float delta) {
     clock.update(delta);
+
+
+    Clock.TimeListener listener = new Clock.TimeListener() {
+      @Override
+      public void handle(Clock.TimeUpdateEvent event) {
+        if(event.time >= 5.0f){
+        }
+      }
+    };
+
+    clock.every(1.0f,listener);
+
+
+
     batch.setProjectionMatrix(cam.combined);
     shapeRenderer.setProjectionMatrix(cam.combined);
 
