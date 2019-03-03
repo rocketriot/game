@@ -2,11 +2,11 @@ package bham.bioshock.minigame.models;
 
 import bham.bioshock.common.Direction;
 import bham.bioshock.common.Position;
+import bham.bioshock.minigame.PlanetPosition;
 import bham.bioshock.minigame.physics.CollisionBoundary;
 import bham.bioshock.minigame.physics.SpeedVector;
 import bham.bioshock.minigame.physics.Vector;
 import bham.bioshock.minigame.worlds.World;
-import bham.bioshock.minigame.worlds.World.PlanetPosition;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;

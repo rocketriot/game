@@ -1,5 +1,6 @@
 package bham.bioshock.minigame.worlds;
 
+import bham.bioshock.minigame.PlanetPosition;
 import java.util.ArrayList;
 import bham.bioshock.common.Position;
 import bham.bioshock.minigame.MapSeeder;
@@ -58,15 +59,5 @@ abstract public class World {
   abstract public ArrayList<Gun> getGuns();
 
   abstract public ArrayList<Platform> getPlatforms();
-
-  public class PlanetPosition {
-    public float angle;
-    public float fromCenter;
-
-    public PlanetPosition(float angle, float fromCenter) {
-      this.angle = angle;
-      this.fromCenter = fromCenter;
-    }
-  }
 
 }

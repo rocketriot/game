@@ -9,7 +9,7 @@ import com.badlogic.gdx.math.Intersector.MinimumTranslationVector;
 import bham.bioshock.common.Direction;
 import bham.bioshock.common.Position;
 import bham.bioshock.minigame.worlds.World;
-import bham.bioshock.minigame.worlds.World.PlanetPosition;
+import bham.bioshock.minigame.PlanetPosition;
 
 public class CollisionBoundary extends Polygon {
 
