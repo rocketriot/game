@@ -6,12 +6,19 @@ import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Rectangle;
 import java.util.ArrayList;
 
+/**
+ * The type Map seeder.
+ */
 public class MapSeeder {
 
-  /** The world */
+  /**
+   * The world
+   */
   private World world;
 
-  /** Platforms */
+  /**
+   * Platforms
+   */
   private ArrayList<Platform> platforms = new ArrayList<>();
 
   public MapSeeder(World w) {
@@ -28,6 +35,14 @@ public class MapSeeder {
     platforms.add(new Platform(world, -2550, 1400, 300, 25));
     platforms.add(new Platform(world, -2050, 1600, 300, 50));
     platforms.add(new Platform(world, -2050, 1400, 100, 100));
+  }
+
+  public void generateHighFreq(float minX, float maxX, float minY, float maxY) {
+
+  }
+
+  public void generateLowFreq(float minX, float maxX, float minY, float maxY) {
+
   }
 
   public ArrayList<Platform> getPlatforms() {
