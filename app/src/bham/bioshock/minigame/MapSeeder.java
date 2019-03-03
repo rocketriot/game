@@ -37,7 +37,6 @@ public class MapSeeder {
   public void seed() {
 
     // generate for top right quarter
-    generateHighFreq(0, 2000, 0, 2000);
 
     // generate for bottom right quarter
 
@@ -46,6 +45,8 @@ public class MapSeeder {
     // generate for top left quarter
 
     platforms.add(new Platform(world, new PlanetPosition(30, 2100), 100, 20));
+    platforms.add(new Platform(world, new PlanetPosition(35, 2100), 100, 20));
+    platforms.add(new Platform(world, new PlanetPosition(45, 2200), 100, 20));
 
     platforms.add(new Platform(world, -2050, 200, 200, 20));
     platforms.add(new Platform(world, -2050, 600, 200, 50));
@@ -58,41 +59,39 @@ public class MapSeeder {
     platforms.add(new Platform(world, -2050, 1400, 100, 100));
   }
 
+  // space between 5 and 13 apart
+  // 50 - 150 vertical difference
+  // base should be 2150
+  // current range of platform placement should be updated as they are placed
+
+
   /**
    * Method to generate a high frequency platform area on the world
    *
-   * @param minX the minimum X value of the area
-   * @param maxX the maximum X value of the area
-   * @param minY the minimum Y value of the area
-   * @param maxY the maximum Y value of the area
+   * @param minAngle the min angle to generate platforms between
+   * @param maxAngle the max angle to generate platforms between
    */
-  public void generateHighFreq(float minX, float maxX, float minY, float maxY) {
-    for (int i = 0; i < 20; i++){
+  public void generateHighFreq(float minAngle, float maxAngle) {
 
-    }
   }
 
   /**
    * Method to generate a medium frequency platform area on the world
    *
-   * @param minX the minimum X value of the area
-   * @param maxX the maximum X value of the area
-   * @param minY the minimum Y value of the area
-   * @param maxY the maximum Y value of the area
+   * @param minAngle the min angle to generate platforms between
+   * @param maxAngle the max angle to generate platforms between
    */
-  public void generateMedFreq(float minX, float maxX, float minY, float maxY) {
+  public void generateMedFreq(float minAngle, float maxAngle) {
 
   }
 
   /**
    * Method to generate a low frequency platform area on the world
    *
-   * @param minX the minimum X value of the area
-   * @param maxX the maximum X value of the area
-   * @param minY the minimum Y value of the area
-   * @param maxY the maximum Y value of the area
+   * @param minAngle the min angle to generate platforms between
+   * @param maxAngle the max angle to generate platforms between
    */
-  public void generateLowFreq(float minX, float maxX, float minY, float maxY) {
+  public void generateLowFreq(float minAngle, float maxAngle) {
 
   }
 
