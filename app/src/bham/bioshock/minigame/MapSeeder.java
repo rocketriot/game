@@ -61,8 +61,14 @@ public class MapSeeder {
 
   // space between 5 and 13 apart
   // 50 - 150 vertical difference
+  // 50-250 width
+  // 10-30 height
   // base should be 2150
   // current range of platform placement should be updated as they are placed
+
+  // maybe generate a certain number at one level, then a certain number at the next level at
+  // positions close to the level below or the level above
+  // continue until no platforms left to place
 
 
   /**
