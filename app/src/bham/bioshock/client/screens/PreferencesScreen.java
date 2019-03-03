@@ -18,7 +18,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
 /**
- * The type Preferences screen.
+ * The Preferences Screen.
  */
 public class PreferencesScreen extends ScreenMaster {
 

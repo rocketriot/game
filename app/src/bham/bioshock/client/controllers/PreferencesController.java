@@ -9,7 +9,7 @@ import bham.bioshock.client.XMLInteraction;
 import bham.bioshock.common.models.store.Store;
 
 /**
- * The type Preferences controller.
+ * The Preferences controller.
  */
 public class PreferencesController extends Controller {
 

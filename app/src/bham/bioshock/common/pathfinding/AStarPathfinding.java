@@ -9,10 +9,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 
-/**
- * The type A star pathfinding.
- */
-// method to find a path between two points
 public class AStarPathfinding {
 
   /**

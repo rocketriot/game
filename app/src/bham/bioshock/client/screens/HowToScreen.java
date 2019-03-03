@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
- * The type How to screen.
+ * The How To Screen.
  */
 public class HowToScreen extends ScreenMaster {
 

@@ -17,7 +17,7 @@ import org.w3c.dom.NodeList;
 
 
 /**
- * The type Xml interaction.
+ * The type XMLInteraction.
  */
 public class XMLInteraction {
 

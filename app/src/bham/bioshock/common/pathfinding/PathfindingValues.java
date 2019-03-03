@@ -3,7 +3,7 @@ package bham.bioshock.common.pathfinding;
 import bham.bioshock.common.models.Coordinates;
 
 /**
- * The type Pathfinding values.
+ * The type PathfindingValues.
  */
 public class PathfindingValues {
 

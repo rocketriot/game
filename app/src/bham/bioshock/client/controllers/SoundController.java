@@ -13,7 +13,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 /**
- * The type Sound controller.
+ * The Sound controller.
  */
 @Singleton
 public class SoundController extends Controller {
