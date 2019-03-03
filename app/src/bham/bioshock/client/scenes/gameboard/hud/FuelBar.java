@@ -11,18 +11,16 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.utils.Align;
-import com.badlogic.gdx.utils.viewport.FitViewport;
 
 public class FuelBar {
-  private final Skin skin;
   public Stage stage;
-  public FitViewport viewport;
-
-  private ShapeRenderer sr;
   private SpriteBatch batch;
+  private final Skin skin;
+  private ShapeRenderer sr;
 
   Label fuelLabel;
   Label fuelValueLabel;
+  
   float fuelWidth = 48f;
   float fuelPadding = 50f;
   float fuelBorderSize = 12f;

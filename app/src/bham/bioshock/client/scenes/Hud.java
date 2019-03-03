@@ -3,6 +3,7 @@ package bham.bioshock.client.scenes;
 import bham.bioshock.client.Assets;
 import bham.bioshock.client.Router;
 import bham.bioshock.client.scenes.gameboard.hud.FuelBar;
+import bham.bioshock.client.scenes.gameboard.hud.ScoreBoard;
 import bham.bioshock.common.models.Player;
 import bham.bioshock.common.models.store.Store;
 import com.badlogic.gdx.Gdx;
@@ -30,12 +31,10 @@ public class Hud implements Disposable {
   private Router router;
 
   private ShapeRenderer sr;
-  private Table scoreBoard;
-  private Label roundLabel;
-  private Image turnPointer;
   private SpriteBatch batch;
 
-  FuelBar fuelBar;
+  private FuelBar fuelBar;
+  private ScoreBoard scoreBoard;
   
   public Hud(SpriteBatch batch, Skin skin, int gameWidth, int gameHeight, Store store, Router router) {
     this.store = store;
@@ -51,71 +50,13 @@ public class Hud implements Disposable {
 
     sr = new ShapeRenderer();
 
-    turnPointer = new Image(new Texture(Assets.turnPointer));
-
+    scoreBoard = new ScoreBoard(stage, batch, skin);
     fuelBar = new FuelBar(stage, batch, skin);
-
-    fuelBar.setup();
     
     batch.begin();
-    setupStats();
     batch.end();
   }
 
-  private void setupStats() {
-    VerticalGroup stats = new VerticalGroup();
-    stats.setFillParent(true);
-    stats.top();
-    stats.left();
-    stats.pad(16);
-    stage.addActor(stats);
-
-    roundLabel = new Label("Round " + store.getRound(), skin);
-    stats.addActor(roundLabel);
-        
-    scoreBoard = new Table();
-    scoreBoard.padTop(16);
-    stats.addActor(scoreBoard);
-  }
-
-  private void renderStats() {
-    roundLabel.setText("Round " + store.getRound());
-
-    scoreBoard.clearChildren();
-
-    // Add players to scoreboard
-    for (Player player : store.getPlayers()) {
-      Player movingPlayer = store.getMovingPlayer();
-      boolean isPlayersTurn = player.getId().equals(movingPlayer.getId());
-      
-      // Add the turn pointer to the player whos turn it is
-      scoreBoard.add(isPlayersTurn ? turnPointer: null)
-        .width(30)
-        .height(30)
-        .padTop(8)
-        .padRight(4);
-
-      // Add name of the user
-      Label usernameLabel = new Label(player.getUsername(), skin);
-      scoreBoard.add(usernameLabel)
-      .padTop(8)
-      .fillX()
-      .align(Align.left);
-      
-      // Specify if the player is a CPU
-      Label cpuLabel = new Label("CPU", skin);
-      scoreBoard.add(player.isCpu() ? cpuLabel : null).padTop(8);
-      
-      // Add the player's points
-      Label pointsLabel = new Label(player.getPoints() + "", skin);
-      scoreBoard.add(pointsLabel)
-        .padTop(8)
-        .padLeft(16)
-        .fillX()
-        .align(Align.left);
-      
-      scoreBoard.row();
-    }
   }
 
 
@@ -185,8 +126,7 @@ public class Hud implements Disposable {
   public void updateHud() {
     Player mainPlayer = store.getMainPlayer();
 
-    renderStats();
-    
+    scoreBoard.render(store.getRound(), store.getPlayers(), store.getMovingPlayer());
     fuelBar.render(mainPlayer.getFuel());
     
     
