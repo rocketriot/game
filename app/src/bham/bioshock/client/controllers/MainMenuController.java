@@ -2,7 +2,6 @@ package bham.bioshock.client.controllers;
 
 import bham.bioshock.client.screens.ScreenMaster;
 import bham.bioshock.common.models.store.Store;
-
 import com.google.inject.Inject;
 import bham.bioshock.client.BoardGame;
 import bham.bioshock.client.Route;
@@ -11,7 +10,7 @@ import bham.bioshock.client.screens.MainMenuScreen;
 import bham.bioshock.server.Server;
 
 public class MainMenuController extends Controller {
-
+  
   Server server;
   BoardGame game;
 
@@ -22,16 +21,16 @@ public class MainMenuController extends Controller {
     this.game = game;
   }
 
-  /** Creates a server */
-  private void startServer() {
-    if(!server.isAlive()) {
-      server.start();      
-    }
-  }
-
+  /**
+   * Starts a server and opens the join screen
+   * @param hostName
+   */
   public void hostGame(String hostName) {
-    startServer();
-    router.call(Route.JOIN_SCREEN, hostName);
+    if( server.start() ) {
+      router.call(Route.JOIN_SCREEN, hostName);
+    } else {
+      alert("Server cannot be created.\nCheck if is not already running");      
+    }
   }
   
   /** Renders main menu */

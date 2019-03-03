@@ -1,7 +1,6 @@
 package bham.bioshock.communication.client;
 
 import bham.bioshock.communication.Config;
-import bham.bioshock.communication.server.CommunicationServer;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
