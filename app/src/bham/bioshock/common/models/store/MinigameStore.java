@@ -44,7 +44,6 @@ public class MinigameStore {
       mainPlayerId = store.getMainPlayer().getId();      
     }
     ArrayList<bham.bioshock.common.models.Player> players = store.getPlayers();
-    System.out.println("there are " + players.size() + " players in the store");
     Position[] playerPos = world.getPlayerPositions();
 
     for (int i = 0; i < players.size(); i++) {

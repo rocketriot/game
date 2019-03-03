@@ -5,6 +5,7 @@ import bham.bioshock.client.ClientHandler;
 import bham.bioshock.client.Route;
 import bham.bioshock.client.Router;
 import bham.bioshock.client.screens.JoinScreen;
+import bham.bioshock.common.Position;
 import bham.bioshock.common.models.Player;
 import bham.bioshock.common.models.store.Store;
 import bham.bioshock.communication.Action;
@@ -13,6 +14,7 @@ import bham.bioshock.communication.client.ClientService;
 import bham.bioshock.communication.client.CommunicationClient;
 import com.google.inject.Inject;
 
+import java.io.Serializable;
 import java.net.ConnectException;
 import java.util.ArrayList;
 import java.util.UUID;
@@ -72,6 +74,7 @@ public class JoinScreenController extends Controller {
         for (Player player : players) {
             logger.debug("Player: " + player.getUsername() + " connected");
             store.addPlayer(player);
+            ((JoinScreen)game.getScreen()).addPlayer(player);
         }
     }
 
@@ -95,10 +98,21 @@ public class JoinScreenController extends Controller {
         logger.debug("Ready to start! Waiting for the board");
     }
 
-    /*might remove */
-    public void moveRocket(JoinScreen.MoveMade move) {
 
+    public void rocketMove(UUID playerId) throws ConnectException {
 
+        ArrayList<Serializable> arguments = new ArrayList<>();
+        arguments.add((Serializable) playerId);
+        arguments.add((Serializable) ((JoinScreen)game.getScreen()).getRocket(playerId).getPosition());
+
+        clientService = commClient.connect(store.getPlayer(playerId).getUsername());
+        clientService.send(new Action(Command.JOIN_SCREEN_MOVE, arguments));
+    }
+
+    public void updateRocket(ArrayList<Serializable> arguments) {
+        UUID id = (UUID) arguments.get(0);
+        Position pos = (Position) arguments.get(1);
+        ((JoinScreen)game.getScreen()).updateRocket(pos, id);
     }
 
 }

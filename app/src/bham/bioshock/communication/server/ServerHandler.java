@@ -76,6 +76,9 @@ public class ServerHandler {
         case ADD_PLAYER:
           joinHandler.addPlayer(action, service);
           break;
+        case JOIN_SCREEN_MOVE:
+          joinHandler.moveRocket(action, service.Id());
+          break;
         case START_GAME:
           joinHandler.startGame(action, gameBoardHandler);
           break;
