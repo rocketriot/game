@@ -2,80 +2,139 @@ package bham.bioshock.common.pathfinding;
 
 import bham.bioshock.common.models.Coordinates;
 
+/**
+ * The type Pathfinding values.
+ */
 public class PathfindingValues {
 
-    // the actual value to take the path up to this point
-    private int pathCost;
+  /**
+   * The actual value to take the path up to this point
+   */
+  private int pathCost;
 
-    // the heuristic estimate of the cost to get to the goal point
-    private double heuristicCost;
+  /**
+   * The heuristic estimate of the cost to get to the goal point
+   */
+  private double heuristicCost;
 
-    // the total cost (pathCost + heuristicCost) to go from this node to the goal node
-    private double totalCost;
+  /**
+   * The total cost (pathCost + heuristicCost) to go from this node to the goal node
+   */
+  private double totalCost;
 
-    // the parent point to this point - the point that came before
-    private Coordinates parent;
+  /**
+   * The parent point to this point - the point that came before
+   */
+  private Coordinates parent;
 
-    // whether the point cam be moved through
-    private boolean passable;
+  /**
+   * Whether the point cam be moved through
+   */
+  private boolean passable;
 
-    // initialise the values
-    public PathfindingValues(boolean passable) {
-        this.passable = passable;
-    }
+  /**
+   * Instantiates a new Pathfinding values.
+   *
+   * @param passable whether the point is passable or not
+   */
+  public PathfindingValues(boolean passable) {
+    this.passable = passable;
+  }
 
-    // method to get the pathCost
-    public int getPathCost() {
-        return pathCost;
-    }
+  /**
+   * Gets path cost.
+   *
+   * @return the path cost
+   */
+  public int getPathCost() {
+    return pathCost;
+  }
 
-    // method to get the heuristicCost
-    public double getHeuristicCost() {
-        return heuristicCost;
-    }
+  /**
+   * Gets heuristic cost.
+   *
+   * @return the heuristic cost
+   */
+  public double getHeuristicCost() {
+    return heuristicCost;
+  }
 
-    // method to get the totalCost
-    public double getTotalCost() {
-        return totalCost;
-    }
+  /**
+   * Gets total cost.
+   *
+   * @return the total cost
+   */
+  public double getTotalCost() {
+    return totalCost;
+  }
 
-    // method to get the parent
-    public Coordinates getParent() {
-        return parent;
-    }
+  /**
+   * Gets the parent point.
+   *
+   * @return the parent point
+   */
+  public Coordinates getParent() {
+    return parent;
+  }
 
-    // method to get whether the point is passable
-    public boolean isPassable() {
-        return passable;
-    }
+  /**
+   * Returns whether a point is passable or not
+   *
+   * @return whether the point is passable as a boolean
+   */
+  public boolean isPassable() {
+    return passable;
+  }
 
-    // method to set the pathCost
-    public void setPathCost(int pathCost) {
-        this.pathCost = pathCost;
-    }
+  /**
+   * Sets path cost.
+   *
+   * @param pathCost the path cost
+   */
+  public void setPathCost(int pathCost) {
+    this.pathCost = pathCost;
+  }
 
-    // method to set the heuristicCost
-    public void setHeuristicCost(double heuristicCost) {
-        this.heuristicCost = heuristicCost;
-    }
+  /**
+   * Sets heuristic cost.
+   *
+   * @param heuristicCost the heuristic cost
+   */
+  public void setHeuristicCost(double heuristicCost) {
+    this.heuristicCost = heuristicCost;
+  }
 
-    // method to set the totalCost
-    public void setTotalCost(double totalCost) {
-        this.totalCost = totalCost;
-    }
+  /**
+   * Sets total cost.
+   *
+   * @param totalCost the total cost
+   */
+  public void setTotalCost(double totalCost) {
+    this.totalCost = totalCost;
+  }
 
-    // method to automatically set the total cost according to the path and heuristic costs
-    public void updateTotalCost() {
-        setTotalCost(pathCost + heuristicCost);
-    }
+  /**
+   * Updates total cost with the current path and heuristic costs.
+   */
+  public void updateTotalCost() {
+    setTotalCost(pathCost + heuristicCost);
+  }
 
-    // method to set the parent
-    public void setParent(Coordinates parent) {
-        this.parent = parent;
-    }
+  /**
+   * Sets the parent point.
+   *
+   * @param parent the parent point
+   */
+  public void setParent(Coordinates parent) {
+    this.parent = parent;
+  }
 
-    // method to set the passability of a point
-    public void setPassable(Boolean passable) {
-        this.passable = passable;
-    }
+  /**
+   * Sets whether the point is passable.
+   *
+   * @param passable whether the point is passable
+   */
+  public void setPassable(Boolean passable) {
+    this.passable = passable;
+  }
 }
