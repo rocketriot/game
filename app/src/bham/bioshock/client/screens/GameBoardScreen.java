@@ -98,8 +98,6 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
     pathRenderer =
         new PathRenderer(camera, store.getGameBoard(), store.getMainPlayer(), store.getPlayers());
 
-    // generateEffects();
-
     hud = new Hud(batch, skin, Config.GAME_WORLD_WIDTH, Config.GAME_WORLD_HEIGHT, store, router);
     background = new Sprite(new Texture(Gdx.files.internal(Assets.gameBackground)));
 
@@ -287,15 +285,15 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
     drawBoardObjects();
     drawPlayers();
     batch.end();
-
+    
     // Draw path rendering
     pathRenderer.draw(PPS);
-
+    
     // Draw the HUD
     batch.setProjectionMatrix(hud.stage.getCamera().combined);
     hud.getStage().act(Gdx.graphics.getDeltaTime());
     hud.updateHud();
-    hud.getStage().draw();
+    hud.draw();
   }
 
   protected void drawBackground() {
