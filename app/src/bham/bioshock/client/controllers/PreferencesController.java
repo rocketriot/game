@@ -10,10 +10,24 @@ import bham.bioshock.common.models.store.Store;
 
 public class PreferencesController extends Controller {
 
+  /**
+   * Store the current state of the BoardGame
+   */
   BoardGame game;
+
+  /**
+   * Store the router
+   */
   Router router;
 
+  /**
+   * Instance of the xmlInteraction class that allows reading from the Preferences XML file
+   */
   private XMLInteraction xmlInteraction;
+
+  /**
+   * Keep track of the users current preferences
+   */
   private AppPreferences preferences;
 
   @Inject
@@ -25,6 +39,10 @@ public class PreferencesController extends Controller {
     xmlInteraction = new XMLInteraction();
   }
 
+  /**
+   * Method to show the preferences screen - before we set the screen we need to get the users
+   * preferences from the XML file so that the sliders and check boxes have the correct values
+   */
   public void show() {
     preferences = xmlInteraction.xmlToPreferences();
     setScreen(new PreferencesScreen(router, preferences));

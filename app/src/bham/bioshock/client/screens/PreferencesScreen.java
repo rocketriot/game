@@ -22,16 +22,23 @@ public class PreferencesScreen extends ScreenMaster {
   private AppPreferences preferences;
   private XMLInteraction xmlInteraction = new XMLInteraction();
 
-  // labels
+  /**
+   * Labels
+   */
   private Label soundVolLabel;
   private Label musicVolLabel;
   private Label soundEnabledLabel;
   private Label musicEnabledLabel;
   private Label titleLabel;
 
+  /**
+   * The table that the screen elements are added to
+   */
   private Table table;
 
-  // variables to keep track of current preferences
+  /**
+   * Variables to keep track of current preferences
+   */
   private boolean musicEnabled;
   private float musicVolume;
   private boolean soundsEnabled;
@@ -66,8 +73,10 @@ public class PreferencesScreen extends ScreenMaster {
     super.render(delta);
   }
 
+  /**
+   * Method to draw all the buttons and add the listeners to them
+   */
   private void drawButtons() {
-
     // sound on or off
     final CheckBox musicCheckBox = new CheckBox(null, skin);
     musicCheckBox.setChecked(musicEnabled);
@@ -122,14 +131,14 @@ public class PreferencesScreen extends ScreenMaster {
           }
         });
 
-    // Labels
+    // Crete the labels
     titleLabel = new Label("Game Preferences", skin);
     musicVolLabel = new Label("Music Volume", skin);
     soundVolLabel = new Label("Sound Volume", skin);
     soundEnabledLabel = new Label("Sound Enabled", skin);
     musicEnabledLabel = new Label("Music Enabled", skin);
 
-    // table
+    // Create the labels
     table = new Table();
     table.setFillParent(true);
 
@@ -162,8 +171,12 @@ public class PreferencesScreen extends ScreenMaster {
   public void hide() {
   }
 
+  /**
+   * Include writing the new preferences to the XML file into the setPrevious method - requires
+   * overriding the super method
+   */
   @Override
-  protected void setPrevious(){
+  protected void setPrevious() {
     backButton.addListener(new ChangeListener() {
       @Override
       public void changed(ChangeEvent event, Actor actor) {
