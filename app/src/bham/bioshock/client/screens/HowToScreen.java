@@ -49,7 +49,7 @@ public class HowToScreen extends ScreenMaster {
     textTable.setFillParent(true);
 
     // contents
-    Label l1 = new Label("How to PLay", skin);
+    Label l1 = new Label("How to Play", skin);
     Label l2 = new Label("Controls", skin);
 
     // game description text is read from the XML file
