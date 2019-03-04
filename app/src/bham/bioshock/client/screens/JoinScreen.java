@@ -107,7 +107,7 @@ public class JoinScreen extends ScreenMaster {
     miniGameButton.addListener(new ChangeListener() {
       @Override
       public void changed(ChangeEvent event, Actor actor) {
-        router.call(Route.SEND_MINIGAME_START);
+        router.call(Route.DIRECT_MINIGAME_START);
       }
     });
   }

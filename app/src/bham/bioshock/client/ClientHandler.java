@@ -9,6 +9,7 @@ import bham.bioshock.common.models.GameBoard;
 import bham.bioshock.common.models.Player;
 import bham.bioshock.communication.Action;
 import bham.bioshock.communication.client.IClientHandler;
+import bham.bioshock.minigame.worlds.World;
 import com.badlogic.gdx.Gdx;
 
 public class ClientHandler implements IClientHandler {
@@ -71,7 +72,8 @@ public class ClientHandler implements IClientHandler {
             break;
           }
           case MINIGAME_START: {
-            router.call(Route.START_MINIGAME);
+            World w = (World) action.getArgument(0);
+            router.call(Route.START_MINIGAME, w);
             break;
           }
           case MINIGAME_PLAYER_MOVE: {

@@ -15,7 +15,7 @@ import bham.bioshock.common.models.store.Store;
 import bham.bioshock.minigame.models.Bullet;
 import bham.bioshock.minigame.models.Entity;
 import bham.bioshock.minigame.models.Gun;
-import bham.bioshock.minigame.models.Player;
+import bham.bioshock.minigame.models.Astronaut;
 import bham.bioshock.minigame.models.Rocket;
 import bham.bioshock.minigame.objectives.KillThemAll;
 import bham.bioshock.minigame.objectives.Objective;
@@ -43,7 +43,7 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import static sun.audio.AudioPlayer.player;
 
 public class Renderer {
-  private Player mainPlayer;
+  private Astronaut mainPlayer;
   private ArrayList<Entity> entities;
 
   ShapeRenderer shapeRenderer;
@@ -115,7 +115,7 @@ public class Renderer {
 
   public void loadSprites() {
     viewport = new FitViewport(GAME_WORLD_WIDTH, GAME_WORLD_HEIGHT, cam);
-    Player.loadTextures();
+    Astronaut.loadTextures();
     Rocket.loadTextures();
     Gun.loadTextures();
     Bullet.loadTextures();
@@ -225,7 +225,7 @@ public class Renderer {
 
 
   public void createBullet() {
-    Player main = minigameStore.getMainPlayer();
+    Astronaut main = minigameStore.getMainPlayer();
     PlanetPosition pp = world.convert(main.getPos());
     pp.fromCenter += main.getHeight() / 2;
 
