@@ -48,9 +48,7 @@ public class TurnStartText {
     }
   }
 
-  /**
-   * sets showTurnPrompt to true if it has just switch to the main player's turn
-   */
+  /** sets showTurnPrompt to true if it has just switch to the main player's turn */
   private void checkTurnChange() {
     if (!wasMainPlayerTurn && store.isMainPlayersTurn()) {
       duration = 2f;

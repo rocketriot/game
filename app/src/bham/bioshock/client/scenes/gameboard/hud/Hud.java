@@ -32,11 +32,11 @@ public class Hud implements Disposable {
     viewport = new FitViewport(Config.GAME_WORLD_WIDTH, Config.GAME_WORLD_HEIGHT, camera);
     stage = new Stage(viewport, batch);
 
-    pauseMenu = new PauseMenu(stage, batch, skin, router);
-    scoreBoard = new ScoreBoard(stage, batch, skin);
-    fuelBar = new FuelBar(stage, batch, skin);
     turnStartText = new TurnStartText(batch, store);
-    skipTurnButton = new SkipTurnButton(stage, batch, skin, router);
+    pauseMenu = new PauseMenu(stage, batch, skin, store, router);
+    scoreBoard = new ScoreBoard(stage, batch, skin, store, router);
+    fuelBar = new FuelBar(stage, batch, skin, store, router);
+    skipTurnButton = new SkipTurnButton(stage, batch, skin, store, router);
   }
 
   public void updateHud() {

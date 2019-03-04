@@ -4,6 +4,8 @@ import bham.bioshock.client.Assets;
 import bham.bioshock.client.Route;
 import bham.bioshock.client.Router;
 import bham.bioshock.common.consts.Config;
+import bham.bioshock.common.models.store.Store;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
@@ -22,11 +24,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 
-public class PauseMenu {
-  private final Skin skin;
-  public Stage stage;
-  private SpriteBatch batch;
-  private Router router;
+public class PauseMenu extends HudElement{
   private ShapeRenderer sr;
 
   private boolean isPaused;
@@ -37,17 +35,13 @@ public class PauseMenu {
   private TextButton soundLabel;
   private TextButton quitLabel;
 
-  PauseMenu(Stage stage, SpriteBatch batch, Skin skin, Router router) {
-    this.stage = stage;
-    this.batch = batch;
-    this.skin = skin;
-    this.router = router;
-    this.sr = new ShapeRenderer();
-
-    setup();
+  PauseMenu(Stage stage, SpriteBatch batch, Skin skin, Store store, Router router) {
+    super(stage, batch, skin, store, router);
+    
+    sr = new ShapeRenderer();
   }
 
-  private void setup() {
+  protected void setup() {
     FileHandle file = Gdx.files.internal(Assets.pauseIcon);
 
     Texture texture = new Texture(file);
@@ -92,7 +86,7 @@ public class PauseMenu {
     menuOptions.addActor(quitLabel);
   }
 
-  public void render() {
+  protected void render() {
     if (isPaused) {
       Gdx.gl.glEnable(GL30.GL_BLEND);
       Gdx.gl.glBlendFunc(GL30.GL_SRC_ALPHA, GL30.GL_ONE_MINUS_SRC_ALPHA);
