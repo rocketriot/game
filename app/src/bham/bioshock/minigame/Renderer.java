@@ -158,7 +158,7 @@ public class Renderer {
     cam.position.lerp(lerpTarget.set(mainPlayer.getX(), mainPlayer.getY(), 0), 3f * delta);
 
     double rotation = -world.getAngleTo(cam.position.x, cam.position.y);
-    //cam.rotate((float) (camRotation - rotation));
+    cam.rotate((float) (camRotation - rotation));
     camRotation = rotation;
     cam.update();
 

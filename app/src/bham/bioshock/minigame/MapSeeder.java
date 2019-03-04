@@ -31,28 +31,38 @@ public class MapSeeder {
    * areas which in themselves have varying numbers and sizes of platforms
    */
   public void seed() {
-
     // generate for top right quarter
-
+    generatePlatforms(0, 90, generateFrequency());
     // generate for bottom right quarter
-
+    generatePlatforms(90, 180, generateFrequency());
     // generate for bottom left quarter
-
+    generatePlatforms(180, 270, generateFrequency());
     // generate for top left quarter
-
-    generatePlatforms(0, 90, "High");
+    generatePlatforms(270, 360, generateFrequency());
   }
 
-  // space between 5 and 13 apart
-  // 50 - 150 vertical difference
-  // 50-250 width
-  // 10-30 height
-  // base should be 2150
-  // current range of platform placement should be updated as they are placed
+  /**
+   * Method to generate whether the part of the map will have a low, medium or high frequency
+   * of platforms
+   * @return a string corresponding to the frequency
+   */
+  private String generateFrequency(){
+    // a result of 1 is low frequency, 2 is medium and 3 is high
+    Random generator = new Random();
+    int frequency = generator.nextInt((3 - 1) + 1) + 1;
 
-  // maybe generate a certain number at one level, then a certain number at the next level at
-  // positions close to the level below or the level above
-  // continue until no platforms left to place
+    switch (frequency) {
+      case 1:
+        return "Low";
+      case 2:
+        return "Medium";
+      case 3:
+        return "High";
+      default:
+        System.out.println("Somehow an int between 1 and 3 has been generated");
+        return null;
+    }
+  }
 
   /**
    * Method to generate platforms for an area of the world depending on the passed frequency
@@ -71,22 +81,22 @@ public class MapSeeder {
     // set the bounds of the number of platforms
     switch (frequency) {
       case "Low":
-        lowerBound = 5;
-        upperBound = 11;
+        lowerBound = 0;
+        upperBound = 10;
       case "Medium":
-        lowerBound = 15;
-        upperBound = 25;
+        lowerBound = 10;
+        upperBound = 20;
       case "High":
-        lowerBound = 30;
-        upperBound = 45;
+        lowerBound = 20;
+        upperBound = 30;
 
       default:
         System.out.println("Invalid seed frequency");
         break;
     }
 
-    Random generator = new Random();
     // get the total number of platforms according to the bounds set above
+    Random generator = new Random();
     int totalPlatforms = generator.nextInt((upperBound - lowerBound) + 1) + lowerBound;
     int lvl1Platforms = totalPlatforms / 2;
     ArrayList<Platform> lvl1 = new ArrayList<>();
@@ -133,7 +143,7 @@ public class MapSeeder {
     }
 
     // generate the lvl4 platforms
-    for (int i = 0; i < lvl3Platforms; i++) {
+    for (int i = 0; i < lvl4Platforms; i++) {
       Platform chosenPlatform = lvl3.get(generator.nextInt(lvl3.size()));
       float angle = generateAngle(chosenPlatform, generator);
       int distance = generator.nextInt((2750 - 2700) + 1) + 2600;
@@ -156,7 +166,7 @@ public class MapSeeder {
     Position platformPos = platform.getPos();
     PlanetPosition platformPPos = world.convert(platformPos);
     float platformAngle = platformPPos.angle;
-    int difference = generator.nextInt((28 - 8) + 1) + 8;
+    int difference = generator.nextInt((20 - 10) + 1) + 10;
     return (platformAngle + difference);
   }
 
