@@ -9,14 +9,18 @@ public class BoardGame extends Game {
   
   private Router router;
   
+  /**
+   * Saves the router
+   * @param router
+   */
+  public void addRouter(Router router) {
+    this.router = router;
+  }
+  
   @Override
   public void create() {
     Gdx.graphics.setTitle("Rocket Riot");
 
     router.call(Route.MAIN_MENU);
-  }
-  
-  public void addRouter(Router router) {
-    this.router = router;
   }
 }

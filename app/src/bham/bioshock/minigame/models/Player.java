@@ -1,13 +1,17 @@
 package bham.bioshock.minigame.models;
+import bham.bioshock.client.controllers.SoundController;
 import bham.bioshock.common.Position;
 import bham.bioshock.minigame.PlayerTexture;
+import bham.bioshock.minigame.physics.CollisionBoundary;
 import bham.bioshock.minigame.worlds.World;
 import bham.bioshock.minigame.worlds.World.PlanetPosition;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Intersector.MinimumTranslationVector;
 
 public class Player extends Entity {
@@ -19,20 +23,20 @@ public class Player extends Entity {
   private static TextureRegion frontGunTexture;
   private final double JUMP_FORCE = 700;
   float animationTime;
-  private PlayerTexture dir;
+  private PlayerTexture dir = PlayerTexture.FRONT;
   private float v = 700f;
   private boolean haveGun = false;
-  public boolean isDead = false;
+  private CollisionBoundary legs;
 
   public Player(World w, float x, float y) {
     super(w, x, y);
     width = 150;
     height = 150;
     animationTime = 0;
-    fromGround = -25;
+    fromGround = -20;
     update(0);
-    collisionWidth = 75;
-    collisionHeight = 150;
+    collisionWidth = 65;
+    collisionHeight = 150 + fromGround;
   }
 
   public Player(World w, Position p) {
@@ -59,6 +63,7 @@ public class Player extends Entity {
 
   public void jump(float delta) {
     if (!isFlying() && speed.getValueFor(angleFromCenter()) < JUMP_FORCE * 3/4 ) {
+      SoundController.playSound("jump");
       speed.apply(angleFromCenter(), JUMP_FORCE);
     }
   }
@@ -71,7 +76,9 @@ public class Player extends Entity {
   }
 
   public void update(float delta) {
+    if(!loaded) return;
     super.update(delta);
+    legs.update(pos, getRotation());
     animationTime += delta;
     dir = PlayerTexture.FRONT;
   }
@@ -83,16 +90,25 @@ public class Player extends Entity {
   public void setDirection(PlayerTexture t) {
     dir = t;
   }
-
-  public Position getPosition() {
-    return pos;
+  
+  @Override
+  public void drawDebug(ShapeRenderer shapeRenderer) {
+    super.drawDebug(shapeRenderer);
+    legs.draw(shapeRenderer, Color.MAGENTA);
   }
 
   public void setPosition(Position p) {
     pos = p;
     collisionBoundary.update(pos, getRotation());
+    legs.update(pos, getRotation());
   }
 
+  
+  public void load() {
+    super.load();
+    legs = new CollisionBoundary(collisionWidth+10, collisionHeight / 10);
+    legs.update(pos, getRotation());
+  }
 
   /**
    * Player textures
@@ -109,7 +125,6 @@ public class Player extends Entity {
     }
     return region;
   }
-
 
   private TextureRegion getTexture(boolean withGun) {
     if (withGun && dir.equals(PlayerTexture.FRONT)) {
@@ -139,6 +154,52 @@ public class Player extends Entity {
     return new Animation<TextureRegion>(0.1f, frames);
   }
 
+  /** Collisions **/
+  @Override
+  public void handleCollision(Entity e) {
+
+    if(e.isA(Bullet.class)) {
+      // Collision check
+      MinimumTranslationVector v = checkCollision(e);
+      if(v == null) return;
+      
+      collide(.2f, v);
+      getObjective().gotShot(this, ((Bullet) e).getShooter());
+    } else if(e.isA(Player.class) || e.isA(Rocket.class)) {
+      // Collision check
+      MinimumTranslationVector v = checkCollision(e);
+      if(v == null) return;
+      
+      collide(0.8f, v);
+    } else if(e.isA(Gun.class)) {
+      // Collision check
+      MinimumTranslationVector v = checkCollision(e);
+      if(v == null) return;
+      
+      e.state = State.REMOVED;
+      haveGun = true;
+    } else if(e.isA(StaticEntity.class)) {
+      
+      // Standard collision check
+      MinimumTranslationVector v = checkCollision(e);
+      if(v!= null)
+      {
+        pos.x += v.normal.x * v.depth;
+        pos.y += v.normal.y * v.depth;
+        
+        collide(0f, v);
+      }
+      
+      // Check collision with legs
+      MinimumTranslationVector vlegs = new MinimumTranslationVector();
+      if (legs.collideWith(e.collisionBoundary, vlegs)) {        
+        // Standing on the platform
+        super.onGround = true;
+      }
+    }
+  }
+
+  
   public static void loadTextures() {
     TextureRegion[][] walkSheet = splittedTexture("app/assets/minigame/astronaut.png");
     TextureRegion[][] walkGunSheet = splittedTexture("app/assets/minigame/astronaut_gun.png");
@@ -148,26 +209,6 @@ public class Player extends Entity {
 
     walkAnimation = textureToAnimation(walkSheet);
     walkGunAnimation = textureToAnimation(walkGunSheet);
-  }
-
-  /** Collisions **/
-  @Override
-  public void handleCollision(Entity e, MinimumTranslationVector v) {
-    if(e.isA(Bullet.class)) {
-      collide(.2f, v);
-      getObjective().gotShot(this, ((Bullet) e).getShooter());
-    } else if(e.isA(Player.class) || e.isA(Rocket.class)) {
-      collide(0.8f, v);
-    } else if(e.isA(Gun.class)) {
-      e.state = State.REMOVED;
-      haveGun = true;
-    } else if(e.isA(StaticEntity.class)) {
-      super.onGround = true;
-      pos.x += v.normal.x;
-      pos.y += v.normal.y;
-      
-      collide(0f, v);
-    }
   }
 
 }

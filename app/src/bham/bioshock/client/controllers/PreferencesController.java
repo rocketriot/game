@@ -2,44 +2,59 @@ package bham.bioshock.client.controllers;
 
 import bham.bioshock.client.AppPreferences;
 import bham.bioshock.client.screens.PreferencesScreen;
-import bham.bioshock.server.Server;
 import com.google.inject.Inject;
 import bham.bioshock.client.BoardGame;
 import bham.bioshock.client.Router;
-import bham.bioshock.client.XMLReader;
+import bham.bioshock.client.XMLInteraction;
 import bham.bioshock.common.models.store.Store;
 
+/**
+ * The Preferences controller.
+ */
 public class PreferencesController extends Controller {
 
-  Server server;
+  /**
+   * Store the current BoardGame
+   */
   BoardGame game;
+
+  /**
+   * Store the router
+   */
   Router router;
 
-  private XMLReader reader;
+  /**
+   * Instance of the xmlInteraction class that allows reading from the Preferences XML file
+   */
+  private XMLInteraction xmlInteraction;
+
+  /**
+   * Keep track of the users current preferences
+   */
   private AppPreferences preferences;
 
-  private float volume;
-  private boolean sound_on;
-  private boolean music_on;
-  private String name;
-  private int difficulty;
-
+  /**
+   * Instantiates a new Preferences controller.
+   *
+   * @param store the store
+   * @param router the router
+   * @param game the current BoardGame
+   */
   @Inject
   public PreferencesController(Store store, Router router, BoardGame game) {
     super(store, router, game);
 
-    reader = new XMLReader("app/assets/Preferences/Preferences.XML");
     this.game = game;
     this.router = router;
+    xmlInteraction = new XMLInteraction();
   }
 
+  /**
+   * Method to show the preferences screen - before we set the screen we need to get the users
+   * preferences from the XML file so that the sliders and check boxes have the correct values
+   */
   public void show() {
-    preferences = readPreferences();
+    preferences = xmlInteraction.xmlToPreferences();
     setScreen(new PreferencesScreen(router, preferences));
-  }
-
-  private AppPreferences readPreferences() {
-    // reader.printNodes("sound");
-    return new AppPreferences();
   }
 }

@@ -5,6 +5,10 @@ import java.util.Collection;
 
 public abstract class Objective {
   private Collection<Player> players;
+
+  private Player mainPlayer;
+  private float initialHealth = 100;
+
   public abstract Player getWinner();
 
   public void setPlayers(Collection<Player> players){

@@ -10,12 +10,12 @@ public class Platform extends StaticEntity {
 
     private TextureRegion texture;
 
-    public Platform(World w, float x, float y) {
+    public Platform(World w, float x, float y, int width, int height) {
         super(w ,x, y);
-        width = 100;
-        height = 50;
-        collisionWidth = 100;
-        collisionHeight = 50;
+        this.width = width;
+        this.height = height;
+        collisionWidth = width;
+        collisionHeight = height;
     }
 
     public TextureRegion getTexture() {

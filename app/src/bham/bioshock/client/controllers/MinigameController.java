@@ -5,7 +5,6 @@ import bham.bioshock.client.Route;
 import bham.bioshock.client.Router;
 import bham.bioshock.client.screens.MinigameScreen;
 import bham.bioshock.common.Position;
-import bham.bioshock.common.models.store.Map;
 import bham.bioshock.common.models.store.MinigameStore;
 import bham.bioshock.common.models.store.Store;
 import bham.bioshock.communication.Action;
@@ -43,7 +42,7 @@ public class MinigameController extends Controller {
     ArrayList<Serializable> arguments = new ArrayList<>();
     arguments.add((Serializable) store.getMainPlayer().getId());
     arguments.add((Serializable) localStore.getMainPlayer().getSpeedVector());
-    arguments.add((Serializable) localStore.getMainPlayer().getPosition());
+    arguments.add((Serializable) localStore.getMainPlayer().getPos());
     arguments.add((Serializable) localStore.getMainPlayer().getDirection());
     arguments.add((Serializable) localStore.getMainPlayer().haveGun());
     
@@ -88,7 +87,6 @@ public class MinigameController extends Controller {
     localStore.seed(store, new FirstWorld(), objective);
 
     store.setMinigameStore(localStore);
-
     router.call(Route.FADE_OUT, "boardGame");
     router.call(Route.START_MUSIC, "minigame");
     setScreen(new MinigameScreen(store, router));
