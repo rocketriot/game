@@ -9,7 +9,7 @@ import bham.bioshock.communication.server.ServerHandler;
 public class KillEveryoneAI extends MinigameAI {
 
   private static final Logger logger = LogManager.getLogger(KillEveryoneAI.class);
-  
+
   public KillEveryoneAI(UUID id, Store store, ServerHandler handler) {
     super(id, store, handler);
   }
@@ -17,8 +17,7 @@ public class KillEveryoneAI extends MinigameAI {
   @Override
   public void update(float delta) {
     astronaut.jump(delta);
- 
-    logger.error(delta);
+
   }
-  
+
 }
