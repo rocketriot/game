@@ -1,23 +1,18 @@
 package bham.bioshock.minigame;
-
 import bham.bioshock.client.controllers.SoundController;
 import bham.bioshock.client.scenes.MinigameHud;
-import bham.bioshock.client.screens.StatsContainer;
 import java.util.ArrayList;
-import java.util.Collection;
 import bham.bioshock.client.Route;
 import bham.bioshock.client.Router;
 import bham.bioshock.common.Position;
 import bham.bioshock.common.consts.Config;
 import bham.bioshock.common.models.store.MinigameStore;
-import bham.bioshock.minigame.models.*;
 import bham.bioshock.common.models.store.Store;
 import bham.bioshock.minigame.models.Bullet;
 import bham.bioshock.minigame.models.Entity;
 import bham.bioshock.minigame.models.Gun;
 import bham.bioshock.minigame.models.Player;
 import bham.bioshock.minigame.models.Rocket;
-import bham.bioshock.minigame.objectives.KillThemAll;
 import bham.bioshock.minigame.objectives.Objective;
 import bham.bioshock.minigame.physics.SpeedVector;
 import bham.bioshock.minigame.worlds.World;
@@ -45,7 +40,6 @@ import static sun.audio.AudioPlayer.player;
 public class Renderer {
   private Player mainPlayer;
   private ArrayList<Entity> entities;
-
   ShapeRenderer shapeRenderer;
   private OrthographicCamera cam;
   Vector3 lerpTarget = new Vector3();
@@ -74,7 +68,7 @@ public class Renderer {
     this.store = store;
     this.minigameStore = store.getMinigameStore();
     this.router = router;
-    this.objective = new KillThemAll(minigameStore.getPlayers(), mainPlayer);
+
     mainPlayer = minigameStore.getMainPlayer();
 
     shapeRenderer = new ShapeRenderer();
@@ -88,6 +82,9 @@ public class Renderer {
     shooting = false;
 
     world = minigameStore.getWorld();
+
+    this.objective = minigameStore.getObjective();
+    this.objective.initialise();
 
     cam = new OrthographicCamera();
     cam.position.set(mainPlayer.getX(), mainPlayer.getY(), 0);
@@ -125,6 +122,7 @@ public class Renderer {
 
     for (Entity e : entities) {
       e.load();
+      e.setObjective(objective);
     }
 
     Gdx.input.setInputProcessor(new InputAdapter() {
@@ -150,7 +148,8 @@ public class Renderer {
   }
 
   public void render(float delta) {
-    clock.update(delta);
+    checkTime(delta);
+
     batch.setProjectionMatrix(cam.combined);
     shapeRenderer.setProjectionMatrix(cam.combined);
 
@@ -237,7 +236,7 @@ public class Renderer {
 
     Position bulletPos = world.convert(pp);
 
-    Bullet b = new Bullet(minigameStore.getWorld(), bulletPos.x, bulletPos.y, main);
+    Bullet b = new Bullet(minigameStore.getWorld(), bulletPos.x, bulletPos.y, mainPlayer);
     // First synchronise the bullet with the player
     b.setSpeedVector((SpeedVector) main.getSpeedVector().clone());
     // Apply bullet speed
@@ -294,6 +293,22 @@ public class Renderer {
 
   public void resize(int width, int height) {
     stage.getViewport().update(width, height, true);
+  }
+
+
+  private void checkTime(float delta){
+    clock.update(delta);
+
+    Clock.TimeListener listener = new Clock.TimeListener() {
+      @Override
+      public void handle(Clock.TimeUpdateEvent event) {
+        if(event.time >= 180.0f){
+          Player p = objective.getWinner();
+        }
+      }
+    };
+
+    clock.every(1.0f,listener);
   }
 
 }
