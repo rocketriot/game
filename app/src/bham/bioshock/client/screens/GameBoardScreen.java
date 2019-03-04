@@ -354,6 +354,8 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
       endMove(mouse);
     }
 
+    hud.touchDown(screenX, screenY, pointer, button);
+
     return false;
   }
 
@@ -427,6 +429,8 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
 
   @Override
   public boolean touchDragged(int screenX, int screenY, int pointer) {
+    if (hud.isPaused()) return false;
+
     // Mouse camera panning
     if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
       camera.translate(-(screenX - mouseDownX), screenY - mouseDownY);
@@ -462,6 +466,8 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
 
   @Override
   public boolean scrolled(int amount) {
+    if (hud.isPaused()) return false;
+
     // Zoom code
     if ((PPS -= amount) <= ((Config.GAME_WORLD_HEIGHT / gridSize) - 4)) {
       PPS = (Config.GAME_WORLD_HEIGHT / gridSize) - 3;

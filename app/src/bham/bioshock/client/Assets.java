@@ -10,4 +10,5 @@ public class Assets {
   public static final String particleEffectsFolder = "app/assets/particle-effects";
   public static final String particleEffect = "app/assets/particle-effects/rocket-trail.p";
   public static final String turnPointer = "app/assets/ui/turn-pointer.png";
+  public static final String pauseIcon = "app/assets/ui/icons/pause.png";  
 }

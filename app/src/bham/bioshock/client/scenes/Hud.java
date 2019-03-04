@@ -3,6 +3,7 @@ package bham.bioshock.client.scenes;
 import bham.bioshock.client.Assets;
 import bham.bioshock.client.Router;
 import bham.bioshock.client.scenes.gameboard.hud.FuelBar;
+import bham.bioshock.client.scenes.gameboard.hud.PauseMenu;
 import bham.bioshock.client.scenes.gameboard.hud.ScoreBoard;
 import bham.bioshock.common.models.Player;
 import bham.bioshock.common.models.store.Store;
@@ -11,9 +12,11 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL30;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.utils.Align;
@@ -35,6 +38,7 @@ public class Hud implements Disposable {
 
   private FuelBar fuelBar;
   private ScoreBoard scoreBoard;
+  private PauseMenu pauseMenu;
   
   public Hud(SpriteBatch batch, Skin skin, int gameWidth, int gameHeight, Store store, Router router) {
     this.store = store;
@@ -50,24 +54,9 @@ public class Hud implements Disposable {
 
     sr = new ShapeRenderer();
 
+    pauseMenu = new PauseMenu(stage, batch, skin, router);
     scoreBoard = new ScoreBoard(stage, batch, skin);
     fuelBar = new FuelBar(stage, batch, skin);
-    
-    batch.begin();
-    batch.end();
-  }
-
-  }
-
-
-    Gdx.gl.glEnable(GL30.GL_BLEND);
-    Gdx.gl.glBlendFunc(GL30.GL_SRC_ALPHA, GL30.GL_ONE_MINUS_SRC_ALPHA);
-    
-    sr.begin(ShapeType.Filled);
-    sr.setProjectionMatrix(batch.getProjectionMatrix());
-    sr.end();
-    Gdx.gl.glDisable(GL30.GL_BLEND);
-
   }
 
   // private void setupTopBar() {
@@ -128,9 +117,8 @@ public class Hud implements Disposable {
 
     scoreBoard.render(store.getRound(), store.getPlayers(), store.getMovingPlayer());
     fuelBar.render(mainPlayer.getFuel());
+    pauseMenu.render();
     
-    
-
     // if (store.getMovingPlayer().getId().equals(store.getMainPlayer().getId()) && !turnPromptShown) {
     //   turnPromptShown = true;
     //   showYourTurnDialog();
@@ -159,8 +147,27 @@ public class Hud implements Disposable {
     stage.draw();
   }
 
+  private Vector3 getMouseCoordinates(int screenX, int screenY) {
+    Vector3 vector = new Vector3(screenX, screenY, 0);
+    Vector3 coordinates = viewport.unproject(vector);
+
+    return coordinates;
+  }
+
   @Override
   public void dispose() {
     stage.dispose();
+  }
+  
+
+  public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+    Vector3 mouse = getMouseCoordinates(screenX, screenY);
+    pauseMenu.touchDown(mouse);
+
+    return false;
+  }
+
+  public boolean isPaused() {
+    return pauseMenu.isPaused();
   }
 }
