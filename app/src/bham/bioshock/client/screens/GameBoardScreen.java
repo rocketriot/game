@@ -3,9 +3,9 @@ package bham.bioshock.client.screens;
 import bham.bioshock.client.Assets;
 import bham.bioshock.client.Route;
 import bham.bioshock.client.Router;
-import bham.bioshock.client.gameLogic.gameboard.*;
 import bham.bioshock.client.controllers.SoundController;
-import bham.bioshock.client.scenes.Hud;
+import bham.bioshock.client.gameLogic.gameboard.*;
+import bham.bioshock.client.scenes.gameboard.hud.Hud;
 import bham.bioshock.common.Direction;
 import bham.bioshock.common.consts.Config;
 import bham.bioshock.common.consts.GridPoint;
@@ -36,19 +36,19 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
   private final float CAMERA_MOVE_SPEED = 5f;
 
   /** Draws players on the board */
-  DrawPlayer drawPlayer;
+  private DrawPlayer drawPlayer;
 
   /** Draws planets on the board */
-  DrawPlanet drawPlanet;
+  private DrawPlanet drawPlanet;
 
   /** Draws fuel on the board */
-  DrawFuel drawFuel;
+  private DrawFuel drawFuel;
 
   /** Draws asteroids on the board */
-  DrawAsteroid drawAsteroid;
+  private DrawAsteroid drawAsteroid;
 
   /** Handles the path rendering */
-  PathRenderer pathRenderer;
+  private PathRenderer pathRenderer;
 
   /** The game data */
   private Store store;
@@ -99,9 +99,7 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
     pathRenderer =
         new PathRenderer(camera, store.getGameBoard(), store.getMainPlayer(), store.getPlayers());
 
-    // generateEffects();
-
-    hud = new Hud(batch, skin, Config.GAME_WORLD_WIDTH, Config.GAME_WORLD_HEIGHT, store, router);
+    hud = new Hud(batch, skin, store, router);
     background = new Sprite(new Texture(Gdx.files.internal(Assets.gameBackground)));
 
     // Setup the input processing
@@ -112,18 +110,20 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
 
   /** Draws the player move */
   private void drawPlayerMove(Player player) {
+    router.call(Route.LOOP_SOUND, "rocket");
     GameBoard gameBoard = store.getGameBoard();
     ArrayList<Player.Move> boardMove = player.getBoardMove();
 
     // Handle end of movement
     if (boardMove.size() == 0) {
       player.clearBoardMove();
+      router.call(Route.STOP_SOUND, "rocket");
 
       // Only show minigame prompt and end turn if this client's player's turns
       if (store.isMainPlayersTurn()) {
         // Show minigame prompt if next to planet
-        if (gameBoard.isNextToThePlanet(player.getCoordinates()) && player
-            .equals(store.getMainPlayer())) {
+        if (gameBoard.isNextToThePlanet(player.getCoordinates())
+            && player.equals(store.getMainPlayer())) {
           showMinigamePrompt();
         } else {
           router.call(Route.END_TURN);
@@ -299,7 +299,7 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
     batch.setProjectionMatrix(hud.stage.getCamera().combined);
     hud.getStage().act(Gdx.graphics.getDeltaTime());
     hud.updateHud();
-    hud.getStage().draw();
+    hud.draw();
   }
 
   protected void drawBackground() {
@@ -363,6 +363,8 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
       endMove(mouse);
     }
 
+    hud.touchDown(screenX, screenY, pointer, button);
+
     return false;
   }
 
@@ -396,7 +398,7 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
     Player movingPlayer = store.getMovingPlayer();
 
     // Check it's the client's turn to move
-    if (!movingPlayer.getId().equals(player.getId())) return false;
+    if (!store.isMainPlayersTurn()) return false;
 
     // Check if click is on the grid
     if (0 <= mouse.x && mouse.x <= gridSize * PPS && 0 <= mouse.y && mouse.y <= gridSize * PPS) {
@@ -436,6 +438,8 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
 
   @Override
   public boolean touchDragged(int screenX, int screenY, int pointer) {
+    if (hud.isPaused()) return false;
+
     // Mouse camera panning
     if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
       camera.translate(-(screenX - mouseDownX), screenY - mouseDownY);
@@ -471,6 +475,8 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
 
   @Override
   public boolean scrolled(int amount) {
+    if (hud.isPaused()) return false;
+
     // Zoom code
     if ((PPS -= amount) <= ((Config.GAME_WORLD_HEIGHT / gridSize) - 4)) {
       PPS = (Config.GAME_WORLD_HEIGHT / gridSize) - 3;

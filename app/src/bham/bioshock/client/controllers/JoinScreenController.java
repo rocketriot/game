@@ -27,7 +27,6 @@ public class JoinScreenController extends Controller {
     private ClientService clientService;
     private CommunicationClient commClient;
     private ClientHandler clientHandler;
-    private BoardGame game;
 
     @Inject
     public JoinScreenController(Store store, Router router, BoardGame game,
