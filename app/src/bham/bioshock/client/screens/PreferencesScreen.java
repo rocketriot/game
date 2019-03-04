@@ -47,6 +47,8 @@ public class PreferencesScreen extends ScreenMaster {
   private boolean soundsEnabled;
   private float soundsVolume;
 
+  private Route backRoute;
+
   /**
    * Instantiates a new Preferences screen.
    *
@@ -64,6 +66,13 @@ public class PreferencesScreen extends ScreenMaster {
     soundsEnabled = preferences.getSoundsEnabled();
     soundsVolume = preferences.getSoundsVolume();
   }
+
+  public PreferencesScreen(Router router, AppPreferences preferences, Route backRoute) {
+    this(router, preferences);
+    this.backRoute = backRoute;
+  }
+
+
 
   @Override
   public void show() {
@@ -191,7 +200,12 @@ public class PreferencesScreen extends ScreenMaster {
       public void changed(ChangeEvent event, Actor actor) {
         SoundController.playSound("menuSelect");
         xmlInteraction.preferencesToXML(musicEnabled, musicVolume, soundsEnabled, soundsVolume);
-        router.back();
+
+        if (backRoute != null) {
+          router.call(backRoute);
+        } else {
+          router.back();
+        }
       }
     });
   }

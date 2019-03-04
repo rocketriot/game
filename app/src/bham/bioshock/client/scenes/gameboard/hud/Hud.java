@@ -46,6 +46,7 @@ public class Hud implements Disposable {
     fuelBar.render(mainPlayer.getFuel());
     pauseMenu.render();
     turnStartText.render();
+    skipTurnButton.render();
   }
 
   public Stage getStage() {

@@ -1,6 +1,7 @@
 package bham.bioshock.client;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
@@ -13,13 +14,17 @@ public class FontGenerator {
    * @param color the color of the font to be generated
    * @return a bitmap font
    */
-  public BitmapFont genFont(int fontSize, Color color) {
-    FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("app/assets/fonts/SpaceMono-Bold.ttf"));
+  public BitmapFont generate(int fontSize, Color color) {
+    FileHandle file = Gdx.files.internal(Assets.font);
+    FreeTypeFontGenerator generator = new FreeTypeFontGenerator(file);
     FreeTypeFontParameter parameter = new FreeTypeFontParameter();
     parameter.size = fontSize;
     parameter.color = color;
+
     BitmapFont font = generator.generateFont(parameter);
+
     generator.dispose();
+
     return font;
   }
 }

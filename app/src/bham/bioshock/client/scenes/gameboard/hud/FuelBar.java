@@ -20,8 +20,8 @@ import com.badlogic.gdx.utils.Align;
 public class FuelBar extends HudElement {
   private ShapeRenderer sr;
 
-  private Label fuelLabel;
   private Label fuelValueLabel;
+  private Label fuelLabel;
 
   private float fuelWidth = 48f;
   private float fuelPadding = 50f;
@@ -47,23 +47,21 @@ public class FuelBar extends HudElement {
     fuelInfo.padBottom(15);
     stage.addActor(fuelInfo);
 
-    fuelLabel = new Label(String.format("%.0f", Player.MAX_FUEL), skin);
-    fuelLabel.setFontScale(1.2f);
-    fuelLabel.setWidth(60);
-    fuelLabel.setAlignment(Align.center);
-    fuelInfo.addActor(fuelLabel);
-
-    fuelValueLabel = new Label("FUEL", skin);
+    fuelValueLabel = new Label(String.format("%.0f", Player.MAX_FUEL), skin);
     fuelValueLabel.setFontScale(1.2f);
     fuelValueLabel.setWidth(60);
     fuelValueLabel.setAlignment(Align.center);
     fuelInfo.addActor(fuelValueLabel);
+
+    fuelLabel = new Label("FUEL", skin);
+    fuelLabel.setFontScale(1.2f);
+    fuelLabel.setWidth(60);
+    fuelLabel.setAlignment(Align.center);
+    fuelInfo.addActor(fuelLabel);
   }
 
   public void render(float fuelValue) {
     float height = (fuelValue / Player.MAX_FUEL) * fuelMaxHeight;
-
-    batch.begin();
 
     Gdx.gl.glEnable(GL30.GL_BLEND);
     Gdx.gl.glBlendFunc(GL30.GL_SRC_ALPHA, GL30.GL_ONE_MINUS_SRC_ALPHA);
@@ -105,6 +103,8 @@ public class FuelBar extends HudElement {
 
     sr.end();
 
+    batch.begin();
+    fuelValueLabel.setText(String.format("%.0f", fuelValue));
     batch.end();
   }
 }

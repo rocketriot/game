@@ -12,12 +12,14 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 
 public class SkipTurnButton extends HudElement {
+  TextButton endTurnButton;
+
   public SkipTurnButton(Stage stage, SpriteBatch batch, Skin skin, Store store, Router router) {
     super(stage, batch, skin, store, router);
   }
 
   protected void setup() {
-    TextButton endTurnButton = new TextButton("End Turn", skin);
+    endTurnButton = new TextButton("End Turn", skin);
 
     endTurnButton.setX((Config.GAME_WORLD_WIDTH - endTurnButton.getWidth()) / 2);
     endTurnButton.setY(15);
@@ -31,5 +33,10 @@ public class SkipTurnButton extends HudElement {
     });
 
     stage.addActor(endTurnButton);
+  }
+
+  protected void render() {
+    boolean isMainPlayersTurn = store.isMainPlayersTurn();
+    endTurnButton.setVisible(isMainPlayersTurn);
   }
 }

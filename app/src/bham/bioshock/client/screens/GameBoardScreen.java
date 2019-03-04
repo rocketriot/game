@@ -70,8 +70,6 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
   /** Used for mouse panning */
   private int mouseDownX, mouseDownY;
 
-  private Coordinates oldGridCoords = new Coordinates(-1, -1);
-
   /** The game background sprite */
   private Sprite background;
 
@@ -154,6 +152,9 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
 
     // Update the players coordinates if the player has moved 1 position
     if (didChangeCoordinates) {
+      Coordinates nextCoordinates = boardMove.get(0).getCoordinates();
+      player.setCoordinates(nextCoordinates);
+
       // Remove the completed move
       boardMove.remove(0);
     }
