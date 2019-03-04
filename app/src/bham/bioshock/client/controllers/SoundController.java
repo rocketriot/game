@@ -1,7 +1,9 @@
 package bham.bioshock.client.controllers;
 
+import bham.bioshock.client.AppPreferences;
 import bham.bioshock.client.BoardGame;
 import bham.bioshock.client.Router;
+import bham.bioshock.client.XMLInteraction;
 import bham.bioshock.common.models.store.Store;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
@@ -10,32 +12,64 @@ import java.util.HashMap;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+/**
+ * The Sound controller.
+ */
 @Singleton
 public class SoundController extends Controller {
 
-  /** Sound variables that contain the music used in the game */
+  /**
+   * Sound variables that contain the music used in the game
+   */
   private Sound mainMenuMusic;
+
   private Sound boardGameMusic;
   private Sound minigameMusic;
 
-  /** Sound variables that contain the sound effects used in the game */
+  /**
+   * Sound variables that contain the sound effects used in the game
+   */
   private Sound rocketSound;
+
   private static Sound menuSelectSound;
   private static Sound jumpSound;
   private static Sound laserSound;
 
+  /**
+   * Variables controlling volumes and enabling sounds
+   */
   private float musicVolume;
+
   private boolean musicEnabled;
   private static float soundsVolume;
   private static boolean soundsEnabled;
 
+  /**
+   * Variables to do with interacting with the preferences file
+   */
+  private AppPreferences preferences;
+
+  private XMLInteraction xmlInteraction = new XMLInteraction();
+
+  /**
+   * Hashmaps that store the sound variables with their names, whether they are playing and the id
+   * if they are playing
+   */
   private HashMap<String, Sound> music = new HashMap<>();
+
   private HashMap<String, Long> musicIds = new HashMap<>();
   private HashMap<String, Boolean> musicPlaying = new HashMap<>();
   private static HashMap<String, Sound> sounds = new HashMap<>();
   private HashMap<String, Boolean> soundsPlaying = new HashMap<>();
   private HashMap<String, Long> soundsIds = new HashMap<>();
 
+  /**
+   * Instantiates a new Sound controller.
+   *
+   * @param store the store
+   * @param router the router
+   * @param game the current BoardGame
+   */
   @Inject
   public SoundController(Store store, Router router, BoardGame game) {
     super(store, router, game);
@@ -49,10 +83,12 @@ public class SoundController extends Controller {
     jumpSound = Gdx.audio.newSound(Gdx.files.internal("app/assets/music/JumpSound.wav"));
     laserSound = Gdx.audio.newSound(Gdx.files.internal("app/assets/music/LaserSound.mp3"));
 
-    musicVolume = 0.4f;
-    musicEnabled = true;
-    soundsEnabled = true;
-    soundsVolume = 0.4f;
+    preferences = xmlInteraction.xmlToPreferences();
+
+    musicEnabled = preferences.getMusicEnabled();
+    musicVolume = preferences.getMusicVolume();
+    soundsEnabled = preferences.getSoundsEnabled();
+    soundsVolume = preferences.getSoundsVolume();
 
     addMusic();
     addSounds();
@@ -136,10 +172,11 @@ public class SoundController extends Controller {
    * Method to fade out music so that another can start in a better sounding way
    *
    * @param music The name of the music that you want to fade out
+   * @throws InterruptedException the interrupted exception
    */
   public void fadeOut(String music) throws InterruptedException {
     if (musicPlaying.get(music)) {
-      int fadeTime = 30;
+      int fadeTime = 20;
       float currentVolume = musicVolume;
       float step = currentVolume / fadeTime;
 
@@ -157,8 +194,8 @@ public class SoundController extends Controller {
    *
    * @param sound The name of the sound
    */
-  public static void playSound(String sound){
-    if (soundsEnabled){
+  public static void playSound(String sound) {
+    if (soundsEnabled) {
       sounds.get(sound).play(soundsVolume);
     }
   }
@@ -169,7 +206,7 @@ public class SoundController extends Controller {
    * @param sound The sound to loop
    */
   public void loopSound(String sound) {
-    if (soundsEnabled) {
+    if (soundsEnabled && !soundsPlaying.get(sound)) {
       long id = sounds.get(sound).loop(soundsVolume);
       soundsIds.put(sound, id);
 
@@ -187,10 +224,10 @@ public class SoundController extends Controller {
    * @param sound The looping sound to stop
    */
   public void stopSound(String sound) {
-    if (soundsPlaying.get(sound)) {
+    if (soundsPlaying.get(sound) && soundsIds.get(sound) != null) {
       sounds.get(sound).stop();
       soundsPlaying.replace(sound, false);
-      soundsPlaying.remove(sound);
+      soundsIds.remove(sound);
     }
   }
 
@@ -233,7 +270,7 @@ public class SoundController extends Controller {
     sounds.put("menuSelect", menuSelectSound);
     sounds.put("rocket", rocketSound);
     soundsPlaying.put("rocket", false);
-    sounds.put("jumpSound", jumpSound);
-    sounds.put("laserSound", laserSound);
+    sounds.put("jump", jumpSound);
+    sounds.put("laser", laserSound);
   }
 }
