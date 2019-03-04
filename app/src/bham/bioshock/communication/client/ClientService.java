@@ -4,6 +4,7 @@ import bham.bioshock.communication.Action;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.net.ConnectException;
 import java.net.Socket;
 import java.util.concurrent.PriorityBlockingQueue;
 import org.apache.logging.log4j.LogManager;
@@ -22,7 +23,7 @@ public class ClientService extends Thread implements IClientService {
 
   private PriorityBlockingQueue<Action> queue = new PriorityBlockingQueue<>();
   private IClientHandler handler;
-  
+  private boolean connectionCreated = false;
   
   /**
    * Creates the service and helper objects to send and receive messages
@@ -32,19 +33,20 @@ public class ClientService extends Thread implements IClientService {
    * @param toServer stream to server
    * @param client main client
    */
-  public ClientService(Socket _server, ObjectInputStream _fromServer, ObjectOutputStream _toServer) {
-
+  public void create(Socket _server, ObjectInputStream _fromServer, ObjectOutputStream _toServer) {
+    connectionCreated = true;
     // save socket and streams for communication
     server = _server;
     fromServer = _fromServer;
     toServer = _toServer;
 
-    // Save client to handle actions sent from the server
-//    client = _client;
-
     // Create two client object to send and receive messages
     receiver = new ClientReceiver(this, fromServer);
     sender = new ClientSender(toServer);
+  }
+  
+  public boolean isCreated() {
+    return connectionCreated;
   }
 
   /** Starts the sender and receiver threads */
@@ -82,6 +84,10 @@ public class ClientService extends Thread implements IClientService {
    * @param action to be sent
    */
   public void send(Action action) {
+    if(!isCreated()) {
+      logger.fatal("ClientService was not created! Message won't be sent!");
+      return;
+    }
     sender.send(action);
   }
 
