@@ -1,4 +1,4 @@
-package bham.bioshock.client.scenes;
+package bham.bioshock.client.scenes.gameboard.hud;
 
 import bham.bioshock.client.Router;
 import bham.bioshock.client.scenes.gameboard.hud.FuelBar;
