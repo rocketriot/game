@@ -1,14 +1,18 @@
 package bham.bioshock.client.scenes.gameboard.hud;
 
+import bham.bioshock.client.FontGenerator;
 import bham.bioshock.client.Router;
 import bham.bioshock.common.consts.Config;
 import bham.bioshock.common.models.Player;
 import bham.bioshock.common.models.store.Store;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 
@@ -22,7 +26,8 @@ public class Hud implements Disposable {
   private FuelBar fuelBar;
   private ScoreBoard scoreBoard;
   private PauseMenu pauseMenu;
-  
+  private TurnStartText turnStartText;
+
   public Hud(SpriteBatch batch, Skin skin, Store store, Router router) {
     this.store = store;
     this.skin = skin;
@@ -34,6 +39,7 @@ public class Hud implements Disposable {
     pauseMenu = new PauseMenu(stage, batch, skin, router);
     scoreBoard = new ScoreBoard(stage, batch, skin);
     fuelBar = new FuelBar(stage, batch, skin);
+    turnStartText = new TurnStartText(batch, store);
   }
 
   // private void setupBottomBar() {
@@ -57,25 +63,7 @@ public class Hud implements Disposable {
     scoreBoard.render(store.getRound(), store.getPlayers(), store.getMovingPlayer());
     fuelBar.render(mainPlayer.getFuel());
     pauseMenu.render();
-    
-    // if (store.getMovingPlayer().getId().equals(store.getMainPlayer().getId()) && !turnPromptShown) {
-    //   turnPromptShown = true;
-    //   showYourTurnDialog();
-    // } else if (!store.getMovingPlayer().getId().equals(store.getMainPlayer().getId()) && turnPromptShown) {
-    //   turnPromptShown = false;
-    // }
-  }
-
-  /** Method to ask the user whether they want to start the minigame or not */
-  private void showYourTurnDialog() {
-    Dialog diag =
-        new Dialog("", skin) {
-          protected void result(Object object) { }
-        };
-
-    diag.text(new Label("Your turn", skin));
-    diag.button("Okay", true);
-    diag.show(stage);
+    turnStartText.render();
   }
 
   public Stage getStage() {
