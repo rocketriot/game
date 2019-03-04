@@ -110,6 +110,14 @@ public class Store {
     return players.get(turn % players.size());
   }
 
+  /**
+   * Method which returns whether it's the main player's turn
+   * @return Whether it's the mainPlayer's turn
+   */
+  public boolean isMainPlayersTurn() {
+    return getMainPlayer().equals(getMovingPlayer());
+  }
+
   /** After a player has finished their turn, set the next turn */
   public void nextTurn() {
     // If all players have had their turn, go to next round

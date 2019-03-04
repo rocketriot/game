@@ -106,6 +106,10 @@ public class GameBoardController extends Controller {
     planet.setPlayerCaptured(player);
     player.setPlanetsCaptured(player.getPlanetsCaptured() + 1);
     player.setPoints(player.getPoints() + 100);
+
+    if(store.isMainPlayersTurn()) {
+      router.call(Route.END_TURN);
+    }
   }
 
   public void miniGameLost(Player player) {
@@ -120,6 +124,10 @@ public class GameBoardController extends Controller {
 
     Coordinates newCoordinates = new Coordinates(x, y);
     player.setCoordinates(newCoordinates);
+
+    if(store.isMainPlayersTurn()) {
+      router.call(Route.END_TURN);
+    }
   }
 
   public boolean hasReceivedGrid() {

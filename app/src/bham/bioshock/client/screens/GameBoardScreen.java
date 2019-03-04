@@ -119,7 +119,8 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
     if (boardMove.size() == 0) {
       player.clearBoardMove();
 
-      if (store.getMovingPlayer().equals(store.getMainPlayer())) {
+      // Only show minigame prompt and end turn if this client's player's turns
+      if (store.isMainPlayersTurn()) {
         // Show minigame prompt if next to planet
         if (gameBoard.isNextToThePlanet(player.getCoordinates()) && player
             .equals(store.getMainPlayer())) {
@@ -150,9 +151,6 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
 
     // Update the players coordinates if the player has moved 1 position
     if (didChangeCoordinates) {
-      //Coordinates nextCoordinates = boardMove.get(0).getCoordinates();
-      //player.setCoordinates(nextCoordinates);
-
       // Remove the completed move
       boardMove.remove(0);
     }
