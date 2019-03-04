@@ -8,13 +8,19 @@ import com.badlogic.gdx.math.Rectangle;
 import java.util.ArrayList;
 import java.util.Random;
 
-/** The Map Seeder. */
+/**
+ * The Map Seeder.
+ */
 public class MapSeeder {
 
-  /** The world */
+  /**
+   * The world
+   */
   private World world;
 
-  /** List of all the platforms in the world */
+  /**
+   * List of all the platforms in the world
+   */
   private ArrayList<Platform> platforms = new ArrayList<>();
 
   /**
@@ -42,11 +48,12 @@ public class MapSeeder {
   }
 
   /**
-   * Method to generate whether the part of the map will have a low, medium or high frequency
-   * of platforms
+   * Method to generate whether the part of the map will have a low, medium or high frequency of
+   * platforms
+   *
    * @return a string corresponding to the frequency
    */
-  private String generateFrequency(){
+  private String generateFrequency() {
     // a result of 1 is low frequency, 2 is medium and 3 is high
     Random generator = new Random();
     int frequency = generator.nextInt((3 - 1) + 1) + 1;
@@ -59,7 +66,7 @@ public class MapSeeder {
       case 3:
         return "High";
       default:
-        System.out.println("Somehow an int between 1 and 3 has been generated");
+        System.out.println("Somehow an int between 1 and 3 hasn't been generated");
         return null;
     }
   }
@@ -85,10 +92,10 @@ public class MapSeeder {
         upperBound = 10;
       case "Medium":
         lowerBound = 10;
-        upperBound = 20;
+        upperBound = 15;
       case "High":
-        lowerBound = 20;
-        upperBound = 30;
+        lowerBound = 15;
+        upperBound = 20;
 
       default:
         System.out.println("Invalid seed frequency");
