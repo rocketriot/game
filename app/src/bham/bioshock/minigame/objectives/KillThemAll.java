@@ -10,7 +10,7 @@ import java.util.Random;
 
 
 public class KillThemAll extends Objective {
-  private Position respawnPosition = new Position(-2300, 0);
+  private Position respawnPosition;
   private HashMap<Player, Float> health = new HashMap<>();
   private HashMap<Player, Integer> kills = new HashMap<>();
   private float initialHealth = 100.0f;
