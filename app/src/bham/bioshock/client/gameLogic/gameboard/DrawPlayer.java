@@ -1,6 +1,7 @@
 package bham.bioshock.client.gameLogic.gameboard;
 
 import bham.bioshock.client.Assets;
+import bham.bioshock.common.Direction;
 import bham.bioshock.common.models.Player;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Batch;
@@ -77,14 +78,16 @@ public class DrawPlayer extends DrawEntity {
         movingSprite.setRotation(0);
         movingSpriteY += distanceToMove;
 
-        rocketTrailX = movingSpriteX + 0.5f;
+        rocketTrailX = movingSpriteX + 0.4f;
         rocketTrailY = movingSpriteY;
         setRocketTrailAngle(0);
 
         // Has the sprite reach the next coordinate in the board move
         if (movingSprite.getY() >= nextMoveY * PPS) {
-          movingSprite.setX(nextMoveX * PPS);
-          movingSprite.setY(nextMoveY * PPS);
+          if (!checkSameDirection(nextMove.getDirection(), boardMove)) {
+            movingSprite.setX(nextMoveX * PPS);
+            movingSprite.setY(nextMoveY * PPS);
+          }
           movingSprite.draw(batch);
 
           return true;
@@ -96,13 +99,15 @@ public class DrawPlayer extends DrawEntity {
         movingSprite.setRotation(180);
         movingSpriteY -= distanceToMove;
 
-        rocketTrailX = movingSpriteX + 0.5f;
+        rocketTrailX = movingSpriteX + 0.4f;
         rocketTrailY = movingSpriteY + 1;
         setRocketTrailAngle(180);
 
         if (movingSprite.getY() <= nextMoveY * PPS) {
-          movingSprite.setX(nextMoveX * PPS);
-          movingSprite.setY(nextMoveY * PPS);
+          if (!checkSameDirection(nextMove.getDirection(), boardMove)) {
+            movingSprite.setX(nextMoveX * PPS);
+            movingSprite.setY(nextMoveY * PPS);
+          }
           movingSprite.draw(batch);
 
           return true;
@@ -119,8 +124,10 @@ public class DrawPlayer extends DrawEntity {
         setRocketTrailAngle(270);
 
         if (movingSprite.getX() >= nextMoveX * PPS) {
-          movingSprite.setX(nextMoveX * PPS);
-          movingSprite.setY(nextMoveY * PPS);
+          if (!checkSameDirection(nextMove.getDirection(), boardMove)) {
+            movingSprite.setX(nextMoveX * PPS);
+            movingSprite.setY(nextMoveY * PPS);
+          }
           movingSprite.draw(batch);
 
           return true;
@@ -132,13 +139,15 @@ public class DrawPlayer extends DrawEntity {
         movingSprite.setRotation(90);
         movingSpriteX -= distanceToMove;
 
-        rocketTrailX = movingSpriteX + 1;
+        rocketTrailX = movingSpriteX + 0.9f;
         rocketTrailY = movingSpriteY + 0.5f;
         setRocketTrailAngle(90);
 
         if (movingSprite.getX() <= nextMoveX * PPS) {
-          movingSprite.setX(nextMoveX * PPS);
-          movingSprite.setY(nextMoveY * PPS);
+          if (!checkSameDirection(nextMove.getDirection(), boardMove)) {
+            movingSprite.setX(nextMoveX * PPS);
+            movingSprite.setY(nextMoveY * PPS);
+          }
           movingSprite.draw(batch);
 
           return true;
@@ -157,6 +166,16 @@ public class DrawPlayer extends DrawEntity {
     movingSprite.setY(movingSpriteY * PPS);
     movingSprite.draw(batch);
 
+    return false;
+  }
+
+  private boolean checkSameDirection(Direction direction, ArrayList<Player.Move> boardMove) {
+    if (boardMove.size() > 1) {
+      Player.Move nextMove = boardMove.get(0);
+      Direction nextDirection = nextMove.getDirection();
+      if (nextDirection.equals(direction))
+        return true;
+    }
     return false;
   }
 
