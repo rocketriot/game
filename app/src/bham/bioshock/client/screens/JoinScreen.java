@@ -15,6 +15,7 @@ import bham.bioshock.minigame.worlds.JoinScreenWorld;
 import bham.bioshock.minigame.worlds.World;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -48,7 +49,7 @@ public class JoinScreen extends ScreenMaster {
     private Texture asteroidTexture;
 
     private float rocketSpeed = 100f;
-    private float rotationSpeed = 0.9f;
+    private float rotationSpeed = 1.8f;
     private int rocketWidth = 50;
     private int rocketHeight = 100;
     private float rocketRotation = 0;
@@ -154,19 +155,18 @@ public class JoinScreen extends ScreenMaster {
         stateTime += Gdx.graphics.getDeltaTime();
 
         //draw rockets
-        batch.begin();
         drawRockets();
-        batch.end();
-
 
         updateRocketPosition();
     }
 
     private void drawRockets() {
+        batch.begin();
         for(UUID id : rocketMap.keySet()) {
             RocketAnimation animation = rocketMap.get(id);
             drawRocket(animation);
         }
+        batch.end();
 
     }
 
