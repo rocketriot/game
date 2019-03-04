@@ -1,67 +1,49 @@
 package bham.bioshock.client;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Preferences;
-
 public class AppPreferences {
 
-  private static final String PREF_MUSIC_VOLUME = "volume";
-  private static final String PREF_MUSIC_ENABLED = "music.enabled";
-  private static final String PREF_SOUND_ENABLED = "sound.enabled";
-  private static final String PREF_SOUND_VOLUME = "sound";
-  private static final String PREFS_NAME = "rocket_riot";
-  private static final String PREF_NUM_PLAYERS = "players.num";
+  private boolean music_enabled;
+  private float music_volume;
+  private float sounds_volume;
+  private boolean sounds_enabled;
 
-  protected Preferences getPreferences() {
-    return Gdx.app.getPreferences(PREFS_NAME);
+  public AppPreferences(boolean music_enabled, float music_volume, boolean sounds_enabled,
+      float sounds_volume) {
+    this.music_enabled = music_enabled;
+    this.music_volume = music_volume;
+    this.sounds_enabled = sounds_enabled;
+    this.sounds_volume = sounds_volume;
   }
 
-  // read and write to XML file using a libary
-  // java XML document class
-
-  // getters and setter
-  public boolean getSoundEnabled() {
-    return getPreferences().getBoolean(PREF_SOUND_ENABLED, true);
+  public boolean getSoundsEnabled() {
+    return sounds_enabled;
   }
 
   public boolean getMusicEnabled() {
-    return getPreferences().getBoolean(PREF_MUSIC_ENABLED, true);
+    return music_enabled;
   }
 
   public float getMusicVolume() {
-    return getPreferences().getFloat(PREF_MUSIC_VOLUME);
+    return music_volume;
   }
 
-  public float getSoundVolume() {
-    return getPreferences().getFloat(PREF_SOUND_VOLUME);
+  public float getSoundsVolume() {
+    return sounds_volume;
   }
 
-  public int getNumberOfPlayers() {
-    return getPreferences().getInteger(PREF_NUM_PLAYERS);
+  public void setMusicEnabled(boolean enabled) {
+    music_enabled = enabled;
   }
 
-  public void setPrefSoundEnabled(boolean enabled) {
-    getPreferences().putBoolean(PREF_SOUND_ENABLED, enabled);
-    getPreferences().flush();
+  public void setMusicVolume(float volume) {
+    music_volume = volume;
   }
 
-  public void setPrefMusicEnabled(boolean enabled) {
-    getPreferences().putBoolean(PREF_MUSIC_ENABLED, enabled);
-    getPreferences().flush();
+  public void setSoundsEnabled(boolean enabled) {
+    sounds_enabled = enabled;
   }
 
-  public void setPrefMusicVolume(float volume) {
-    getPreferences().putFloat(PREF_MUSIC_VOLUME, volume);
-    getPreferences().flush();
-  }
-
-  public void setPrefSoundVolume(float volume) {
-    getPreferences().putFloat(PREF_SOUND_VOLUME, volume);
-    getPreferences().flush();
-  }
-
-  public void setPrefNumPlayers(int players) {
-    getPreferences().putInteger(PREF_NUM_PLAYERS, players);
-    getPreferences().flush();
+  public void setSoundsVolume(float volume) {
+    sounds_volume = volume;
   }
 }

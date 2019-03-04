@@ -110,12 +110,14 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
 
   /** Draws the player move */
   private void drawPlayerMove(Player player) {
+    router.call(Route.LOOP_SOUND, "rocket");
     GameBoard gameBoard = store.getGameBoard();
     ArrayList<Player.Move> boardMove = player.getBoardMove();
 
     // Handle end of movement
     if (boardMove.size() == 0) {
       player.clearBoardMove();
+      router.call(Route.STOP_SOUND, "rocket");
 
       if (store.getMovingPlayer().equals(store.getMainPlayer())) {
         // Show minigame prompt if next to planet

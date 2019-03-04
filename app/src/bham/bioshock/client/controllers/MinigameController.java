@@ -40,7 +40,7 @@ public class MinigameController extends Controller {
     ArrayList<Serializable> arguments = new ArrayList<>();
     arguments.add((Serializable) store.getMainPlayer().getId());
     arguments.add((Serializable) localStore.getMainPlayer().getSpeedVector());
-    arguments.add((Serializable) localStore.getMainPlayer().getPosition());
+    arguments.add((Serializable) localStore.getMainPlayer().getPos());
     arguments.add((Serializable) localStore.getMainPlayer().getDirection());
     arguments.add((Serializable) localStore.getMainPlayer().haveGun());
     
@@ -70,7 +70,7 @@ public class MinigameController extends Controller {
     Position p = (Position) arguments.get(1);
     
     MinigameScreen screen = (MinigameScreen) store.getScreen();
-    Bullet b = new Bullet(localStore.getWorld(), p.x, p.y);  
+    Bullet b = new Bullet(localStore.getWorld(), p.x, p.y,localStore.getMainPlayer());
     b.setSpeedVector(sv);
     screen.addBullet(b);
   }
@@ -80,9 +80,7 @@ public class MinigameController extends Controller {
     // Create local store for the minigame, and create a new world
     MinigameStore localStore = new MinigameStore();
     localStore.seed(store, new FirstWorld());
-    
     store.setMinigameStore(localStore);
-
     router.call(Route.FADE_OUT, "boardGame");
     router.call(Route.START_MUSIC, "minigame");
     setScreen(new MinigameScreen(store, router));

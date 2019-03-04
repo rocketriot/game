@@ -37,7 +37,7 @@ public class Clock {
     every(1, listener);
   }
   
-  abstract public class TimeListener {
+  abstract public static class TimeListener {
  
     float lastCall = 0f; 
     float every = 0;

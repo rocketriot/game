@@ -23,10 +23,10 @@ public class EntityTests {
     
     p1.setPosition(new Position(0, 0));
     p2.setPosition(new Position(76, 0));
-    assertFalse(p1.checkCollision(p2));
+    assertNull(p1.checkCollision(p2));
     
     p2.setPosition(new Position(70, 0));
-    assertTrue(p1.checkCollision(p2));
+    assertNotNull(p1.checkCollision(p2));
   }
   
   @Test
