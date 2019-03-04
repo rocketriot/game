@@ -70,7 +70,9 @@ public class PauseMenu extends HudElement{
     quitLabel.addListener(
         new ChangeListener() {
           @Override
-          public void changed(ChangeEvent event, Actor actor) {}
+          public void changed(ChangeEvent event, Actor actor) {
+            router.call(Route.MAIN_MENU);
+          }
         });
     menuOptions.addActor(quitLabel);
   }
