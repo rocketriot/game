@@ -19,14 +19,14 @@ public class CommunicationClient {
 
   public static String hostAddress;
   public static int port = Config.PORT;
-  private ClientService service = null;
+  private ClientService service = new ClientService();;
 
   public ClientService getConnection() {
     return service;
   }
 
   public ClientService createConnection() throws ConnectException {
-    if (service != null) {
+    if (service.isCreated()) {
       return service;
     }
     // Open sockets:
@@ -45,7 +45,7 @@ public class CommunicationClient {
     }
 
     // We are connected to the server, create a service to get and send messages
-    service = new ClientService(server, fromServer, toServer);
+    service.create(server, fromServer, toServer);
     service.start();
     logger.debug("Client connected!");
     return service;

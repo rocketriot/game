@@ -1,4 +1,5 @@
 package bham.bioshock.minigame.models;
+import bham.bioshock.client.controllers.SoundController;
 import bham.bioshock.common.Position;
 import bham.bioshock.minigame.PlayerTexture;
 import bham.bioshock.minigame.physics.CollisionBoundary;
@@ -65,6 +66,7 @@ public class Player extends Entity {
 
   public void jump(float delta) {
     if (!isFlying() && speed.getValueFor(angleFromCenter()) < JUMP_FORCE * 3/4 ) {
+      SoundController.playSound("jump");
       speed.apply(angleFromCenter(), JUMP_FORCE);
     }
   }
