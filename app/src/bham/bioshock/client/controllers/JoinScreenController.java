@@ -105,8 +105,9 @@ public class JoinScreenController extends Controller {
 
         ArrayList<Serializable> arguments = new ArrayList<>();
         arguments.add((Serializable) playerId);
-        arguments.add((Serializable) ((JoinScreen)game.getScreen()).getMainPlayerAnimation().getPosition());
-        //arguments.add((Serializable) ((JoinScreen)game.getScreen()).getRocket(playerId).getPosition());
+        JoinScreen.RocketAnimation animation = ((JoinScreen)game.getScreen()).getMainPlayerAnimation();
+        arguments.add((Serializable) animation.getPosition());
+        arguments.add((Serializable) (float) animation.getRotation());
 
         clientService = commClient.getConnection();
         clientService.send(new Action(Command.JOIN_SCREEN_MOVE, arguments));
@@ -115,8 +116,9 @@ public class JoinScreenController extends Controller {
     public void updateRocket(ArrayList<Serializable> arguments) {
         UUID id = (UUID) arguments.get(0);
         Position pos = (Position) arguments.get(1);
+        float rotation = (float) arguments.get(2);
 
-        store.getJoinScreenStore().updateRocket(pos, id);
+        store.getJoinScreenStore().updateRocket(pos, rotation, id);
     }
 
 }

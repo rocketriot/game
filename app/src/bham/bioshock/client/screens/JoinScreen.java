@@ -482,8 +482,9 @@ public class JoinScreen extends ScreenMaster {
             collisionBoundary.update(pos, getRotation());
         }
 
-        public void updatePosition(Position new_pos) {
+        public void updatePosition(Position new_pos, float new_rot) {
             pos = new_pos;
+            rotation = new_rot;
         }
 
         public Position getPosition() {
@@ -492,15 +493,32 @@ public class JoinScreen extends ScreenMaster {
 
         public void moveLeft() {
             pos.x -= Gdx.graphics.getDeltaTime() * rocketSpeed;
+
         }
         public void moveRight() {
             pos.x += Gdx.graphics.getDeltaTime() * rocketSpeed;
+
         }
         public void moveUp() {
             pos.y += Gdx.graphics.getDeltaTime() * rocketSpeed;
+
+
         }
         public void moveDown() {
             pos.y -= Gdx.graphics.getDeltaTime() * rocketSpeed;
+
+        }
+        public void moveTowards(float angle) {
+            if(rotation != angle) {
+                float diff = Math.abs(angle - rotation);
+                if(rotation < angle) {
+                    rotation += Gdx.graphics.getDeltaTime() * rocketSpeed;
+                }
+            }
+        }
+        @Override
+        public double getRotation() {
+            return rotation;
         }
 
     }

@@ -26,9 +26,9 @@ public class JoinScreenStore {
      * @param pos position of a player
      * @param playerID the id of a player that will be moved
      */
-    public void updateRocket(Position pos, UUID playerID) {
-        System.out.println("UPDATE POS");
-        rocketMap.get(playerID).updatePosition(pos);
+    public void updateRocket(Position pos, float rotation, UUID playerID) {
+        System.out.println("UPDATE ROTATION: " + rotation);
+        rocketMap.get(playerID).updatePosition(pos, rotation);
     }
 
 }
