@@ -308,9 +308,8 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
 
   protected void drawBackground() {
     int offset = 1;
-
     for (int i = -1; i <= 1; i++) {
-      for (int j = -1; j <= 1; j++) {
+      for (int j = -1; j <= 2; j++) {
         background.setPosition(i * background.getWidth() - offset++, j * background.getHeight());
         background.draw(batch);
       }
@@ -346,10 +345,34 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
     }
 
     // Move camera with WASD
-    if (Gdx.input.isKeyPressed(Input.Keys.W)) camera.translate(0f, CAMERA_MOVE_SPEED);
-    if (Gdx.input.isKeyPressed(Input.Keys.A)) camera.translate(-CAMERA_MOVE_SPEED, 0f);
-    if (Gdx.input.isKeyPressed(Input.Keys.S)) camera.translate(0f, -CAMERA_MOVE_SPEED);
-    if (Gdx.input.isKeyPressed(Input.Keys.D)) camera.translate(CAMERA_MOVE_SPEED, 0f);
+    if (Gdx.input.isKeyPressed(Input.Keys.W)) {
+      if (checkCameraMove(0f, CAMERA_MOVE_SPEED))
+        camera.translate(0f, CAMERA_MOVE_SPEED);
+    }
+    if (Gdx.input.isKeyPressed(Input.Keys.A)) {
+      if (checkCameraMove(-CAMERA_MOVE_SPEED, 0f))
+        camera.translate(-CAMERA_MOVE_SPEED, 0f);
+    }
+    if (Gdx.input.isKeyPressed(Input.Keys.S)) {
+      if (checkCameraMove(0f, -CAMERA_MOVE_SPEED))
+        camera.translate(0f, -CAMERA_MOVE_SPEED);
+    }
+    if (Gdx.input.isKeyPressed(Input.Keys.D)) {
+      if (checkCameraMove(0f, CAMERA_MOVE_SPEED))
+        camera.translate(CAMERA_MOVE_SPEED, 0f);
+    }
+  }
+
+  private boolean checkCameraMove(float x, float y) {
+    float cameraX = camera.position.x;
+    float cameraY = camera.position.y;
+    System.out.println(cameraX + ", " + cameraY + ", " + PPS);
+    if (cameraX + x < 80 || cameraY + y < 300) {
+      return false;
+    } else if (cameraX + x > PPS/0.03f || cameraY + y > (PPS - 10)/0.025f) {
+      return false;
+    }
+    return true;
   }
 
   @Override
@@ -446,7 +469,13 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
 
     // Mouse camera panning
     if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
-      camera.translate(-(screenX - mouseDownX), screenY - mouseDownY);
+      float xDist = -(screenX - mouseDownX);
+      float yDist = screenY - mouseDownY;
+      
+      if (checkCameraMove(xDist, yDist)) {
+        camera.translate(xDist, yDist);
+      }
+
       mouseDownX = screenX;
       mouseDownY = screenY;
       return true;
