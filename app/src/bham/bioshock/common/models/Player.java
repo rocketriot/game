@@ -97,11 +97,11 @@ public class Player extends Sendable {
   }
 
   public void increaseFuel(float fuel) {
-    this.fuel += fuel;
+    this.fuel = Math.min(this.fuel + fuel, MAX_FUEL);
   }
 
   public void decreaseFuel(float fuel) {
-    this.fuel -= fuel;
+    this.fuel = Math.max(this.fuel - fuel, 0f);
   }
 
   public int getPlanetsCaptured() {

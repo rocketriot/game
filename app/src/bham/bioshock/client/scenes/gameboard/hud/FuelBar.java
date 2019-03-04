@@ -1,7 +1,10 @@
 package bham.bioshock.client.scenes.gameboard.hud;
 
+import bham.bioshock.client.Router;
 import bham.bioshock.common.consts.Config;
 import bham.bioshock.common.models.Player;
+import bham.bioshock.common.models.store.Store;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL30;
@@ -14,11 +17,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup;
 import com.badlogic.gdx.utils.Align;
 
-public class FuelBar {
-  private final Skin skin;
-  private SpriteBatch batch;
+public class FuelBar extends HudElement {
   private ShapeRenderer sr;
-  private Stage stage;
 
   private Label fuelLabel;
   private Label fuelValueLabel;
@@ -29,19 +29,16 @@ public class FuelBar {
   private float fuelMaxHeight;
   private float fuelXCoordinate;
 
-  FuelBar(Stage stage, SpriteBatch batch, Skin skin) {
-    this.stage = stage;
-    this.batch = batch;
-    this.skin = skin;
-    this.sr = new ShapeRenderer();
+  FuelBar(Stage stage, SpriteBatch batch, Skin skin, Store store, Router router) {
+    super(stage, batch, skin, store, router);
+    
+    sr = new ShapeRenderer();
 
-    this.fuelMaxHeight = Config.GAME_WORLD_HEIGHT - (fuelPadding * 2) - 50f;
-    this.fuelXCoordinate = Config.GAME_WORLD_WIDTH - (fuelWidth + fuelPadding);
-
-    setup();
+    fuelMaxHeight = Config.GAME_WORLD_HEIGHT - (fuelPadding * 2) - 50f;
+    fuelXCoordinate = Config.GAME_WORLD_WIDTH - (fuelWidth + fuelPadding);
   }
 
-  private void setup() {
+  protected void setup() {
     VerticalGroup fuelInfo = new VerticalGroup();
     fuelInfo.setFillParent(true);
     fuelInfo.bottom();

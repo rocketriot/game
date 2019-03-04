@@ -1,7 +1,10 @@
 package bham.bioshock.client.scenes.gameboard.hud;
 
 import bham.bioshock.client.Assets;
+import bham.bioshock.client.Router;
 import bham.bioshock.common.models.Player;
+import bham.bioshock.common.models.store.Store;
+
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -10,25 +13,16 @@ import com.badlogic.gdx.utils.Align;
 
 import java.util.ArrayList;
 
-public class ScoreBoard {
-  private final Skin skin;
-  public Stage stage;
-
+public class ScoreBoard extends HudElement {
   private Table scoreBoard;
   private Label roundLabel;
   private Image turnPointer;
 
-  private SpriteBatch batch;
-
-  public ScoreBoard(Stage stage, SpriteBatch batch, Skin skin) {
-    this.stage = stage;
-    this.batch = batch;
-    this.skin = skin;
-
-    setup();
+  public ScoreBoard(Stage stage, SpriteBatch batch, Skin skin, Store store, Router router) {
+    super(stage, batch, skin, store, router);
   }
 
-  private void setup() {
+  protected void setup() {
     VerticalGroup stats = new VerticalGroup();
     stats.setFillParent(true);
     stats.top();
@@ -46,7 +40,7 @@ public class ScoreBoard {
     turnPointer = new Image(new Texture(Assets.turnPointer));
   }
 
-  public void render(int round, ArrayList<Player> players, Player movingPlayer) {
+  protected void render(int round, ArrayList<Player> players, Player movingPlayer) {
     batch.begin();
 
     roundLabel.setText("Round " + round);
