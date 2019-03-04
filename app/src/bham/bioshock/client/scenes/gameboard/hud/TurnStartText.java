@@ -16,7 +16,7 @@ public class TurnStartText {
   private boolean showTurnPrompt;
   private float duration;
   private boolean wasMainPlayerTurn;
-  private FontGenerator fg;
+  private FontGenerator fontGenerator;
   private int fontSize = 72;
 
   public TurnStartText(SpriteBatch batch, Store store) {
@@ -26,8 +26,8 @@ public class TurnStartText {
   }
 
   private void setup() {
-    fg = new FontGenerator();
-    font = fg.genFont(fontSize, Color.WHITE);
+    fontGenerator = new FontGenerator();
+    font = fontGenerator.generate(fontSize, Color.WHITE);
   }
 
   public void render() {
@@ -43,7 +43,7 @@ public class TurnStartText {
       if (duration <= 0) {
         showTurnPrompt = false;
       } else {
-        font = fg.genFont(fontSize, new Color(1, 1, 1, duration/2));
+        font = fontGenerator.generate(fontSize, new Color(1, 1, 1, duration/2));
       }
     }
   }

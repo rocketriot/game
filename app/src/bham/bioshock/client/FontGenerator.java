@@ -14,7 +14,7 @@ public class FontGenerator {
    * @param color the color of the font to be generated
    * @return a bitmap font
    */
-  public BitmapFont genFont(int fontSize, Color color) {
+  public BitmapFont generate(int fontSize, Color color) {
     FileHandle file = Gdx.files.internal(Assets.font);
     FreeTypeFontGenerator generator = new FreeTypeFontGenerator(file);
     FreeTypeFontParameter parameter = new FreeTypeFontParameter();
