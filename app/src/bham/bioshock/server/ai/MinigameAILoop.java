@@ -11,7 +11,7 @@ public class MinigameAILoop extends Thread {
 
   private ArrayList<MinigameAI> aiHandlers = new ArrayList<>();
 
-  private int LOOP_TIME = 1000;
+  private int LOOP_TIME = 100;
 
   @Override
   public void run() {

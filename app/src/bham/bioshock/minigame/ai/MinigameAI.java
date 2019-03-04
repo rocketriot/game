@@ -16,6 +16,7 @@ abstract public class MinigameAI {
   protected Store store;
   protected UUID id;
   protected Astronaut astronaut;
+  protected MinigameStore localStore;
   
   public MinigameAI(UUID id, Store store, ServerHandler handler) {
     this.store = store;
@@ -24,8 +25,10 @@ abstract public class MinigameAI {
   }
   
   public final void run(float delta) {
-    MinigameStore localStore = store.getMinigameStore();
-    if(localStore == null) return;
+    if(localStore == null) {
+      localStore = store.getMinigameStore();
+      if(localStore == null) return;
+    };
     if(astronaut == null) {
       astronaut = localStore.getPlayer(id);
       if(astronaut == null) return;

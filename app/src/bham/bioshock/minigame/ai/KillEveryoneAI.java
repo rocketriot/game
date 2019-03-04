@@ -5,6 +5,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import bham.bioshock.common.models.store.Store;
 import bham.bioshock.communication.server.ServerHandler;
+import bham.bioshock.minigame.models.Astronaut;
+import bham.bioshock.minigame.worlds.World.PlanetPosition;
 
 public class KillEveryoneAI extends MinigameAI {
 
@@ -16,8 +18,22 @@ public class KillEveryoneAI extends MinigameAI {
 
   @Override
   public void update(float delta) {
-    astronaut.jump(delta);
-
+    Astronaut host = localStore.getMainPlayer();
+    
+    PlanetPosition hostPP = host.getPlanetPos();
+    PlanetPosition pp = astronaut.getPlanetPos();
+    
+    double angleDelta = hostPP.angle - pp.angle;
+    double angle = (angleDelta + 180) % 360 - 180;
+    
+    for(int i=0; i<2; i++) {
+      if(angle < 0) {
+        astronaut.moveLeft(delta);
+      } else {
+        astronaut.moveRight(delta);
+      }
+    }
+    
   }
 
 }

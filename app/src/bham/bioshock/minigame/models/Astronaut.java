@@ -49,7 +49,7 @@ public class Astronaut extends Entity {
 
   public void moveLeft(float delta) {
     if (!isFlying()) {
-      speed.apply(angleFromCenter() + 270, v * GROUND_FRICTION);
+      speed.apply(angleFromCenter() + 270, v * GROUND_FRICTION );
     }
     dir = PlayerTexture.LEFT;
   }
@@ -68,6 +68,10 @@ public class Astronaut extends Entity {
     }
   }
   
+  public void resetDirection() {
+    dir = PlayerTexture.FRONT;
+  }
+  
   public boolean haveGun() {
     return haveGun;
   }
@@ -80,7 +84,6 @@ public class Astronaut extends Entity {
     super.update(delta);
     legs.update(pos, getRotation());
     animationTime += delta;
-    dir = PlayerTexture.FRONT;
   }
 
   public PlayerTexture getDirection() {

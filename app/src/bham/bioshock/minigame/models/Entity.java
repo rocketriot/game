@@ -186,6 +186,9 @@ public abstract class Entity implements Serializable {
     this.onGround = false;
   }
  
+  public PlanetPosition getPlanetPos() {
+    return world.convert(getPos());
+  }
 
   public void collide(float elastic, MinimumTranslationVector v) {
     if (!loaded) return;

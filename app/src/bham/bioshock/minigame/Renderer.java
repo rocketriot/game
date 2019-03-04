@@ -289,6 +289,8 @@ public class Renderer {
     if (moveMade) {
       // Send a move to the server
       router.call(Route.MINIGAME_MOVE);
+    } else {
+      mainPlayer.resetDirection();
     }
   }
 

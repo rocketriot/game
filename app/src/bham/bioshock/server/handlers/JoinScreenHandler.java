@@ -89,6 +89,12 @@ public class JoinScreenHandler {
     // Send the board and the players
     gameBoardHandler.getGameBoard(action, cpuPlayers);
     
+    // Wait for the board
+    try {
+      Thread.sleep(1000);
+    } catch (InterruptedException e) {
+      e.printStackTrace();
+    }
     minigameHandler.startMinigame(new Action(Command.MINIGAME_START));
   }
 }
