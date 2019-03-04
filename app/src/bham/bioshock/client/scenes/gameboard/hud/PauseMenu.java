@@ -60,7 +60,7 @@ public class PauseMenu extends HudElement{
         new ChangeListener() {
           @Override
           public void changed(ChangeEvent event, Actor actor) {
-            router.call(Route.PREFERENCES_WITH_BACK, Route.GAME_BOARD_SHOW);
+            router.call(Route.PREFERENCES_WITH_BACK_ROUTE, Route.GAME_BOARD_SHOW);
           }
         });
 
