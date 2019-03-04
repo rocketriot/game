@@ -1,22 +1,18 @@
 package bham.bioshock.minigame;
-
 import bham.bioshock.client.controllers.SoundController;
 import bham.bioshock.client.scenes.MinigameHud;
-import bham.bioshock.client.screens.StatsContainer;
 import java.util.ArrayList;
 import bham.bioshock.client.Route;
 import bham.bioshock.client.Router;
 import bham.bioshock.common.Position;
 import bham.bioshock.common.consts.Config;
 import bham.bioshock.common.models.store.MinigameStore;
-import bham.bioshock.minigame.models.*;
 import bham.bioshock.common.models.store.Store;
 import bham.bioshock.minigame.models.Bullet;
 import bham.bioshock.minigame.models.Entity;
 import bham.bioshock.minigame.models.Gun;
 import bham.bioshock.minigame.models.Player;
 import bham.bioshock.minigame.models.Rocket;
-import bham.bioshock.minigame.objectives.KillThemAll;
 import bham.bioshock.minigame.objectives.Objective;
 import bham.bioshock.minigame.physics.SpeedVector;
 import bham.bioshock.minigame.worlds.World;
@@ -85,17 +81,10 @@ public class Renderer {
     entities.addAll(minigameStore.getGuns());
     shooting = false;
 
-
     world = minigameStore.getWorld();
-
-    //test
-    Player second = new Player(world,-2310, 0);
-    entities.add(second);
-    //
 
     this.objective = minigameStore.getObjective();
     this.objective.initialise();
-    this.objective.addPlayer(second);
 
     cam = new OrthographicCamera();
     cam.position.set(mainPlayer.getX(), mainPlayer.getY(), 0);
@@ -313,8 +302,8 @@ public class Renderer {
     Clock.TimeListener listener = new Clock.TimeListener() {
       @Override
       public void handle(Clock.TimeUpdateEvent event) {
-        if(event.time >= 5.0f){
-          objective.getWinner();
+        if(event.time >= 180.0f){
+          Player p = objective.getWinner();
         }
       }
     };

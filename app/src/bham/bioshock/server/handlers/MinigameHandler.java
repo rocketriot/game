@@ -28,8 +28,9 @@ public class MinigameHandler {
    */
   public void startMinigame(Action action) {
     MinigameStore miniGameStore = new MinigameStore();
-    Objective objective = new KillThemAll();
-    miniGameStore.seed(store, new FirstWorld(), objective);
+    FirstWorld world = new FirstWorld();
+    Objective objective = new KillThemAll(world);
+    miniGameStore.seed(store, world, objective);
     
     store.setMinigameStore(miniGameStore);
     handler.sendToAll(action);

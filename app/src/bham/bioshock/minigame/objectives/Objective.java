@@ -1,14 +1,18 @@
 package bham.bioshock.minigame.objectives;
 import bham.bioshock.minigame.models.Player;
+import bham.bioshock.minigame.worlds.World;
+
 import java.util.Collection;
 
 
 public abstract class Objective {
+
+  private World world;
+
+  public Objective(World world){
+    this.world = world;
+  }
   private Collection<Player> players;
-
-  private Player mainPlayer;
-  private float initialHealth = 100;
-
   public abstract Player getWinner();
 
   public void setPlayers(Collection<Player> players){
@@ -18,8 +22,6 @@ public abstract class Objective {
   public Collection<Player> getPlayers(){return this.players;}
   public abstract void gotShot(Player player, Player killer);
   public abstract void initialise();
-
-  // test
-  public abstract void addPlayer(Player p);
+  public World getWorld(){return this.world;}
 
 }
