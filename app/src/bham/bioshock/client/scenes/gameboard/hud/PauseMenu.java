@@ -119,7 +119,7 @@ public class PauseMenu {
     if (pauseButton.getX() <= mouse.x
         && mouse.x <= pauseButton.getX() + pauseButton.getWidth()
         && pauseButton.getY() <= mouse.y
-        && mouse.y <= Config.GAME_WORLD_HEIGHT - pauseButton.getY() + pauseButton.getHeight()) {
+        && mouse.y <= pauseButton.getY() + pauseButton.getHeight()) {
       isPaused = !isPaused;
     }
   }
