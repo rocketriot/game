@@ -74,9 +74,9 @@ public class GameBoardHandler {
 
     // Update the store
     store.setGameBoard(gameBoard);
-    Player p = store.getPlayer(movingPlayer.getId());
-    p.setCoordinates(movingPlayer.getCoordinates());
-    p.setFuel(movingPlayer.getFuel());
+    Player currentPlayer = store.getPlayer(movingPlayer.getId());
+    currentPlayer.setCoordinates(movingPlayer.getCoordinates());
+    currentPlayer.setFuel(movingPlayer.getFuel());
 
     // Send out new game board and moving player to players
     ArrayList<Serializable> response = new ArrayList<>();
@@ -85,30 +85,33 @@ public class GameBoardHandler {
     
     handler.sendToAll(new Action(Command.MOVE_PLAYER_ON_BOARD, response));
 
-    // Sleeps the server for the duration of the move animation
-    // This shouldn't cause any problems as nothing should happen during a move
-    // Message Rob if this is causing problems as I can refactor this to work slightly differently
     if (movingPlayer.isCpu()) {
-      int deltaTime = calculateMoveTime(p.getBoardMove());
-      try {
-        Thread.sleep(deltaTime);
-        endTurn();
-      } catch (InterruptedException e) {
-        e.printStackTrace();
-      }
+      int waitTime = calculateMoveTime(currentPlayer.getBoardMove());
+      new Thread(() -> {
+        try {
+          Thread.sleep(waitTime);
+          endTurn();
+        } catch (InterruptedException e) {
+          e.printStackTrace();
+        }
+      }).start();
     }
   }
 
   private int calculateMoveTime(ArrayList<Move> boardMove) {
     // Players move 3 tiles per second + 500 to prevent race condition
-    return (boardMove.size() * 1000)/3 + 500;
+    if (boardMove != null)
+      return (boardMove.size() * 1000)/3 + 500;
+    else
+      return 0;
   }
 
   public void endTurn() {
     store.nextTurn();
     // Handle if the next player is a CPU
     Player movingPlayer = store.getMovingPlayer();
-    if (movingPlayer.isCpu())
+    if (movingPlayer.isCpu()) {
       new BoardAi(store, this).run();
+    }
   }
 }
