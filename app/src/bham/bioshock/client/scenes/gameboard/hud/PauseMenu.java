@@ -31,8 +31,7 @@ public class PauseMenu extends HudElement{
 
   private Sprite pauseButton;
   private VerticalGroup menuOptions;
-  private TextButton musicLabel;
-  private TextButton soundLabel;
+  private TextButton preferencesLabel;
   private TextButton quitLabel;
 
   PauseMenu(Stage stage, SpriteBatch batch, Skin skin, Store store, Router router) {
@@ -56,8 +55,8 @@ public class PauseMenu extends HudElement{
     menuOptions.center();
     stage.addActor(menuOptions);
 
-    musicLabel = new TextButton("Toggle Music", skin);
-    musicLabel.addListener(
+    preferencesLabel = new TextButton("Preferences", skin);
+    preferencesLabel.addListener(
         new ChangeListener() {
           @Override
           public void changed(ChangeEvent event, Actor actor) {
@@ -65,17 +64,7 @@ public class PauseMenu extends HudElement{
           }
         });
 
-    menuOptions.addActor(musicLabel);
-
-    soundLabel = new TextButton("Toggle Sound", skin);
-    soundLabel.addListener(
-        new ChangeListener() {
-          @Override
-          public void changed(ChangeEvent event, Actor actor) {
-            router.call(Route.SOUNDS_ENABLED, true);
-          }
-        });
-    menuOptions.addActor(soundLabel);
+    menuOptions.addActor(preferencesLabel);
 
     quitLabel = new TextButton("Quit Game", skin);
     quitLabel.addListener(
