@@ -1,5 +1,6 @@
 package bham.bioshock.minigame;
 
+import bham.bioshock.client.controllers.SoundController;
 import bham.bioshock.client.scenes.MinigameHud;
 import bham.bioshock.client.screens.StatsContainer;
 import java.util.ArrayList;
@@ -131,6 +132,7 @@ public class Renderer {
       public boolean keyDown(int keyCode) {
         if (Input.Keys.SPACE == keyCode && !shooting && mainPlayer.haveGun()) {
           createBullet();
+          SoundController.playSound("laser");
           shooting = true;
         }
         return true;
