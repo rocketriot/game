@@ -92,7 +92,7 @@ public class MainMenuScreen extends ScreenMaster {
     exit.addListener(new ChangeListener() {
       @Override
       public void changed(ChangeEvent event, Actor actor) {
-        router.call(Route.SELECT_SOUND);
+        SoundController.playSound("menuSelect");
         Gdx.app.exit();
       }
     });
@@ -101,7 +101,7 @@ public class MainMenuScreen extends ScreenMaster {
       @Override
       public void changed(ChangeEvent event, Actor actor) {
         /** Bring up a dialogue to ask the user for a host name then start the new server */
-        router.call(Route.SELECT_SOUND);
+        SoundController.playSound("menuSelect");
         showHostDialogue();
       }
     });
@@ -109,7 +109,7 @@ public class MainMenuScreen extends ScreenMaster {
     howto.addListener(new ChangeListener() {
       @Override
       public void changed(ChangeEvent event, Actor actor) {
-        router.call(Route.SELECT_SOUND);
+        SoundController.playSound("menuSelect");
         router.call(Route.HOW_TO);
       }
     });
@@ -117,7 +117,7 @@ public class MainMenuScreen extends ScreenMaster {
     preferences.addListener(new ChangeListener() {
       @Override
       public void changed(ChangeEvent event, Actor actor) {
-        router.call(Route.SELECT_SOUND);
+        SoundController.playSound("menuSelect");
         router.call(Route.PREFERENCES);
       }
     });
@@ -126,7 +126,7 @@ public class MainMenuScreen extends ScreenMaster {
       @Override
       public void changed(ChangeEvent event, Actor actor) {
         // Do something to add a new player...
-        router.call(Route.SELECT_SOUND);
+        SoundController.playSound("menuSelect");
         showJoinDialogue();
       }
     });
@@ -146,11 +146,11 @@ public class MainMenuScreen extends ScreenMaster {
             alert("Please Enter a Host Name");
           } else {
             // show join screen
-            router.call(Route.SELECT_SOUND);
+            SoundController.playSound("menuSelect");
             router.call(Route.HOST_GAME, host_name);
           }
         } else {
-          router.call(Route.SELECT_SOUND);
+          SoundController.playSound("menuSelect");
           System.out.println("Cancelled..");
         }
       }
@@ -178,12 +178,12 @@ public class MainMenuScreen extends ScreenMaster {
           if (username.equals("")) {
             alert("Please Enter a Username");
           } else {
-            router.call(Route.SELECT_SOUND);
+            SoundController.playSound("menuSelect");
             router.call(Route.JOIN_SCREEN, username);
           }
 
         } else {
-          router.call(Route.SELECT_SOUND);
+          SoundController.playSound("menuSelect");
           System.out.println("Cancelled..");
         }
       }

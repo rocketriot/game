@@ -1,6 +1,7 @@
 package bham.bioshock.client.controllers;
 
 import bham.bioshock.client.BoardGame;
+import bham.bioshock.client.Route;
 import bham.bioshock.client.Router;
 import bham.bioshock.client.screens.GameBoardScreen;
 import bham.bioshock.common.consts.GridPoint;
@@ -29,6 +30,8 @@ public class GameBoardController extends Controller {
 
   /** Start the game */
   public void show() {
+    router.call(Route.FADE_OUT, "mainMenu");
+    router.call(Route.START_MUSIC, "boardGame");
     setScreen(new GameBoardScreen(router, store));
   }
 
@@ -71,6 +74,8 @@ public class GameBoardController extends Controller {
     }
 
     mainPlayer.createBoardMove(path);
+    mainPlayer.setCoordinates(destination);
+    mainPlayer.decreaseFuel(pathCost);
 
     // Send the updated grid to the server
     ArrayList<Serializable> arguments = new ArrayList<>();
@@ -79,20 +84,17 @@ public class GameBoardController extends Controller {
     clientService.send(new Action(Command.MOVE_PLAYER_ON_BOARD, arguments));
   }
 
-  /** Skips a players turn by sending a move with the same coordinates */
-  public void skipTurn() {
-    // TODO TEMP SOLUTION
-    ArrayList<Serializable> arguments = new ArrayList<>();
-    arguments.add(store.getGameBoard());
-    arguments.add(store.getMainPlayer());
-    clientService.send(new Action(Command.MOVE_PLAYER_ON_BOARD, arguments));
+  /** Ends the players turn */
+  public void endTurn() {
+    clientService.send(new Action(Command.END_TURN));
   }
 
   /** Player move received from the server */
   public void moveReceived(Player movingPlayer) {
     // Update the model
-    store.updatePlayer(movingPlayer);
-    store.nextTurn();
+    Player p = store.getPlayer(movingPlayer.getId());
+    p.setCoordinates(movingPlayer.getCoordinates());
+    p.setFuel(movingPlayer.getFuel());
   }
 
   public void miniGameWon(Player player, Planet planet) {
@@ -124,11 +126,4 @@ public class GameBoardController extends Controller {
     return store.getGameBoard().getGrid() != null;
   }
 
-  /** Check if it is the main player's turn */
-  public boolean isMainPlayersTurn() {
-    int turn = store.getTurn();
-    Player nextPlayer = store.getPlayers().get(turn);
-
-    return store.getMainPlayer().getId().equals(nextPlayer.getId());
-  }
 }

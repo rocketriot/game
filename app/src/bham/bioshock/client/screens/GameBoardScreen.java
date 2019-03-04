@@ -3,8 +3,9 @@ package bham.bioshock.client.screens;
 import bham.bioshock.client.Assets;
 import bham.bioshock.client.Route;
 import bham.bioshock.client.Router;
+import bham.bioshock.client.gameLogic.gameboard.*;
+import bham.bioshock.client.controllers.SoundController;
 import bham.bioshock.client.scenes.Hud;
-import bham.bioshock.client.scenes.gameboard.*;
 import bham.bioshock.common.Direction;
 import bham.bioshock.common.consts.Config;
 import bham.bioshock.common.consts.GridPoint;
@@ -116,9 +117,14 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
     if (boardMove.size() == 0) {
       player.clearBoardMove();
 
-      // Show minigame prompt if next to planet
-      if (gameBoard.isNextToThePlanet(player.getCoordinates())) {
-        showMinigamePrompt();
+      if (store.getMovingPlayer().equals(store.getMainPlayer())) {
+        // Show minigame prompt if next to planet
+        if (gameBoard.isNextToThePlanet(player.getCoordinates()) && player
+            .equals(store.getMainPlayer())) {
+          showMinigamePrompt();
+        } else {
+          router.call(Route.END_TURN);
+        }
       }
 
       return;
@@ -142,8 +148,8 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
 
     // Update the players coordinates if the player has moved 1 position
     if (didChangeCoordinates) {
-      Coordinates nextCoordinates = boardMove.get(0).getCoordinates();
-      player.setCoordinates(nextCoordinates);
+      //Coordinates nextCoordinates = boardMove.get(0).getCoordinates();
+      //player.setCoordinates(nextCoordinates);
 
       // Remove the completed move
       boardMove.remove(0);
@@ -330,7 +336,10 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
 
   private void handleKeyPress() {
     // Unselect player on ESC
-    if (Gdx.input.isKeyPressed(Input.Keys.ESCAPE)) playerSelected = false;
+    if (Gdx.input.isKeyPressed(Input.Keys.ESCAPE)) {
+      playerSelected = false;
+      pathRenderer.clearPath();
+    }
 
     // Move camera with WASD
     if (Gdx.input.isKeyPressed(Input.Keys.W)) camera.translate(0f, CAMERA_MOVE_SPEED);
@@ -455,9 +464,9 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
 
     // Ensure the mouse is clicking on the board
     if (coordinates.getX() >= gridSize
-        && coordinates.getX() < 0
-        && coordinates.getY() >= gridSize
-        && coordinates.getY() < 0) return false;
+        || coordinates.getX() < 0
+        || coordinates.getY() >= gridSize
+        || coordinates.getY() < 0) return false;
 
     // Pathfind to where the mouse is located
     pathRenderer.generatePath(store.getMainPlayer().getCoordinates(), coordinates);
@@ -497,9 +506,13 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
 
             if (object.equals(true)) {
               System.out.println("Starting minigame");
+              SoundController.playSound("menuSelect");
               router.call(Route.START_MINIGAME);
             } else {
+              SoundController.playSound("menuSelect");
               System.out.println("Minigame not started");
+              // Ends the turn
+              router.call(Route.END_TURN);
             }
           }
         };

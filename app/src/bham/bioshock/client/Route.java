@@ -2,6 +2,7 @@ package bham.bioshock.client;
 
 import bham.bioshock.client.controllers.Controller;
 import bham.bioshock.client.controllers.*;
+import com.badlogic.gdx.audio.Sound;
 
 public enum Route {
 //@formatter:off
@@ -28,7 +29,7 @@ public enum Route {
   GAME_BOARD_SAVE   (GameBoardController.class,     "saveGameBoard"),
   PLAYERS_SAVE      (GameBoardController.class,     "savePlayers"),
   GAME_BOARD_SHOW   (GameBoardController.class,     "show"),
-  SKIP_TURN         (GameBoardController.class,     "skipTurn"),
+  END_TURN         (GameBoardController.class,     "endTurn"),
 
   SEND_MINIGAME_START(MinigameController.class,     "sendStart"),
   START_MINIGAME    (MinigameController.class,      "show"),
@@ -39,11 +40,13 @@ public enum Route {
   MINIGAME_BULLET    (MinigameController.class,     "bulletCreate"),
   MINIGAME_BULLET_SEND(MinigameController.class,     "bulletShot"),
 
-  START_MENU_MUSIC  (SoundController.class,         "startMenuMusic"),
+  START_MUSIC       (SoundController.class,         "startMusic"),
+  STOP_MUSIC        (SoundController.class,         "stopMusic"),
+  FADE_OUT          (SoundController.class,         "fadeOut"),
   MUSIC_VOLUME      (SoundController.class,         "setMusicVolume"),
   MUSIC_ENABLED     (SoundController.class,         "enableMusic"),
-  STOP_MAIN_MUSIC   (SoundController.class,         "stopMainMusic"),
-  SELECT_SOUND      (SoundController.class,         "selectSound"),
+  LOOP_SOUND        (SoundController.class,         "loopSound"),
+  STOP_SOUND        (SoundController.class,         "stopSound"),
   SOUNDS_VOLUME     (SoundController.class,         "setSoundsVolume"),
   SOUNDS_ENABLED    (SoundController.class,         "enableSounds");
   
