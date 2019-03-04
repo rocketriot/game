@@ -108,7 +108,7 @@ public class JoinScreenController extends Controller {
         arguments.add((Serializable) ((JoinScreen)game.getScreen()).getMainPlayerAnimation().getPosition());
         //arguments.add((Serializable) ((JoinScreen)game.getScreen()).getRocket(playerId).getPosition());
 
-        clientService = commClient.connect(store.getPlayer(playerId).getUsername());
+        clientService = commClient.getConnection();
         clientService.send(new Action(Command.JOIN_SCREEN_MOVE, arguments));
     }
 
