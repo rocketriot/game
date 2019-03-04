@@ -118,6 +118,13 @@ public class Store {
     return getMainPlayer().equals(getMovingPlayer());
   }
 
+  /**
+   * Method which returns whether it's the passed in player's turn
+   * @param player the player being checked
+   * @return Whether it's the passed in player's turns
+   */
+  public boolean isThisPlayersTurn(Player player) { return player.equals(getMovingPlayer()); }
+
   /** After a player has finished their turn, set the next turn */
   public void nextTurn() {
     // If all players have had their turn, go to next round
