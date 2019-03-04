@@ -91,6 +91,9 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
     this.viewport = new FitViewport(Config.GAME_WORLD_WIDTH, Config.GAME_WORLD_HEIGHT, camera);
     this.viewport.apply();
 
+    // Center the camera on the middle of the grid
+    camera.position.set(Config.GAME_WORLD_WIDTH/4, Config.GAME_WORLD_HEIGHT/2.25f, 0);
+
     drawPlayer = new DrawPlayer(batch);
     drawPlanet = new DrawPlanet(batch);
     drawFuel = new DrawFuel(batch);
@@ -255,7 +258,7 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
 
   @Override
   public void resize(int width, int height) {
-    viewport.update(width, height, true);
+    viewport.update(width, height);
     hud.viewport.update(width, height, true);
     resizeSprites();
   }
