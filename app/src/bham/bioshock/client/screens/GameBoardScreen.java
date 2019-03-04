@@ -2,6 +2,7 @@ package bham.bioshock.client.screens;
 
 import bham.bioshock.client.Route;
 import bham.bioshock.client.Router;
+import bham.bioshock.client.controllers.SoundController;
 import bham.bioshock.client.scenes.Hud;
 import bham.bioshock.common.Direction;
 import bham.bioshock.common.consts.Config;
@@ -120,6 +121,7 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
 
   /** Draws the player move */
   private void drawPlayerMove(Player player) {
+    router.call(Route.LOOP_SOUND, "rocket");
     GameBoard gameBoard = store.getGameBoard();
     BoardMove boardMove = player.getBoardMove();
     if (boardMove.getDirections().size() == boardMovePointer) {
@@ -135,6 +137,7 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
       if (player.equals(store.getMainPlayer())) {
         playerSelected = true;
         pathFinder.setStartPosition(player.getCoordinates());
+        router.call(Route.STOP_SOUND, "rocket");
       }
     } else {
       // Calculate distance to travel
@@ -647,8 +650,10 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
 
             if (object.equals(true)) {
               System.out.println("Starting minigame");
+              SoundController.playSound("menuSelect");
               router.call(Route.START_MINIGAME);
             } else {
+              SoundController.playSound("menuSelect");
               System.out.println("Minigame not started");
             }
           }

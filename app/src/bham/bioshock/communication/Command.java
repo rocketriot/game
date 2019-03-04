@@ -9,6 +9,7 @@ public enum Command {
   TEST,
 
   // Creating a game
+  SERVER_FULL,
   ADD_PLAYER,
   REMOVE_PLAYER,
   START_GAME,

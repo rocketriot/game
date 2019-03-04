@@ -1,6 +1,7 @@
 package bham.bioshock.client.controllers;
 
 import bham.bioshock.client.BoardGame;
+import bham.bioshock.client.Route;
 import bham.bioshock.client.Router;
 import bham.bioshock.client.screens.GameBoardScreen;
 import bham.bioshock.common.Direction;
@@ -21,8 +22,7 @@ public class GameBoardController extends Controller {
   private IClientService clientService;
 
   @Inject
-  public GameBoardController(
-      Router router, Store store, IClientService clientService, BoardGame game) {
+  public GameBoardController(Router router, Store store, IClientService clientService, BoardGame game) {
     super(store, router, game);
     this.clientService = clientService;
     this.router = router;
@@ -30,6 +30,8 @@ public class GameBoardController extends Controller {
 
   /* Start the game */
   public void show() {
+    router.call(Route.FADE_OUT, "mainMenu");
+    router.call(Route.START_MUSIC, "boardGame");
     setScreen(new GameBoardScreen(router, store));
   }
 
@@ -101,7 +103,10 @@ public class GameBoardController extends Controller {
   /** Player move received from the server */
   public void moveReceived(Player movingPlayer) {
     // Update the model
-    store.updatePlayer(movingPlayer);
+    Player p = store.getPlayer(movingPlayer.getId());
+    p.setCoordinates(movingPlayer.getCoordinates());
+    p.setFuel(movingPlayer.getFuel());
+    
     store.nextTurn();
   }
 
@@ -193,11 +198,4 @@ public class GameBoardController extends Controller {
     return store.getGameBoard().getGrid() != null;
   }
 
-  /** Check if it is the main player's turn */
-  public boolean isMainPlayersTurn() {
-    int turn = store.getTurn();
-    Player nextPlayer = store.getPlayers().get(turn);
-
-    return store.getMainPlayer().getId().equals(nextPlayer.getId());
-  }
 }

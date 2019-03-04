@@ -2,6 +2,7 @@ package bham.bioshock.minigame.worlds;
 
 import bham.bioshock.common.Position;
 import bham.bioshock.minigame.models.Gun;
+import bham.bioshock.minigame.models.Platform;
 import bham.bioshock.minigame.models.Rocket;
 
 import java.util.ArrayList;
@@ -44,6 +45,11 @@ public class JoinScreenWorld extends World {
 
     @Override
     public ArrayList<Gun> getGuns() {
+        return null;
+    }
+
+    @Override
+    public ArrayList<Platform> getPlatforms() {
         return null;
     }
 }

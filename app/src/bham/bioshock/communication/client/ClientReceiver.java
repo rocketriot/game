@@ -1,7 +1,6 @@
 package bham.bioshock.communication.client;
 
 import bham.bioshock.communication.Action;
-
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.net.SocketException;
@@ -42,8 +41,8 @@ public class ClientReceiver extends Thread {
     } catch (SocketException e) {
       System.out.println("Client receiver ending");
     } catch (NullPointerException | IOException e) {
-      System.err.println(
-          "Server seems to have died " + (e.getMessage() == null ? "" : e.getMessage()));
+      System.err
+          .println("Server seems to have died " + (e.getMessage() == null ? "" : e.getMessage()));
       System.exit(0);
     }
   }

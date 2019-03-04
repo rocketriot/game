@@ -1,12 +1,8 @@
 package bham.bioshock.client.controllers;
 
 import bham.bioshock.client.screens.ScreenMaster;
-import bham.bioshock.client.screens.StatsContainer;
-import com.badlogic.gdx.scenes.scene2d.Stage;
 import bham.bioshock.common.models.store.Store;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.core.Logger;
+import com.badlogic.gdx.audio.Sound;
 import com.google.inject.Inject;
 import bham.bioshock.client.BoardGame;
 import bham.bioshock.client.Route;
@@ -24,33 +20,28 @@ public class MainMenuController extends Controller {
     super(store, router, game);
     this.server = server;
     this.game = game;
-    menuMusic();
   }
 
-  /** Creates a server */
-  private void startServer() {
-    if(!server.isAlive()) {
-      server.start();      
+  /**
+   * Starts a server and opens the join screen
+   * 
+   * @param hostName
+   */
+  public void hostGame(String hostName) {
+    if (server.start()) {
+      router.call(Route.JOIN_SCREEN, hostName);
+    } else {
+      alert("Server cannot be created.\nCheck if one is not already running");
     }
   }
 
-  public void hostGame(String hostName) {
-    startServer();
-    
-    router.call(Route.JOIN_SCREEN, hostName);
-  }
-  
   /** Renders main menu */
   public void show() {
     setScreen(new MainMenuScreen(router));
   }
 
-  
-  public void alert(String message) {
-    ((ScreenMaster)store.getScreen()).alert(message);
-  }
 
-  public void menuMusic(){
-    router.call(Route.START_MENU_MUSIC);
+  public void alert(String message) {
+    ((ScreenMaster) store.getScreen()).alert(message);
   }
 }

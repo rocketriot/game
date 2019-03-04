@@ -6,6 +6,7 @@ import bham.bioshock.common.Position;
 import bham.bioshock.common.models.Player;
 import bham.bioshock.common.models.store.JoinScreenStore;
 import bham.bioshock.common.models.store.Store;
+
 import bham.bioshock.minigame.models.Entity;
 import bham.bioshock.minigame.models.Rocket;
 import bham.bioshock.minigame.physics.CollisionBoundary;
@@ -13,6 +14,10 @@ import bham.bioshock.minigame.physics.Vector;
 import bham.bioshock.minigame.worlds.FirstWorld;
 import bham.bioshock.minigame.worlds.JoinScreenWorld;
 import bham.bioshock.minigame.worlds.World;
+
+import java.util.ArrayList;
+import java.util.Collection;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.GL20;
@@ -37,6 +42,7 @@ import java.util.*;
 
 
 public class JoinScreen extends ScreenMaster {
+
     private Store store;
 
     /* Container elements */
@@ -329,7 +335,6 @@ public class JoinScreen extends ScreenMaster {
             startButton.addListener(new ChangeListener() {
                 @Override
                 public void changed(ChangeEvent event, Actor actor) {
-                    router.call(Route.STOP_MAIN_MUSIC);
                     router.call(Route.START_GAME);
                 }
             });
@@ -537,7 +542,6 @@ public class JoinScreen extends ScreenMaster {
         }
 
     }
-
 
 
 

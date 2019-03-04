@@ -14,16 +14,15 @@ import bham.bioshock.communication.Command;
 import bham.bioshock.communication.client.ClientService;
 import bham.bioshock.communication.client.CommunicationClient;
 import com.google.inject.Inject;
-
 import java.io.Serializable;
 import java.net.ConnectException;
 import java.util.ArrayList;
 import java.util.UUID;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 public class JoinScreenController extends Controller {
+
 
     private static final Logger logger = LogManager.getLogger(JoinScreenController.class);
 

@@ -43,12 +43,13 @@ public class MinigameStore {
     if(store.getMainPlayer() != null) {
       mainPlayerId = store.getMainPlayer().getId();      
     }
-    ArrayList<bham.bioshock.common.models.Player> players = store.getPlayers();
+
     Position[] playerPos = world.getPlayerPositions();
 
-    for (int i = 0; i < players.size(); i++) {
+    int i = 0;
+    for(bham.bioshock.common.models.Player player : store.getPlayers()) {
       Player p = new Player(world, playerPos[i]);
-      this.players.put(players.get(i).getId(), p);
+      players.put(player.getId(), p);
     }
     
     this.rockets = world.getRockets();
