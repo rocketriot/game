@@ -94,11 +94,11 @@ public class Renderer {
     //test
     Player second = new Player(world,-2310, 0);
     entities.add(second);
-    System.out.println(mainPlayer.getPosition().x);
-    System.out.println(mainPlayer.getPosition().y);
     //
 
     this.objective = minigameStore.getObjective();
+    this.objective.initialise();
+    this.objective.addPlayer(second);
 
     cam = new OrthographicCamera();
     cam.position.set(mainPlayer.getX(), mainPlayer.getY(), 0);
@@ -161,20 +161,7 @@ public class Renderer {
   }
 
   public void render(float delta) {
-    clock.update(delta);
-
-
-    Clock.TimeListener listener = new Clock.TimeListener() {
-      @Override
-      public void handle(Clock.TimeUpdateEvent event) {
-        if(event.time >= 5.0f){
-        }
-      }
-    };
-
-    clock.every(1.0f,listener);
-
-
+    checkTime(delta);
 
     batch.setProjectionMatrix(cam.combined);
     shapeRenderer.setProjectionMatrix(cam.combined);
@@ -320,6 +307,24 @@ public class Renderer {
 
   public void resize(int width, int height) {
     stage.getViewport().update(width, height, true);
+  }
+
+
+  private void checkTime(float delta){
+    clock.update(delta);
+
+    Clock.TimeListener listener = new Clock.TimeListener() {
+      @Override
+      public void handle(Clock.TimeUpdateEvent event) {
+        if(event.time >= 5.0f){
+          objective.getWinner();
+        }
+      }
+    };
+
+    clock.every(1.0f,listener);
+
+
   }
 
 }

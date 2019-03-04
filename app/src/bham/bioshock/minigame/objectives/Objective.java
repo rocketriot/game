@@ -15,4 +15,7 @@ public abstract class Objective {
   public abstract void gotShot(Player player, Player killer);
   public abstract void initialise();
 
+  // test
+  public abstract void addPlayer(Player p);
+
 }
