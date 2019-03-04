@@ -363,6 +363,12 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
     }
   }
 
+  /**
+   * Checks if the input x and y values would result in a valid camera movement
+   * @param x movement in x direction
+   * @param y movement in y direction
+   * @return whether it's a valid camera move
+   */
   private boolean checkCameraMove(float x, float y) {
     float cameraX = camera.position.x;
     float cameraY = camera.position.y;
@@ -471,7 +477,7 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
     if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
       float xDist = -(screenX - mouseDownX);
       float yDist = screenY - mouseDownY;
-      
+
       if (checkCameraMove(xDist, yDist)) {
         camera.translate(xDist, yDist);
       }
