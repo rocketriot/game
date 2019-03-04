@@ -37,17 +37,25 @@ public class BoardAi extends Thread {
     GridPoint[][] grid = gameBoard.getGrid();
     Player player = store.getMovingPlayer();
 
-    HashMap<Type, ArrayList<ArrayList<Coordinates>>> possibleMoves = generatePossibleMoves(store);
-
+    // Setup random
     Random random = new Random();
-    ArrayList<ArrayList<Coordinates>> pathList = possibleMoves.get(Type.EMPTY);
 
+    // Attempts to path to planets
+    HashMap<Type, ArrayList<ArrayList<Coordinates>>> possibleMoves = generatePossibleMoves(store, true);
+
+    // Path to random location if a move to a planet isn't possible
+    if (possibleMoves.size() == 0)
+      possibleMoves = generatePossibleMoves(store, false);
+
+    // Picks and random move from list of possible moves
+    ArrayList<ArrayList<Coordinates>> pathList = possibleMoves.get(Type.EMPTY);
     ArrayList<Coordinates> movePath = pathList.get(random.nextInt(pathList.size()));
     player.createBoardMove(movePath);
 
     // Set player Cooordinates to final coordinate in the list
     player.setCoordinates(player.getBoardMove().get(player.getBoardMove().size()-1).getCoordinates());
 
+    // Update fuel
     float pathCost = (movePath.size() - 1) * 10;
     player.decreaseFuel(pathCost);
 
@@ -62,7 +70,7 @@ public class BoardAi extends Thread {
 
   /** Generate all possible moves that a CPU could take */
   private HashMap<GridPoint.Type, ArrayList<ArrayList<Coordinates>>> generatePossibleMoves(
-      Store store) {
+      Store store, boolean checkPlanetMoves) {
     GameBoard gameBoard = store.getGameBoard();
     GridPoint[][] grid = gameBoard.getGrid();
     Player player = store.getMovingPlayer();
@@ -84,9 +92,20 @@ public class BoardAi extends Thread {
         } else if ((Math.abs(x - player.getCoordinates().getX()) + Math.abs(y - player.getCoordinates().getY())) >= (player.getFuel() / 10)) {
           continue;
         }
+        Coordinates moveCoords = new Coordinates(x, y);
+        Player p;
+
+        // Skips points that arn't next to planets or if the cpu player already owns the planet
+        if (checkPlanetMoves) {
+          if (!gameBoard.isNextToThePlanet(moveCoords))
+            continue;
+          else if ((p = gameBoard.getAdjacentPlanet(moveCoords).getPlayerCaptured()) != null)
+            if (p.equals(player))
+              continue;
+        }
 
         // Attempt to generate path to the point
-        ArrayList<Coordinates> path = pathFinder.pathfind(new Coordinates(x, y));
+        ArrayList<Coordinates> path = pathFinder.pathfind(moveCoords);
         float pathCost = (path.size() - 1) * 10;
 
         // If it's possible to travel to that point, add path to possible moves
