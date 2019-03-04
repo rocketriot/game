@@ -8,6 +8,8 @@ import bham.bioshock.common.models.store.JoinScreenStore;
 import bham.bioshock.common.models.store.Store;
 import bham.bioshock.minigame.models.Entity;
 import bham.bioshock.minigame.models.Rocket;
+import bham.bioshock.minigame.physics.CollisionBoundary;
+import bham.bioshock.minigame.physics.Vector;
 import bham.bioshock.minigame.worlds.FirstWorld;
 import bham.bioshock.minigame.worlds.JoinScreenWorld;
 import bham.bioshock.minigame.worlds.World;
@@ -45,9 +47,8 @@ public class JoinScreen extends ScreenMaster {
     private Texture[] connectedTextures;
     private Texture asteroidTexture;
 
-    private float rocketX = 50;
-    private float rocketY = 50;
     private float rocketSpeed = 100f;
+    private float rotationSpeed = 0.9f;
     private int rocketWidth = 50;
     private int rocketHeight = 100;
     private float rocketRotation = 0;
@@ -59,6 +60,7 @@ public class JoinScreen extends ScreenMaster {
     private World world;
 
     private HashMap<UUID, RocketAnimation> rocketMap;
+
 
 
     public JoinScreen(Router router, Store store, Player mainPlayer) {
@@ -457,6 +459,19 @@ public class JoinScreen extends ScreenMaster {
             sprite.setRegionHeight(rocketHeight);
         }
 
+        @Override
+        public void load() {
+            this.loaded = true;
+            state = State.LOADED;
+            if (getTexture() != null) {
+                sprite = new Sprite(getTexture());
+                sprite.setSize(rocketWidth, rocketHeight);
+                sprite.setOrigin(rocketWidth/2f, rocketHeight);
+            }
+            collisionBoundary = new CollisionBoundary(collisionWidth, collisionHeight);
+            collisionBoundary.update(pos, getRotation());
+        }
+
         public int getWidth() {
             return rocketWidth;
         }
@@ -493,29 +508,29 @@ public class JoinScreen extends ScreenMaster {
 
         public void moveLeft() {
             pos.x -= Gdx.graphics.getDeltaTime() * rocketSpeed;
+            moveTowards(90);
 
         }
         public void moveRight() {
             pos.x += Gdx.graphics.getDeltaTime() * rocketSpeed;
-
+            moveTowards(275);
         }
         public void moveUp() {
             pos.y += Gdx.graphics.getDeltaTime() * rocketSpeed;
-
+            moveTowards(0);
 
         }
         public void moveDown() {
             pos.y -= Gdx.graphics.getDeltaTime() * rocketSpeed;
-
+            moveTowards(180);
         }
         public void moveTowards(float angle) {
-            if(rotation != angle) {
-                float diff = Math.abs(angle - rotation);
-                if(rotation < angle) {
-                    rotation += Gdx.graphics.getDeltaTime() * rocketSpeed;
-                }
-            }
+            System.out.println(Math.sin(angle));
+            float signed = (angle - rotation + 180) % 360 - 180;
+            rotation += Gdx.graphics.getDeltaTime() * rotationSpeed * signed;
+
         }
+
         @Override
         public double getRotation() {
             return rotation;
