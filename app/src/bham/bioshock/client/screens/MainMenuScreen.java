@@ -25,7 +25,7 @@ public class MainMenuScreen extends ScreenMaster {
     // set the stage, which will react to user inputs
     stage = new Stage(new ScreenViewport());
     batch = new SpriteBatch();
-
+    router.call(Route.START_MUSIC, "mainMenu");
   }
 
   @Override

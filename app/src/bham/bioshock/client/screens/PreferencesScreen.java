@@ -3,7 +3,10 @@ package bham.bioshock.client.screens;
 import bham.bioshock.client.AppPreferences;
 import bham.bioshock.client.Route;
 import bham.bioshock.client.Router;
+import bham.bioshock.client.XMLInteraction;
+import bham.bioshock.client.controllers.SoundController;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Event;
 import com.badlogic.gdx.scenes.scene2d.EventListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -11,26 +14,55 @@ import com.badlogic.gdx.scenes.scene2d.ui.CheckBox;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Slider;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
+/**
+ * The Preferences Screen.
+ */
 public class PreferencesScreen extends ScreenMaster {
 
   private AppPreferences preferences;
+  private XMLInteraction xmlInteraction = new XMLInteraction();
 
-  // labels
+  /**
+   * Labels
+   */
   private Label soundVolLabel;
   private Label musicVolLabel;
   private Label soundEnabledLabel;
   private Label musicEnabledLabel;
   private Label titleLabel;
 
+  /**
+   * The table that the screen elements are added to
+   */
   private Table table;
 
+  /**
+   * Variables to keep track of current preferences
+   */
+  private boolean musicEnabled;
+  private float musicVolume;
+  private boolean soundsEnabled;
+  private float soundsVolume;
+
+  /**
+   * Instantiates a new Preferences screen.
+   *
+   * @param router the router
+   * @param preferences the passed current user preferences
+   */
   public PreferencesScreen(Router router, AppPreferences preferences) {
     super(router);
     this.preferences = preferences;
     stage = new Stage(new ScreenViewport());
     batch = stage.getBatch();
+
+    musicEnabled = preferences.getMusicEnabled();
+    musicVolume = preferences.getMusicVolume();
+    soundsEnabled = preferences.getSoundsEnabled();
+    soundsVolume = preferences.getSoundsVolume();
   }
 
   @Override
@@ -40,6 +72,9 @@ public class PreferencesScreen extends ScreenMaster {
 
     drawButtons();
     Gdx.input.setInputProcessor(stage);
+    if (musicEnabled) {
+      router.call(Route.START_MUSIC, "mainMenu");
+    }
   }
 
   @Override
@@ -47,71 +82,72 @@ public class PreferencesScreen extends ScreenMaster {
     super.render(delta);
   }
 
+  /**
+   * Method to draw all the buttons and add the listeners to them
+   */
   private void drawButtons() {
-
     // sound on or off
     final CheckBox musicCheckBox = new CheckBox(null, skin);
-    musicCheckBox.setChecked(preferences.getMusicEnabled());
+    musicCheckBox.setChecked(musicEnabled);
     musicCheckBox.addListener(
         new EventListener() {
           @Override
           public boolean handle(Event event) {
-            router.call(Route.MUSIC_ENABLED, musicCheckBox.isChecked());
-            preferences.setPrefMusicEnabled(musicCheckBox.isChecked());
-
-            if (musicCheckBox.isChecked()){
-              router.call(Route.START_MUSIC, "mainMenu");
-            }
-
+            musicEnabled = musicCheckBox.isChecked();
+            router.call(Route.MUSIC_ENABLED, musicEnabled);
+            preferences.setMusicEnabled(musicEnabled);
             return false;
           }
         });
 
     final CheckBox soundCheckBox = new CheckBox(null, skin);
-    soundCheckBox.setChecked(preferences.getSoundEnabled());
+    soundCheckBox.setChecked(soundsEnabled);
     soundCheckBox.addListener(
         new EventListener() {
           @Override
           public boolean handle(Event event) {
-            router.call(Route.SOUNDS_ENABLED, soundCheckBox.isChecked());
-            preferences.setPrefSoundEnabled(soundCheckBox.isChecked());
+            soundsEnabled = soundCheckBox.isChecked();
+            router.call(Route.SOUNDS_ENABLED, soundsEnabled);
+            preferences.setSoundsEnabled(soundsEnabled);
             return false;
           }
         });
 
     // volume control
     final Slider musicVolumeSlider = new Slider(0f, 1f, 0.1f, false, skin);
-    musicVolumeSlider.setValue(preferences.getMusicVolume());
+    musicVolumeSlider.setValue(musicVolume);
     musicVolumeSlider.addListener(
         new EventListener() {
           @Override
           public boolean handle(Event event) {
-            router.call(Route.MUSIC_VOLUME, musicVolumeSlider.getValue());
-            preferences.setPrefMusicVolume(musicVolumeSlider.getValue());
+            musicVolume = musicVolumeSlider.getValue();
+            router.call(Route.MUSIC_VOLUME, musicVolume);
+            preferences.setMusicVolume(musicVolume);
             return false;
           }
         });
 
     final Slider soundVolumeSlider = new Slider(0f, 1f, 0.1f, false, skin);
-    soundVolumeSlider.setValue(preferences.getSoundVolume());
+    soundVolumeSlider.setValue(soundsVolume);
     soundVolumeSlider.addListener(
         new EventListener() {
           @Override
           public boolean handle(Event event) {
-            router.call(Route.SOUNDS_VOLUME, soundVolumeSlider.getValue());
-            preferences.setPrefSoundVolume(soundVolumeSlider.getValue());
+            soundsVolume = soundVolumeSlider.getValue();
+            router.call(Route.SOUNDS_VOLUME, soundsVolume);
+            preferences.setSoundsVolume(soundsVolume);
             return false;
           }
         });
 
-    // Labels
+    // Crete the labels
     titleLabel = new Label("Game Preferences", skin);
     musicVolLabel = new Label("Music Volume", skin);
     soundVolLabel = new Label("Sound Volume", skin);
     soundEnabledLabel = new Label("Sound Enabled", skin);
     musicEnabledLabel = new Label("Music Enabled", skin);
 
-    // table
+    // Create the labels
     table = new Table();
     table.setFillParent(true);
 
@@ -133,11 +169,30 @@ public class PreferencesScreen extends ScreenMaster {
   }
 
   @Override
-  public void pause() {}
+  public void pause() {
+  }
 
   @Override
-  public void resume() {}
+  public void resume() {
+  }
 
   @Override
-  public void hide() {}
+  public void hide() {
+  }
+
+  /**
+   * Include writing the new preferences to the XML file into the setPrevious method - requires
+   * overriding the super method
+   */
+  @Override
+  protected void setPrevious() {
+    backButton.addListener(new ChangeListener() {
+      @Override
+      public void changed(ChangeEvent event, Actor actor) {
+        SoundController.playSound("menuSelect");
+        xmlInteraction.preferencesToXML(musicEnabled, musicVolume, soundsEnabled, soundsVolume);
+        router.back();
+      }
+    });
+  }
 }

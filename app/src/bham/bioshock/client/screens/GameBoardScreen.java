@@ -121,6 +121,7 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
 
   /** Draws the player move */
   private void drawPlayerMove(Player player) {
+    router.call(Route.LOOP_SOUND, "rocket");
     GameBoard gameBoard = store.getGameBoard();
     BoardMove boardMove = player.getBoardMove();
     if (boardMove.getDirections().size() == boardMovePointer) {
@@ -136,6 +137,7 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
       if (player.equals(store.getMainPlayer())) {
         playerSelected = true;
         pathFinder.setStartPosition(player.getCoordinates());
+        router.call(Route.STOP_SOUND, "rocket");
       }
     } else {
       // Calculate distance to travel
