@@ -1,23 +1,18 @@
 package bham.bioshock.client.scenes.gameboard.hud;
 
-import bham.bioshock.client.FontGenerator;
 import bham.bioshock.client.Router;
 import bham.bioshock.common.consts.Config;
 import bham.bioshock.common.models.Player;
 import bham.bioshock.common.models.store.Store;
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
-import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 
 public class Hud implements Disposable {
-
   private final Skin skin;
   public Stage stage;
   public FitViewport viewport;
@@ -27,6 +22,7 @@ public class Hud implements Disposable {
   private ScoreBoard scoreBoard;
   private PauseMenu pauseMenu;
   private TurnStartText turnStartText;
+  private SkipTurnButton skipTurnButton;
 
   public Hud(SpriteBatch batch, Skin skin, Store store, Router router) {
     this.store = store;
@@ -40,22 +36,8 @@ public class Hud implements Disposable {
     scoreBoard = new ScoreBoard(stage, batch, skin);
     fuelBar = new FuelBar(stage, batch, skin);
     turnStartText = new TurnStartText(batch, store);
+    skipTurnButton = new SkipTurnButton(stage, batch, skin, router);
   }
-
-  // private void setupBottomBar() {
-  //   HorizontalGroup bottomBar = new HorizontalGroup();
-  //   bottomBar.bottom();
-  //   TextButton endTurnButton = new TextButton("Skip Turn", skin);
-  //   bottomBar.addActor(endTurnButton);
-  //   stage.addActor(bottomBar);
-  //   endTurnButton.addListener(
-  //       new ChangeListener() {
-  //         @Override
-  //         public void changed(ChangeEvent event, Actor actor) {
-  //           router.call(Route.SKIP_TURN);
-  //         }
-  //       });
-  // }
 
   public void updateHud() {
     Player mainPlayer = store.getMainPlayer();
