@@ -20,7 +20,7 @@ public class ClientConnectThread extends Thread {
 
   @Override
   public void run() {
-    DatagramSocket c;
+    DatagramSocket c = null;
     try {
       // Open a random port to send the package
       c = new DatagramSocket();
@@ -66,9 +66,12 @@ public class ClientConnectThread extends Thread {
         CommunicationClient.setHostAddress(receivePacket.getAddress().getHostAddress());
       }
 
-      c.close();
     } catch (IOException ex) {
       System.err.println(ex.getMessage());
+    } finally {
+      if(c != null) {
+        c.close();              
+      }
     }
   }
 }
