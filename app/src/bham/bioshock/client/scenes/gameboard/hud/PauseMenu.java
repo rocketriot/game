@@ -1,5 +1,9 @@
 package bham.bioshock.client.scenes.gameboard.hud;
 
+import bham.bioshock.client.Assets;
+import bham.bioshock.client.Route;
+import bham.bioshock.client.Router;
+import bham.bioshock.common.consts.Config;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
@@ -13,30 +17,27 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 
-import bham.bioshock.client.Assets;
-import bham.bioshock.client.Route;
-import bham.bioshock.client.Router;
-import bham.bioshock.common.consts.Config;
-
 public class PauseMenu {
+  private final Skin skin;
   public Stage stage;
   private SpriteBatch batch;
-  private final Skin skin;
   private Router router;
   private ShapeRenderer sr;
-  
+
   private boolean isPaused;
-  
+
   private Sprite pauseButton;
   private VerticalGroup menuOptions;
   private TextButton musicLabel;
   private TextButton soundLabel;
   private TextButton quitLabel;
-  
-  public PauseMenu(Stage stage, SpriteBatch batch, Skin skin, Router router) {
+
+  PauseMenu(Stage stage, SpriteBatch batch, Skin skin, Router router) {
     this.stage = stage;
     this.batch = batch;
     this.skin = skin;
@@ -46,7 +47,7 @@ public class PauseMenu {
     setup();
   }
 
-  public void setup() {
+  private void setup() {
     FileHandle file = Gdx.files.internal(Assets.pauseIcon);
 
     Texture texture = new Texture(file);
@@ -63,50 +64,47 @@ public class PauseMenu {
 
     musicLabel = new TextButton("Toggle Music", skin);
     musicLabel.addListener(
-      new ChangeListener() {
-        @Override
-        public void changed(ChangeEvent event, Actor actor) {
-          router.call(Route.MUSIC_ENABLED, true);
-        }
-    });
-    
+        new ChangeListener() {
+          @Override
+          public void changed(ChangeEvent event, Actor actor) {
+            router.call(Route.MUSIC_ENABLED, true);
+          }
+        });
+
     menuOptions.addActor(musicLabel);
-    
+
     soundLabel = new TextButton("Toggle Sound", skin);
     soundLabel.addListener(
-      new ChangeListener() {
-      @Override
-      public void changed(ChangeEvent event, Actor actor) {
-        router.call(Route.SOUNDS_ENABLED, true);
-      }
-    });
+        new ChangeListener() {
+          @Override
+          public void changed(ChangeEvent event, Actor actor) {
+            router.call(Route.SOUNDS_ENABLED, true);
+          }
+        });
     menuOptions.addActor(soundLabel);
-    
+
     quitLabel = new TextButton("Quit Game", skin);
     quitLabel.addListener(
-      new ChangeListener() {
-      @Override
-      public void changed(ChangeEvent event, Actor actor) {
-
-      }
-    });
+        new ChangeListener() {
+          @Override
+          public void changed(ChangeEvent event, Actor actor) {}
+        });
     menuOptions.addActor(quitLabel);
   }
 
-
   public void render() {
     if (isPaused) {
-        Gdx.gl.glEnable(GL30.GL_BLEND);
-        Gdx.gl.glBlendFunc(GL30.GL_SRC_ALPHA, GL30.GL_ONE_MINUS_SRC_ALPHA);
-        
-        // Render overlay
-        sr.begin(ShapeType.Filled);
-        sr.setProjectionMatrix(batch.getProjectionMatrix());
-        sr.setColor(new Color(0, 0, 0, 0.5f));
-        sr.rect(0, 0, Config.GAME_WORLD_WIDTH, Config.GAME_WORLD_HEIGHT);
-        sr.end();
+      Gdx.gl.glEnable(GL30.GL_BLEND);
+      Gdx.gl.glBlendFunc(GL30.GL_SRC_ALPHA, GL30.GL_ONE_MINUS_SRC_ALPHA);
 
-        Gdx.gl.glDisable(GL30.GL_BLEND);
+      // Render overlay
+      sr.begin(ShapeType.Filled);
+      sr.setProjectionMatrix(batch.getProjectionMatrix());
+      sr.setColor(new Color(0, 0, 0, 0.5f));
+      sr.rect(0, 0, Config.GAME_WORLD_WIDTH, Config.GAME_WORLD_HEIGHT);
+      sr.end();
+
+      Gdx.gl.glDisable(GL30.GL_BLEND);
     }
 
     menuOptions.setVisible(isPaused);
@@ -116,18 +114,17 @@ public class PauseMenu {
     batch.end();
   }
 
-  public void touchDown(Vector3 mouse) {
+  void touchDown(Vector3 mouse) {
     // If pause button clicked, toggle pause menu
     if (pauseButton.getX() <= mouse.x
-    && mouse.x <= pauseButton.getX() + pauseButton.getWidth()
-    && pauseButton.getY() <= mouse.y
-    && mouse.y <= Config.GAME_WORLD_HEIGHT - pauseButton.getY() + pauseButton.getHeight()
-    ) {
-        isPaused = !isPaused;
+        && mouse.x <= pauseButton.getX() + pauseButton.getWidth()
+        && pauseButton.getY() <= mouse.y
+        && mouse.y <= Config.GAME_WORLD_HEIGHT - pauseButton.getY() + pauseButton.getHeight()) {
+      isPaused = !isPaused;
     }
   }
 
-  public boolean isPaused() {
+  boolean isPaused() {
     return isPaused;
   }
 }

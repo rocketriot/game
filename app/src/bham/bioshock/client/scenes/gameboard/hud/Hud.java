@@ -1,9 +1,7 @@
 package bham.bioshock.client.scenes.gameboard.hud;
 
 import bham.bioshock.client.Router;
-import bham.bioshock.client.scenes.gameboard.hud.FuelBar;
-import bham.bioshock.client.scenes.gameboard.hud.PauseMenu;
-import bham.bioshock.client.scenes.gameboard.hud.ScoreBoard;
+import bham.bioshock.common.consts.Config;
 import bham.bioshock.common.models.Player;
 import bham.bioshock.common.models.store.Store;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -17,8 +15,6 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 public class Hud implements Disposable {
 
   private final Skin skin;
-  private final float gameWidth;
-  private final float gameHeight;
   public Stage stage;
   public FitViewport viewport;
   private Store store;
@@ -27,14 +23,12 @@ public class Hud implements Disposable {
   private ScoreBoard scoreBoard;
   private PauseMenu pauseMenu;
   
-  public Hud(SpriteBatch batch, Skin skin, int gameWidth, int gameHeight, Store store, Router router) {
+  public Hud(SpriteBatch batch, Skin skin, Store store, Router router) {
     this.store = store;
     this.skin = skin;
-    this.gameWidth = gameWidth;
-    this.gameHeight = gameHeight;
 
     OrthographicCamera camera = new OrthographicCamera();
-    viewport = new FitViewport(this.gameWidth, this.gameHeight, camera);
+    viewport = new FitViewport(Config.GAME_WORLD_WIDTH, Config.GAME_WORLD_HEIGHT, camera);
     stage = new Stage(viewport, batch);
 
     pauseMenu = new PauseMenu(stage, batch, skin, router);

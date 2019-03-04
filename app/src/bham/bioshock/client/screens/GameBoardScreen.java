@@ -3,8 +3,8 @@ package bham.bioshock.client.screens;
 import bham.bioshock.client.Assets;
 import bham.bioshock.client.Route;
 import bham.bioshock.client.Router;
-import bham.bioshock.client.gameLogic.gameboard.*;
 import bham.bioshock.client.controllers.SoundController;
+import bham.bioshock.client.gameLogic.gameboard.*;
 import bham.bioshock.client.scenes.gameboard.hud.Hud;
 import bham.bioshock.common.Direction;
 import bham.bioshock.common.consts.Config;
@@ -36,19 +36,19 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
   private final float CAMERA_MOVE_SPEED = 5f;
 
   /** Draws players on the board */
-  DrawPlayer drawPlayer;
+  private DrawPlayer drawPlayer;
 
   /** Draws planets on the board */
-  DrawPlanet drawPlanet;
+  private DrawPlanet drawPlanet;
 
   /** Draws fuel on the board */
-  DrawFuel drawFuel;
+  private DrawFuel drawFuel;
 
   /** Draws asteroids on the board */
-  DrawAsteroid drawAsteroid;
+  private DrawAsteroid drawAsteroid;
 
   /** Handles the path rendering */
-  PathRenderer pathRenderer;
+  private PathRenderer pathRenderer;
 
   /** The game data */
   private Store store;
@@ -99,7 +99,7 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
     pathRenderer =
         new PathRenderer(camera, store.getGameBoard(), store.getMainPlayer(), store.getPlayers());
 
-    hud = new Hud(batch, skin, Config.GAME_WORLD_WIDTH, Config.GAME_WORLD_HEIGHT, store, router);
+    hud = new Hud(batch, skin, store, router);
     background = new Sprite(new Texture(Gdx.files.internal(Assets.gameBackground)));
 
     // Setup the input processing
@@ -119,8 +119,8 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
 
       if (store.getMovingPlayer().equals(store.getMainPlayer())) {
         // Show minigame prompt if next to planet
-        if (gameBoard.isNextToThePlanet(player.getCoordinates()) && player
-            .equals(store.getMainPlayer())) {
+        if (gameBoard.isNextToThePlanet(player.getCoordinates())
+            && player.equals(store.getMainPlayer())) {
           showMinigamePrompt();
         } else {
           router.call(Route.END_TURN);
@@ -148,8 +148,8 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
 
     // Update the players coordinates if the player has moved 1 position
     if (didChangeCoordinates) {
-      //Coordinates nextCoordinates = boardMove.get(0).getCoordinates();
-      //player.setCoordinates(nextCoordinates);
+      // Coordinates nextCoordinates = boardMove.get(0).getCoordinates();
+      // player.setCoordinates(nextCoordinates);
 
       // Remove the completed move
       boardMove.remove(0);
@@ -291,10 +291,10 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
     drawBoardObjects();
     drawPlayers();
     batch.end();
-    
+
     // Draw path rendering
     pathRenderer.draw(PPS);
-    
+
     // Draw the HUD
     batch.setProjectionMatrix(hud.stage.getCamera().combined);
     hud.getStage().act(Gdx.graphics.getDeltaTime());
