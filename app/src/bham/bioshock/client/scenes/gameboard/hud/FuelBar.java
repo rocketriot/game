@@ -63,8 +63,6 @@ public class FuelBar extends HudElement {
   public void render(float fuelValue) {
     float height = (fuelValue / Player.MAX_FUEL) * fuelMaxHeight;
 
-    batch.begin();
-
     Gdx.gl.glEnable(GL30.GL_BLEND);
     Gdx.gl.glBlendFunc(GL30.GL_SRC_ALPHA, GL30.GL_ONE_MINUS_SRC_ALPHA);
 
@@ -105,6 +103,8 @@ public class FuelBar extends HudElement {
 
     sr.end();
 
+    batch.begin();
+    fuelValueLabel.setText(String.format("%.0f", Player.MAX_FUEL));
     batch.end();
   }
 }
