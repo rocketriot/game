@@ -1,12 +1,10 @@
 package bham.bioshock.communication.client;
 
 import bham.bioshock.communication.Config;
-import bham.bioshock.communication.server.CommunicationServer;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ConnectException;
-import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import org.apache.logging.log4j.LogManager;
@@ -64,8 +62,8 @@ public class CommunicationClient {
         while (c.isAlive()) {
           Thread.sleep(200);
           waiting += 200;
-          
-          if(waiting > 5000) {
+
+          if (waiting > 5000) {
             c.interrupt();
             throw new ConnectException("IP address not configured and no server has been found");
           }
