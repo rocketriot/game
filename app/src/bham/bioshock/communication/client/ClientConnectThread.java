@@ -2,7 +2,6 @@ package bham.bioshock.communication.client;
 
 import bham.bioshock.communication.Command;
 import bham.bioshock.communication.Config;
-
 import java.io.IOException;
 import java.net.*;
 import java.util.Enumeration;
@@ -20,7 +19,7 @@ public class ClientConnectThread extends Thread {
 
   @Override
   public void run() {
-    DatagramSocket c;
+    DatagramSocket c = null;
     try {
       // Open a random port to send the package
       c = new DatagramSocket();
@@ -34,22 +33,20 @@ public class ClientConnectThread extends Thread {
       while (interfaces.hasMoreElements()) {
         NetworkInterface networkInterface = interfaces.nextElement();
 
-        if (networkInterface.isLoopback() || !networkInterface.isUp()) continue;
+        if (networkInterface.isLoopback() || !networkInterface.isUp())
+          continue;
 
         for (InterfaceAddress interfaceAddress : networkInterface.getInterfaceAddresses()) {
           InetAddress broadcast = interfaceAddress.getBroadcast();
 
-          if (broadcast == null) continue;
+          if (broadcast == null)
+            continue;
 
           // Send the broadcast package
           sendPacket(c, data, broadcast);
 
-          System.out.println(
-              "Request packet sent to: "
-                  + broadcast.getHostAddress()
-                  + ";"
-                  + "Interface: "
-                  + networkInterface.getDisplayName());
+          System.out.println("Request packet sent to: " + broadcast.getHostAddress() + ";"
+              + "Interface: " + networkInterface.getDisplayName());
         }
       }
 
@@ -66,9 +63,12 @@ public class ClientConnectThread extends Thread {
         CommunicationClient.setHostAddress(receivePacket.getAddress().getHostAddress());
       }
 
-      c.close();
     } catch (IOException ex) {
       System.err.println(ex.getMessage());
+    } finally {
+      if (c != null) {
+        c.close();
+      }
     }
   }
 }

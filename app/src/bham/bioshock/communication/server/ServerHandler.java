@@ -2,6 +2,7 @@ package bham.bioshock.communication.server;
 
 import bham.bioshock.common.models.store.Store;
 import bham.bioshock.communication.Action;
+import bham.bioshock.server.Server;
 import bham.bioshock.server.handlers.GameBoardHandler;
 import bham.bioshock.server.handlers.JoinScreenHandler;
 import bham.bioshock.server.handlers.MinigameHandler;
@@ -15,14 +16,14 @@ public class ServerHandler {
   private static final Logger logger = LogManager.getLogger(ServerHandler.class);
 
   private ArrayList<ServerService> connections;
-  private Store store;
+  private Server server;
   private JoinScreenHandler joinHandler;
   private GameBoardHandler gameBoardHandler;
   private MinigameHandler minigameHandler;
   
-  public ServerHandler(Store store) {
+  public ServerHandler(Store store, Server server) {
     connections = new ArrayList<>();
-    this.store = store;
+    this.server = server;
     joinHandler = new JoinScreenHandler(store, this);
     gameBoardHandler = new GameBoardHandler(store, this);
     minigameHandler = new MinigameHandler(store, this);
@@ -77,6 +78,7 @@ public class ServerHandler {
           joinHandler.addPlayer(action, service);
           break;
         case START_GAME:
+          server.stopDiscovery();
           joinHandler.startGame(action, gameBoardHandler);
           break;
         case GET_GAME_BOARD:
