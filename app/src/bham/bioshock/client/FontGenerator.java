@@ -3,6 +3,7 @@ package bham.bioshock.client;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
@@ -22,9 +23,14 @@ public class FontGenerator {
     parameter.color = color;
 
     BitmapFont font = generator.generateFont(parameter);
+    font.getRegion().getTexture().setFilter(TextureFilter.Linear, TextureFilter.Linear);
 
     generator.dispose();
 
     return font;
+  }
+
+  public BitmapFont generate(int fontSize) {
+    return generate(fontSize, Color.WHITE);
   }
 }

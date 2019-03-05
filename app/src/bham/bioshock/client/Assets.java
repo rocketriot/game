@@ -2,7 +2,7 @@ package bham.bioshock.client;
 
 public class Assets {
   public static final String gameBackground = "app/assets/backgrounds/game.png";
-  public static final String font = "app/assets/fonts/SpaceMono-Bold.ttf";
+  public static final String font = "app/assets/fonts/font.otf";
 
   // Game Board assets
   public static final String planetsFolder = "app/assets/entities/planets";
