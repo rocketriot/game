@@ -372,7 +372,7 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
   private boolean checkCameraMove(float x, float y) {
     float cameraX = camera.position.x;
     float cameraY = camera.position.y;
-    System.out.println(cameraX + ", " + cameraY + ", " + PPS);
+
     if (cameraX + x < 80 || cameraY + y < 300) {
       return false;
     } else if (cameraX + x > PPS/0.03f || cameraY + y > (PPS - 10)/0.025f) {
@@ -425,10 +425,6 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
   private boolean endMove(Vector3 mouse) {
     // Check a left click was performed
     if (!Gdx.input.isButtonPressed(Input.Buttons.LEFT)) return false;
-
-    // Get players
-    Player player = store.getMainPlayer();
-    Player movingPlayer = store.getMovingPlayer();
 
     // Check it's the client's turn to move
     if (!store.isMainPlayersTurn()) return false;
