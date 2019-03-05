@@ -1,7 +1,6 @@
 package bham.bioshock.communication.client;
 
 import bham.bioshock.communication.Action;
-
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.util.concurrent.BlockingQueue;
@@ -38,5 +37,5 @@ public class ClientSender extends Thread {
 
     System.out.println("Client sender thread ending");
   }
- 
+
 }

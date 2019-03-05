@@ -1,4 +1,5 @@
 package bham.bioshock.minigame.models;
+import bham.bioshock.client.controllers.SoundController;
 import bham.bioshock.common.Position;
 import bham.bioshock.minigame.PlayerTexture;
 import bham.bioshock.minigame.physics.CollisionBoundary;
@@ -24,10 +25,7 @@ public class Player extends Entity {
   private PlayerTexture dir = PlayerTexture.FRONT;
   private float v = 700f;
   private boolean haveGun = false;
-  private float health = 0;
-  private int kills = 0;
   private CollisionBoundary legs;
-  public boolean isDead = false;
 
   public Player(World w, float x, float y) {
     super(w, x, y);
@@ -64,6 +62,7 @@ public class Player extends Entity {
 
   public void jump(float delta) {
     if (!isFlying() && speed.getValueFor(angleFromCenter()) < JUMP_FORCE * 3/4 ) {
+      SoundController.playSound("jump");
       speed.apply(angleFromCenter(), JUMP_FORCE);
     }
   }
@@ -164,13 +163,7 @@ public class Player extends Entity {
       if(v == null) return;
       
       collide(.2f, v);
-      health -= 3;
-      if(health<=0) {
-        Bullet b = (Bullet)e;
-        b.getShooter().addKills(1);
-        this.isDead = true;
-      }
-
+      getObjective().gotShot(this, ((Bullet) e).getShooter());
     } else if(e.isA(Player.class) || e.isA(Rocket.class)) {
       // Collision check
       MinimumTranslationVector v = checkCollision(e);
@@ -204,23 +197,7 @@ public class Player extends Entity {
       }
     }
   }
-  
 
-  public void setHealth(float newHealth){
-    this.health = newHealth;
-  }
-
-  public float getHealth(){
-    return this.health;
-  }
-
-  public void addKills(int addedKills){
-    this.kills += addedKills;
-  }
-
-  public float getKills(){
-    return this.kills;
-  }
   
   public static void loadTextures() {
     TextureRegion[][] walkSheet = splittedTexture("app/assets/minigame/astronaut.png");
@@ -232,4 +209,5 @@ public class Player extends Entity {
     walkAnimation = textureToAnimation(walkSheet);
     walkGunAnimation = textureToAnimation(walkGunSheet);
   }
+
 }

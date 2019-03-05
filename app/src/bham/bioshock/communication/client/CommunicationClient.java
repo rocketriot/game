@@ -1,12 +1,10 @@
 package bham.bioshock.communication.client;
 
 import bham.bioshock.communication.Config;
-import bham.bioshock.communication.server.CommunicationServer;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ConnectException;
-import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import org.apache.logging.log4j.LogManager;
@@ -20,14 +18,14 @@ public class CommunicationClient {
 
   public static String hostAddress;
   public static int port = Config.PORT;
-  private ClientService service = null;
+  private ClientService service = new ClientService();;
 
   public ClientService getConnection() {
     return service;
   }
 
   public ClientService createConnection() throws ConnectException {
-    if (service != null) {
+    if (service.isCreated()) {
       return service;
     }
     // Open sockets:
@@ -46,7 +44,7 @@ public class CommunicationClient {
     }
 
     // We are connected to the server, create a service to get and send messages
-    service = new ClientService(server, fromServer, toServer);
+    service.create(server, fromServer, toServer);
     service.start();
     logger.debug("Client connected!");
     return service;
@@ -64,8 +62,8 @@ public class CommunicationClient {
         while (c.isAlive()) {
           Thread.sleep(200);
           waiting += 200;
-          
-          if(waiting > 5000) {
+
+          if (waiting > 5000) {
             c.interrupt();
             throw new ConnectException("IP address not configured and no server has been found");
           }

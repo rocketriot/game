@@ -13,7 +13,7 @@ import org.apache.logging.log4j.Logger;
 public class ClientService extends Thread implements IClientService {
 
   private static final Logger logger = LogManager.getLogger(ClientService.class);
-  
+
   private ClientSender sender;
   private ClientReceiver receiver;
   private Socket server;
@@ -22,8 +22,8 @@ public class ClientService extends Thread implements IClientService {
 
   private PriorityBlockingQueue<Action> queue = new PriorityBlockingQueue<>();
   private IClientHandler handler;
-  
-  
+  private boolean connectionCreated = false;
+
   /**
    * Creates the service and helper objects to send and receive messages
    *
@@ -32,19 +32,20 @@ public class ClientService extends Thread implements IClientService {
    * @param toServer stream to server
    * @param client main client
    */
-  public ClientService(Socket _server, ObjectInputStream _fromServer, ObjectOutputStream _toServer) {
-
+  public void create(Socket _server, ObjectInputStream _fromServer, ObjectOutputStream _toServer) {
+    connectionCreated = true;
     // save socket and streams for communication
     server = _server;
     fromServer = _fromServer;
     toServer = _toServer;
 
-    // Save client to handle actions sent from the server
-//    client = _client;
-
     // Create two client object to send and receive messages
     receiver = new ClientReceiver(this, fromServer);
     sender = new ClientSender(toServer);
+  }
+
+  public boolean isCreated() {
+    return connectionCreated;
   }
 
   /** Starts the sender and receiver threads */
@@ -56,7 +57,7 @@ public class ClientService extends Thread implements IClientService {
     try {
       while (true) {
         // Execute action from a blocking queue
-        if(handler != null) {
+        if (handler != null) {
           handler.execute(queue.take());
         }
       }
@@ -67,7 +68,7 @@ public class ClientService extends Thread implements IClientService {
     // wait for the threads to terminate and close the streams
     close();
   }
-  
+
   public void registerHandler(IClientHandler handler) {
     this.handler = handler;
   }
@@ -82,6 +83,10 @@ public class ClientService extends Thread implements IClientService {
    * @param action to be sent
    */
   public void send(Action action) {
+    if (!isCreated()) {
+      logger.fatal("ClientService was not created! Message won't be sent!");
+      return;
+    }
     sender.send(action);
   }
 

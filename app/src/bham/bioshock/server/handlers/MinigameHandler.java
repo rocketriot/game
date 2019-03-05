@@ -9,6 +9,8 @@ import bham.bioshock.common.models.store.Store;
 import bham.bioshock.communication.Action;
 import bham.bioshock.communication.Command;
 import bham.bioshock.communication.server.ServerHandler;
+import bham.bioshock.minigame.objectives.KillThemAll;
+import bham.bioshock.minigame.objectives.Objective;
 import bham.bioshock.minigame.worlds.FirstWorld;
 
 public class MinigameHandler {
@@ -26,7 +28,9 @@ public class MinigameHandler {
    */
   public void startMinigame(Action action) {
     MinigameStore miniGameStore = new MinigameStore();
-    miniGameStore.seed(store, new FirstWorld() );
+    FirstWorld world = new FirstWorld();
+    Objective objective = new KillThemAll(world);
+    miniGameStore.seed(store, world, objective);
     
     store.setMinigameStore(miniGameStore);
     handler.sendToAll(action);

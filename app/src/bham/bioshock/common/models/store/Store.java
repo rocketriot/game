@@ -78,7 +78,9 @@ public class Store {
   }
 
   public void addPlayer(Player player) {
-    players.add(player);
+    if(getPlayer(player.getId()) == null) {
+      players.add(player);      
+    }
   }
 
   public void removePlayer(UUID id) {
