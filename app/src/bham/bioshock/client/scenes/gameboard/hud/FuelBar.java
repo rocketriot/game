@@ -1,5 +1,6 @@
 package bham.bioshock.client.scenes.gameboard.hud;
 
+import bham.bioshock.client.FontGenerator;
 import bham.bioshock.client.Router;
 import bham.bioshock.common.consts.Config;
 import bham.bioshock.common.models.Player;
@@ -15,6 +16,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup;
+import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.utils.Align;
 
 public class FuelBar extends HudElement {
@@ -29,6 +31,8 @@ public class FuelBar extends HudElement {
   private float fuelMaxHeight;
   private float fuelXCoordinate;
 
+  private FontGenerator fontGenerator;
+
   FuelBar(Stage stage, SpriteBatch batch, Skin skin, Store store, Router router) {
     super(stage, batch, skin, store, router);
     
@@ -39,6 +43,8 @@ public class FuelBar extends HudElement {
   }
 
   protected void setup() {
+    fontGenerator = new FontGenerator();
+    
     VerticalGroup fuelInfo = new VerticalGroup();
     fuelInfo.setFillParent(true);
     fuelInfo.bottom();
@@ -47,13 +53,19 @@ public class FuelBar extends HudElement {
     fuelInfo.padBottom(15);
     stage.addActor(fuelInfo);
 
-    fuelValueLabel = new Label(String.format("%.0f", Player.MAX_FUEL), skin);
+    LabelStyle style = new LabelStyle();
+    style.font = fontGenerator.generate(20);
+    
+    LabelStyle style1 = new LabelStyle();
+    style1.font = fontGenerator.generate(25);
+    
+    fuelValueLabel = new Label(String.format("%.0f", Player.MAX_FUEL), style1);
     fuelValueLabel.setFontScale(1.2f);
     fuelValueLabel.setWidth(60);
     fuelValueLabel.setAlignment(Align.center);
     fuelInfo.addActor(fuelValueLabel);
 
-    fuelLabel = new Label("FUEL", skin);
+    fuelLabel = new Label("FUEL", style);
     fuelLabel.setFontScale(1.2f);
     fuelLabel.setWidth(60);
     fuelLabel.setAlignment(Align.center);
