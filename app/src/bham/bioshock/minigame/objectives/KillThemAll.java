@@ -1,5 +1,6 @@
 package bham.bioshock.minigame.objectives;
 import bham.bioshock.common.Position;
+import bham.bioshock.common.models.store.MinigameStore;
 import bham.bioshock.minigame.models.Player;
 import bham.bioshock.minigame.worlds.World;
 
@@ -48,6 +49,11 @@ public class KillThemAll extends Objective {
     });
   }
 
+  @Override
+  public void seed(MinigameStore store) {
+    return;
+  }
+
 
   private boolean checkIfdead(Player p){
     if(health.get(p) - 5.0f <=0)
@@ -61,7 +67,7 @@ public class KillThemAll extends Objective {
 
   private void setRandonRespawnPosition(){
     Random r = new Random();
-    int i = r.nextInt()%4;
+    int i = Math.abs(r.nextInt()%4);
     respawnPosition = positions[i];
   }
 

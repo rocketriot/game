@@ -1,4 +1,5 @@
 package bham.bioshock.minigame.objectives;
+import bham.bioshock.common.models.store.MinigameStore;
 import bham.bioshock.minigame.models.Player;
 import bham.bioshock.minigame.worlds.World;
 
@@ -23,5 +24,6 @@ public abstract class Objective {
   public abstract void gotShot(Player player, Player killer);
   public abstract void initialise();
   public World getWorld(){return this.world;}
+  public abstract void seed(MinigameStore store);
 
 }

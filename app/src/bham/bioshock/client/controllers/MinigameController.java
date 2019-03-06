@@ -12,6 +12,7 @@ import bham.bioshock.communication.Command;
 import bham.bioshock.communication.client.ClientService;
 import bham.bioshock.minigame.PlayerTexture;
 import bham.bioshock.minigame.models.Bullet;
+import bham.bioshock.minigame.objectives.CaptureTheFlag;
 import bham.bioshock.minigame.objectives.KillThemAll;
 import bham.bioshock.minigame.objectives.Objective;
 import bham.bioshock.minigame.physics.SpeedVector;
@@ -84,7 +85,7 @@ public class MinigameController extends Controller {
 
     // for testing
     FirstWorld world = new FirstWorld();
-    Objective objective = new KillThemAll(world);
+    Objective objective = new CaptureTheFlag(world);
 
     localStore.seed(store, world, objective);
 

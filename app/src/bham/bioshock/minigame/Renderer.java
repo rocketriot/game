@@ -8,11 +8,7 @@ import bham.bioshock.common.Position;
 import bham.bioshock.common.consts.Config;
 import bham.bioshock.common.models.store.MinigameStore;
 import bham.bioshock.common.models.store.Store;
-import bham.bioshock.minigame.models.Bullet;
-import bham.bioshock.minigame.models.Entity;
-import bham.bioshock.minigame.models.Gun;
-import bham.bioshock.minigame.models.Player;
-import bham.bioshock.minigame.models.Rocket;
+import bham.bioshock.minigame.models.*;
 import bham.bioshock.minigame.objectives.Objective;
 import bham.bioshock.minigame.physics.SpeedVector;
 import bham.bioshock.minigame.worlds.World;
@@ -79,6 +75,8 @@ public class Renderer {
     entities.addAll(minigameStore.getPlayers());
     entities.addAll(minigameStore.getRockets());
     entities.addAll(minigameStore.getGuns());
+    entities.addAll(minigameStore.getOthers());
+
     shooting = false;
 
     world = minigameStore.getWorld();
@@ -116,6 +114,7 @@ public class Renderer {
     Rocket.loadTextures();
     Gun.loadTextures();
     Bullet.loadTextures();
+    Flag.loadTextures();
     stage = new Stage(viewport);
 
     background = new Sprite(new Texture(Gdx.files.internal("app/assets/backgrounds/game.png")));
