@@ -1,11 +1,8 @@
 package bham.bioshock.client.screens;
 
 import bham.bioshock.client.Router;
-import bham.bioshock.common.models.store.MinigameStore;
 import bham.bioshock.common.models.store.Store;
-import bham.bioshock.minigame.MapSeeder;
 import bham.bioshock.minigame.Renderer;
-import bham.bioshock.minigame.models.Bullet;
 import com.badlogic.gdx.Screen;
 
 public class MinigameScreen implements Screen {
@@ -17,7 +14,6 @@ public class MinigameScreen implements Screen {
 
   @Override
   public void show() {
-    // TODO Auto-generated method stub
 
   }
 
@@ -31,32 +27,24 @@ public class MinigameScreen implements Screen {
   public void resize(int width, int height) {
     renderer.resize(width, height);
   }
-  
-  public void addBullet(Bullet b) {
-    renderer.addBullet(b);
-  }
 
   @Override
   public void pause() {
-    // TODO Auto-generated method stub
 
   }
 
   @Override
   public void resume() {
-    // TODO Auto-generated method stub
 
   }
 
   @Override
   public void hide() {
-    // TODO Auto-generated method stub
 
   }
 
   @Override
   public void dispose() {
-    // TODO Auto-generated method stub
 
   }
 }

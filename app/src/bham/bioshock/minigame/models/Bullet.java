@@ -34,7 +34,7 @@ public class Bullet extends Entity {
     if (is(State.REMOVED)) {
       return;
     }
-    if (!isFlying()) {
+    if (!isFlying(getX(), getY())) {
       state = State.REMOVING;
       speed.stop(speed.getSpeedAngle());
     }

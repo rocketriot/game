@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.UUID;
 import bham.bioshock.common.Position;
 import bham.bioshock.minigame.PlayerTexture;
+import bham.bioshock.minigame.models.Bullet;
+import bham.bioshock.minigame.models.Entity;
 import bham.bioshock.minigame.models.Gun;
 import bham.bioshock.minigame.models.Player;
 import bham.bioshock.minigame.models.Rocket;
@@ -20,6 +22,7 @@ public class MinigameStore {
   private HashMap<UUID, Player> players;
   private ArrayList<Rocket> rockets;
   private ArrayList<Gun> guns;
+  private ArrayList<Entity> dynamic = new ArrayList<>();
   
   private Skin skin;
 
@@ -94,6 +97,14 @@ public class MinigameStore {
 
   public Skin getSkin() {
     return skin;
+  }
+
+  public void addEntity(Bullet b) {
+    dynamic.add(b);
+  }
+  
+  public Collection<Entity> getDynamicEntities() {
+    return dynamic;
   }
 
 

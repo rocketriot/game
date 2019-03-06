@@ -19,6 +19,11 @@ public class SpeedVector extends Sendable {
   }
 
   public SpeedVector() {};
+  
+  public SpeedVector(double d, double e) {
+    this.dx = d;
+    this.dy = e;
+  }
 
   /*
    * UP: angle 0

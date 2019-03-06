@@ -2,21 +2,19 @@ package bham.bioshock.minigame.models;
 
 import bham.bioshock.common.Direction;
 import bham.bioshock.common.Position;
-import bham.bioshock.minigame.physics.CollisionBoundary;
-import bham.bioshock.minigame.physics.SpeedVector;
-import bham.bioshock.minigame.physics.Vector;
+import bham.bioshock.minigame.physics.*;
 import bham.bioshock.minigame.worlds.World;
 import bham.bioshock.minigame.worlds.World.PlanetPosition;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Intersector.MinimumTranslationVector;
 import com.badlogic.gdx.math.Polygon;
 
 public abstract class Entity {
-
-  protected final double GROUND_FRICTION = 0.2;
 
   protected int width = 50;
   protected int height = 50;
@@ -33,6 +31,8 @@ public abstract class Entity {
   protected CollisionBoundary collisionBoundary;
   protected float collisionWidth = 50;
   protected float collisionHeight = 50;
+ 
+  protected StepsGenerator stepsGenerator;
 
   protected boolean onGround;
   protected State state = State.CREATED;
@@ -44,6 +44,7 @@ public abstract class Entity {
     fromGround = 0;
     world = w;
     onGround = false;
+    stepsGenerator = new StepsGenerator(w, this);
   }
   
   public Entity(World w, float x, float y) {
@@ -73,9 +74,17 @@ public abstract class Entity {
   public float getY() {
     return pos.y;
   }
+  
+  public Step currentStep() {
+    return new Step(pos, speed);
+  }
 
-  public boolean isFlying() {
-    return distanceFromGround() > 10 && !onGround;
+//  public boolean isFlying() {
+//    return distanceFromGround() > 10 && !onGround;
+//  }
+  
+  public boolean isFlying(float x, float y) {
+    return distanceFromGround(x, y) > 0;
   }
 
   public boolean isA(Class<? extends Entity> c) {
@@ -87,7 +96,11 @@ public abstract class Entity {
   }
 
   public double distanceFromGround() {
-    return world.fromGroundTo(getX(), getY()) - fromGround;
+    return distanceFromGround(getX(), getY());
+  }
+  
+  public double distanceFromGround(float x, float y) {
+    return world.fromGroundTo(x, y) - fromGround;
   }
 
   public double angleToCenterOfGravity() {
@@ -102,7 +115,6 @@ public abstract class Entity {
     return world.getAngleTo(getX(), getY());
   }
 
-
   public abstract TextureRegion getTexture();
 
   public void load() {
@@ -115,6 +127,7 @@ public abstract class Entity {
     }
     collisionBoundary = new CollisionBoundary(collisionWidth, collisionHeight);
     collisionBoundary.update(pos, getRotation());
+    stepsGenerator.generate();
   }
 
   public Sprite getSprite() {
@@ -133,20 +146,13 @@ public abstract class Entity {
   }
 
   public void update(float delta) {
-    if (!loaded || isStatic)
-      return;
-    double angle = angleToCenterOfGravity();
-
-    pos.y += speed.dY() * delta;
-    pos.x += speed.dX() * delta;
-    
-    if (isFlying()) {
-      speed.apply(angle, world.getGravity() * delta);
-    } else {
-      speed.friction(GROUND_FRICTION);
-      speed.stop(angle);
+    if (!loaded || isStatic) return;
+    Step step = stepsGenerator.getStep(delta);
+    if(step != null) {
+      pos = step.position;
+      speed = step.vector;
     }
-
+    
     collisionBoundary.update(pos, getRotation());
   }
 
@@ -167,6 +173,10 @@ public abstract class Entity {
    */
   public void handleCollision(Entity e) {}
 
+  public void afterCollision() {
+//    stepsGenerator.regenerate();
+  }
+  
   public CollisionBoundary collisionBoundary() {
     return collisionBoundary;
   }
@@ -233,6 +243,15 @@ public abstract class Entity {
       default:
         break;
     }
+  }
+  
+  public void draw(SpriteBatch batch, float delta) {
+    Sprite sprite = getSprite();
+    sprite.setRegion(getTexture());
+    sprite.setPosition(getX() - (sprite.getWidth() / 2), getY());
+    sprite.setRotation((float) getRotation());
+    sprite.draw(batch);
+    update(delta);
   }
 
   public enum State {

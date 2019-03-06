@@ -1,18 +1,19 @@
 package bham.bioshock.minigame.models;
-import bham.bioshock.client.controllers.SoundController;
-import bham.bioshock.common.Position;
-import bham.bioshock.minigame.PlayerTexture;
-import bham.bioshock.minigame.physics.CollisionBoundary;
-import bham.bioshock.minigame.worlds.World;
-import bham.bioshock.minigame.worlds.World.PlanetPosition;
+import java.util.stream.Stream;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Intersector.MinimumTranslationVector;
+import bham.bioshock.client.controllers.SoundController;
+import bham.bioshock.common.Position;
+import bham.bioshock.minigame.PlayerTexture;
+import bham.bioshock.minigame.physics.CollisionBoundary;
+import bham.bioshock.minigame.physics.Step;
+import bham.bioshock.minigame.worlds.World;
 
 public class Player extends Entity {
 
@@ -21,10 +22,8 @@ public class Player extends Entity {
   private static Animation<TextureRegion> walkGunAnimation;
   private static TextureRegion frontTexture;
   private static TextureRegion frontGunTexture;
-  private final double JUMP_FORCE = 700;
   float animationTime;
   private PlayerTexture dir = PlayerTexture.FRONT;
-  private float v = 700f;
   private boolean haveGun = false;
   private float health = 0;
   private int kills = 0;
@@ -50,25 +49,24 @@ public class Player extends Entity {
     this(w, 0f, 0f);
   }
 
-  public void moveLeft(float delta) {
-    if (!isFlying()) {
-      speed.apply(angleFromCenter() + 270, v * GROUND_FRICTION);
-    }
+  public void moveLeft() {
+    stepsGenerator.moveLeft();
     dir = PlayerTexture.LEFT;
   }
 
-  public void moveRight(float delta) {
-    if (!isFlying()) {
-      speed.apply(angleFromCenter() + 90, v * GROUND_FRICTION);
-    }
+  public void moveRight() {
+    stepsGenerator.moveRight();
     dir = PlayerTexture.RIGHT;
   }
 
-  public void jump(float delta) {
-    if (!isFlying() && speed.getValueFor(angleFromCenter()) < JUMP_FORCE * 3/4 ) {
-      SoundController.playSound("jump");
-      speed.apply(angleFromCenter(), JUMP_FORCE);
-    }
+  public void jump() {
+    SoundController.playSound("jump");
+    stepsGenerator.jump();
+  }
+  
+  public void moveStop() {
+    stepsGenerator.moveStop();
+    dir = PlayerTexture.FRONT;
   }
   
   public boolean haveGun() {
@@ -83,7 +81,6 @@ public class Player extends Entity {
     super.update(delta);
     legs.update(pos, getRotation());
     animationTime += delta;
-    dir = PlayerTexture.FRONT;
   }
 
   public PlayerTexture getDirection() {
@@ -98,6 +95,13 @@ public class Player extends Entity {
   public void drawDebug(ShapeRenderer shapeRenderer) {
     super.drawDebug(shapeRenderer);
     legs.draw(shapeRenderer, Color.MAGENTA);
+    Stream<Step> futureSteps = stepsGenerator.getFutureSteps();
+    
+    shapeRenderer.begin(ShapeType.Filled);
+    futureSteps.forEach(step -> {
+      shapeRenderer.circle(step.position.x, step.position.y, 5);
+    });
+    shapeRenderer.end();      
   }
 
   public void setPosition(Position p) {
@@ -160,11 +164,13 @@ public class Player extends Entity {
   /** Collisions **/
   @Override
   public void handleCollision(Entity e) {
-
+    boolean collided = false;
+    
     if(e.isA(Bullet.class)) {
       // Collision check
       MinimumTranslationVector v = checkCollision(e);
       if(v == null) return;
+      collided = true;
       
       collide(.2f, v);
       health -= 3;
@@ -178,12 +184,15 @@ public class Player extends Entity {
       // Collision check
       MinimumTranslationVector v = checkCollision(e);
       if(v == null) return;
+      collided = true;
       
       collide(0.8f, v);
+      
     } else if(e.isA(Gun.class)) {
       // Collision check
       MinimumTranslationVector v = checkCollision(e);
       if(v == null) return;
+      collided = true;
       
       e.state = State.REMOVED;
       haveGun = true;
@@ -197,6 +206,7 @@ public class Player extends Entity {
         pos.y += v.normal.y * v.depth;
         
         collide(0f, v);
+        collided = true;
       }
       
       // Check collision with legs
@@ -204,10 +214,14 @@ public class Player extends Entity {
       if (legs.collideWith(e.collisionBoundary, vlegs)) {        
         // Standing on the platform
         super.onGround = true;
+        collided = true;
       }
     }
-  }
-  
+    
+    if(collided) {
+      afterCollision();
+    }
+  }  
 
   public void setHealth(float newHealth){
     this.health = newHealth;
@@ -235,4 +249,5 @@ public class Player extends Entity {
     walkAnimation = textureToAnimation(walkSheet);
     walkGunAnimation = textureToAnimation(walkGunSheet);
   }
+
 }
