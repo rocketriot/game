@@ -15,9 +15,9 @@ public class Bullet extends Entity {
   static Animation<TextureRegion> splash;
   static int FRAMES = 5;
   private float animationTime = 0;
-  private Player shooter;
+  private Astronaut shooter;
 
-  public Bullet(World w, float x, float y,Player shooter) {
+  public Bullet(World w, float x, float y,Astronaut shooter) {
     super(w, x, y);
     this.shooter = shooter;
     rotation = 0;
@@ -91,12 +91,12 @@ public class Bullet extends Entity {
     splash = new Animation<TextureRegion>(0.03f, frames);
   }
 
-  public Player getShooter(){return this.shooter;}
+  public Astronaut getShooter(){return this.shooter;}
 
   /** Collisions **/
   @Override
   public void handleCollision(Entity e) {    
-    if (e.isA(Player.class)) {
+    if (e.isA(Astronaut.class)) {
       MinimumTranslationVector v = checkCollision(e);
       if(v == null) return;
       

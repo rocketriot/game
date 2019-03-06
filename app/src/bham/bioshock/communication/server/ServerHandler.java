@@ -2,6 +2,7 @@ package bham.bioshock.communication.server;
 
 import bham.bioshock.common.models.store.Store;
 import bham.bioshock.communication.Action;
+import bham.bioshock.minigame.Clock;
 import bham.bioshock.server.Server;
 import bham.bioshock.server.handlers.GameBoardHandler;
 import bham.bioshock.server.handlers.JoinScreenHandler;
@@ -66,6 +67,8 @@ public class ServerHandler {
     }
   }
 
+
+
   public void handleRequest(Action action, ServerService service) {
     logger.trace("Server received: " + action);
     
@@ -76,6 +79,9 @@ public class ServerHandler {
           break;
         case ADD_PLAYER:
           joinHandler.addPlayer(action, service);
+          break;
+        case JOIN_SCREEN_MOVE:
+          joinHandler.moveRocket(action, service.Id());
           break;
         case START_GAME:
           server.stopDiscovery();
@@ -98,6 +104,9 @@ public class ServerHandler {
           break;
         case MINIGAME_BULLET:
           minigameHandler.bulletShot(action, service.Id());
+          break;
+        case MINIGAME_DIRECT_START:
+          joinHandler.minigameDirectStart(action, gameBoardHandler, minigameHandler);
           break;
         default:
           logger.error("Received unhandled command: " + action.getCommand().toString());

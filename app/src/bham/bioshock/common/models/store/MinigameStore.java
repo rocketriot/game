@@ -5,8 +5,12 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.UUID;
 import bham.bioshock.common.Position;
+import bham.bioshock.common.models.Player;
 import bham.bioshock.minigame.PlayerTexture;
 import bham.bioshock.minigame.models.*;
+import bham.bioshock.minigame.models.Gun;
+import bham.bioshock.minigame.models.Astronaut;
+import bham.bioshock.minigame.models.Rocket;
 import bham.bioshock.minigame.objectives.Objective;
 import bham.bioshock.minigame.physics.SpeedVector;
 import bham.bioshock.minigame.worlds.World;
@@ -16,7 +20,7 @@ public class MinigameStore {
 
   private World currentWorld;
   private UUID mainPlayerId;
-  private HashMap<UUID, Player> players;
+  private HashMap<UUID, Astronaut> players;
   private ArrayList<Rocket> rockets;
   private ArrayList<Gun> guns;
   private ArrayList<Entity> otherEntities;
@@ -31,7 +35,7 @@ public class MinigameStore {
   }
 
   public void updatePlayer(UUID playerId, SpeedVector speed, Position pos, PlayerTexture dir, Boolean haveGun) {
-    Player p = getPlayer(playerId);
+    Astronaut p = getPlayer(playerId);
     p.setSpeedVector(speed);
     p.setPosition(pos);
     p.setDirection(dir);
@@ -41,15 +45,14 @@ public class MinigameStore {
   // Create world from the seeder
   public void seed(Store store, World world, Objective o) {
     this.currentWorld = world;
-    if(store.getMainPlayer() != null) {
-      mainPlayerId = store.getMainPlayer().getId();      
-    }
+    mainPlayerId = store.getMainPlayer().getId();
     Position[] playerPos = world.getPlayerPositions();
 
     int i = 0;
-    for(bham.bioshock.common.models.Player player : store.getPlayers()) {
-      Player p = new Player(world, playerPos[i]);
+    for(Player player : store.getPlayers()) {
+      Astronaut p = new Astronaut(world, playerPos[i]);
       players.put(player.getId(), p);
+      i++;
     }
     
     this.rockets = world.getRockets();
@@ -65,18 +68,18 @@ public class MinigameStore {
     return currentWorld;
   }
 
-  public Player getPlayer(UUID playerId) {
+  public Astronaut getPlayer(UUID playerId) {
     return players.get(playerId);
   }
 
-  public Player getMainPlayer() {
+  public Astronaut getMainPlayer() {
     return getPlayer(mainPlayerId);
   }
 
-  public Collection<Player> getPlayers() {
+  public Collection<Astronaut> getPlayers() {
     return players.values();
   }
-
+  
   public Collection<Rocket> getRockets() {
     return rockets;
   }

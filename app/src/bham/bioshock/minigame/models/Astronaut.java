@@ -4,7 +4,7 @@ import bham.bioshock.common.Position;
 import bham.bioshock.minigame.PlayerTexture;
 import bham.bioshock.minigame.physics.CollisionBoundary;
 import bham.bioshock.minigame.worlds.World;
-import bham.bioshock.minigame.worlds.World.PlanetPosition;
+import java.util.UUID;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
@@ -14,7 +14,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Intersector.MinimumTranslationVector;
 
-public class Player extends Entity {
+public class Astronaut extends Entity {
 
   private static final int FRAMES = 11;
   private static Animation<TextureRegion> walkAnimation;
@@ -28,7 +28,7 @@ public class Player extends Entity {
   private boolean haveGun = false;
   private CollisionBoundary legs;
 
-  public Player(World w, float x, float y) {
+  public Astronaut(World w, float x, float y) {
     super(w, x, y);
     width = 150;
     height = 150;
@@ -39,17 +39,13 @@ public class Player extends Entity {
     collisionHeight = 150 + fromGround;
   }
 
-  public Player(World w, Position p) {
+  public Astronaut(World w, Position p) {
     this(w, p.x, p.y);
-  }
-
-  public Player(World w) {
-    this(w, 0f, 0f);
   }
 
   public void moveLeft(float delta) {
     if (!isFlying()) {
-      speed.apply(angleFromCenter() + 270, v * GROUND_FRICTION);
+      speed.apply(angleFromCenter() + 270, v * GROUND_FRICTION );
     }
     dir = PlayerTexture.LEFT;
   }
@@ -68,6 +64,10 @@ public class Player extends Entity {
     }
   }
   
+  public void resetDirection() {
+    dir = PlayerTexture.FRONT;
+  }
+  
   public boolean haveGun() {
     return haveGun;
   }
@@ -80,7 +80,6 @@ public class Player extends Entity {
     super.update(delta);
     legs.update(pos, getRotation());
     animationTime += delta;
-    dir = PlayerTexture.FRONT;
   }
 
   public PlayerTexture getDirection() {
@@ -165,7 +164,7 @@ public class Player extends Entity {
       
       collide(.2f, v);
       getObjective().gotShot(this, ((Bullet) e).getShooter());
-    } else if(e.isA(Player.class) || e.isA(Rocket.class)) {
+    } else if(e.isA(Astronaut.class) || e.isA(Rocket.class)) {
       // Collision check
       MinimumTranslationVector v = checkCollision(e);
       if(v == null) return;

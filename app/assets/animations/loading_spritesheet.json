@@ -1,0 +1,227 @@
+{ "frames": {
+   "planet_with_ring 0.png": {
+    "frame": { "x": 0, "y": 0, "w": 400, "h": 400 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 400, "h": 400 },
+    "sourceSize": { "w": 400, "h": 400 },
+    "duration": 100
+   },
+   "planet_with_ring 1.png": {
+    "frame": { "x": 400, "y": 0, "w": 400, "h": 400 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 400, "h": 400 },
+    "sourceSize": { "w": 400, "h": 400 },
+    "duration": 100
+   },
+   "planet_with_ring 2.png": {
+    "frame": { "x": 800, "y": 0, "w": 400, "h": 400 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 400, "h": 400 },
+    "sourceSize": { "w": 400, "h": 400 },
+    "duration": 100
+   },
+   "planet_with_ring 3.png": {
+    "frame": { "x": 1200, "y": 0, "w": 400, "h": 400 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 400, "h": 400 },
+    "sourceSize": { "w": 400, "h": 400 },
+    "duration": 100
+   },
+   "planet_with_ring 4.png": {
+    "frame": { "x": 1600, "y": 0, "w": 400, "h": 400 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 400, "h": 400 },
+    "sourceSize": { "w": 400, "h": 400 },
+    "duration": 100
+   },
+   "planet_with_ring 5.png": {
+    "frame": { "x": 2000, "y": 0, "w": 400, "h": 400 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 400, "h": 400 },
+    "sourceSize": { "w": 400, "h": 400 },
+    "duration": 100
+   },
+   "planet_with_ring 6.png": {
+    "frame": { "x": 2400, "y": 0, "w": 400, "h": 400 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 400, "h": 400 },
+    "sourceSize": { "w": 400, "h": 400 },
+    "duration": 100
+   },
+   "planet_with_ring 7.png": {
+    "frame": { "x": 2800, "y": 0, "w": 400, "h": 400 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 400, "h": 400 },
+    "sourceSize": { "w": 400, "h": 400 },
+    "duration": 100
+   },
+   "planet_with_ring 8.png": {
+    "frame": { "x": 3200, "y": 0, "w": 400, "h": 400 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 400, "h": 400 },
+    "sourceSize": { "w": 400, "h": 400 },
+    "duration": 100
+   },
+   "planet_with_ring 9.png": {
+    "frame": { "x": 3600, "y": 0, "w": 400, "h": 400 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 400, "h": 400 },
+    "sourceSize": { "w": 400, "h": 400 },
+    "duration": 100
+   },
+   "planet_with_ring 10.png": {
+    "frame": { "x": 4000, "y": 0, "w": 400, "h": 400 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 400, "h": 400 },
+    "sourceSize": { "w": 400, "h": 400 },
+    "duration": 100
+   },
+   "planet_with_ring 11.png": {
+    "frame": { "x": 4400, "y": 0, "w": 400, "h": 400 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 400, "h": 400 },
+    "sourceSize": { "w": 400, "h": 400 },
+    "duration": 100
+   },
+   "planet_with_ring 12.png": {
+    "frame": { "x": 4800, "y": 0, "w": 400, "h": 400 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 400, "h": 400 },
+    "sourceSize": { "w": 400, "h": 400 },
+    "duration": 100
+   },
+   "planet_with_ring 13.png": {
+    "frame": { "x": 5200, "y": 0, "w": 400, "h": 400 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 400, "h": 400 },
+    "sourceSize": { "w": 400, "h": 400 },
+    "duration": 100
+   },
+   "planet_with_ring 14.png": {
+    "frame": { "x": 5600, "y": 0, "w": 400, "h": 400 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 400, "h": 400 },
+    "sourceSize": { "w": 400, "h": 400 },
+    "duration": 100
+   },
+   "planet_with_ring 15.png": {
+    "frame": { "x": 6000, "y": 0, "w": 400, "h": 400 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 400, "h": 400 },
+    "sourceSize": { "w": 400, "h": 400 },
+    "duration": 100
+   },
+   "planet_with_ring 16.png": {
+    "frame": { "x": 6400, "y": 0, "w": 400, "h": 400 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 400, "h": 400 },
+    "sourceSize": { "w": 400, "h": 400 },
+    "duration": 100
+   },
+   "planet_with_ring 17.png": {
+    "frame": { "x": 6800, "y": 0, "w": 400, "h": 400 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 400, "h": 400 },
+    "sourceSize": { "w": 400, "h": 400 },
+    "duration": 100
+   },
+   "planet_with_ring 18.png": {
+    "frame": { "x": 7200, "y": 0, "w": 400, "h": 400 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 400, "h": 400 },
+    "sourceSize": { "w": 400, "h": 400 },
+    "duration": 100
+   },
+   "planet_with_ring 19.png": {
+    "frame": { "x": 7600, "y": 0, "w": 400, "h": 400 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 400, "h": 400 },
+    "sourceSize": { "w": 400, "h": 400 },
+    "duration": 100
+   },
+   "planet_with_ring 20.png": {
+    "frame": { "x": 8000, "y": 0, "w": 400, "h": 400 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 400, "h": 400 },
+    "sourceSize": { "w": 400, "h": 400 },
+    "duration": 100
+   },
+   "planet_with_ring 21.png": {
+    "frame": { "x": 8400, "y": 0, "w": 400, "h": 400 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 400, "h": 400 },
+    "sourceSize": { "w": 400, "h": 400 },
+    "duration": 100
+   },
+   "planet_with_ring 22.png": {
+    "frame": { "x": 8800, "y": 0, "w": 400, "h": 400 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 400, "h": 400 },
+    "sourceSize": { "w": 400, "h": 400 },
+    "duration": 100
+   },
+   "planet_with_ring 23.png": {
+    "frame": { "x": 9200, "y": 0, "w": 400, "h": 400 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 400, "h": 400 },
+    "sourceSize": { "w": 400, "h": 400 },
+    "duration": 100
+   },
+   "planet_with_ring 24.png": {
+    "frame": { "x": 9600, "y": 0, "w": 400, "h": 400 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 400, "h": 400 },
+    "sourceSize": { "w": 400, "h": 400 },
+    "duration": 100
+   },
+   "planet_with_ring 25.png": {
+    "frame": { "x": 10000, "y": 0, "w": 400, "h": 400 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 400, "h": 400 },
+    "sourceSize": { "w": 400, "h": 400 },
+    "duration": 100
+   }
+ },
+ "meta": {
+  "app": "http://www.aseprite.org/",
+  "version": "1.2.6",
+  "image": "/Users/adcorney/newgit/bioshock/app/assets/animations/loading_spritesheet.png",
+  "format": "RGBA8888",
+  "size": { "w": 10400, "h": 400 },
+  "scale": "1",
+  "frameTags": [
+  ],
+  "layers": [
+   { "name": "Layer", "opacity": 255, "blendMode": "normal" },
+   { "name": "Layer 1", "opacity": 255, "blendMode": "normal" }
+  ],
+  "slices": [
+  ]
+ }
+}

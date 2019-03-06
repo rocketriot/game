@@ -9,10 +9,14 @@ import bham.bioshock.common.consts.Config;
 import bham.bioshock.common.models.store.MinigameStore;
 import bham.bioshock.common.models.store.Store;
 import bham.bioshock.minigame.models.*;
+import bham.bioshock.minigame.models.Bullet;
+import bham.bioshock.minigame.models.Entity;
+import bham.bioshock.minigame.models.Gun;
+import bham.bioshock.minigame.models.Astronaut;
+import bham.bioshock.minigame.models.Rocket;
 import bham.bioshock.minigame.objectives.Objective;
 import bham.bioshock.minigame.physics.SpeedVector;
 import bham.bioshock.minigame.worlds.World;
-import bham.bioshock.minigame.worlds.World.PlanetPosition;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputAdapter;
@@ -34,7 +38,7 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import static sun.audio.AudioPlayer.player;
 
 public class Renderer {
-  private Player mainPlayer;
+  private Astronaut mainPlayer;
   private ArrayList<Entity> entities;
   ShapeRenderer shapeRenderer;
   private OrthographicCamera cam;
@@ -56,7 +60,7 @@ public class Renderer {
   private MinigameHud hud;
   private InputMultiplexer inputMultiplexer;
   private World world;
-  private Clock clock;
+
   private Objective objective;
 
 
@@ -92,7 +96,6 @@ public class Renderer {
     batch = new SpriteBatch();
     backgroundBatch = new SpriteBatch();
 
-    clock = new Clock();
     setupUI();
     loadSprites();
 
@@ -110,7 +113,7 @@ public class Renderer {
 
   public void loadSprites() {
     viewport = new FitViewport(GAME_WORLD_WIDTH, GAME_WORLD_HEIGHT, cam);
-    Player.loadTextures();
+    Astronaut.loadTextures();
     Rocket.loadTextures();
     Gun.loadTextures();
     Bullet.loadTextures();
@@ -147,8 +150,6 @@ public class Renderer {
   }
 
   public void render(float delta) {
-    checkTime(delta);
-
     batch.setProjectionMatrix(cam.combined);
     shapeRenderer.setProjectionMatrix(cam.combined);
 
@@ -223,7 +224,7 @@ public class Renderer {
 
 
   public void createBullet() {
-    Player main = minigameStore.getMainPlayer();
+    Astronaut main = minigameStore.getMainPlayer();
     PlanetPosition pp = world.convert(main.getPos());
     pp.fromCenter += main.getHeight() / 2;
 
@@ -287,6 +288,8 @@ public class Renderer {
     if (moveMade) {
       // Send a move to the server
       router.call(Route.MINIGAME_MOVE);
+    } else {
+      mainPlayer.resetDirection();
     }
   }
 
@@ -295,20 +298,7 @@ public class Renderer {
   }
 
 
-  private void checkTime(float delta){
-    clock.update(delta);
 
-    Clock.TimeListener listener = new Clock.TimeListener() {
-      @Override
-      public void handle(Clock.TimeUpdateEvent event) {
-        if(event.time >= 180.0f){
-          Player p = objective.getWinner();
-        }
-      }
-    };
-
-    clock.every(1.0f,listener);
-  }
 
 }
 
