@@ -108,13 +108,15 @@ public abstract class ScreenMaster implements Screen {
   @Override
   public void render(float delta) {
     drawBackground();
-    stage.act(Math.min(Gdx.graphics.getDeltaTime(), 1 / 30f));
+    stage.act(Gdx.graphics.getDeltaTime());
     stage.draw();
   }
 
   @Override
   public void resize(int width, int height) {
     stage.getViewport().update(width, height, true);
+    stage.act(Gdx.graphics.getDeltaTime());
+
     screen_width = Gdx.graphics.getWidth();
     screen_height = Gdx.graphics.getHeight();
   }

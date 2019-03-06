@@ -10,6 +10,7 @@ import bham.bioshock.communication.server.ServerService;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.UUID;
 
 public class JoinScreenHandler {
 
@@ -61,8 +62,10 @@ public class JoinScreenHandler {
     int storedPlayersNum = store.getPlayers().size();
 
     // If there is not 4 players, create CPU players
+
     while (storedPlayersNum + cpuPlayers.size() < store.MAX_PLAYERS) {
       int number = storedPlayersNum + cpuPlayers.size();
+
 
       Player player = new Player("Player " + (number+1), true);
 
@@ -77,5 +80,9 @@ public class JoinScreenHandler {
     
     // Tell the clients to start the game
     handler.sendToAll(new Action(Command.START_GAME));
+  }
+
+  public void moveRocket(Action action, UUID player) {
+    handler.sendToAllExcept(action, player);
   }
 }

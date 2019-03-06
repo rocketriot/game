@@ -16,12 +16,15 @@ public enum Route {
   HOW_TO                (HowToController.class,         "show"),
   LOADING               (LoadingController.class,       "show"),
   PREFERENCES           (PreferencesController.class,   "show"),
-  
-  JOIN_SCREEN           (JoinScreenController.class,    "show"),
-  ADD_PLAYER            (JoinScreenController.class,    "addPlayer"),
-  REMOVE_PLAYER         (JoinScreenController.class,    "removePlayer"),
-  DISCONNECT_PLAYER     (JoinScreenController.class,    "disconnectPlayer"),
-  START_GAME            (JoinScreenController.class,    "start"),
+
+  JOIN_SCREEN       (JoinScreenController.class,    "show"),
+  ADD_PLAYER        (JoinScreenController.class,    "addPlayer"),
+  REMOVE_PLAYER     (JoinScreenController.class,    "removePlayer"),
+  DISCONNECT_PLAYER (JoinScreenController.class,    "disconnectPlayer"),
+  START_GAME        (JoinScreenController.class,    "start"),
+  JOIN_SCREEN_MOVE (JoinScreenController.class, "rocketMove"),
+  JOIN_SCREEN_UPDATE (JoinScreenController.class, "updateRocket"),
+
 
   MOVE_PLAYER           (GameBoardController.class,     "move"),
   MOVE_RECEIVED         (GameBoardController.class,     "moveReceived"),

@@ -45,6 +45,7 @@ public class MinigameStore {
     if(store.getMainPlayer() != null) {
       mainPlayerId = store.getMainPlayer().getId();      
     }
+
     Position[] playerPos = world.getPlayerPositions();
 
     int i = 0;

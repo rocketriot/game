@@ -86,6 +86,10 @@ public class ClientHandler implements IClientHandler {
             router.call(Route.MINIGAME_BULLET, action.getArguments());
             break;
           }
+          case JOIN_SCREEN_MOVE: {
+            router.call(Route.JOIN_SCREEN_UPDATE, action.getArguments());
+            break;
+          }
           default: {
             System.out.println("Received unhandled command: " + action.getCommand().toString());
           }}
