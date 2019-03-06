@@ -2,8 +2,10 @@ package bham.bioshock.minigame.objectives;
 
 import bham.bioshock.common.Position;
 import bham.bioshock.minigame.models.Astronaut;
+import bham.bioshock.minigame.models.Platform;
 import bham.bioshock.minigame.worlds.World;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -16,6 +18,7 @@ public class Platformer extends Objective {
     private float maxFreeze = 3f;
     private float maxBoost = 3f;
     private Astronaut winner;
+    private Position goalPosition;
 
     public Platformer(World world) {
         super(world);
@@ -42,7 +45,28 @@ public class Platformer extends Objective {
             frozenFor.put(player, 0f);
             speedBoost.put(player, 1f);
         });
+        generateGoalPosition();
     }
+
+    public Position getGoalPosition() {
+        return goalPosition;
+    }
+
+    private void generateGoalPosition() {
+        /* generate a feasable position for the end goal */
+        ArrayList<Platform> platforms = this.getWorld().getPlatforms();
+        Position highestPlatform = platforms.get(0).getPos();
+        for(int i = 0; i < platforms.size(); i++) {
+            Platform platform = this.getWorld().getPlatforms().get(i);
+            if(platform.getY() > highestPlatform.y) {
+                highestPlatform = platform.getPos();
+            }
+        }
+        /* set the goal to the highest platform */
+        goalPosition = highestPlatform;
+    }
+
+
 
     public boolean checkIfFrozen(Astronaut player) {
         return frozen.get(player);
