@@ -2,7 +2,7 @@ package bham.bioshock.common.models.store;
 
 import bham.bioshock.client.AppPreferences;
 import java.util.HashMap;
-
+import java.util.List;
 import java.util.Map.Entry;
 
 import bham.bioshock.common.models.Coordinates;
@@ -11,8 +11,8 @@ import bham.bioshock.common.models.Player;
 import com.badlogic.gdx.Screen;
 import com.google.inject.Singleton;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 /** Stores all of the models */
 @Singleton
@@ -146,6 +146,13 @@ public class Store {
     minigameStore = null;
   }
 
+  public List<UUID> getCpuPlayers() {
+    return players.stream()
+      .filter(p -> p.isCpu())
+      .map(p -> p.getId())
+      .collect(Collectors.toList());
+  }
+  
   public JoinScreenStore getJoinScreenStore() {
     return joinScreenStore;
   }

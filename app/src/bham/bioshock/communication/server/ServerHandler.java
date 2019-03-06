@@ -102,6 +102,9 @@ public class ServerHandler {
         case MINIGAME_BULLET:
           minigameHandler.bulletShot(action, service.Id());
           break;
+        case MINIGAME_DIRECT_START:
+          joinHandler.minigameDirectStart(action, gameBoardHandler, minigameHandler);
+          break;
         default:
           logger.error("Received unhandled command: " + action.getCommand().toString());
           break;

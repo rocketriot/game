@@ -33,6 +33,7 @@ public enum Route {
   GAME_BOARD_SHOW       (GameBoardController.class,     "show"),
   SKIP_TURN             (GameBoardController.class,     "skipTurn"),
 
+  DIRECT_MINIGAME_START (MinigameController.class,      "directStart"), // FOR TESTS ONLY
   SEND_MINIGAME_START   (MinigameController.class,      "sendStart"),
   START_MINIGAME        (MinigameController.class,      "show"),
   MINIGAME_MOVE         (MinigameController.class,      "playerMove"),

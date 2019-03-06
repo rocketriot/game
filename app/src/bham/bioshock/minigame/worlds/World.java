@@ -1,5 +1,6 @@
 package bham.bioshock.minigame.worlds;
 
+import java.io.Serializable;
 import bham.bioshock.minigame.PlanetPosition;
 import java.util.ArrayList;
 import bham.bioshock.common.Position;
@@ -10,7 +11,7 @@ import bham.bioshock.minigame.models.Rocket;
 import bham.bioshock.minigame.objectives.Objective;
 import bham.bioshock.minigame.physics.Vector;
 
-abstract public class World {
+abstract public class World implements Serializable {
 
 
   public double getAngleTo(double x, double y) {

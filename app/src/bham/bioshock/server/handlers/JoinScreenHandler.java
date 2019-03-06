@@ -4,10 +4,8 @@ import bham.bioshock.common.models.Player;
 import bham.bioshock.common.models.store.Store;
 import bham.bioshock.communication.Action;
 import bham.bioshock.communication.Command;
-import bham.bioshock.communication.Sendable;
 import bham.bioshock.communication.server.ServerHandler;
 import bham.bioshock.communication.server.ServerService;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.UUID;
@@ -16,6 +14,7 @@ public class JoinScreenHandler {
 
   Store store;
   ServerHandler handler;
+  
   public JoinScreenHandler(Store store, ServerHandler handler) {
     this.store = store;
     this.handler = handler;
@@ -55,9 +54,8 @@ public class JoinScreenHandler {
   public void disconnectPlayer(ServerService service) {
     handler.sendToAll(new Action(Command.REMOVE_PLAYER, service.Id()));
   }
-
-  /** Creates CPU players and starts the game */
-  public void startGame(Action action, GameBoardHandler gameBoardHandler) {
+  
+  private ArrayList<Player> createCpuPlayers() {
     ArrayList<Player> cpuPlayers = new ArrayList<>();
     int storedPlayersNum = store.getPlayers().size();
 
@@ -74,14 +72,35 @@ public class JoinScreenHandler {
       player.setTextureID(textureId);
       cpuPlayers.add(player);
     }
+    
+    return cpuPlayers;
+  }
 
+  /** Creates CPU players and starts the game */
+  public void startGame(Action action, GameBoardHandler gameBoardHandler) {
+    ArrayList<Player> cpuPlayers = createCpuPlayers();
     // Send the board and the players
     gameBoardHandler.getGameBoard(action, cpuPlayers);
     
     // Tell the clients to start the game
     handler.sendToAll(new Action(Command.START_GAME));
   }
-
+  
+  public void minigameDirectStart(Action action, 
+      GameBoardHandler gameBoardHandler, MinigameHandler minigameHandler) {
+    ArrayList<Player> cpuPlayers = createCpuPlayers();
+    // Send the board and the players
+    gameBoardHandler.getGameBoard(action, cpuPlayers);
+    
+    // Wait for the board
+    try {
+      Thread.sleep(1000);
+    } catch (InterruptedException e) {
+      e.printStackTrace();
+    }
+    minigameHandler.startMinigame(new Action(Command.MINIGAME_START));
+  }
+  
   public void moveRocket(Action action, UUID player) {
     handler.sendToAllExcept(action, player);
   }
