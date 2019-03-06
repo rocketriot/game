@@ -24,7 +24,10 @@ public enum Command {
   MINIGAME_DIRECT_START, // FOR TESTS ONLY
   MINIGAME_PLAYER_MOVE,
   MINIGAME_END,
-  MINIGAME_BULLET;
+  MINIGAME_BULLET,
+
+  //JoinScreen
+  JOIN_SCREEN_MOVE;
 
   // @formatter:on
 

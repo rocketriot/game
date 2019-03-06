@@ -4,7 +4,6 @@ import bham.bioshock.common.Position;
 import bham.bioshock.minigame.PlayerTexture;
 import bham.bioshock.minigame.physics.CollisionBoundary;
 import bham.bioshock.minigame.worlds.World;
-import bham.bioshock.minigame.worlds.World.PlanetPosition;
 import java.util.UUID;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
@@ -27,10 +26,7 @@ public class Astronaut extends Entity {
   private PlayerTexture dir = PlayerTexture.FRONT;
   private float v = 700f;
   private boolean haveGun = false;
-  private float health = 0;
-  private int kills = 0;
   private CollisionBoundary legs;
-  public boolean isDead = false;
 
   public Astronaut(World w, float x, float y) {
     super(w, x, y);
@@ -167,13 +163,7 @@ public class Astronaut extends Entity {
       if(v == null) return;
       
       collide(.2f, v);
-      health -= 3;
-      if(health<=0) {
-        Bullet b = (Bullet)e;
-        b.getShooter().addKills(1);
-        this.isDead = true;
-      }
-
+      getObjective().gotShot(this, ((Bullet) e).getShooter());
     } else if(e.isA(Astronaut.class) || e.isA(Rocket.class)) {
       // Collision check
       MinimumTranslationVector v = checkCollision(e);
@@ -207,23 +197,7 @@ public class Astronaut extends Entity {
       }
     }
   }
-  
 
-  public void setHealth(float newHealth){
-    this.health = newHealth;
-  }
-
-  public float getHealth(){
-    return this.health;
-  }
-
-  public void addKills(int addedKills){
-    this.kills += addedKills;
-  }
-
-  public float getKills(){
-    return this.kills;
-  }
   
   public static void loadTextures() {
     TextureRegion[][] walkSheet = splittedTexture("app/assets/minigame/astronaut.png");
@@ -235,4 +209,5 @@ public class Astronaut extends Entity {
     walkAnimation = textureToAnimation(walkSheet);
     walkGunAnimation = textureToAnimation(walkGunSheet);
   }
+
 }

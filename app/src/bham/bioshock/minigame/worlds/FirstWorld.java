@@ -63,6 +63,7 @@ public class FirstWorld extends World {
   public ArrayList<Gun> getGuns() {
     return guns;
   }
+
   
   public ArrayList<Platform> getPlatforms() {
     return platforms;

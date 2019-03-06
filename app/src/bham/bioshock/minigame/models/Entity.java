@@ -2,10 +2,11 @@ package bham.bioshock.minigame.models;
 
 import bham.bioshock.common.Direction;
 import bham.bioshock.common.Position;
+import bham.bioshock.minigame.PlanetPosition;
+import bham.bioshock.minigame.objectives.Objective;
 import bham.bioshock.minigame.physics.CollisionBoundary;
 import bham.bioshock.minigame.physics.SpeedVector;
 import bham.bioshock.minigame.worlds.World;
-import bham.bioshock.minigame.worlds.World.PlanetPosition;
 import java.io.Serializable;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -38,6 +39,7 @@ public abstract class Entity implements Serializable {
 
   protected boolean onGround;
   protected State state = State.CREATED;
+  private Objective objective = null;
   
   public Entity(World w, float x, float y, boolean isStatic) {
     this.isStatic = isStatic;
@@ -104,7 +106,8 @@ public abstract class Entity implements Serializable {
     return world.getAngleTo(getX(), getY());
   }
 
-
+  public Objective getObjective(){return this.objective;}
+  public void setObjective(Objective o){this.objective = o;}
   public abstract TextureRegion getTexture();
 
   public void load() {

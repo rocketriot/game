@@ -45,6 +45,13 @@ public class ClientConnectThread extends Thread {
           // Send the broadcast package
           sendPacket(c, data, broadcast);
 
+          System.out.println(
+              "Request packet sent to: "
+                  + broadcast.getHostAddress()
+                  + ";"
+                  + "Interface: "
+                  + networkInterface.getDisplayName());
+
           System.out.println("Request packet sent to: " + broadcast.getHostAddress() + ";"
               + "Interface: " + networkInterface.getDisplayName());
         }

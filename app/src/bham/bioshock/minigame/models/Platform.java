@@ -1,6 +1,8 @@
 package bham.bioshock.minigame.models;
 
 
+import bham.bioshock.common.Position;
+import bham.bioshock.minigame.PlanetPosition;
 import bham.bioshock.minigame.worlds.World;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
@@ -18,6 +20,14 @@ public class Platform extends StaticEntity {
         collisionHeight = height;
     }
 
+    public Platform(World w, Position p, int width, int height) {
+        this(w, p.x, p.y, width, height);
+    }
+
+    public Platform(World w, PlanetPosition pp, int width, int height) {
+        this(w, w.convert(pp), width, height);
+    }
+
     public TextureRegion getTexture() {
        return texture;
     }
@@ -26,6 +36,5 @@ public class Platform extends StaticEntity {
         texture = new TextureRegion( new Texture(Gdx.files.internal("app/assets/minigame/platform.png")));
         super.load();
     }
-
 
 }

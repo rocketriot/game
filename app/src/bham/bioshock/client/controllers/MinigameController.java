@@ -12,6 +12,8 @@ import bham.bioshock.communication.Command;
 import bham.bioshock.communication.client.ClientService;
 import bham.bioshock.minigame.PlayerTexture;
 import bham.bioshock.minigame.models.Bullet;
+import bham.bioshock.minigame.objectives.KillThemAll;
+import bham.bioshock.minigame.objectives.Objective;
 import bham.bioshock.minigame.physics.SpeedVector;
 import bham.bioshock.minigame.worlds.FirstWorld;
 import bham.bioshock.minigame.worlds.World;
@@ -83,7 +85,11 @@ public class MinigameController extends Controller {
   
   public void show(World w) {    
     MinigameStore localStore = new MinigameStore();
-    localStore.seed(store, w);
+
+    Objective objective = new KillThemAll(w);
+
+    localStore.seed(store, w, objective);
+
     store.setMinigameStore(localStore);
     router.call(Route.FADE_OUT, "boardGame");
     router.call(Route.START_MUSIC, "minigame");

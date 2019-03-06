@@ -11,6 +11,8 @@ import bham.bioshock.communication.Command;
 import bham.bioshock.communication.server.ServerHandler;
 import bham.bioshock.minigame.ai.KillEveryoneAI;
 import bham.bioshock.minigame.ai.MinigameAI;
+import bham.bioshock.minigame.objectives.KillThemAll;
+import bham.bioshock.minigame.objectives.Objective;
 import bham.bioshock.minigame.worlds.FirstWorld;
 import bham.bioshock.minigame.worlds.World;
 import bham.bioshock.server.ai.MinigameAILoop;
@@ -32,7 +34,6 @@ public class MinigameHandler {
   public void startMinigame(Action action) {
     // Create a world for the minigame
     World w = new FirstWorld();
-    
     aiLoop = new MinigameAILoop();
     aiLoop.start();
     

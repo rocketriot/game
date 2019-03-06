@@ -12,6 +12,7 @@ import bham.bioshock.minigame.PlayerTexture;
 import bham.bioshock.minigame.models.Gun;
 import bham.bioshock.minigame.models.Astronaut;
 import bham.bioshock.minigame.models.Rocket;
+import bham.bioshock.minigame.objectives.Objective;
 import bham.bioshock.minigame.physics.SpeedVector;
 import bham.bioshock.minigame.worlds.World;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
@@ -25,6 +26,7 @@ public class MinigameStore {
   private ArrayList<Gun> guns;
   
   private Skin skin;
+  private Objective objective;
 
   public MinigameStore() {
     players = new HashMap<>();
@@ -41,7 +43,7 @@ public class MinigameStore {
   }
 
   // Create world from the seeder
-  public void seed(Store store, World world) {
+  public void seed(Store store, World world, Objective o) {
     this.currentWorld = world;
     mainPlayerId = store.getMainPlayer().getId();
     Position[] playerPos = world.getPlayerPositions();
@@ -55,6 +57,8 @@ public class MinigameStore {
     
     this.rockets = world.getRockets();
     this.guns = world.getGuns();
+    this.objective = o;
+    o.setPlayers(getPlayers());
   }
   
 
@@ -91,6 +95,8 @@ public class MinigameStore {
   public double getPlanetRadius() {
     return currentWorld.getPlanetRadius();
   }
+
+  public Objective getObjective(){return this.objective;}
 
   public void setSkin(Skin skin) { this.skin = skin; }
 
