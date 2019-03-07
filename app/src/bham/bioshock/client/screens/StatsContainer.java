@@ -4,10 +4,8 @@ import bham.bioshock.common.models.Player;
 import bham.bioshock.common.models.store.MinigameStore;
 import bham.bioshock.common.models.store.Store;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.scenes.scene2d.ui.Container;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.scenes.scene2d.ui.*;
 
 
 import java.util.*;
@@ -38,13 +36,17 @@ public class StatsContainer extends Container {
 
         Table table = new Table();
         Iterator<Player> iterator = store.getPlayers().iterator();
+
         int i = 0;
         while(iterator.hasNext()) {
             Player p = iterator.next();
-            playerTables.add(new PlayerContainer(p.getId(), p.getUsername()));
-            update(playerTables.get(i));
-            table.add(playerTables.get(i)).padRight(20);
-            i++;
+            if(p.getId() != store.getMainPlayer().getId()) {
+                playerTables.add(new PlayerContainer(p.getId(), p.getUsername()));
+                update(playerTables.get(i));
+                table.add(playerTables.get(i)).padRight(30);
+                i++;
+            }
+
         }
 
         this.setActor(table);
@@ -76,9 +78,19 @@ public class StatsContainer extends Container {
         private Label points_label;
         private Label player_name;
         private UUID id;
+        private int ICON_SIZE = 1;
 
         PlayerContainer(UUID id, String name) {
             this.id = id;
+
+            Image fuelIcon = new Image(new Texture(Gdx.files.internal("app/assets/ui/icons/fuel.png")));
+            Image planetIcon = new Image(new Texture(Gdx.files.internal("app/assets/ui/icons/planet.png")));
+            Image pointsIcon = new Image(new Texture(Gdx.files.internal("app/assets/ui/icons/star.png")));
+
+            fuelIcon.setSize(1,1);
+            planetIcon.setSize(ICON_SIZE, ICON_SIZE);
+            pointsIcon.setSize(ICON_SIZE, ICON_SIZE);
+
             Table table = new Table();
             Label l1 = new Label("Fuel: ", skin);
             Label l2 = new Label("Planets: ", skin);
@@ -91,13 +103,13 @@ public class StatsContainer extends Container {
 
             table.add(player_name).colspan(2);
             table.row();
-            table.add(l1);
+            table.add(fuelIcon);
             table.add(fuel_label);
             table.row();
-            table.add(l2);
+            table.add(planetIcon);
             table.add(planets_label);
             table.row();
-            table.add(l3);
+            table.add(pointsIcon);
             table.add(points_label);
 
             this.setActor(table);

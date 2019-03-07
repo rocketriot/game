@@ -41,7 +41,11 @@ public class PlatformerAi extends MinigameAI {
         }
     }
 
+
     private void moveTowardsGoal(float delta, Position goal) {
+        /*
+        we need an ai to move as if a player would, by jumping up to platforms
+         */
         PlanetPosition pp = astronaut.getPlanetPos();
 
     }
