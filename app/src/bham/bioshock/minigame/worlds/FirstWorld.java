@@ -1,6 +1,8 @@
 package bham.bioshock.minigame.worlds;
 
 import java.util.ArrayList;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Texture;
 import bham.bioshock.common.Position;
 import bham.bioshock.minigame.MapSeeder;
 import bham.bioshock.minigame.models.Gun;
@@ -69,4 +71,9 @@ public class FirstWorld extends World {
     return platforms;
   }
 
+  @Override
+  public Texture getTexture() {
+    return new Texture(Gdx.files.internal("app/assets/minigame/planet1.png"));
+  }
+  
 }
