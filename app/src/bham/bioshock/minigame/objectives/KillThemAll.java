@@ -1,8 +1,11 @@
 package bham.bioshock.minigame.objectives;
 
+import bham.bioshock.client.Route;
+import bham.bioshock.client.Router;
 import bham.bioshock.common.Position;
+import bham.bioshock.common.models.store.MinigameStore;
 import bham.bioshock.minigame.models.Astronaut;
-import java.util.Collection;
+
 import bham.bioshock.minigame.worlds.World;
 import java.util.Collections;
 import java.util.Comparator;
@@ -35,6 +38,7 @@ public class KillThemAll extends Objective {
     if (checkIfdead(player)) {
       addKill(killer);
       player.setPosition(respawnPosition);
+      getRouter().call(Route.MINIGAME_MOVE);
       setPlayerHealth(initialHealth, player);
     } else {
       float newHealth = health.get(player) - 5.0f;
@@ -49,6 +53,14 @@ public class KillThemAll extends Objective {
       kills.put(player, 0);
     });
   }
+
+  @Override
+  public void seed(MinigameStore store) {
+    return;
+  }
+
+  @Override
+  public void captured(Astronaut a) { return;}
 
 
   private boolean checkIfdead(Astronaut p) {
@@ -67,7 +79,7 @@ public class KillThemAll extends Objective {
 
   private void setRandonRespawnPosition() {
     Random r = new Random();
-    int i = Math.abs(r.nextInt()) % 4;
+    int i = Math.abs(r.nextInt()%4);
     respawnPosition = positions[i];
   }
 

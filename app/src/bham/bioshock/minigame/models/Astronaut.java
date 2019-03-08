@@ -161,7 +161,6 @@ public class Astronaut extends Entity {
       // Collision check
       MinimumTranslationVector v = checkCollision(e);
       if(v == null) return;
-      
       collide(.2f, v);
       getObjective().gotShot(this, ((Bullet) e).getShooter());
     } else if(e.isA(Astronaut.class) || e.isA(Rocket.class)) {
@@ -177,6 +176,14 @@ public class Astronaut extends Entity {
       
       e.state = State.REMOVED;
       haveGun = true;
+    } else if(e.isA(Flag.class)){
+      // Collision check
+      MinimumTranslationVector v = checkCollision(e);
+      if(v== null) return;
+
+      this.getObjective().captured(this);
+      e.state = State.REMOVED;
+
     } else if(e.isA(StaticEntity.class)) {
       
       // Standard collision check

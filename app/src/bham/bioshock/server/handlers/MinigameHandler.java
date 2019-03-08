@@ -9,6 +9,8 @@ import bham.bioshock.common.models.store.Store;
 import bham.bioshock.communication.Action;
 import bham.bioshock.communication.Command;
 import bham.bioshock.communication.server.ServerHandler;
+import bham.bioshock.minigame.Clock;
+import bham.bioshock.minigame.objectives.CaptureTheFlag;
 import bham.bioshock.minigame.ai.KillEveryoneAI;
 import bham.bioshock.minigame.ai.MinigameAI;
 import bham.bioshock.minigame.objectives.KillThemAll;
@@ -34,6 +36,8 @@ public class MinigameHandler {
   public void startMinigame(Action action) {
     // Create a world for the minigame
     World w = new FirstWorld();
+    Objective o = new CaptureTheFlag(w);
+    //
     aiLoop = new MinigameAILoop();
     aiLoop.start();
     
@@ -42,7 +46,12 @@ public class MinigameHandler {
     }
 
     Serializable arg = (Serializable) w;
-    handler.sendToAll(new Action(Command.MINIGAME_START, arg));
+    Serializable arg2 = (Serializable) o;
+
+    ArrayList<Serializable> arguments = new ArrayList<>();
+    arguments.add(arg);
+    arguments.add(arg2);
+    handler.sendToAll(new Action(Command.MINIGAME_START, arguments));
   }
   
   /*
@@ -57,6 +66,21 @@ public class MinigameHandler {
    */
   public void bulletShot(Action action, UUID playerId) {
     handler.sendToAllExcept(action, playerId);
+  }
+
+  private void checkTime(float delta){
+        Clock clock = new Clock();
+        clock.update(delta);
+
+        Clock.TimeListener listener = new Clock.TimeListener() {
+            @Override
+            public void handle(Clock.TimeUpdateEvent event) {
+
+               store.getMinigameStore().getObjective().getWinner();
+            }
+        };
+
+        clock.every(1800f,listener);
   }
 
   /**

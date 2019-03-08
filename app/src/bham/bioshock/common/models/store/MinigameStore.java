@@ -3,12 +3,11 @@ package bham.bioshock.common.models.store;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Map.Entry;
-import java.util.Set;
 import java.util.UUID;
 import bham.bioshock.common.Position;
 import bham.bioshock.common.models.Player;
 import bham.bioshock.minigame.PlayerTexture;
+import bham.bioshock.minigame.models.*;
 import bham.bioshock.minigame.models.Gun;
 import bham.bioshock.minigame.models.Astronaut;
 import bham.bioshock.minigame.models.Rocket;
@@ -24,7 +23,7 @@ public class MinigameStore {
   private HashMap<UUID, Astronaut> players;
   private ArrayList<Rocket> rockets;
   private ArrayList<Gun> guns;
-  
+  private ArrayList<Entity> otherEntities;
   private Skin skin;
   private Objective objective;
 
@@ -32,6 +31,7 @@ public class MinigameStore {
     players = new HashMap<>();
     rockets = new ArrayList<>();
     guns = new ArrayList<>();
+    otherEntities = new ArrayList<>();
   }
 
   public void updatePlayer(UUID playerId, SpeedVector speed, Position pos, PlayerTexture dir, Boolean haveGun) {
@@ -57,8 +57,10 @@ public class MinigameStore {
     
     this.rockets = world.getRockets();
     this.guns = world.getGuns();
+
     this.objective = o;
     o.setPlayers(getPlayers());
+    o.seed(this);
   }
   
 
@@ -85,6 +87,10 @@ public class MinigameStore {
   public Collection<Gun> getGuns() {
     return guns;
   }
+
+  public Collection<Entity> getOthers(){return otherEntities;}
+
+  public void addOther(Entity e){otherEntities.add(e);}
   public void removeGun(Gun g) {
     guns.removeIf(gun -> gun == g);
   }

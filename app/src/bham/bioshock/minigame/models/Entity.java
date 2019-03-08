@@ -66,6 +66,13 @@ public abstract class Entity implements Serializable {
     return state.equals(State.REMOVED);
   }
 
+  public void setIsRemoved(boolean removed){
+    if(removed)
+      state = State.REMOVED;
+    else
+      state = State.LOADED;
+  }
+
   public Position getPos() {
     return pos;
   }
