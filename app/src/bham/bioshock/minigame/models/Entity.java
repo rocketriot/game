@@ -1,25 +1,25 @@
 package bham.bioshock.minigame.models;
 
-import bham.bioshock.common.Direction;
 import bham.bioshock.common.Position;
 import bham.bioshock.minigame.physics.*;
 import bham.bioshock.minigame.worlds.World;
-import bham.bioshock.minigame.worlds.World.PlanetPosition;
-import com.badlogic.gdx.Gdx;
+import java.util.Optional;
+import java.util.stream.Stream;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Intersector.MinimumTranslationVector;
-import com.badlogic.gdx.math.Polygon;
 
 public abstract class Entity {
 
   protected int width = 50;
   protected int height = 50;
   
-  protected Boolean isStatic;
+  public final EntityType type;
+  protected final Boolean isStatic;
   protected Position pos;
   protected boolean loaded = false;
   protected Sprite sprite;
@@ -29,26 +29,31 @@ public abstract class Entity {
   protected World world;
 
   protected CollisionBoundary collisionBoundary;
+  protected CollisionHandler collisionHandler;
   protected float collisionWidth = 50;
   protected float collisionHeight = 50;
  
   protected StepsGenerator stepsGenerator;
 
-  protected boolean onGround;
   protected State state = State.CREATED;
   
-  public Entity(World w, float x, float y, boolean isStatic) {
+  public Entity(World w, float x, float y, boolean isStatic, EntityType type) {
     this.isStatic = isStatic;
+    this.type = type;
     pos = new Position(x, y);
     speed = new SpeedVector();
     fromGround = 0;
     world = w;
-    onGround = false;
     stepsGenerator = new StepsGenerator(w, this);
   }
   
-  public Entity(World w, float x, float y) {
-    this(w, x, y, false);
+  public Entity(World w, float x, float y, EntityType type) {
+    this(w, x, y, false, type);
+  }
+  
+  public void setCollisionHandler(CollisionHandler collisionHandler) {
+    this.collisionHandler = collisionHandler;
+    stepsGenerator.setCollisionHandler(collisionHandler);
   }
   
   public int getWidth() {
@@ -59,6 +64,9 @@ public abstract class Entity {
     return height;
   }
 
+  public void remove() {
+    state = State.REMOVED;
+  }
   public boolean isRemoved() {
     return state.equals(State.REMOVED);
   }
@@ -78,10 +86,6 @@ public abstract class Entity {
   public Step currentStep() {
     return new Step(pos, speed);
   }
-
-//  public boolean isFlying() {
-//    return distanceFromGround() > 10 && !onGround;
-//  }
   
   public boolean isFlying(float x, float y) {
     return distanceFromGround(x, y) > 0;
@@ -108,7 +112,11 @@ public abstract class Entity {
   }
 
   public double getRotation() {
-    return rotation - angleFromCenter();
+    return getRotation(getX(), getY());
+  }
+  
+  public double getRotation(float x, float y) {
+    return rotation - world.getAngleTo(x, y);
   }
 
   public double angleFromCenter() {
@@ -127,7 +135,9 @@ public abstract class Entity {
     }
     collisionBoundary = new CollisionBoundary(collisionWidth, collisionHeight);
     collisionBoundary.update(pos, getRotation());
-    stepsGenerator.generate();
+    if(!isStatic) {
+      stepsGenerator.generate();      
+    }
   }
 
   public Sprite getSprite() {
@@ -144,38 +154,35 @@ public abstract class Entity {
   public SpeedVector getSpeedVector() {
     return speed;
   }
+  
+  public Optional<Step> getFutureStep(int n) {
+    return stepsGenerator.getFutureStep(n);
+  }
 
   public void update(float delta) {
     if (!loaded || isStatic) return;
-    Step step = stepsGenerator.getStep(delta);
+    Step step = stepsGenerator.getStep(delta);    
     if(step != null) {
       pos = step.position;
       speed = step.vector;
+      
+      for(Entity e : step.getCollisions() ) {
+        this.handleCollision(e);
+      }
     }
     
     collisionBoundary.update(pos, getRotation());
   }
 
-  public MinimumTranslationVector checkCollision(Polygon p) {
-    MinimumTranslationVector v = new MinimumTranslationVector();
-    if (collisionBoundary.collideWith(p, v)) {
-      return v;
-    }
-    return null;
-  }
-  
-  public MinimumTranslationVector checkCollision(Entity e) {
-    return checkCollision(e.collisionBoundary);
-  }
 
   /*
    * Default behaviour for the collision. Can be overwritten by the subclass
    */
-  public void handleCollision(Entity e) {}
+  public void handleCollisionMove(Step step, MinimumTranslationVector v, Entity e) {}
+  
+  public void handleCollision(Entity e) {};
 
-  public void afterCollision() {
-//    stepsGenerator.regenerate();
-  }
+  public boolean canColideWith(Entity e) { return false; }
   
   public CollisionBoundary collisionBoundary() {
     return collisionBoundary;
@@ -183,67 +190,21 @@ public abstract class Entity {
 
   public void drawDebug(ShapeRenderer shapeRenderer) {
     collisionBoundary().draw(shapeRenderer, Color.WHITE);
+    if(isStatic || !loaded) return;
     speed.draw(shapeRenderer, pos);
+    Stream<Step> futureSteps = stepsGenerator.getFutureSteps();
+    
+    shapeRenderer.begin(ShapeType.Filled);
+    futureSteps.forEach(step -> {
+      shapeRenderer.circle(step.position.x, step.position.y, 5);
+    });
+    shapeRenderer.end(); 
   }
 
   public boolean is(State s) {
     return state.equals(s);
   }
-  
-  public void resetColision() {
-    this.onGround = false;
-  }
- 
 
-  public void collide(float elastic, MinimumTranslationVector v) {
-    if (!loaded) return;
-    
-    Direction colPlace;
-    Position pdelta = new Position(getX() + v.normal.x, getY() + v.normal.y);
-    PlanetPosition ppdelta = world.convert(pdelta);
-    PlanetPosition pp = world.convert(pos);
-    double angleRatio = world.angleRatio(pp.fromCenter);
-    
-    if( Math.abs(ppdelta.angle - pp.angle) > 
-      Math.abs(ppdelta.fromCenter - pp.fromCenter)*angleRatio ) { 
-     
-      if(ppdelta.angle < pp.angle ) {
-        colPlace = Direction.RIGHT;
-      } else {
-        colPlace = Direction.LEFT;
-      }
-      
-    } else {
-      
-      if(ppdelta.fromCenter < pp.fromCenter) {
-        colPlace = Direction.UP;
-      } else {
-        colPlace = Direction.DOWN;
-      }
-    }
-    
-    double angleNorm = angleFromCenter();
-    double speedVBefore = speed.getValue();
-    
-    switch (colPlace) {
-      case RIGHT:
-        speed.stop(angleNorm + 90);
-        speed.apply(angleNorm - 90, (speedVBefore - speed.getValue()) * elastic);
-        break;
-      case LEFT:
-        speed.stop(angleNorm - 90);
-        speed.apply(angleNorm + 90, (speedVBefore - speed.getValue()) * elastic);
-        break;
-      case DOWN:
-        speed.stop(angleNorm + 180);
-        speed.apply(angleNorm, (speedVBefore - speed.getValue()) * elastic);
-      case UP:
-        speed.stop(angleNorm);
-        speed.apply(angleNorm + 180, (speedVBefore - speed.getValue()) * elastic);
-      default:
-        break;
-    }
-  }
   
   public void draw(SpriteBatch batch, float delta) {
     Sprite sprite = getSprite();
@@ -257,7 +218,7 @@ public abstract class Entity {
   public enum State {
     CREATED, LOADED, REMOVED, REMOVING,
   }
-
+  
 }
 
 

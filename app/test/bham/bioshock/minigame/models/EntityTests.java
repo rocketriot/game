@@ -14,20 +14,6 @@ public class EntityTests {
   }
   
   
-  @Test
-  public void testSimpleCollisions() {
-    Player p1 = createPlayer();
-    Player p2 = createPlayer();
-    
-    assertNotNull(p1.collisionBoundary());
-    
-    p1.setPosition(new Position(0, 0));
-    p2.setPosition(new Position(76, 0));
-    assertNull(p1.checkCollision(p2));
-    
-    p2.setPosition(new Position(70, 0));
-    assertNotNull(p1.checkCollision(p2));
-  }
   
   @Test
   public void testCollisionDirection() {

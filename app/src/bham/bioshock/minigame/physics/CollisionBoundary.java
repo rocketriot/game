@@ -45,6 +45,10 @@ public class CollisionBoundary extends Polygon {
   public PlanetPosition planetPosition(World world) {
     return world.convert(new Position(getX(), getY()));
   }
+  
+  public CollisionBoundary clone() {
+    return new CollisionBoundary(width, height);
+  }
 
   public Direction getDirectionTo(World world, CollisionBoundary cb, MinimumTranslationVector v) {
 

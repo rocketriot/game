@@ -14,4 +14,10 @@ public class Position extends Sendable {
     this.y = y;
   }
 
+  public float sqDistanceFrom(Position p) {
+    float dx = Math.abs(x - p.x);
+    float dy = Math.abs(y - p.y);
+    return dx * dx + dy * dy;
+  }
+
 }

@@ -1,5 +1,6 @@
 package bham.bioshock.minigame.models;
 
+import bham.bioshock.minigame.physics.Step;
 import bham.bioshock.minigame.worlds.World;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
@@ -18,7 +19,7 @@ public class Bullet extends Entity {
   private Player shooter;
 
   public Bullet(World w, float x, float y,Player shooter) {
-    super(w, x, y);
+    super(w, x, y, EntityType.BULLET);
     this.shooter = shooter;
     rotation = 0;
     fromGround = -10;
@@ -43,7 +44,6 @@ public class Bullet extends Entity {
     }
     if (splash.isAnimationFinished(animationTime)) {
       state = State.REMOVED;
-
     }
   }
 
@@ -95,17 +95,37 @@ public class Bullet extends Entity {
 
   /** Collisions **/
   @Override
-  public void handleCollision(Entity e) {    
-    if (e.isA(Player.class)) {
-      MinimumTranslationVector v = checkCollision(e);
-      if(v == null) return;
-      
-      collide(0.2f, v);
-    } else if (e.isA(Rocket.class)) {
-      MinimumTranslationVector v = checkCollision(e);
-      if(v == null) return;
-      
-      collide(0.9f, v);
+  public boolean canColideWith(Entity e) {
+    switch(e.type) {
+      case PLAYER:
+      case BULLET:
+      case ROCKET:
+      case PLATFORM:
+        return true;
+      default:
+        return false;
     }
   }
+  
+  @Override
+  public void handleCollisionMove(Step step, MinimumTranslationVector v, Entity e) {
+    switch(e.type) { 
+      case BULLET:
+        collisionHandler.collide(step, 1f, v);
+        break;
+      case PLAYER:
+        System.out.println("Collision with player");
+        collisionHandler.collide(step, .8f, v);
+        break;
+      case PLATFORM:
+        collisionHandler.collide(step, .5f, v);
+        break;
+      case ROCKET:
+        collisionHandler.collide(step, .9f, v);
+        break;
+      default:
+        break;
+    }
+  }
+  
 }

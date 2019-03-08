@@ -10,7 +10,7 @@ public class Gun extends Entity {
   private static TextureRegion texture;
   
   public Gun(World w, float x, float y) {
-    super(w, x, y);
+    super(w, x, y, EntityType.GUN);
     setRotation(0);
     fromGround = -5;
   }

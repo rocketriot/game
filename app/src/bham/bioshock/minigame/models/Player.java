@@ -29,9 +29,12 @@ public class Player extends Entity {
   private int kills = 0;
   private CollisionBoundary legs;
   public boolean isDead = false;
+  
+  private boolean movingLeft = false;
+  private boolean movingRight = false;
 
   public Player(World w, float x, float y) {
-    super(w, x, y);
+    super(w, x, y, EntityType.PLAYER);
     width = 150;
     height = 150;
     animationTime = 0;
@@ -49,24 +52,31 @@ public class Player extends Entity {
     this(w, 0f, 0f);
   }
 
-  public void moveLeft() {
-    stepsGenerator.moveLeft();
-    dir = PlayerTexture.LEFT;
-  }
-
-  public void moveRight() {
-    stepsGenerator.moveRight();
-    dir = PlayerTexture.RIGHT;
-  }
-
-  public void jump() {
-    SoundController.playSound("jump");
-    stepsGenerator.jump();
+  public void moveLeft(boolean value) {
+    movingLeft = value;
   }
   
-  public void moveStop() {
+  public void moveRight(boolean value) {
+    movingRight = value;
+  }
+
+  public void jump(boolean value) {
+    SoundController.playSound("jump");
+    stepsGenerator.jump(value);
+  }
+  
+  public void moveChange() {
+    if(movingRight) {
+      dir = PlayerTexture.RIGHT;
+      stepsGenerator.moveRight();
+      return;
+    } else if(movingLeft) {
+      dir = PlayerTexture.LEFT; 
+      stepsGenerator.moveLeft();
+      return;
+    }
     stepsGenerator.moveStop();
-    dir = PlayerTexture.FRONT;
+    dir = PlayerTexture.FRONT;  
   }
   
   public boolean haveGun() {
@@ -94,14 +104,7 @@ public class Player extends Entity {
   @Override
   public void drawDebug(ShapeRenderer shapeRenderer) {
     super.drawDebug(shapeRenderer);
-    legs.draw(shapeRenderer, Color.MAGENTA);
-    Stream<Step> futureSteps = stepsGenerator.getFutureSteps();
-    
-    shapeRenderer.begin(ShapeType.Filled);
-    futureSteps.forEach(step -> {
-      shapeRenderer.circle(step.position.x, step.position.y, 5);
-    });
-    shapeRenderer.end();      
+    legs.draw(shapeRenderer, Color.MAGENTA);     
   }
 
   public void setPosition(Position p) {
@@ -161,67 +164,66 @@ public class Player extends Entity {
     return new Animation<TextureRegion>(0.1f, frames);
   }
 
+  @Override
+  public boolean canColideWith(Entity e) {
+    switch(e.type) {
+      case PLAYER:
+      case BULLET:
+      case ROCKET:
+      case GUN:
+      case PLATFORM:
+        return true;
+      default:
+        return false;
+    }
+  }
+  
   /** Collisions **/
   @Override
   public void handleCollision(Entity e) {
-    boolean collided = false;
+    switch(e.type) {
+      case GUN:
+        haveGun = true;
+        e.remove();
+        break;
+      default:
+        break;
+    }
+  }
+  
+  @Override
+  public void handleCollisionMove(Step step, MinimumTranslationVector v, Entity e) {
+    switch(e.type) { 
+      case BULLET:
+        collisionHandler.collide(step, 0.2f, v);
+        break;
+      case PLAYER:
+        collisionHandler.collide(step, .8f, v);
+        break;
+      case ROCKET:
+        collisionHandler.collide(step, .3f, v);
+        break;
+      case PLATFORM:
+        // Standard collision check
+        step.position.x += v.normal.x * v.depth;
+        step.position.y += v.normal.y * v.depth;
     
-    if(e.isA(Bullet.class)) {
-      // Collision check
-      MinimumTranslationVector v = checkCollision(e);
-      if(v == null) return;
-      collided = true;
-      
-      collide(.2f, v);
-      health -= 3;
-      if(health<=0) {
-        Bullet b = (Bullet)e;
-        b.getShooter().addKills(1);
-        this.isDead = true;
-      }
-
-    } else if(e.isA(Player.class) || e.isA(Rocket.class)) {
-      // Collision check
-      MinimumTranslationVector v = checkCollision(e);
-      if(v == null) return;
-      collided = true;
-      
-      collide(0.8f, v);
-      
-    } else if(e.isA(Gun.class)) {
-      // Collision check
-      MinimumTranslationVector v = checkCollision(e);
-      if(v == null) return;
-      collided = true;
-      
-      e.state = State.REMOVED;
-      haveGun = true;
-    } else if(e.isA(StaticEntity.class)) {
-      
-      // Standard collision check
-      MinimumTranslationVector v = checkCollision(e);
-      if(v!= null)
-      {
-        pos.x += v.normal.x * v.depth;
-        pos.y += v.normal.y * v.depth;
+        collisionHandler.collide(step, 0f, v);      
         
-        collide(0f, v);
-        collided = true;
-      }
-      
-      // Check collision with legs
-      MinimumTranslationVector vlegs = new MinimumTranslationVector();
-      if (legs.collideWith(e.collisionBoundary, vlegs)) {        
-        // Standing on the platform
-        super.onGround = true;
-        collided = true;
-      }
+        // Check collision with legs
+        MinimumTranslationVector vlegs = new MinimumTranslationVector();
+        CollisionBoundary legs = this.legs.clone();
+        legs.update(step.position, this.getRotation(step.position.x, step.position.y));
+        
+        if (legs.collideWith(e.collisionBoundary, vlegs)) {
+          // Standing on the platform
+          step.setOnGround(true);
+        }
+        break;
+      default:
+        break;
     }
-    
-    if(collided) {
-      afterCollision();
-    }
-  }  
+  }
 
   public void setHealth(float newHealth){
     this.health = newHealth;

@@ -1,6 +1,8 @@
 package bham.bioshock.minigame;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.stream.Collectors;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.graphics.Color;
@@ -21,18 +23,14 @@ import bham.bioshock.client.scenes.MinigameHud;
 import bham.bioshock.common.consts.Config;
 import bham.bioshock.common.models.store.MinigameStore;
 import bham.bioshock.common.models.store.Store;
-import bham.bioshock.minigame.models.Bullet;
-import bham.bioshock.minigame.models.Entity;
-import bham.bioshock.minigame.models.Gun;
-import bham.bioshock.minigame.models.Player;
-import bham.bioshock.minigame.models.Rocket;
+import bham.bioshock.minigame.models.*;
 import bham.bioshock.minigame.objectives.KillThemAll;
 import bham.bioshock.minigame.objectives.Objective;
+import bham.bioshock.minigame.physics.CollisionHandler;
 import bham.bioshock.minigame.worlds.World;
 
 public class Renderer {
   private Player mainPlayer;
-  private ArrayList<Entity> entities;
 
   ShapeRenderer shapeRenderer;
   private OrthographicCamera cam;
@@ -50,12 +48,10 @@ public class Renderer {
   private static boolean DEBUG_MODE = true;
   private MinigameStore minigameStore;
   
-  private boolean firstRender = true;
   private MinigameHud hud;
   private World world;
   private Clock clock;
   private Objective objective;
-
 
   public Renderer(Store store, Router router) {
     this.store = store;
@@ -65,33 +61,27 @@ public class Renderer {
     mainPlayer = minigameStore.getMainPlayer();
 
     shapeRenderer = new ShapeRenderer();
-    entities = new ArrayList<Entity>();
-
-    world = minigameStore.getWorld();
-    entities.addAll(world.getPlatforms());
-    entities.addAll(minigameStore.getPlayers());
-    entities.addAll(minigameStore.getRockets());
-    entities.addAll(minigameStore.getGuns());
 
     world = minigameStore.getWorld();
 
     cam = new OrthographicCamera();
-    //cam.position.set(mainPlayer.getX(), mainPlayer.getY(), 0);
     camRotation = 0;
     cam.update();
 
     batch = new SpriteBatch();
     backgroundBatch = new SpriteBatch();
+    
+    CollisionHandler collisionHandler = new CollisionHandler(minigameStore);
 
     clock = new Clock();
     setupUI();
-    loadSprites();
+    loadSprites(collisionHandler);
 
     // Setup the input processing
     InputMultiplexer multiplexer = new InputMultiplexer();
     multiplexer.addProcessor(hud.getStage());
     multiplexer.addProcessor(stage);
-    multiplexer.addProcessor(new InputListener(minigameStore, router));
+    multiplexer.addProcessor(new InputListener(minigameStore, router, collisionHandler));
     Gdx.input.setInputProcessor(multiplexer);
   }
 
@@ -101,7 +91,7 @@ public class Renderer {
   }
 
 
-  public void loadSprites() {
+  public void loadSprites(CollisionHandler collisionHandler) {
     viewport = new FitViewport(GAME_WORLD_WIDTH, GAME_WORLD_HEIGHT, cam);
     Player.loadTextures();
     Rocket.loadTextures();
@@ -110,20 +100,24 @@ public class Renderer {
     stage = new Stage(viewport);
 
     background = new Sprite(new Texture(Gdx.files.internal("app/assets/backgrounds/game.png")));
-
-    for (Entity e : entities) {
+    
+    for (Entity e : getEntities()) {
       e.load();
+      e.setCollisionHandler(collisionHandler);
     }
+  }
+  
+  public Collection<Entity> getEntities() {
+    Collection<Entity> entities = new ArrayList<>(minigameStore.countEntities());
+    entities.addAll(minigameStore.getEntities());
+    entities.addAll(minigameStore.getStaticEntities());
+    return entities;
   }
 
   public void render(float delta) {
     clock.update(delta);
     batch.setProjectionMatrix(cam.combined);
     shapeRenderer.setProjectionMatrix(cam.combined);
-
-    if (!firstRender) {
-      handleCollisions();
-    }
 
     cam.position.lerp(lerpTarget.set(mainPlayer.getX(), mainPlayer.getY(), 0), 3f * delta);
 
@@ -133,20 +127,17 @@ public class Renderer {
     cam.update();
 
     Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
-    backgroundBatch.begin();
-    backgroundBatch.draw(background, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-    backgroundBatch.end();
-
+    
+    Collection<Entity> entities = getEntities();
+    
     drawPlanet();
 
     if (DEBUG_MODE) {
-      drawDebug();
+      entities.forEach(e -> e.drawDebug(shapeRenderer));
     }
-
+    
     batch.begin();
-    drawEntities(delta);
-
+    entities.forEach(e -> e.draw(batch, delta));      
     batch.end();
 
     // Draw the ui
@@ -154,47 +145,18 @@ public class Renderer {
     hud.getStage().act(delta);
     hud.updateHud();
     hud.getStage().draw();
-
-
-    firstRender = false;
-  }
-
-  public void drawEntities(float delta) {
-    for (Entity e : entities) {
-      e.draw(batch, delta);
-    }
-    for (Entity e : minigameStore.getDynamicEntities()) {
-      e.draw(batch, delta);
-    }
+    minigameStore.getEntities().removeIf(e -> e.isRemoved());
+    minigameStore.getStaticEntities().removeIf(e -> e.isRemoved());
   }
 
   public void drawPlanet() {
+    backgroundBatch.begin();
+    backgroundBatch.draw(background, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+    backgroundBatch.end();
     shapeRenderer.begin(ShapeType.Filled);
     shapeRenderer.setColor(Color.SALMON);
     shapeRenderer.circle(0, 0, (float) minigameStore.getPlanetRadius());
-
     shapeRenderer.end();
-  }
-
-  public void drawDebug() {
-    for (Entity e : entities) {
-      e.drawDebug(shapeRenderer);
-    }
-  }
-
-  public void handleCollisions() {
-    for (Entity e : entities) {
-      e.resetColision();
-    }
-
-    // Check collisions between any two entities
-    for (Entity e1 : entities) {
-      for (Entity e2 : entities) {
-        if (!e1.equals(e2)) {
-          e1.handleCollision(e2);
-        }
-      }
-    }
   }
 
   public void resize(int width, int height) {

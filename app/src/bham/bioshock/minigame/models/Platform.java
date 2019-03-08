@@ -11,7 +11,7 @@ public class Platform extends StaticEntity {
     private TextureRegion texture;
 
     public Platform(World w, float x, float y, int width, int height) {
-        super(w ,x, y);
+        super(w ,x, y, EntityType.PLATFORM);
         this.width = width;
         this.height = height;
         collisionWidth = width;

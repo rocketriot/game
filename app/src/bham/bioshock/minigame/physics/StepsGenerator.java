@@ -1,5 +1,6 @@
 package bham.bioshock.minigame.physics;
 
+import java.util.Optional;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.stream.Stream;
 import org.apache.logging.log4j.LogManager;
@@ -13,12 +14,13 @@ public class StepsGenerator {
   private static final Logger logger = LogManager.getLogger(StepsGenerator.class);
 
   protected final double GROUND_FRICTION = 0.2;
-  private final double JUMP_FORCE = 900;
+  protected final double AIR_FRICTION = 0.15;
+  private final double JUMP_FORCE = 1200;
   private final int MAX_STEPS = 100;
   private float MOVE_SPEED = 700f;
-  private int MOVE_DELAY = 200;
-
+  
   protected LinkedBlockingQueue<Step> steps = new LinkedBlockingQueue<>();
+  private CollisionHandler collisionHandler = null;
   private Step lastStep;
   private Entity entity;
   private World world;
@@ -26,7 +28,7 @@ public class StepsGenerator {
   private Generator generator;
   
   private Move currentMove = Move.NONE;
-  private int fromCurrentMove = 0;
+  private boolean jump = false;
 
   public StepsGenerator(World world, Entity entity) {
     this.entity = entity;
@@ -46,8 +48,14 @@ public class StepsGenerator {
     saveMove(Move.RIGHT);
   }
 
-  public void jump() {
-    saveMove(Move.UP);
+  public void jump(boolean isJumping) {
+    if(jump != isJumping) {
+      jump = isJumping; 
+      synchronized(steps) {
+        steps.clear();
+        lastStep = null;
+      }
+    }
   }
 
   public void moveStop() {
@@ -56,8 +64,10 @@ public class StepsGenerator {
   
   private void saveMove(Move move) {
     if(currentMove != move) {
-      steps.clear();
-      fromCurrentMove = 0;
+      synchronized(steps) {
+        steps.clear();
+        lastStep = null;
+      }
     }
     currentMove = move;
   }
@@ -65,25 +75,61 @@ public class StepsGenerator {
   public Stream<Step> getFutureSteps() {
     return steps.stream();
   }
+  
+  public Optional<Step> getFutureStep(int n) {
+    if(steps.size() < n) {
+      if (lastStep != null) {
+        return Optional.of(lastStep);
+      }
+      return Optional.of(entity.currentStep());
+    }
+    return steps.stream().skip(n).findFirst();
+  }
+  
+  public void setCollisionHandler(CollisionHandler collisionHandler) {
+    this.collisionHandler = collisionHandler;
+  }
 
   public Step getStep(float delta) {
     int num = ((int) (delta / UNIT)) + 1;
-
+    
     try {
+      int size = steps.size();
       // Remove first n steps
-      for (int i = 0; i < (num - 1); i++) {
-        steps.take();
+      for (int i = 0; i < Math.min(size, num)-1; i++) {
+        steps.poll();
       }
-      return steps.take();
+
+      
+      Step s = steps.take();
+      checkDynamicCollisions(s); 
+      return s;
+      
     } catch (InterruptedException e) {
       logger.fatal("Interrupted while getting a step");
     }
     return null;
   }
+  
+  public void checkCollisions(Step step) {
+    if(collisionHandler == null) return;
+    collisionHandler.applyCollisions(step, entity);
+  }
+  
+  public void checkDynamicCollisions(Step step) {
+    if(collisionHandler == null) return;
+    boolean collided = collisionHandler.applyDynamicCollisions(step, entity);
+    if(collided) {
+      synchronized(steps) {
+        steps.clear();
+        lastStep = step;        
+      }
+    }
+  }
 
   private class Generator extends Thread {
 
-    private final int DELAY = 10;
+    private final int DELAY = 0;
 
     private void applyMovement(double angle, SpeedVector speed) {
       switch(currentMove) {
@@ -93,8 +139,26 @@ public class StepsGenerator {
         case RIGHT:
           speed.apply(angle + 270, MOVE_SPEED * GROUND_FRICTION);
           break;
-        case UP:
-          speed.apply(angle + 180, JUMP_FORCE);
+        default:
+          break;
+      }
+      if(jump) {
+        double currentUp = speed.getValueFor(angle + 180);
+        speed.apply(angle + 180, Math.max(0, (JUMP_FORCE - currentUp)));        
+      }
+    }
+    
+    private void applyFlyMovement(double angle, SpeedVector speed) {
+      switch(currentMove) {
+        case LEFT:
+          double currentLeft = speed.getValueFor(angle + 90);
+          speed.apply(angle + 90, Math.max(0, MOVE_SPEED * AIR_FRICTION - currentLeft));
+          break;
+        case RIGHT:
+          double currentRight = speed.getValueFor(angle + 270);
+          speed.apply(angle + 270, Math.max(0, MOVE_SPEED * AIR_FRICTION - currentRight));
+          break;
+        default:
           break;
       }
     }
@@ -107,31 +171,36 @@ public class StepsGenerator {
             continue;
           };
 
-          Step last;
-          if (!steps.isEmpty()) {
-            last = lastStep;
-          } else {
-            last = entity.currentStep();
+          synchronized (steps) {
+            Step last;
+            if (!steps.isEmpty() && lastStep != null) {
+              last = lastStep;
+            } else {
+              last = entity.currentStep();
+            }
+  
+            double angle = world.getAngleTo(last.position.x, last.position.y) + 180;
+            Position p = new Position(last.position.x, last.position.y);
+            SpeedVector speed = new SpeedVector(last.vector.dX(), last.vector.dY());
+            
+            Step s = new Step(p, speed);
+            checkCollisions(s);
+            
+            if (entity.isFlying(p.x, p.y) && !s.getOnGround()) {
+              speed.apply(angle, world.getGravity() * UNIT);
+              applyFlyMovement(angle, speed);
+            } else {
+              applyMovement(angle, speed);
+              speed.friction(GROUND_FRICTION);
+              speed.stop(angle);
+            }
+            
+            p.y += s.vector.dY() * UNIT;
+            p.x += s.vector.dX() * UNIT;
+  
+            steps.add(s);
+            lastStep = s;
           }
-
-          double angle = world.getAngleTo(last.position.x, last.position.y) + 180;
-          Position p = new Position(last.position.x, last.position.y);
-          SpeedVector speed = new SpeedVector(last.vector.dX(), last.vector.dY());
-          
-          if (entity.isFlying(p.x, p.y)) {
-            speed.apply(angle, world.getGravity() * UNIT);
-          } else {
-            applyMovement(angle, speed);
-            speed.friction(GROUND_FRICTION);
-            speed.stop(angle);
-          }
-          
-          p.y += speed.dY() * UNIT;
-          p.x += speed.dX() * UNIT;
-          
-          Step s = new Step(p, speed);
-          steps.add(s);
-          lastStep = s;
 
           sleep(DELAY);
         }
@@ -142,6 +211,6 @@ public class StepsGenerator {
   }
   
   private enum Move {
-    LEFT, RIGHT, UP, NONE
+    LEFT, RIGHT, NONE
   }
 }

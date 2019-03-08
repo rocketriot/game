@@ -9,6 +9,7 @@ import bham.bioshock.common.Position;
 import bham.bioshock.common.models.store.MinigameStore;
 import bham.bioshock.minigame.models.Bullet;
 import bham.bioshock.minigame.models.Player;
+import bham.bioshock.minigame.physics.CollisionHandler;
 import bham.bioshock.minigame.physics.SpeedVector;
 import bham.bioshock.minigame.worlds.World;
 import bham.bioshock.minigame.worlds.World.PlanetPosition;
@@ -20,14 +21,16 @@ public class InputListener extends InputAdapter {
   private MinigameStore localStore;
   private World world;
   private Router router;
-  
-  public InputListener(MinigameStore minigameStore, Router router) {
+  private CollisionHandler collisionHandler;
+
+  public InputListener(MinigameStore minigameStore, Router router, CollisionHandler collisionHandler) {
     this.world = minigameStore.getWorld();
     this.mainPlayer = minigameStore.getMainPlayer();
     this.localStore = minigameStore;
     this.router = router;
+    this.collisionHandler = collisionHandler;
   }
-  
+
   @Override
   public boolean keyDown(int keyCode) {
     if (Input.Keys.SPACE == keyCode && !shooting && mainPlayer.haveGun()) {
@@ -35,20 +38,19 @@ public class InputListener extends InputAdapter {
       SoundController.playSound("laser");
       shooting = true;
     }
-    if(keyCode == Input.Keys.LEFT || keyCode == Input.Keys.A) {
-      System.out.println("MOVE LEFT");
-      mainPlayer.moveLeft();
+    if (keyCode == Input.Keys.LEFT || keyCode == Input.Keys.A) {
+      mainPlayer.moveLeft(true);
     }
-    if(keyCode == Input.Keys.RIGHT || keyCode == Input.Keys.D) {
-      System.out.println("MOVE RIGHT");
-      mainPlayer.moveRight();
+    if (keyCode == Input.Keys.RIGHT || keyCode == Input.Keys.D) {
+      mainPlayer.moveRight(true);
     }
-    if(keyCode == Input.Keys.UP || keyCode == Input.Keys.W) {
-      mainPlayer.jump();
+    if (keyCode == Input.Keys.UP || keyCode == Input.Keys.W) {
+      mainPlayer.jump(true);
     }
-    
+    mainPlayer.moveChange();
+
     router.call(Route.MINIGAME_MOVE);
-    
+
     return false;
   }
 
@@ -57,12 +59,20 @@ public class InputListener extends InputAdapter {
     if (Input.Keys.SPACE == keyCode) {
       shooting = false;
     }
-    
-    mainPlayer.moveStop();
-    
+    if (keyCode == Input.Keys.UP || keyCode == Input.Keys.W) {
+      mainPlayer.jump(false);
+    }
+    if (keyCode == Input.Keys.LEFT || keyCode == Input.Keys.A) {
+      mainPlayer.moveLeft(false);
+    }
+    if (keyCode == Input.Keys.RIGHT || keyCode == Input.Keys.D) {
+      mainPlayer.moveRight(false);
+    }
+    mainPlayer.moveChange();
+
     return false;
   }
-  
+
   public void createBullet() {
     PlanetPosition pp = world.convert(mainPlayer.getPos());
     pp.fromCenter += mainPlayer.getHeight() / 2;
@@ -80,13 +90,10 @@ public class InputListener extends InputAdapter {
     b.setSpeedVector((SpeedVector) mainPlayer.getSpeedVector().clone());
     // Apply bullet speed
     b.setSpeed((float) mainPlayer.getSpeedVector().getSpeedAngle(), Bullet.launchSpeed);
-//    router.call(Route.MINIGAME_BULLET_SEND, b);
-    addBullet(b);
+    // router.call(Route.MINIGAME_BULLET_SEND, b);
+    b.load();
+    b.setCollisionHandler(collisionHandler);
+    localStore.addEntity(b);
   }
 
-  public void addBullet(Bullet b) {
-    b.load();
-    localStore.addEntity(b);
-//    entities.add(b);
-  }
 }
