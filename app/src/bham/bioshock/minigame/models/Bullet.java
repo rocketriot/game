@@ -114,7 +114,6 @@ public class Bullet extends Entity {
         collisionHandler.collide(step, 1f, v);
         break;
       case PLAYER:
-        System.out.println("Collision with player");
         collisionHandler.collide(step, .8f, v);
         break;
       case PLATFORM:

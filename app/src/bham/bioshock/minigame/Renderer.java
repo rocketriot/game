@@ -45,7 +45,7 @@ public class Renderer {
   private final int GAME_WORLD_HEIGHT = Config.GAME_WORLD_HEIGHT;
   private Store store;
   private Router router;
-  private static boolean DEBUG_MODE = true;
+  private static boolean DEBUG_MODE = false;
   private MinigameStore minigameStore;
   
   private MinigameHud hud;

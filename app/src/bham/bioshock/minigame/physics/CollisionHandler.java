@@ -1,6 +1,5 @@
 package bham.bioshock.minigame.physics;
 
-import java.util.Optional;
 import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.Polygon;
 import com.badlogic.gdx.math.Intersector.MinimumTranslationVector;
