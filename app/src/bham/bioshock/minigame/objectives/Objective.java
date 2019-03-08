@@ -1,4 +1,6 @@
 package bham.bioshock.minigame.objectives;
+import bham.bioshock.client.Route;
+import bham.bioshock.client.Router;
 import bham.bioshock.common.models.store.MinigameStore;
 import bham.bioshock.minigame.worlds.World;
 
@@ -12,6 +14,7 @@ import java.util.Collection;
 public abstract class Objective implements Serializable {
 
   private World world;
+  private Router router;
 
   public Objective(World world) {
     this.world = world;
@@ -38,6 +41,8 @@ public abstract class Objective implements Serializable {
   public abstract void seed(MinigameStore store);
 
   public abstract void captured(Astronaut a);
+  public void setRouter(Router router){this.router = router;}
+  public Router getRouter(){return this.router;}
 
 
 }

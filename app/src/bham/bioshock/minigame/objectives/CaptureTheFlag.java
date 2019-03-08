@@ -1,5 +1,7 @@
 package bham.bioshock.minigame.objectives;
 
+import bham.bioshock.client.Route;
+import bham.bioshock.client.Router;
 import bham.bioshock.common.Position;
 import bham.bioshock.common.models.store.MinigameStore;
 import bham.bioshock.minigame.models.Entity;
@@ -47,8 +49,7 @@ public class CaptureTheFlag extends Objective {
             setFlagPosition(player.getPos());
             flag.setIsRemoved(false);
             player.setPosition(respawnPosition);
-            float dt = Gdx.graphics.getDeltaTime();
-            player.update(dt);
+            getRouter().call(Route.MINIGAME_MOVE);
             setPlayerHealth(initialHealth, player);
 
         } else {
@@ -92,7 +93,6 @@ public class CaptureTheFlag extends Objective {
         health.computeIfPresent(p, (k, v) -> newHealth);
     }
 
-    // to be changed
     private void setFlagPosition(Position p){
         flagPosition = p;
     }

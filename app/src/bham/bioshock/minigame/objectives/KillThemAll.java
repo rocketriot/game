@@ -1,5 +1,7 @@
 package bham.bioshock.minigame.objectives;
 
+import bham.bioshock.client.Route;
+import bham.bioshock.client.Router;
 import bham.bioshock.common.Position;
 import bham.bioshock.common.models.store.MinigameStore;
 import bham.bioshock.minigame.models.Astronaut;
@@ -36,6 +38,7 @@ public class KillThemAll extends Objective {
     if (checkIfdead(player)) {
       addKill(killer);
       player.setPosition(respawnPosition);
+      getRouter().call(Route.MINIGAME_MOVE);
       setPlayerHealth(initialHealth, player);
     } else {
       float newHealth = health.get(player) - 5.0f;
@@ -57,9 +60,7 @@ public class KillThemAll extends Objective {
   }
 
   @Override
-  public void captured(Astronaut a) {
-
-  }
+  public void captured(Astronaut a) { return;}
 
 
   private boolean checkIfdead(Astronaut p) {
