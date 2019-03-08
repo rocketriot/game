@@ -4,10 +4,14 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Intersector.MinimumTranslationVector;
 import bham.bioshock.client.controllers.SoundController;
+import bham.bioshock.client.screens.ScreenMaster;
 import bham.bioshock.common.Position;
 import bham.bioshock.communication.Sendable;
 import bham.bioshock.minigame.PlayerTexture;
@@ -16,6 +20,7 @@ import bham.bioshock.minigame.physics.SpeedVector;
 import bham.bioshock.minigame.physics.Step;
 import bham.bioshock.minigame.worlds.World;
 import static java.util.stream.Collectors.toList;
+import java.awt.Font;
 
 public class Astronaut extends Entity {
 
@@ -29,6 +34,7 @@ public class Astronaut extends Entity {
   private PlayerTexture dir = PlayerTexture.FRONT;
   private boolean haveGun = false;
   private CollisionBoundary legs;
+  private String name;
   private Move move = new Move();
 
 
@@ -45,6 +51,10 @@ public class Astronaut extends Entity {
 
   public Astronaut(World w, Position p) {
     this(w, p.x, p.y);
+  }
+  
+  public void setName(String name) {
+    this.name = name;
   }
 
   public void moveLeft(boolean value) {
@@ -107,7 +117,7 @@ public class Astronaut extends Entity {
     super.drawDebug(shapeRenderer);
     legs.draw(shapeRenderer, Color.MAGENTA);     
   }
-
+  
   public void setPosition(Position p) {
     pos = p;
     if(collisionBoundary != null) {
@@ -192,7 +202,9 @@ public class Astronaut extends Entity {
         e.remove();
         break;
       case BULLET:
-        getObjective().gotShot(this, ((Bullet) e).getShooter());
+        if(!e.state.equals(State.REMOVING)) {
+          getObjective().gotShot(this, ((Bullet) e).getShooter());          
+        }
         break;
       default:
         break;
@@ -203,7 +215,9 @@ public class Astronaut extends Entity {
   public void handleCollisionMove(Step step, MinimumTranslationVector v, Entity e) {
     switch(e.type) { 
       case BULLET:
-        collisionHandler.collide(step, 0.2f, v);
+        if(!e.state.equals(State.REMOVING)) {
+          collisionHandler.collide(step, 0.2f, v);          
+        }
         break;
       case PLAYER:
         collisionHandler.collide(step, .8f, v);

@@ -108,16 +108,27 @@ public class Bullet extends Entity {
   }
   
   @Override
+  public void handleCollision(Entity e) {
+    switch(e.type) {
+      case PLAYER:
+        state = State.REMOVING;
+        break;
+      default:
+        break;
+    }
+  }
+  
+  @Override
   public void handleCollisionMove(Step step, MinimumTranslationVector v, Entity e) {
     switch(e.type) { 
       case BULLET:
         collisionHandler.collide(step, 1f, v);
         break;
       case PLAYER:
-        collisionHandler.collide(step, .8f, v);
+        collisionHandler.collide(step, .1f, v);
         break;
       case PLATFORM:
-        collisionHandler.collide(step, .5f, v);
+        collisionHandler.collide(step, .2f, v);
         break;
       case ROCKET:
         collisionHandler.collide(step, .9f, v);

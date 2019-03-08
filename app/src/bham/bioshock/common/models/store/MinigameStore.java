@@ -54,6 +54,7 @@ public class MinigameStore {
     int i = 0;
     for (Player player : store.getPlayers()) {
       Astronaut p = new Astronaut(world, playerPos[i]);
+      p.setName(player.getUsername());
       players.put(player.getId(), p);
       i++;
     }

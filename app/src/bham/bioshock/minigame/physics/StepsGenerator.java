@@ -16,7 +16,7 @@ public class StepsGenerator {
 
   protected final double GROUND_FRICTION = 0.2;
   protected final double AIR_FRICTION = 0.15;
-  private final double JUMP_FORCE = 1000;
+  private final double JUMP_FORCE = 1100;
   private final int MAX_STEPS = 70;
   private float MOVE_SPEED = 600f;
   
