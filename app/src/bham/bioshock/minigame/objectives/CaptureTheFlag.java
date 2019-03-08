@@ -2,6 +2,7 @@ package bham.bioshock.minigame.objectives;
 
 import bham.bioshock.common.Position;
 import bham.bioshock.common.models.store.MinigameStore;
+import bham.bioshock.minigame.models.Entity;
 import bham.bioshock.minigame.models.Flag;
 import bham.bioshock.minigame.models.Astronaut;
 import bham.bioshock.minigame.worlds.World;
@@ -17,13 +18,16 @@ public class CaptureTheFlag extends Objective {
     private Position[] positions;
     private Position flagPosition;
     private Flag flag;
+    private Astronaut flagOwner = null;
 
 
     public CaptureTheFlag(World world) {
         super(world);
         this.positions = this.getWorld().getPlayerPositions();
         setRandonRespawnPosition();
-        setFagPosition();
+        Position p= new Position(-2350.0f, 100.0f);
+        setFlagPosition(p);
+
         this.flag = new Flag(world,flagPosition.x , flagPosition.y, true);
 
     }
@@ -36,8 +40,14 @@ public class CaptureTheFlag extends Objective {
     @Override
     public void gotShot(Astronaut player, Astronaut killer) {
         if(checkIfdead(player)) {
+            setFlagPosition(player.getPos());
+            System.out.println("cap");
+            Flag.loadTextures();
+            flag.load();
+            flag.setIsRemoved(false);
             player.setPosition(respawnPosition);
             setPlayerHealth(initialHealth, player);
+
         } else {
             float newHealth = health.get(player) - 10.0f;
             setPlayerHealth(newHealth, player);
@@ -47,12 +57,21 @@ public class CaptureTheFlag extends Objective {
 
     @Override
     public void initialise() {
+        getPlayers().forEach(player -> {
+            health.put(player, initialHealth);
+        });
 
     }
 
     @Override
     public void seed(MinigameStore store) {
         store.addOther(flag);
+
+    }
+
+    @Override
+    public void captured(Astronaut a) {
+        setFlagOwner(a);
 
     }
 
@@ -71,7 +90,11 @@ public class CaptureTheFlag extends Objective {
     }
 
     // to be changed
-    private void setFagPosition(){
-        flagPosition = new Position(-2320.0f, 0.0f);
+    private void setFlagPosition(Position p){
+        flagPosition = p;
+    }
+
+    public void setFlagOwner(Astronaut owner) {
+        this.flagOwner = owner;
     }
 }

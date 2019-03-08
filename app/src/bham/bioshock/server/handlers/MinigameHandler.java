@@ -68,7 +68,7 @@ public class MinigameHandler {
     handler.sendToAllExcept(action, playerId);
   }
 
-    private void checkTime(float delta){
+  private void checkTime(float delta){
         Clock clock = new Clock();
         clock.update(delta);
 
@@ -81,7 +81,7 @@ public class MinigameHandler {
         };
 
         clock.every(1800f,listener);
-    }
+  }
 
   /**
    * Method to end the minigame and send the players back to the main board

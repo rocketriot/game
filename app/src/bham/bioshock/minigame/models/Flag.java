@@ -12,7 +12,7 @@ public class Flag extends Entity {
     public Flag(World w, float x, float y, boolean isStatic) {
         super(w, x, y, isStatic);
         setRotation(0);
-        fromGround = -5;
+        onGround = true;
     }
 
     @Override

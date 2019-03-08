@@ -37,5 +37,7 @@ public abstract class Objective implements Serializable {
   public World getWorld(){return this.world;}
   public abstract void seed(MinigameStore store);
 
+  public abstract void captured(Astronaut a);
+
 
 }

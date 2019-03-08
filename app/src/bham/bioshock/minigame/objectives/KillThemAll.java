@@ -56,6 +56,11 @@ public class KillThemAll extends Objective {
     return;
   }
 
+  @Override
+  public void captured(Astronaut a) {
+
+  }
+
 
   private boolean checkIfdead(Astronaut p) {
     if (health.get(p) - 5.0f <= 0)
