@@ -7,13 +7,11 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class EntityTests {
   
-  private Player createPlayer() {
-    Player p = new Player(new FirstWorld());
+  private Astronaut createPlayer() {
+    Astronaut p = new Astronaut(new FirstWorld(), 0, 0);
     p.load();
     return p;
   }
-  
-  
   
   @Test
   public void testCollisionDirection() {

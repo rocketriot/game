@@ -3,14 +3,14 @@ package bham.bioshock.common.models.store;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Map.Entry;
+import java.util.Set;
 import java.util.UUID;
 import bham.bioshock.common.Position;
+import bham.bioshock.common.models.Player;
 import bham.bioshock.minigame.PlayerTexture;
-import bham.bioshock.minigame.models.Bullet;
-import bham.bioshock.minigame.models.Entity;
-import bham.bioshock.minigame.models.Gun;
-import bham.bioshock.minigame.models.Player;
-import bham.bioshock.minigame.models.StaticEntity;
+import bham.bioshock.minigame.models.*;
+import bham.bioshock.minigame.objectives.Objective;
 import bham.bioshock.minigame.physics.SpeedVector;
 import bham.bioshock.minigame.worlds.World;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
@@ -19,18 +19,19 @@ public class MinigameStore {
 
   private World currentWorld;
   private UUID mainPlayerId;
-  private HashMap<UUID, Player> players;
+  private HashMap<UUID, Astronaut> players;
   private ArrayList<Entity> entities = new ArrayList<>();
   private ArrayList<Entity> staticEntities = new ArrayList<>();
   
   private Skin skin;
+  private Objective objective;
 
   public MinigameStore() {
     players = new HashMap<>();
   }
 
   public void updatePlayer(UUID playerId, SpeedVector speed, Position pos, PlayerTexture dir, Boolean haveGun) {
-    Player p = getPlayer(playerId);
+    Astronaut p = getPlayer(playerId);
     p.setSpeedVector(speed);
     p.setPosition(pos);
     p.setDirection(dir);
@@ -38,23 +39,24 @@ public class MinigameStore {
   }
 
   // Create world from the seeder
-  public void seed(Store store, World world) {
+  public void seed(Store store, World world, Objective o) {
     this.currentWorld = world;
-    if(store.getMainPlayer() != null) {
-      mainPlayerId = store.getMainPlayer().getId();      
-    }
+    mainPlayerId = store.getMainPlayer().getId();
     Position[] playerPos = world.getPlayerPositions();
 
     int i = 0;
-    for(bham.bioshock.common.models.Player player : store.getPlayers()) {
-      Player p = new Player(world, playerPos[i]);
+    for(Player player : store.getPlayers()) {
+      Astronaut p = new Astronaut(world, playerPos[i]);
       players.put(player.getId(), p);
+      i++;
     }
     
     staticEntities.addAll(world.getPlatforms());
     staticEntities.addAll(world.getRockets());
     entities.addAll(world.getGuns());
     entities.addAll(getPlayers());
+    this.objective = o;
+    o.setPlayers(getPlayers());
   }
   
 
@@ -62,11 +64,11 @@ public class MinigameStore {
     return currentWorld;
   }
 
-  public Player getPlayer(UUID playerId) {
+  public Astronaut getPlayer(UUID playerId) {
     return players.get(playerId);
   }
 
-  public Player getMainPlayer() {
+  public Astronaut getMainPlayer() {
     return getPlayer(mainPlayerId);
   }
   
@@ -96,6 +98,8 @@ public class MinigameStore {
   public double getPlanetRadius() {
     return currentWorld.getPlanetRadius();
   }
+
+  public Objective getObjective(){return this.objective;}
 
   public void setSkin(Skin skin) { this.skin = skin; }
 

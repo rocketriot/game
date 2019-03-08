@@ -77,6 +77,9 @@ public class ServerHandler {
         case ADD_PLAYER:
           joinHandler.addPlayer(action, service);
           break;
+        case JOIN_SCREEN_MOVE:
+          joinHandler.moveRocket(action, service.Id());
+          break;
         case START_GAME:
           server.stopDiscovery();
           joinHandler.startGame(action, gameBoardHandler);
@@ -98,6 +101,9 @@ public class ServerHandler {
           break;
         case MINIGAME_BULLET:
           minigameHandler.bulletShot(action, service.Id());
+          break;
+        case MINIGAME_DIRECT_START:
+          joinHandler.minigameDirectStart(action, gameBoardHandler, minigameHandler);
           break;
         default:
           logger.error("Received unhandled command: " + action.getCommand().toString());

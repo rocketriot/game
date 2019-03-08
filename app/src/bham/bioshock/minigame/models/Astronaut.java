@@ -15,7 +15,7 @@ import bham.bioshock.minigame.physics.CollisionBoundary;
 import bham.bioshock.minigame.physics.Step;
 import bham.bioshock.minigame.worlds.World;
 
-public class Player extends Entity {
+public class Astronaut extends Entity {
 
   private static final int FRAMES = 11;
   private static Animation<TextureRegion> walkAnimation;
@@ -25,15 +25,12 @@ public class Player extends Entity {
   float animationTime;
   private PlayerTexture dir = PlayerTexture.FRONT;
   private boolean haveGun = false;
-  private float health = 0;
-  private int kills = 0;
   private CollisionBoundary legs;
-  public boolean isDead = false;
-  
   private boolean movingLeft = false;
   private boolean movingRight = false;
 
-  public Player(World w, float x, float y) {
+
+  public Astronaut(World w, float x, float y) {
     super(w, x, y, EntityType.PLAYER);
     width = 150;
     height = 150;
@@ -44,12 +41,8 @@ public class Player extends Entity {
     collisionHeight = 150 + fromGround;
   }
 
-  public Player(World w, Position p) {
+  public Astronaut(World w, Position p) {
     this(w, p.x, p.y);
-  }
-
-  public Player(World w) {
-    this(w, 0f, 0f);
   }
 
   public void moveLeft(boolean value) {
@@ -77,6 +70,10 @@ public class Player extends Entity {
     }
     stepsGenerator.moveStop();
     dir = PlayerTexture.FRONT;  
+  }
+  
+  public void resetDirection() {
+    dir = PlayerTexture.FRONT;
   }
   
   public boolean haveGun() {
@@ -186,6 +183,9 @@ public class Player extends Entity {
         haveGun = true;
         e.remove();
         break;
+      case BULLET:
+        getObjective().gotShot(this, ((Bullet) e).getShooter());
+        break;
       default:
         break;
     }
@@ -225,21 +225,6 @@ public class Player extends Entity {
     }
   }
 
-  public void setHealth(float newHealth){
-    this.health = newHealth;
-  }
-
-  public float getHealth(){
-    return this.health;
-  }
-
-  public void addKills(int addedKills){
-    this.kills += addedKills;
-  }
-
-  public float getKills(){
-    return this.kills;
-  }
   
   public static void loadTextures() {
     TextureRegion[][] walkSheet = splittedTexture("app/assets/minigame/astronaut.png");

@@ -13,7 +13,9 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Intersector.MinimumTranslationVector;
 
-public abstract class Entity {
+public abstract class Entity implements Serializable {
+
+  private static final long serialVersionUID = 7916524444980988734L;
 
   protected int width = 50;
   protected int height = 50;
@@ -36,6 +38,7 @@ public abstract class Entity {
   protected StepsGenerator stepsGenerator;
 
   protected State state = State.CREATED;
+  private Objective objective = null;
   
   public Entity(World w, float x, float y, boolean isStatic, EntityType type) {
     this.isStatic = isStatic;
@@ -123,6 +126,8 @@ public abstract class Entity {
     return world.getAngleTo(getX(), getY());
   }
 
+  public Objective getObjective(){return this.objective;}
+  public void setObjective(Objective o){this.objective = o;}
   public abstract TextureRegion getTexture();
 
   public void load() {
@@ -203,6 +208,10 @@ public abstract class Entity {
 
   public boolean is(State s) {
     return state.equals(s);
+  }
+ 
+  public PlanetPosition getPlanetPos() {
+    return world.convert(getPos());
   }
 
   

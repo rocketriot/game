@@ -30,7 +30,7 @@ import bham.bioshock.minigame.physics.CollisionHandler;
 import bham.bioshock.minigame.worlds.World;
 
 public class Renderer {
-  private Player mainPlayer;
+  private Astronaut mainPlayer;
 
   ShapeRenderer shapeRenderer;
   private OrthographicCamera cam;
@@ -57,12 +57,15 @@ public class Renderer {
     this.store = store;
     this.minigameStore = store.getMinigameStore();
     this.router = router;
-    this.objective = new KillThemAll(minigameStore.getPlayers(), mainPlayer);
+
     mainPlayer = minigameStore.getMainPlayer();
 
     shapeRenderer = new ShapeRenderer();
 
     world = minigameStore.getWorld();
+
+    this.objective = minigameStore.getObjective();
+    this.objective.initialise();
 
     cam = new OrthographicCamera();
     camRotation = 0;
@@ -93,7 +96,7 @@ public class Renderer {
 
   public void loadSprites(CollisionHandler collisionHandler) {
     viewport = new FitViewport(GAME_WORLD_WIDTH, GAME_WORLD_HEIGHT, cam);
-    Player.loadTextures();
+    Astronaut.loadTextures();
     Rocket.loadTextures();
     Gun.loadTextures();
     Bullet.loadTextures();
@@ -104,6 +107,7 @@ public class Renderer {
     for (Entity e : getEntities()) {
       e.load();
       e.setCollisionHandler(collisionHandler);
+      e.setObjective(objective);
     }
   }
   
@@ -115,7 +119,8 @@ public class Renderer {
   }
 
   public void render(float delta) {
-    clock.update(delta);
+    checkTime(delta);
+
     batch.setProjectionMatrix(cam.combined);
     shapeRenderer.setProjectionMatrix(cam.combined);
 
@@ -161,6 +166,22 @@ public class Renderer {
 
   public void resize(int width, int height) {
     stage.getViewport().update(width, height, true);
+  }
+
+
+  private void checkTime(float delta){
+    clock.update(delta);
+
+    Clock.TimeListener listener = new Clock.TimeListener() {
+      @Override
+      public void handle(Clock.TimeUpdateEvent event) {
+        if(event.time >= 180.0f){
+          Astronaut p = objective.getWinner();
+        }
+      }
+    };
+
+    clock.every(1.0f,listener);
   }
 
 }
