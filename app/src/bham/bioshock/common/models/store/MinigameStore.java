@@ -23,6 +23,7 @@ public class MinigameStore {
   private World currentWorld;
   private UUID mainPlayerId;
   private HashMap<UUID, Astronaut> players;
+  private HashMap<UUID, Long> lastMessage = new HashMap<>();
   private ArrayList<Entity> entities = new ArrayList<>();
   private ArrayList<Entity> staticEntities = new ArrayList<>();
 
@@ -33,10 +34,15 @@ public class MinigameStore {
     players = new HashMap<>();
   }
 
-  public void updatePlayer(UUID playerId, SpeedVector speed, Position pos, Move move,
+  public void updatePlayer(long time, UUID playerId, SpeedVector speed, Position pos, Move move,
       Boolean haveGun) {
-    Astronaut p = getPlayer(playerId);
-    p.updateFromServer(speed, pos, move, haveGun);
+    Long previous = lastMessage.get(playerId);
+    if(previous == null) {
+      lastMessage.put(playerId, time);
+    } else if(previous < time) {
+      Astronaut p = getPlayer(playerId);
+      p.updateFromServer(speed, pos, move, haveGun);      
+    }
   }
 
   // Create world from the seeder

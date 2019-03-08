@@ -9,6 +9,8 @@ import bham.bioshock.minigame.models.Rocket;
 
 public class FirstWorld extends World {
 
+  private static final long serialVersionUID = -5432716795106522826L;
+  
   Position GRAVITY_POS = new Position(0f, 0f);
   double PLANET_RADIUS = 2000;
   double GRAVITY = 1500;
@@ -24,10 +26,11 @@ public class FirstWorld extends World {
     playerPositions[2] = new Position(2000, 0);
     playerPositions[3] = new Position(0, 2000);
 
-    rockets.add(new Rocket(this, 0, 2000, 1));
-    rockets.add(new Rocket(this, 500, 2500, 2));
-
     guns.add(new Gun(this, -2070, -100));
+    guns.add(new Gun(this, 2070, -100));
+    guns.add(new Gun(this, 2070, 3000));
+    guns.add(new Gun(this, -2070, -3100));
+    guns.add(new Gun(this, 0, -3000));
     
     MapSeeder seeder = new MapSeeder(this);
     seeder.seed();

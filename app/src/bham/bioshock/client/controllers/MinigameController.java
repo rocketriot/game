@@ -64,7 +64,7 @@ public class MinigameController extends Controller {
     Move move = (Move) action.getArgument(3);
     Boolean haveGun = (Boolean) action.getArgument(4);
 
-    localStore.updatePlayer(playerId, speed, pos, move, haveGun);
+    localStore.updatePlayer(action.whenCreated(), playerId, speed, pos, move, haveGun);
   }
   
   public void bulletShot(Bullet bullet) {

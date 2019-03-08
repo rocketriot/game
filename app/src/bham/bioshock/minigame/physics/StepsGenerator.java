@@ -1,12 +1,10 @@
 package bham.bioshock.minigame.physics;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.stream.Stream;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import bham.bioshock.client.Router;
 import bham.bioshock.common.Position;
 import bham.bioshock.minigame.models.Astronaut.Move;
 import bham.bioshock.minigame.models.Entity;
@@ -18,9 +16,9 @@ public class StepsGenerator {
 
   protected final double GROUND_FRICTION = 0.2;
   protected final double AIR_FRICTION = 0.15;
-  private final double JUMP_FORCE = 1200;
-  private final int MAX_STEPS = 50;
-  private float MOVE_SPEED = 700f;
+  private final double JUMP_FORCE = 1000;
+  private final int MAX_STEPS = 70;
+  private float MOVE_SPEED = 600f;
   
   protected LinkedBlockingQueue<Step> steps = new LinkedBlockingQueue<>();
   private CollisionHandler collisionHandler = null;
@@ -29,7 +27,6 @@ public class StepsGenerator {
   private World world;
   private final float UNIT = 0.01f;
   private Generator generator;
-  private Router router;
   
   private Move currentMove = new Move();
 
@@ -181,7 +178,7 @@ public class StepsGenerator {
       try {
         while (!isInterrupted()) {
           if (steps.size() >= MAX_STEPS) {
-            sleep(DELAY + 10);
+            sleep(DELAY + 20);
             continue;
           };
 

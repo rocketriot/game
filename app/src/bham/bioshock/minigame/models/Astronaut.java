@@ -1,14 +1,11 @@
 package bham.bioshock.minigame.models;
-import java.util.Collection;
 import java.util.List;
-import java.util.stream.Stream;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Intersector.MinimumTranslationVector;
 import bham.bioshock.client.controllers.SoundController;
 import bham.bioshock.common.Position;
@@ -19,10 +16,10 @@ import bham.bioshock.minigame.physics.SpeedVector;
 import bham.bioshock.minigame.physics.Step;
 import bham.bioshock.minigame.worlds.World;
 import static java.util.stream.Collectors.toList;
-import java.io.Serializable;
 
 public class Astronaut extends Entity {
 
+  private static final long serialVersionUID = -5131439342109870021L;
   private static final int FRAMES = 11;
   private static Animation<TextureRegion> walkAnimation;
   private static Animation<TextureRegion> walkGunAnimation;
@@ -257,6 +254,8 @@ public class Astronaut extends Entity {
   }
   
   public static class Move extends Sendable {
+
+    private static final long serialVersionUID = 3668803304780843571L;
     public boolean jumping = false;
     public boolean movingLeft = false;
     public boolean movingRight = false;
