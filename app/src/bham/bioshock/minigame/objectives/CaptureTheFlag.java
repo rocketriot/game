@@ -6,6 +6,7 @@ import bham.bioshock.minigame.models.Entity;
 import bham.bioshock.minigame.models.Flag;
 import bham.bioshock.minigame.models.Astronaut;
 import bham.bioshock.minigame.worlds.World;
+import com.badlogic.gdx.Gdx;
 
 import java.util.HashMap;
 import java.util.Random;
@@ -28,24 +29,26 @@ public class CaptureTheFlag extends Objective {
         Position p= new Position(-2350.0f, 100.0f);
         setFlagPosition(p);
 
+
         this.flag = new Flag(world,flagPosition.x , flagPosition.y, true);
 
     }
 
     @Override
     public Astronaut getWinner() {
-        return null;
+        return flagOwner;
     }
 
+    // router call minigame move
+    
     @Override
     public void gotShot(Astronaut player, Astronaut killer) {
         if(checkIfdead(player)) {
             setFlagPosition(player.getPos());
-            System.out.println("cap");
-            Flag.loadTextures();
-            flag.load();
             flag.setIsRemoved(false);
             player.setPosition(respawnPosition);
+            float dt = Gdx.graphics.getDeltaTime();
+            player.update(dt);
             setPlayerHealth(initialHealth, player);
 
         } else {
