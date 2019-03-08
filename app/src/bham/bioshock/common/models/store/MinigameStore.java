@@ -32,10 +32,7 @@ public class MinigameStore {
 
   public void updatePlayer(UUID playerId, SpeedVector speed, Position pos, PlayerTexture dir, Boolean haveGun) {
     Astronaut p = getPlayer(playerId);
-    p.setSpeedVector(speed);
-    p.setPosition(pos);
-    p.setDirection(dir);
-    p.setGun(haveGun);
+    p.updateFromServer(speed, pos, dir, haveGun);
   }
 
   // Create world from the seeder

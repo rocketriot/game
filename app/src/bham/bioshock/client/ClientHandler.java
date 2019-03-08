@@ -77,7 +77,7 @@ public class ClientHandler implements IClientHandler {
             break;
           }
           case MINIGAME_PLAYER_MOVE: {
-            router.call(Route.MINIGAME_PLAYER_UPDATE, action.getArguments());
+            router.call(Route.MINIGAME_PLAYER_UPDATE, action);
             break;
           }
           case MINIGAME_END: {

@@ -15,7 +15,7 @@ abstract public class MinigameAI {
   private ServerHandler handler;
   protected Store store;
   protected UUID id;
-  protected Astronaut astronaut;
+  protected CpuAstronaut astronaut;
   protected MinigameStore localStore;
   
   public MinigameAI(UUID id, Store store, ServerHandler handler) {
@@ -30,7 +30,7 @@ abstract public class MinigameAI {
       if(localStore == null) return;
     };
     if(astronaut == null) {
-      astronaut = localStore.getPlayer(id);
+      astronaut = new CpuAstronaut(localStore.getPlayer(id));
       if(astronaut == null) return;
     }
     
@@ -41,13 +41,19 @@ abstract public class MinigameAI {
   abstract public void update(float delta);
 
   public void afterUpdate() {
+    astronaut.moveChange();
+    
     ArrayList<Serializable> arguments = new ArrayList<>();
     arguments.add((Serializable) id);
-    arguments.add((Serializable) astronaut.getSpeedVector());
-    arguments.add((Serializable) astronaut.getPos());
-    arguments.add((Serializable) astronaut.getDirection());
-    arguments.add((Serializable) astronaut.haveGun());
+    arguments.add((Serializable) astronaut.get().getSpeedVector());
+    arguments.add((Serializable) astronaut.get().getPos());
+    arguments.add((Serializable) astronaut.get().getDirection());
+    arguments.add((Serializable) astronaut.get().haveGun());
     
-    handler.sendToAll(new Action(Command.MINIGAME_PLAYER_MOVE, arguments));
+    // Send to all except the host
+    handler.sendToAllExcept(
+        new Action(Command.MINIGAME_PLAYER_MOVE, arguments), 
+        store.getMainPlayer().getId()
+    );
   }
 }

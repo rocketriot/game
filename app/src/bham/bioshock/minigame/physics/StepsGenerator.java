@@ -5,6 +5,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.stream.Stream;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import bham.bioshock.client.Router;
 import bham.bioshock.common.Position;
 import bham.bioshock.minigame.models.Entity;
 import bham.bioshock.minigame.worlds.World;
@@ -26,6 +27,7 @@ public class StepsGenerator {
   private World world;
   private final float UNIT = 0.02f;
   private Generator generator;
+  private Router router;
   
   private Move currentMove = Move.NONE;
   private boolean jump = false;
@@ -51,10 +53,7 @@ public class StepsGenerator {
   public void jump(boolean isJumping) {
     if(jump != isJumping) {
       jump = isJumping; 
-      synchronized(steps) {
-        steps.clear();
-        lastStep = null;
-      }
+      this.reset();
     }
   }
 
@@ -64,14 +63,22 @@ public class StepsGenerator {
   
   private void saveMove(Move move) {
     if(currentMove != move) {
-      synchronized(steps) {
-        steps.clear();
-        lastStep = null;
-      }
+      this.reset();
     }
     currentMove = move;
   }
+  
+  public void updateFromServer(SpeedVector speed, Position pos) {
+    this.reset();
+  }
 
+  private void reset() {
+    synchronized(steps) {
+      steps.clear();
+      lastStep = null;
+    }
+  }
+  
   public Stream<Step> getFutureSteps() {
     return steps.stream();
   }
@@ -167,7 +174,7 @@ public class StepsGenerator {
       try {
         while (!isInterrupted()) {
           if (steps.size() >= MAX_STEPS) {
-            sleep(DELAY);
+            sleep(DELAY + 10);
             continue;
           };
 

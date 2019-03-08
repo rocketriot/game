@@ -12,6 +12,7 @@ import bham.bioshock.client.controllers.SoundController;
 import bham.bioshock.common.Position;
 import bham.bioshock.minigame.PlayerTexture;
 import bham.bioshock.minigame.physics.CollisionBoundary;
+import bham.bioshock.minigame.physics.SpeedVector;
 import bham.bioshock.minigame.physics.Step;
 import bham.bioshock.minigame.worlds.World;
 
@@ -54,7 +55,9 @@ public class Astronaut extends Entity {
   }
 
   public void jump(boolean value) {
-    SoundController.playSound("jump");
+    if(value) {
+      SoundController.playSound("jump");      
+    }
     stepsGenerator.jump(value);
   }
   
@@ -239,6 +242,15 @@ public class Astronaut extends Entity {
 
     walkAnimation = textureToAnimation(walkSheet);
     walkGunAnimation = textureToAnimation(walkGunSheet);
+  }
+
+  public void updateFromServer(SpeedVector speed, Position pos, PlayerTexture dir,
+      Boolean haveGun) {
+    this.haveGun = haveGun;
+    this.dir = dir;
+    this.setSpeedVector(speed);
+    this.setPosition(pos);
+    this.stepsGenerator.updateFromServer(speed, pos);
   }
 
 }

@@ -147,10 +147,14 @@ public class Store {
   }
 
   public List<UUID> getCpuPlayers() {
-    return players.stream()
-      .filter(p -> p.isCpu())
-      .map(p -> p.getId())
-      .collect(Collectors.toList());
+    List<UUID> cpuPlayers = new ArrayList<>();
+    for(Player p : players) {
+      if(p.isCpu()) {
+        cpuPlayers.add(p.getId());
+      }
+    }
+    System.out.println(cpuPlayers.size());
+    return cpuPlayers;
   }
   
   public JoinScreenStore getJoinScreenStore() {

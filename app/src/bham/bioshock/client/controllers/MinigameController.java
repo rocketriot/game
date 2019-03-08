@@ -54,13 +54,13 @@ public class MinigameController extends Controller {
     clientService.send(new Action(Command.MINIGAME_PLAYER_MOVE, arguments));
   }
   
-  public void updatePlayer(ArrayList<Serializable> arguments) {
-    UUID playerId = (UUID) arguments.get(0);
-    SpeedVector speed = (SpeedVector) arguments.get(1);
-    Position pos = (Position) arguments.get(2);
-    PlayerTexture dir = (PlayerTexture) arguments.get(3);
-    Boolean haveGun = (Boolean) arguments.get(4);
-    
+  public void updatePlayer(Action action) {
+    UUID playerId = (UUID) action.getArgument(0);
+    SpeedVector speed = (SpeedVector) action.getArgument(1);
+    Position pos = (Position) action.getArgument(2);
+    PlayerTexture dir = (PlayerTexture) action.getArgument(3);
+    Boolean haveGun = (Boolean) action.getArgument(4);
+
     localStore.updatePlayer(playerId, speed, pos, dir, haveGun);
   }
   
