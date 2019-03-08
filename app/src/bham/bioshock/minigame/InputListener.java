@@ -46,7 +46,6 @@ public class InputListener extends InputAdapter {
       mainPlayer.jump(true);
     }
     mainPlayer.moveChange();
-
     router.call(Route.MINIGAME_MOVE);
 
     return false;
@@ -67,6 +66,7 @@ public class InputListener extends InputAdapter {
       mainPlayer.moveRight(false);
     }
     mainPlayer.moveChange();
+    router.call(Route.MINIGAME_MOVE);
 
     return false;
   }
@@ -75,9 +75,9 @@ public class InputListener extends InputAdapter {
     PlanetPosition pp = world.convert(mainPlayer.getPos());
     pp.fromCenter += mainPlayer.getHeight() / 2;
 
-    if (mainPlayer.getDirection().equals(PlayerTexture.LEFT)) {
+    if (mainPlayer.getMove().movingLeft) {
       pp.angle -= 2;
-    } else if (mainPlayer.getDirection().equals(PlayerTexture.RIGHT)) {
+    } else if (mainPlayer.getMove().movingRight) {
       pp.angle += 2;
     }
 
@@ -88,7 +88,7 @@ public class InputListener extends InputAdapter {
     b.setSpeedVector((SpeedVector) mainPlayer.getSpeedVector().clone());
     // Apply bullet speed
     b.setSpeed((float) mainPlayer.getSpeedVector().getSpeedAngle(), Bullet.launchSpeed);
-    // router.call(Route.MINIGAME_BULLET_SEND, b);
+    router.call(Route.MINIGAME_BULLET_SEND, b);
     b.load();
     b.setCollisionHandler(collisionHandler);
     localStore.addEntity(b);

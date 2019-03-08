@@ -1,5 +1,6 @@
 package bham.bioshock.minigame.physics;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.stream.Stream;
@@ -7,6 +8,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import bham.bioshock.client.Router;
 import bham.bioshock.common.Position;
+import bham.bioshock.minigame.models.Astronaut.Move;
 import bham.bioshock.minigame.models.Entity;
 import bham.bioshock.minigame.worlds.World;
 
@@ -17,7 +19,7 @@ public class StepsGenerator {
   protected final double GROUND_FRICTION = 0.2;
   protected final double AIR_FRICTION = 0.15;
   private final double JUMP_FORCE = 1200;
-  private final int MAX_STEPS = 100;
+  private final int MAX_STEPS = 50;
   private float MOVE_SPEED = 700f;
   
   protected LinkedBlockingQueue<Step> steps = new LinkedBlockingQueue<>();
@@ -25,12 +27,11 @@ public class StepsGenerator {
   private Step lastStep;
   private Entity entity;
   private World world;
-  private final float UNIT = 0.02f;
+  private final float UNIT = 0.01f;
   private Generator generator;
   private Router router;
   
-  private Move currentMove = Move.NONE;
-  private boolean jump = false;
+  private Move currentMove = new Move();
 
   public StepsGenerator(World world, Entity entity) {
     this.entity = entity;
@@ -41,35 +42,51 @@ public class StepsGenerator {
   public void generate() {
     generator.start();
   }
-
+  
   public void moveLeft() {
-    saveMove(Move.LEFT);
+    if(!currentMove.movingLeft) {
+      currentMove.movingLeft = true;
+      currentMove.movingRight = false;
+      this.reset();
+    }
   }
 
   public void moveRight() {
-    saveMove(Move.RIGHT);
+    if(!currentMove.movingRight) {
+      currentMove.movingRight = true;
+      currentMove.movingLeft = false;
+      this.reset();
+    }
   }
 
   public void jump(boolean isJumping) {
-    if(jump != isJumping) {
-      jump = isJumping; 
+    if(currentMove.jumping != isJumping) {
+      currentMove.jumping = isJumping; 
       this.reset();
     }
+  }
+  
+  public void moveChanged(Move move) {
+    currentMove.movingLeft = move.movingLeft;
+    currentMove.movingRight = move.movingRight;
+    currentMove.jumping = move.jumping;
   }
 
   public void moveStop() {
-    saveMove(Move.NONE);
-  }
-  
-  private void saveMove(Move move) {
-    if(currentMove != move) {
+    if(currentMove.movingLeft || currentMove.movingRight) {
+      currentMove.movingLeft = false;
+      currentMove.movingRight = false;
       this.reset();
     }
-    currentMove = move;
   }
   
+  
   public void updateFromServer(SpeedVector speed, Position pos) {
-    this.reset();
+    synchronized(steps) {
+      steps.clear();
+      entity.setStep(new Step(pos, speed));
+      lastStep = null;
+    }
   }
 
   private void reset() {
@@ -139,34 +156,24 @@ public class StepsGenerator {
     private final int DELAY = 0;
 
     private void applyMovement(double angle, SpeedVector speed) {
-      switch(currentMove) {
-        case LEFT:
-          speed.apply(angle + 90, MOVE_SPEED * GROUND_FRICTION);
-          break;
-        case RIGHT:
-          speed.apply(angle + 270, MOVE_SPEED * GROUND_FRICTION);
-          break;
-        default:
-          break;
+      if(currentMove.movingLeft) {
+        speed.apply(angle + 90, MOVE_SPEED * GROUND_FRICTION);        
+      } else if(currentMove.movingRight) {
+        speed.apply(angle + 270, MOVE_SPEED * GROUND_FRICTION);        
       }
-      if(jump) {
+      if(currentMove.jumping) {
         double currentUp = speed.getValueFor(angle + 180);
         speed.apply(angle + 180, Math.max(0, (JUMP_FORCE - currentUp)));        
       }
     }
     
     private void applyFlyMovement(double angle, SpeedVector speed) {
-      switch(currentMove) {
-        case LEFT:
-          double currentLeft = speed.getValueFor(angle + 90);
-          speed.apply(angle + 90, Math.max(0, MOVE_SPEED * AIR_FRICTION - currentLeft));
-          break;
-        case RIGHT:
-          double currentRight = speed.getValueFor(angle + 270);
-          speed.apply(angle + 270, Math.max(0, MOVE_SPEED * AIR_FRICTION - currentRight));
-          break;
-        default:
-          break;
+      if(currentMove.movingLeft) {
+        double currentLeft = speed.getValueFor(angle + 90);
+        speed.apply(angle + 90, Math.max(0, MOVE_SPEED * AIR_FRICTION - currentLeft));        
+      } else if(currentMove.movingRight) {
+        double currentRight = speed.getValueFor(angle + 270);
+        speed.apply(angle + 270, Math.max(0, MOVE_SPEED * AIR_FRICTION - currentRight));        
       }
     }
     
@@ -216,8 +223,5 @@ public class StepsGenerator {
       }
     }
   }
-  
-  private enum Move {
-    LEFT, RIGHT, NONE
-  }
+
 }

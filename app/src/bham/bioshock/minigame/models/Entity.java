@@ -2,6 +2,7 @@ package bham.bioshock.minigame.models;
 
 import bham.bioshock.common.Position;
 import bham.bioshock.minigame.PlanetPosition;
+import bham.bioshock.minigame.models.Astronaut.Move;
 import bham.bioshock.minigame.objectives.Objective;
 import bham.bioshock.minigame.physics.*;
 import bham.bioshock.minigame.worlds.World;
@@ -159,6 +160,11 @@ public abstract class Entity implements Serializable {
 
   public void setSpeed(float angle, float force) {
     speed.apply(angle, force);
+  }
+  
+  public void setStep(Step step) {
+    speed = step.vector;
+    pos = step.position;
   }
 
   public void setSpeedVector(SpeedVector s) {

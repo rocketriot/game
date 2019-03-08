@@ -11,14 +11,17 @@ import bham.bioshock.communication.Action;
 import bham.bioshock.communication.Command;
 import bham.bioshock.communication.client.ClientService;
 import bham.bioshock.minigame.PlayerTexture;
+import bham.bioshock.minigame.models.Astronaut.Move;
 import bham.bioshock.minigame.models.Bullet;
 import bham.bioshock.minigame.objectives.KillThemAll;
 import bham.bioshock.minigame.objectives.Objective;
 import bham.bioshock.minigame.physics.SpeedVector;
+import bham.bioshock.minigame.physics.Step;
 import bham.bioshock.minigame.worlds.FirstWorld;
 import bham.bioshock.minigame.worlds.World;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 import com.google.inject.Inject;
 
@@ -48,7 +51,7 @@ public class MinigameController extends Controller {
     arguments.add((Serializable) store.getMainPlayer().getId());
     arguments.add((Serializable) localStore.getMainPlayer().getSpeedVector());
     arguments.add((Serializable) localStore.getMainPlayer().getPos());
-    arguments.add((Serializable) localStore.getMainPlayer().getDirection());
+    arguments.add((Serializable) localStore.getMainPlayer().getMove());
     arguments.add((Serializable) localStore.getMainPlayer().haveGun());
     
     clientService.send(new Action(Command.MINIGAME_PLAYER_MOVE, arguments));
@@ -58,10 +61,10 @@ public class MinigameController extends Controller {
     UUID playerId = (UUID) action.getArgument(0);
     SpeedVector speed = (SpeedVector) action.getArgument(1);
     Position pos = (Position) action.getArgument(2);
-    PlayerTexture dir = (PlayerTexture) action.getArgument(3);
+    Move move = (Move) action.getArgument(3);
     Boolean haveGun = (Boolean) action.getArgument(4);
 
-    localStore.updatePlayer(playerId, speed, pos, dir, haveGun);
+    localStore.updatePlayer(playerId, speed, pos, move, haveGun);
   }
   
   public void bulletShot(Bullet bullet) {

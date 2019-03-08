@@ -48,7 +48,7 @@ public class ServerHandler {
   public void sendToAllExcept(Action action, UUID id) {
     synchronized(connections) {
       for(ServerService s : connections) {
-        if(s.Id() != id) {
+        if(!s.Id().equals(id)) {
           s.send(action);        
         }
       }
@@ -58,7 +58,7 @@ public class ServerHandler {
   public void sendTo(UUID clientId, Action action) {
     synchronized(connections) {
       for(ServerService s : connections) {
-        if(s.Id() == clientId) {
+        if(s.Id().equals(clientId)) {
           s.send(action);
           return;
         }

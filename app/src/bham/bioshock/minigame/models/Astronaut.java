@@ -1,4 +1,6 @@
 package bham.bioshock.minigame.models;
+import java.util.Collection;
+import java.util.List;
 import java.util.stream.Stream;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
@@ -10,11 +12,14 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Intersector.MinimumTranslationVector;
 import bham.bioshock.client.controllers.SoundController;
 import bham.bioshock.common.Position;
+import bham.bioshock.communication.Sendable;
 import bham.bioshock.minigame.PlayerTexture;
 import bham.bioshock.minigame.physics.CollisionBoundary;
 import bham.bioshock.minigame.physics.SpeedVector;
 import bham.bioshock.minigame.physics.Step;
 import bham.bioshock.minigame.worlds.World;
+import static java.util.stream.Collectors.toList;
+import java.io.Serializable;
 
 public class Astronaut extends Entity {
 
@@ -27,8 +32,7 @@ public class Astronaut extends Entity {
   private PlayerTexture dir = PlayerTexture.FRONT;
   private boolean haveGun = false;
   private CollisionBoundary legs;
-  private boolean movingLeft = false;
-  private boolean movingRight = false;
+  private Move move = new Move();
 
 
   public Astronaut(World w, float x, float y) {
@@ -47,32 +51,36 @@ public class Astronaut extends Entity {
   }
 
   public void moveLeft(boolean value) {
-    movingLeft = value;
+    move.movingLeft = value;
   }
   
   public void moveRight(boolean value) {
-    movingRight = value;
+    move.movingRight = value;
   }
 
   public void jump(boolean value) {
     if(value) {
       SoundController.playSound("jump");      
     }
-    stepsGenerator.jump(value);
+    move.jumping = value;
+  }
+  
+  public List<Step> getFutureSteps() {
+    return stepsGenerator.getFutureSteps().collect(toList());
   }
   
   public void moveChange() {
-    if(movingRight) {
-      dir = PlayerTexture.RIGHT;
-      stepsGenerator.moveRight();
-      return;
-    } else if(movingLeft) {
+    if(move.movingLeft) {
       dir = PlayerTexture.LEFT; 
       stepsGenerator.moveLeft();
-      return;
+    } else if(move.movingRight) {
+      dir = PlayerTexture.RIGHT;
+      stepsGenerator.moveRight();
+    } else {
+      stepsGenerator.moveStop();
+      dir = PlayerTexture.FRONT;
     }
-    stepsGenerator.moveStop();
-    dir = PlayerTexture.FRONT;  
+    stepsGenerator.jump(move.jumping);
   }
   
   public void resetDirection() {
@@ -93,12 +101,8 @@ public class Astronaut extends Entity {
     animationTime += delta;
   }
 
-  public PlayerTexture getDirection() {
-    return dir;
-  }
-
-  public void setDirection(PlayerTexture t) {
-    dir = t;
+  public Move getMove() {
+    return move;
   }
   
   @Override
@@ -244,13 +248,18 @@ public class Astronaut extends Entity {
     walkGunAnimation = textureToAnimation(walkGunSheet);
   }
 
-  public void updateFromServer(SpeedVector speed, Position pos, PlayerTexture dir,
+  public void updateFromServer(SpeedVector speed, Position pos, Move move,
       Boolean haveGun) {
     this.haveGun = haveGun;
-    this.dir = dir;
-    this.setSpeedVector(speed);
-    this.setPosition(pos);
-    this.stepsGenerator.updateFromServer(speed, pos);
+    this.move = move;
+    this.moveChange();
+    stepsGenerator.updateFromServer(speed, pos);
+  }
+  
+  public static class Move extends Sendable {
+    public boolean jumping = false;
+    public boolean movingLeft = false;
+    public boolean movingRight = false;
   }
 
 }

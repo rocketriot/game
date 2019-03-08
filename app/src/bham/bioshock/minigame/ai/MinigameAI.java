@@ -2,6 +2,7 @@ package bham.bioshock.minigame.ai;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 import bham.bioshock.common.models.store.MinigameStore;
 import bham.bioshock.common.models.store.Store;
@@ -9,6 +10,8 @@ import bham.bioshock.communication.Action;
 import bham.bioshock.communication.Command;
 import bham.bioshock.communication.server.ServerHandler;
 import bham.bioshock.minigame.models.Astronaut;
+import bham.bioshock.minigame.models.Astronaut.Move;
+import bham.bioshock.minigame.physics.Step;
 
 abstract public class MinigameAI {
 
@@ -42,12 +45,12 @@ abstract public class MinigameAI {
 
   public void afterUpdate() {
     astronaut.moveChange();
-    
+
     ArrayList<Serializable> arguments = new ArrayList<>();
     arguments.add((Serializable) id);
     arguments.add((Serializable) astronaut.get().getSpeedVector());
     arguments.add((Serializable) astronaut.get().getPos());
-    arguments.add((Serializable) astronaut.get().getDirection());
+    arguments.add((Serializable) astronaut.get().getMove());
     arguments.add((Serializable) astronaut.get().haveGun());
     
     // Send to all except the host
