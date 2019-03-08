@@ -3,6 +3,7 @@ package bham.bioshock.minigame.worlds;
 import java.io.Serializable;
 import bham.bioshock.minigame.PlanetPosition;
 import java.util.ArrayList;
+import com.badlogic.gdx.graphics.Texture;
 import bham.bioshock.common.Position;
 import bham.bioshock.minigame.MapSeeder;
 import bham.bioshock.minigame.models.Gun;
@@ -61,5 +62,7 @@ abstract public class World implements Serializable {
   abstract public ArrayList<Gun> getGuns();
 
   abstract public ArrayList<Platform> getPlatforms();
+  
+  abstract public Texture getTexture();
 
 }

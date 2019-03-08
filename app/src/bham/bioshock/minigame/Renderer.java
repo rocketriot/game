@@ -50,6 +50,7 @@ public class Renderer {
   private World world;
   private Clock clock;
   private Objective objective;
+  private Texture worldTexture;
 
   public Renderer(Store store, Router router) {
     this.store = store;
@@ -61,6 +62,7 @@ public class Renderer {
     shapeRenderer = new ShapeRenderer();
 
     world = minigameStore.getWorld();
+    worldTexture = world.getTexture();
 
     this.objective = minigameStore.getObjective();
     this.objective.initialise();
@@ -133,13 +135,15 @@ public class Renderer {
     
     Collection<Entity> entities = getEntities();
     
-    drawPlanet();
+    drawBackground();
 
     if (DEBUG_MODE) {
       entities.forEach(e -> e.drawDebug(shapeRenderer));
     }
     
+    
     batch.begin();
+    drawPlanet();
     entities.forEach(e -> e.draw(batch, delta));      
     batch.end();
 
@@ -153,13 +157,14 @@ public class Renderer {
   }
 
   public void drawPlanet() {
+    float radius = (float) world.getPlanetRadius()+530;
+    batch.draw(worldTexture, -radius, -radius, radius*2, radius*2);
+  }
+  
+  public void drawBackground() {
     backgroundBatch.begin();
     backgroundBatch.draw(background, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
     backgroundBatch.end();
-    shapeRenderer.begin(ShapeType.Filled);
-    shapeRenderer.setColor(Color.SALMON);
-    shapeRenderer.circle(0, 0, (float) minigameStore.getPlanetRadius());
-    shapeRenderer.end();
   }
 
   public void resize(int width, int height) {
