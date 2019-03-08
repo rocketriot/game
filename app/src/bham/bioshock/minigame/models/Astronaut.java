@@ -106,8 +106,12 @@ public class Astronaut extends Entity {
 
   public void setPosition(Position p) {
     pos = p;
-    collisionBoundary.update(pos, getRotation());
-    legs.update(pos, getRotation());
+    if(collisionBoundary != null) {
+      collisionBoundary.update(pos, getRotation());      
+    }
+    if(legs != null) {
+      legs.update(pos, getRotation());      
+    }
   }
 
   

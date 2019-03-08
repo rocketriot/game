@@ -28,9 +28,11 @@ public class KillEveryoneAI extends MinigameAI {
     
     for(int i=0; i<2; i++) {
       if(angle < 0) {
-        astronaut.moveLeft(delta);
+        astronaut.moveLeft(true);
+        astronaut.moveRight(false);
       } else {
-        astronaut.moveRight(delta);
+        astronaut.moveRight(true);
+        astronaut.moveLeft(false);
       }
     }
     

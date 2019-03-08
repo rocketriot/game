@@ -7,17 +7,15 @@ import bham.bioshock.client.Router;
 import bham.bioshock.client.controllers.SoundController;
 import bham.bioshock.common.Position;
 import bham.bioshock.common.models.store.MinigameStore;
-import bham.bioshock.minigame.models.Bullet;
-import bham.bioshock.minigame.models.Player;
+import bham.bioshock.minigame.models.*;
 import bham.bioshock.minigame.physics.CollisionHandler;
 import bham.bioshock.minigame.physics.SpeedVector;
 import bham.bioshock.minigame.worlds.World;
-import bham.bioshock.minigame.worlds.World.PlanetPosition;
 
 public class InputListener extends InputAdapter {
 
   private boolean shooting = false;
-  private Player mainPlayer;
+  private Astronaut mainPlayer;
   private MinigameStore localStore;
   private World world;
   private Router router;

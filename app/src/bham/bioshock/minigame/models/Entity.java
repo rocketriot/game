@@ -1,8 +1,11 @@
 package bham.bioshock.minigame.models;
 
 import bham.bioshock.common.Position;
+import bham.bioshock.minigame.PlanetPosition;
+import bham.bioshock.minigame.objectives.Objective;
 import bham.bioshock.minigame.physics.*;
 import bham.bioshock.minigame.worlds.World;
+import java.io.Serializable;
 import java.util.Optional;
 import java.util.stream.Stream;
 import com.badlogic.gdx.graphics.Color;
@@ -30,12 +33,12 @@ public abstract class Entity implements Serializable {
   protected SpeedVector speed;
   protected World world;
 
-  protected CollisionBoundary collisionBoundary;
-  protected CollisionHandler collisionHandler;
+  protected transient CollisionBoundary collisionBoundary;
+  protected transient CollisionHandler collisionHandler;
   protected float collisionWidth = 50;
   protected float collisionHeight = 50;
  
-  protected StepsGenerator stepsGenerator;
+  protected transient StepsGenerator stepsGenerator;
 
   protected State state = State.CREATED;
   private Objective objective = null;
@@ -56,7 +59,9 @@ public abstract class Entity implements Serializable {
   
   public void setCollisionHandler(CollisionHandler collisionHandler) {
     this.collisionHandler = collisionHandler;
-    stepsGenerator.setCollisionHandler(collisionHandler);
+    if(stepsGenerator != null) {
+      stepsGenerator.setCollisionHandler(collisionHandler);      
+    }
   }
   
   public int getWidth() {
@@ -141,6 +146,9 @@ public abstract class Entity implements Serializable {
     collisionBoundary = new CollisionBoundary(collisionWidth, collisionHeight);
     collisionBoundary.update(pos, getRotation());
     if(!isStatic) {
+      if(stepsGenerator == null) {
+        stepsGenerator = new StepsGenerator(world, this);
+      }
       stepsGenerator.generate();      
     }
   }

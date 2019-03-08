@@ -7,9 +7,9 @@ import com.badlogic.gdx.math.Intersector.MinimumTranslationVector;
 import bham.bioshock.common.Direction;
 import bham.bioshock.common.Position;
 import bham.bioshock.common.models.store.MinigameStore;
+import bham.bioshock.minigame.PlanetPosition;
 import bham.bioshock.minigame.models.Entity;
 import bham.bioshock.minigame.worlds.World;
-import bham.bioshock.minigame.worlds.World.PlanetPosition;
 
 public class CollisionHandler {
   

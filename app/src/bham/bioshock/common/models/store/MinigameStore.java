@@ -84,7 +84,7 @@ public class MinigameStore {
     return entities.size() + staticEntities.size();
   }
   
-  public Collection<Player> getPlayers() {
+  public Collection<Astronaut> getPlayers() {
     return players.values();
   }
   
