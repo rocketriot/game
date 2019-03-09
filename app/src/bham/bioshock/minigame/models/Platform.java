@@ -10,31 +10,34 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 public class Platform extends StaticEntity {
 
-    private TextureRegion texture;
+  private static final long serialVersionUID = -2823962935775990161L;
 
-    public Platform(World w, float x, float y, int width, int height) {
-        super(w ,x, y);
-        this.width = width;
-        this.height = height;
-        collisionWidth = width;
-        collisionHeight = height;
-    }
+  private TextureRegion texture;
 
-    public Platform(World w, Position p, int width, int height) {
-        this(w, p.x, p.y, width, height);
-    }
+  public Platform(World w, float x, float y, int width, int height) {
+    super(w, x, y, EntityType.PLATFORM);
+    this.width = width;
+    this.height = height;
+    collisionWidth = width;
+    collisionHeight = height;
+  }
 
-    public Platform(World w, PlanetPosition pp, int width, int height) {
-        this(w, w.convert(pp), width, height);
-    }
+  public Platform(World w, Position p, int width, int height) {
+    this(w, p.x, p.y, width, height);
+  }
 
-    public TextureRegion getTexture() {
-       return texture;
-    }
+  public Platform(World w, PlanetPosition pp, int width, int height) {
+    this(w, w.convert(pp), width, height);
+  }
 
-    public void load() {
-        texture = new TextureRegion( new Texture(Gdx.files.internal("app/assets/minigame/platform.png")));
-        super.load();
-    }
+  public TextureRegion getTexture() {
+    return texture;
+  }
+
+  public void load() {
+    texture =
+        new TextureRegion(new Texture(Gdx.files.internal("app/assets/minigame/platform.png")));
+    super.load();
+  }
 
 }

@@ -2,6 +2,7 @@ package bham.bioshock.minigame.ai;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 import bham.bioshock.common.models.store.MinigameStore;
 import bham.bioshock.common.models.store.Store;
@@ -9,13 +10,15 @@ import bham.bioshock.communication.Action;
 import bham.bioshock.communication.Command;
 import bham.bioshock.communication.server.ServerHandler;
 import bham.bioshock.minigame.models.Astronaut;
+import bham.bioshock.minigame.models.Astronaut.Move;
+import bham.bioshock.minigame.physics.Step;
 
 abstract public class MinigameAI {
 
   private ServerHandler handler;
   protected Store store;
   protected UUID id;
-  protected Astronaut astronaut;
+  protected CpuAstronaut astronaut;
   protected MinigameStore localStore;
   
   public MinigameAI(UUID id, Store store, ServerHandler handler) {
@@ -30,7 +33,7 @@ abstract public class MinigameAI {
       if(localStore == null) return;
     };
     if(astronaut == null) {
-      astronaut = localStore.getPlayer(id);
+      astronaut = new CpuAstronaut(localStore.getPlayer(id));
       if(astronaut == null) return;
     }
     
@@ -41,13 +44,19 @@ abstract public class MinigameAI {
   abstract public void update(float delta);
 
   public void afterUpdate() {
+    astronaut.moveChange();
+
     ArrayList<Serializable> arguments = new ArrayList<>();
     arguments.add((Serializable) id);
-    arguments.add((Serializable) astronaut.getSpeedVector());
-    arguments.add((Serializable) astronaut.getPos());
-    arguments.add((Serializable) astronaut.getDirection());
-    arguments.add((Serializable) astronaut.haveGun());
+    arguments.add((Serializable) astronaut.get().getSpeedVector());
+    arguments.add((Serializable) astronaut.get().getPos());
+    arguments.add((Serializable) astronaut.get().getMove());
+    arguments.add((Serializable) astronaut.get().haveGun());
     
-    handler.sendToAll(new Action(Command.MINIGAME_PLAYER_MOVE, arguments));
+    // Send to all except the host
+    handler.sendToAllExcept(
+        new Action(Command.MINIGAME_PLAYER_MOVE, arguments), 
+        store.getMainPlayer().getId()
+    );
   }
 }

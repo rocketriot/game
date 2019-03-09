@@ -161,7 +161,6 @@ public class MainMenuScreen extends ScreenMaster {
           }
         } else {
           SoundController.playSound("menuSelect");
-          System.out.println("Cancelled..");
         }
       }
     };
@@ -194,7 +193,6 @@ public class MainMenuScreen extends ScreenMaster {
 
         } else {
           SoundController.playSound("menuSelect");
-          System.out.println("Cancelled..");
         }
       }
 

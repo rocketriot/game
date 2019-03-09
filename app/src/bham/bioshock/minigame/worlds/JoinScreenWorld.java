@@ -6,6 +6,7 @@ import bham.bioshock.minigame.models.Platform;
 import bham.bioshock.minigame.models.Rocket;
 
 import java.util.ArrayList;
+import com.badlogic.gdx.graphics.Texture;
 
 
 
@@ -51,5 +52,9 @@ public class JoinScreenWorld extends World {
     @Override
     public ArrayList<Platform> getPlatforms() {
         return null;
+    }
+    @Override
+    public Texture getTexture() {
+      return null;
     }
 }

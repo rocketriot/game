@@ -21,19 +21,16 @@ public class KillEveryoneAI extends MinigameAI {
     Astronaut host = localStore.getMainPlayer();
     
     PlanetPosition hostPP = host.getPlanetPos();
-    PlanetPosition pp = astronaut.getPlanetPos();
+    PlanetPosition pp = astronaut.get().getPlanetPos();
     
     double angleDelta = hostPP.angle - pp.angle;
     double angle = (angleDelta + 180) % 360 - 180;
     
-    for(int i=0; i<2; i++) {
-      if(angle < 0) {
-        astronaut.moveLeft(delta);
-      } else {
-        astronaut.moveRight(delta);
-      }
+    if(angle < 0) {
+      astronaut.moveLeft();
+    } else {
+      astronaut.moveRight();
     }
-    
   }
 
 }

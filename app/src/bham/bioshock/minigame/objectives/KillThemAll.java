@@ -5,7 +5,6 @@ import bham.bioshock.client.Router;
 import bham.bioshock.common.Position;
 import bham.bioshock.common.models.store.MinigameStore;
 import bham.bioshock.minigame.models.Astronaut;
-
 import bham.bioshock.minigame.worlds.World;
 import java.util.Collections;
 import java.util.Comparator;
