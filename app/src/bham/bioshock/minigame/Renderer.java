@@ -2,6 +2,8 @@ package bham.bioshock.minigame;
 import bham.bioshock.client.controllers.SoundController;
 import bham.bioshock.client.scenes.MinigameHud;
 import java.util.ArrayList;
+
+import bham.bioshock.client.Assets;
 import bham.bioshock.client.Route;
 import bham.bioshock.client.Router;
 import bham.bioshock.common.Position;
@@ -105,7 +107,7 @@ public class Renderer {
   }
 
   private void setupUI() {
-    Skin skin = new Skin(Gdx.files.internal("app/assets/skins/neon/skin/neon-ui.json"));
+    Skin skin = new Skin(Gdx.files.internal(Assets.skin));
     hud = new MinigameHud(batch, skin, GAME_WORLD_WIDTH, GAME_WORLD_HEIGHT, store, router);
   }
 

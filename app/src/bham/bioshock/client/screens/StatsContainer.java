@@ -1,5 +1,6 @@
 package bham.bioshock.client.screens;
 
+import bham.bioshock.client.Assets;
 import bham.bioshock.common.models.Player;
 import bham.bioshock.common.models.store.MinigameStore;
 import bham.bioshock.common.models.store.Store;
@@ -29,7 +30,7 @@ public class StatsContainer extends Container {
         this.store = store;
 
         /*nb: change the skin*/
-        this.skin = new Skin(Gdx.files.internal("app/assets/skins/neon/skin/neon-ui.json"));
+        this.skin = new Skin(Gdx.files.internal(Assets.skin));
         setupContainers();
     }
 
