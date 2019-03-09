@@ -13,7 +13,7 @@ import bham.bioshock.communication.client.ClientService;
 import bham.bioshock.minigame.PlayerTexture;
 import bham.bioshock.minigame.models.Astronaut.Move;
 import bham.bioshock.minigame.models.Bullet;
-import bham.bioshock.minigame.objectives.KillThemAll;
+import bham.bioshock.minigame.objectives.CaptureTheFlag;
 import bham.bioshock.minigame.objectives.Objective;
 import bham.bioshock.minigame.physics.SpeedVector;
 import bham.bioshock.minigame.physics.Step;
@@ -86,12 +86,12 @@ public class MinigameController extends Controller {
   }
   
   
-  public void show(World w) {    
+  public void show(ArrayList<Serializable> arr) {
+    World w = (World) arr.get(0);
+    Objective o = (Objective) arr.get(1);
+    o.setRouter(router);
     MinigameStore localStore = new MinigameStore();
-
-    Objective objective = new KillThemAll(w);
-
-    localStore.seed(store, w, objective);
+    localStore.seed(store, w, o);
 
     store.setMinigameStore(localStore);
     router.call(Route.FADE_OUT, "boardGame");

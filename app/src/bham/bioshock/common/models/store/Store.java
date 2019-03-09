@@ -159,4 +159,5 @@ public class Store {
   public void setJoinScreenStore(JoinScreenStore joinScreenStore) {
     this.joinScreenStore = joinScreenStore;
   }
+
 }

@@ -20,11 +20,7 @@ import bham.bioshock.client.scenes.MinigameHud;
 import bham.bioshock.common.consts.Config;
 import bham.bioshock.common.models.store.MinigameStore;
 import bham.bioshock.common.models.store.Store;
-import bham.bioshock.minigame.models.Astronaut;
-import bham.bioshock.minigame.models.Bullet;
-import bham.bioshock.minigame.models.Entity;
-import bham.bioshock.minigame.models.Gun;
-import bham.bioshock.minigame.models.Rocket;
+import bham.bioshock.minigame.models.*;
 import bham.bioshock.minigame.objectives.Objective;
 import bham.bioshock.minigame.physics.CollisionHandler;
 import bham.bioshock.minigame.worlds.World;
@@ -50,7 +46,7 @@ public class Renderer {
   
   private MinigameHud hud;
   private World world;
-  private Clock clock;
+
   private Objective objective;
   private Texture worldTexture;
   
@@ -78,7 +74,6 @@ public class Renderer {
     
     CollisionHandler collisionHandler = new CollisionHandler(minigameStore);
 
-    clock = new Clock();
     setupUI();
     loadSprites(collisionHandler);
 
@@ -102,6 +97,7 @@ public class Renderer {
     Rocket.loadTextures();
     Gun.loadTextures();
     Bullet.loadTextures();
+    Flag.loadTextures();
     stage = new Stage(viewport);
 
     background = new Sprite(new Texture(Gdx.files.internal("app/assets/backgrounds/game.png")));
@@ -121,8 +117,6 @@ public class Renderer {
   }
 
   public void render(float delta) {
-    checkTime(delta);
-
     batch.setProjectionMatrix(cam.combined);
     shapeRenderer.setProjectionMatrix(cam.combined);
 
@@ -174,20 +168,7 @@ public class Renderer {
   }
 
 
-  private void checkTime(float delta){
-    clock.update(delta);
 
-    Clock.TimeListener listener = new Clock.TimeListener() {
-      @Override
-      public void handle(Clock.TimeUpdateEvent event) {
-        if(event.time >= 180.0f){
-          Astronaut p = objective.getWinner();
-        }
-      }
-    };
-
-    clock.every(1.0f,listener);
-  }
 
 }
 

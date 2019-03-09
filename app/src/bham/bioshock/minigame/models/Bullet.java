@@ -100,7 +100,7 @@ public class Bullet extends Entity {
   @Override
   public boolean canColideWith(Entity e) {
     switch(e.type) {
-      case PLAYER:
+      case ASTRONAUT:
       case BULLET:
       case ROCKET:
       case PLATFORM:
@@ -113,7 +113,7 @@ public class Bullet extends Entity {
   @Override
   public void handleCollision(Entity e) {
     switch(e.type) {
-      case PLAYER:
+      case ASTRONAUT:
         state = State.REMOVING;
         break;
       default:
@@ -127,7 +127,7 @@ public class Bullet extends Entity {
       case BULLET:
         collisionHandler.collide(step, 1f, v);
         break;
-      case PLAYER:
+      case ASTRONAUT:
         collisionHandler.collide(step, .1f, v);
         break;
       case PLATFORM:

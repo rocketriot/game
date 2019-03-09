@@ -7,11 +7,8 @@ import java.util.UUID;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import bham.bioshock.common.Position;
 import bham.bioshock.common.models.Player;
-import bham.bioshock.minigame.models.Astronaut;
+import bham.bioshock.minigame.models.*;
 import bham.bioshock.minigame.models.Astronaut.Move;
-import bham.bioshock.minigame.models.Entity;
-import bham.bioshock.minigame.models.EntityType;
-import bham.bioshock.minigame.models.Gun;
 import bham.bioshock.minigame.objectives.Objective;
 import bham.bioshock.minigame.physics.SpeedVector;
 import bham.bioshock.minigame.worlds.World;
@@ -61,8 +58,10 @@ public class MinigameStore {
     staticEntities.addAll(world.getRockets());
     entities.addAll(world.getGuns());
     entities.addAll(getPlayers());
+
     this.objective = o;
     o.setPlayers(getPlayers());
+    o.seed(this);
   }
 
 

@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.UUID;
+
+import bham.bioshock.minigame.objectives.Objective;
 import com.google.inject.Inject;
 import bham.bioshock.common.models.GameBoard;
 import bham.bioshock.common.models.Player;
@@ -72,8 +74,7 @@ public class ClientHandler implements IClientHandler {
             break;
           }
           case MINIGAME_START: {
-            World w = (World) action.getArgument(0);
-            router.call(Route.START_MINIGAME, w);
+            router.call(Route.START_MINIGAME, action.getArguments());
             break;
           }
           case MINIGAME_PLAYER_MOVE: {

@@ -34,7 +34,7 @@ public class Astronaut extends Entity {
 
 
   public Astronaut(World w, float x, float y) {
-    super(w, x, y, EntityType.PLAYER);
+    super(w, x, y, EntityType.ASTRONAUT);
     width = 150;
     height = 150;
     animationTime = 0;
@@ -177,11 +177,11 @@ public class Astronaut extends Entity {
   @Override
   public boolean canColideWith(Entity e) {
     switch(e.type) {
-      case PLAYER:
+      case ASTRONAUT:
       case BULLET:
-      case ROCKET:
       case GUN:
       case PLATFORM:
+      case FLAG:
         return true;
       default:
         return false;
@@ -201,6 +201,10 @@ public class Astronaut extends Entity {
           getObjective().gotShot(this, ((Bullet) e).getShooter());          
         }
         break;
+      case FLAG:
+        this.getObjective().captured(this);
+        e.state = State.REMOVED;
+        break;
       default:
         break;
     }
@@ -214,7 +218,7 @@ public class Astronaut extends Entity {
           collisionHandler.collide(step, 0.2f, v);          
         }
         break;
-      case PLAYER:
+      case ASTRONAUT:
         collisionHandler.collide(step, .8f, v);
         break;
       case ROCKET:

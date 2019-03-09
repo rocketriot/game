@@ -1,5 +1,5 @@
 package bham.bioshock.minigame.models;
 
 public enum EntityType {
-  BULLET, GUN, PLATFORM, PLAYER, ROCKET
+  BULLET, GUN, PLATFORM, ASTRONAUT, ROCKET, FLAG
 }
