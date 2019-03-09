@@ -100,16 +100,16 @@ public class SoundController extends Controller {
    * @param music The name of the music that you want to start
    */
   public void startMusic(String music) {
-    // if (!musicPlaying.get(music) && musicEnabled) {
-    //   long id = this.music.get(music).loop(musicVolume);
-    //   musicIds.put(music, id);
+    if (!musicPlaying.get(music) && musicEnabled) {
+      long id = this.music.get(music).loop(musicVolume);
+      musicIds.put(music, id);
 
-    //   if (musicPlaying.keySet().contains(music)) {
-    //     musicPlaying.replace(music, true);
-    //   } else {
-    //     musicPlaying.put(music, true);
-    //   }
-    // }
+      if (musicPlaying.keySet().contains(music)) {
+        musicPlaying.replace(music, true);
+      } else {
+        musicPlaying.put(music, true);
+      }
+    }
   }
 
   /**
