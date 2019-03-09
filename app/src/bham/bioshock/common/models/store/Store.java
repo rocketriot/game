@@ -148,7 +148,6 @@ public class Store {
         cpuPlayers.add(p.getId());
       }
     }
-    System.out.println(cpuPlayers.size());
     return cpuPlayers;
   }
   

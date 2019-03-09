@@ -130,7 +130,7 @@ public class Renderer {
     Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
     
     Collection<Entity> entities = getEntities();
-    
+
     drawBackground();
 
     if (DEBUG_MODE) {
