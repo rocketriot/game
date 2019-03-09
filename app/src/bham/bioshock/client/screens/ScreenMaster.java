@@ -149,9 +149,8 @@ public abstract class ScreenMaster implements Screen {
 
     };
 
-    diag.text(new Label(alert_text, skin));
+    diag.text(new Label(alert_text, skin, "window"));
     diag.button("OK", true);
-    // diag.button("Cancel", false);
 
     diag.show(stage);
   }
