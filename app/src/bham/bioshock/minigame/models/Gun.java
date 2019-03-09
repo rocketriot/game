@@ -7,10 +7,12 @@ import bham.bioshock.minigame.worlds.World;
 
 public class Gun extends Entity {
 
+  private static final long serialVersionUID = 7208353527077911911L;
+  
   private static TextureRegion texture;
   
   public Gun(World w, float x, float y) {
-    super(w, x, y);
+    super(w, x, y, EntityType.GUN);
     setRotation(0);
     fromGround = -5;
   }

@@ -50,8 +50,6 @@ public class ClientConnectThread extends Thread {
         }
       }
 
-      System.out.println("Waiting for a connection...");
-
       // Wait for a response
       byte[] buffer = new byte[15000];
       DatagramPacket receivePacket = new DatagramPacket(buffer, buffer.length);

@@ -1,6 +1,9 @@
 package bham.bioshock.minigame.worlds;
 
+import java.io.Serializable;
+import bham.bioshock.minigame.PlanetPosition;
 import java.util.ArrayList;
+import com.badlogic.gdx.graphics.Texture;
 import bham.bioshock.common.Position;
 import bham.bioshock.minigame.MapSeeder;
 import bham.bioshock.minigame.models.Gun;
@@ -9,7 +12,7 @@ import bham.bioshock.minigame.models.Rocket;
 import bham.bioshock.minigame.objectives.Objective;
 import bham.bioshock.minigame.physics.Vector;
 
-abstract public class World {
+abstract public class World implements Serializable {
 
 
   public double getAngleTo(double x, double y) {
@@ -59,15 +62,7 @@ abstract public class World {
   abstract public ArrayList<Gun> getGuns();
 
   abstract public ArrayList<Platform> getPlatforms();
-
-  public class PlanetPosition {
-    public float angle;
-    public float fromCenter;
-
-    public PlanetPosition(float angle, float fromCenter) {
-      this.angle = angle;
-      this.fromCenter = fromCenter;
-    }
-  }
+  
+  abstract public Texture getTexture();
 
 }

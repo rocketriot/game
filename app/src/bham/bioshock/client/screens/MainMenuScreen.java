@@ -4,7 +4,10 @@ import bham.bioshock.client.Route;
 import bham.bioshock.client.Router;
 import bham.bioshock.client.controllers.SoundController;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
@@ -20,6 +23,8 @@ public class MainMenuScreen extends ScreenMaster {
   private TextButton exit;
   private TextButton join;
 
+
+
   public MainMenuScreen(Router router) {
     super(router);
     // set the stage, which will react to user inputs
@@ -33,6 +38,7 @@ public class MainMenuScreen extends ScreenMaster {
     super.show();
     drawButtons();
     addListeners();
+
   }
 
   @Override
@@ -47,7 +53,11 @@ public class MainMenuScreen extends ScreenMaster {
   @Override
   public void render(float delta) {
     super.render(delta);
+
   }
+
+
+
 
   private void drawButtons() {
     Container<Table> tableContainer = new Container<>();
@@ -151,7 +161,6 @@ public class MainMenuScreen extends ScreenMaster {
           }
         } else {
           SoundController.playSound("menuSelect");
-          System.out.println("Cancelled..");
         }
       }
     };
@@ -184,7 +193,6 @@ public class MainMenuScreen extends ScreenMaster {
 
         } else {
           SoundController.playSound("menuSelect");
-          System.out.println("Cancelled..");
         }
       }
 
@@ -197,6 +205,9 @@ public class MainMenuScreen extends ScreenMaster {
 
     diag.show(stage);
   }
+
+
+
 
 
 }

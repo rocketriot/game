@@ -71,6 +71,10 @@ public class Action implements Serializable, Comparable<Action> {
   public Command getCommand() {
     return command;
   }
+  
+  public long whenCreated() {
+    return created;
+  }
 
   /**
    * List of arguments sent with the command

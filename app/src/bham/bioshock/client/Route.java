@@ -23,6 +23,8 @@ public enum Route {
   REMOVE_PLAYER               (JoinScreenController.class,    "removePlayer"),
   DISCONNECT_PLAYER           (JoinScreenController.class,    "disconnectPlayer"),
   START_GAME                  (JoinScreenController.class,    "start"),
+  JOIN_SCREEN_MOVE            (JoinScreenController.class,    "rocketMove"),
+  JOIN_SCREEN_UPDATE          (JoinScreenController.class,    "updateRocket"),
 
   MOVE_PLAYER                 (GameBoardController.class,     "move"),
   MOVE_RECEIVED               (GameBoardController.class,     "moveReceived"),
@@ -31,6 +33,7 @@ public enum Route {
   GAME_BOARD_SHOW             (GameBoardController.class,     "show"),
   END_TURN                    (GameBoardController.class,     "endTurn"),
 
+  DIRECT_MINIGAME_START       (MinigameController.class,      "directStart"), // FOR TESTS ONLY
   SEND_MINIGAME_START         (MinigameController.class,      "sendStart"),
   START_MINIGAME              (MinigameController.class,      "show"),
   MINIGAME_MOVE               (MinigameController.class,      "playerMove"),

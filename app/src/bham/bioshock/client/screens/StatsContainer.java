@@ -119,5 +119,6 @@ public class StatsContainer extends Container {
         public UUID getId() {
             return id;
         }
+
     }
 }

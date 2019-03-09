@@ -1,8 +1,11 @@
 package bham.bioshock.minigame.objectives;
-import bham.bioshock.common.Position;
-import bham.bioshock.minigame.models.Player;
-import bham.bioshock.minigame.worlds.World;
 
+import bham.bioshock.client.Route;
+import bham.bioshock.client.Router;
+import bham.bioshock.common.Position;
+import bham.bioshock.common.models.store.MinigameStore;
+import bham.bioshock.minigame.models.Astronaut;
+import bham.bioshock.minigame.worlds.World;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -11,8 +14,8 @@ import java.util.Random;
 
 public class KillThemAll extends Objective {
   private Position respawnPosition;
-  private HashMap<Player, Float> health = new HashMap<>();
-  private HashMap<Player, Integer> kills = new HashMap<>();
+  private HashMap<Astronaut, Float> health = new HashMap<>();
+  private HashMap<Astronaut, Integer> kills = new HashMap<>();
   private float initialHealth = 100.0f;
   private Position[] positions;
 
@@ -23,16 +26,18 @@ public class KillThemAll extends Objective {
   }
 
   @Override
-  public Player getWinner() {
-    return Collections.max(kills.entrySet(), Comparator.comparingInt(HashMap.Entry::getValue)).getKey();
+  public Astronaut getWinner() {
+    return Collections.max(kills.entrySet(), Comparator.comparingInt(HashMap.Entry::getValue))
+        .getKey();
   }
 
 
   @Override
-  public void gotShot(Player player, Player killer) {
-    if(checkIfdead(player)) {
+  public void gotShot(Astronaut player, Astronaut killer) {
+    if (checkIfdead(player)) {
       addKill(killer);
       player.setPosition(respawnPosition);
+      getRouter().call(Route.MINIGAME_MOVE);
       setPlayerHealth(initialHealth, player);
     } else {
       float newHealth = health.get(player) - 5.0f;
@@ -43,25 +48,37 @@ public class KillThemAll extends Objective {
   @Override
   public void initialise() {
     getPlayers().forEach(player -> {
-      health.put(player,initialHealth);
-      kills.put(player,0);
+      health.put(player, initialHealth);
+      kills.put(player, 0);
     });
   }
 
+  @Override
+  public void seed(MinigameStore store) {
+    return;
+  }
 
-  private boolean checkIfdead(Player p){
-    if(health.get(p) - 5.0f <=0)
+  @Override
+  public void captured(Astronaut a) { return;}
+
+
+  private boolean checkIfdead(Astronaut p) {
+    if (health.get(p) - 5.0f <= 0)
       return true;
     return false;
   }
-  private void setPlayerHealth(float newHealth, Player p){
+
+  private void setPlayerHealth(float newHealth, Astronaut p) {
     health.computeIfPresent(p, (k, v) -> newHealth);
   }
-  private void addKill( Player p){ kills.computeIfPresent(p, (k, v) -> (v+1)); }
 
-  private void setRandonRespawnPosition(){
+  private void addKill(Astronaut p) {
+    kills.computeIfPresent(p, (k, v) -> (v + 1));
+  }
+
+  private void setRandonRespawnPosition() {
     Random r = new Random();
-    int i = r.nextInt()%4;
+    int i = Math.abs(r.nextInt()%4);
     respawnPosition = positions[i];
   }
 

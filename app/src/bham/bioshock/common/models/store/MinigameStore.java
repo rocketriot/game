@@ -4,104 +4,123 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.UUID;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import bham.bioshock.common.Position;
-import bham.bioshock.minigame.PlayerTexture;
-import bham.bioshock.minigame.models.Gun;
-import bham.bioshock.minigame.models.Player;
-import bham.bioshock.minigame.models.Rocket;
+import bham.bioshock.common.models.Player;
+import bham.bioshock.minigame.models.*;
+import bham.bioshock.minigame.models.Astronaut.Move;
 import bham.bioshock.minigame.objectives.Objective;
 import bham.bioshock.minigame.physics.SpeedVector;
 import bham.bioshock.minigame.worlds.World;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 
 public class MinigameStore {
 
   private World currentWorld;
   private UUID mainPlayerId;
-  private HashMap<UUID, Player> players;
-  private ArrayList<Rocket> rockets;
-  private ArrayList<Gun> guns;
-  
+  private HashMap<UUID, Astronaut> players;
+  private HashMap<UUID, Long> lastMessage = new HashMap<>();
+  private ArrayList<Entity> entities = new ArrayList<>();
+  private ArrayList<Entity> staticEntities = new ArrayList<>();
+
   private Skin skin;
   private Objective objective;
 
   public MinigameStore() {
     players = new HashMap<>();
-    rockets = new ArrayList<>();
-    guns = new ArrayList<>();
   }
 
-  public void updatePlayer(UUID playerId, SpeedVector speed, Position pos, PlayerTexture dir, Boolean haveGun) {
-    Player p = getPlayer(playerId);
-    p.setSpeedVector(speed);
-    p.setPosition(pos);
-    p.setDirection(dir);
-    p.setGun(haveGun);
+  public void updatePlayer(long time, UUID playerId, SpeedVector speed, Position pos, Move move,
+      Boolean haveGun) {
+    Long previous = lastMessage.get(playerId);
+    if(previous == null) {
+      lastMessage.put(playerId, time);
+    } else if(previous < time) {
+      Astronaut p = getPlayer(playerId);
+      p.updateFromServer(speed, pos, move, haveGun);      
+    }
   }
 
   // Create world from the seeder
   public void seed(Store store, World world, Objective o) {
     this.currentWorld = world;
-    if(store.getMainPlayer() != null) {
-      mainPlayerId = store.getMainPlayer().getId();      
-    }
+    mainPlayerId = store.getMainPlayer().getId();
     Position[] playerPos = world.getPlayerPositions();
 
     int i = 0;
-    for(bham.bioshock.common.models.Player player : store.getPlayers()) {
-      Player p = new Player(world, playerPos[i]);
+    for (Player player : store.getPlayers()) {
+      Astronaut p = new Astronaut(world, playerPos[i]);
+      p.setName(player.getUsername());
       players.put(player.getId(), p);
+      i++;
     }
-    
-    this.rockets = world.getRockets();
-    this.guns = world.getGuns();
+
+    staticEntities.addAll(world.getPlatforms());
+    staticEntities.addAll(world.getRockets());
+    entities.addAll(world.getGuns());
+    entities.addAll(getPlayers());
+
     this.objective = o;
     o.setPlayers(getPlayers());
+    o.seed(this);
   }
-  
+
 
   public World getWorld() {
     return currentWorld;
   }
 
-  public Player getPlayer(UUID playerId) {
+  public Astronaut getPlayer(UUID playerId) {
     return players.get(playerId);
   }
 
-  public Player getMainPlayer() {
+  public Astronaut getMainPlayer() {
     return getPlayer(mainPlayerId);
   }
 
-  public Collection<Player> getPlayers() {
+  public Collection<Gun> getGuns() {
+    ArrayList<Gun> guns = new ArrayList<>();
+    for(Entity e : entities) {
+      if(e.type == EntityType.GUN) {
+        guns.add((Gun) e);        
+      }
+    }
+    return guns;
+  }
+  
+  public Collection<Entity> getEntities() {
+    return entities;
+  }
+
+  public Collection<Entity> getStaticEntities() {
+    return staticEntities;
+  }
+
+  public int countEntities() {
+    return entities.size() + staticEntities.size();
+  }
+
+  public Collection<Astronaut> getPlayers() {
     return players.values();
   }
 
-  public Collection<Rocket> getRockets() {
-    return rockets;
-  }
-
-  public Collection<Gun> getGuns() {
-    return guns;
-  }
-  public void removeGun(Gun g) {
-    guns.removeIf(gun -> gun == g);
-  }
-  public void addGun(Gun g) {
-    guns.add(g);
-  }
-  
   public double getPlanetRadius() {
     return currentWorld.getPlanetRadius();
   }
 
-  public Objective getObjective(){return this.objective;}
+  public Objective getObjective() {
+    return this.objective;
+  }
 
-  public void setSkin(Skin skin) { this.skin = skin; }
+  public void setSkin(Skin skin) {
+    this.skin = skin;
+  }
 
   public Skin getSkin() {
     return skin;
   }
 
-
+  public void addEntity(Entity e) {
+    entities.add(e);
+  }
 
 }

@@ -540,9 +540,8 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
           protected void result(Object object) {
 
             if (object.equals(true)) {
-              System.out.println("Starting minigame");
               SoundController.playSound("menuSelect");
-              router.call(Route.START_MINIGAME);
+              router.call(Route.SEND_MINIGAME_START);
             } else {
               SoundController.playSound("menuSelect");
               System.out.println("Minigame not started");

@@ -1,16 +1,13 @@
 package bham.bioshock.common.models.store;
 
-import bham.bioshock.client.AppPreferences;
-import java.util.HashMap;
-import java.util.Map.Entry;
-import bham.bioshock.common.models.Coordinates;
-import bham.bioshock.common.models.GameBoard;
-import bham.bioshock.common.models.Player;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 import com.badlogic.gdx.Screen;
 import com.google.inject.Singleton;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.UUID;
+import bham.bioshock.client.AppPreferences;
+import bham.bioshock.common.models.GameBoard;
+import bham.bioshock.common.models.Player;
 
 /** Stores all of the models */
 @Singleton
@@ -36,6 +33,9 @@ public class Store {
 
   /** Minigame World */
   private MinigameStore minigameStore;
+
+  /** Join Screen */
+  private JoinScreenStore joinScreenStore;
 
   public AppPreferences getPreferences() {
     return preferences;
@@ -155,4 +155,23 @@ public class Store {
   public void resetMinigameStore() {
     minigameStore = null;
   }
+
+  public List<UUID> getCpuPlayers() {
+    List<UUID> cpuPlayers = new ArrayList<>();
+    for(Player p : players) {
+      if(p.isCpu()) {
+        cpuPlayers.add(p.getId());
+      }
+    }
+    return cpuPlayers;
+  }
+  
+  public JoinScreenStore getJoinScreenStore() {
+    return joinScreenStore;
+  }
+
+  public void setJoinScreenStore(JoinScreenStore joinScreenStore) {
+    this.joinScreenStore = joinScreenStore;
+  }
+
 }
