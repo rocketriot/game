@@ -3,20 +3,18 @@ package bham.bioshock.common.models.store;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Map.Entry;
-import java.util.Set;
 import java.util.UUID;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import bham.bioshock.common.Position;
 import bham.bioshock.common.models.Player;
-import bham.bioshock.minigame.PlayerTexture;
-import bham.bioshock.minigame.models.*;
+import bham.bioshock.minigame.models.Astronaut;
 import bham.bioshock.minigame.models.Astronaut.Move;
+import bham.bioshock.minigame.models.Entity;
+import bham.bioshock.minigame.models.EntityType;
+import bham.bioshock.minigame.models.Gun;
 import bham.bioshock.minigame.objectives.Objective;
 import bham.bioshock.minigame.physics.SpeedVector;
-import bham.bioshock.minigame.physics.Step;
 import bham.bioshock.minigame.worlds.World;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 
 public class MinigameStore {
 
@@ -80,6 +78,16 @@ public class MinigameStore {
     return getPlayer(mainPlayerId);
   }
 
+  public Collection<Gun> getGuns() {
+    ArrayList<Gun> guns = new ArrayList<>();
+    for(Entity e : entities) {
+      if(e.type == EntityType.GUN) {
+        guns.add((Gun) e);        
+      }
+    }
+    return guns;
+  }
+  
   public Collection<Entity> getEntities() {
     return entities;
   }
@@ -94,14 +102,6 @@ public class MinigameStore {
 
   public Collection<Astronaut> getPlayers() {
     return players.values();
-  }
-
-  public void removeGun(Gun g) {
-    entities.removeIf(gun -> gun == g);
-  }
-
-  public void addGun(Gun g) {
-    entities.add(g);
   }
 
   public double getPlanetRadius() {

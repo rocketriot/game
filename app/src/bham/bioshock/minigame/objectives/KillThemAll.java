@@ -2,7 +2,6 @@ package bham.bioshock.minigame.objectives;
 
 import bham.bioshock.common.Position;
 import bham.bioshock.minigame.models.Astronaut;
-import java.util.Collection;
 import bham.bioshock.minigame.worlds.World;
 import java.util.Collections;
 import java.util.Comparator;

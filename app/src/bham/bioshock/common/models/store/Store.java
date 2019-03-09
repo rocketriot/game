@@ -1,18 +1,13 @@
 package bham.bioshock.common.models.store;
 
-import bham.bioshock.client.AppPreferences;
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map.Entry;
-
-import bham.bioshock.common.models.Coordinates;
-import bham.bioshock.common.models.GameBoard;
-import bham.bioshock.common.models.Player;
+import java.util.UUID;
 import com.badlogic.gdx.Screen;
 import com.google.inject.Singleton;
-import java.util.ArrayList;
-import java.util.UUID;
-import java.util.stream.Collectors;
+import bham.bioshock.client.AppPreferences;
+import bham.bioshock.common.models.GameBoard;
+import bham.bioshock.common.models.Player;
 
 /** Stores all of the models */
 @Singleton

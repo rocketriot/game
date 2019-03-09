@@ -4,14 +4,10 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Intersector.MinimumTranslationVector;
 import bham.bioshock.client.controllers.SoundController;
-import bham.bioshock.client.screens.ScreenMaster;
 import bham.bioshock.common.Position;
 import bham.bioshock.communication.Sendable;
 import bham.bioshock.minigame.PlayerTexture;
@@ -20,7 +16,6 @@ import bham.bioshock.minigame.physics.SpeedVector;
 import bham.bioshock.minigame.physics.Step;
 import bham.bioshock.minigame.worlds.World;
 import static java.util.stream.Collectors.toList;
-import java.awt.Font;
 
 public class Astronaut extends Entity {
 

@@ -10,6 +10,9 @@ import com.badlogic.gdx.math.Intersector.MinimumTranslationVector;
 
 
 public class Bullet extends Entity {
+
+  private static final long serialVersionUID = -7192308795772982285L;
+  
   private static TextureRegion texture;
   public boolean isFired = false;
   public static final int launchSpeed = 1200;

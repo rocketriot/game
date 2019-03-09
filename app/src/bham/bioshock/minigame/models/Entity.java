@@ -2,12 +2,12 @@ package bham.bioshock.minigame.models;
 
 import bham.bioshock.common.Position;
 import bham.bioshock.minigame.PlanetPosition;
-import bham.bioshock.minigame.models.Astronaut.Move;
 import bham.bioshock.minigame.objectives.Objective;
 import bham.bioshock.minigame.physics.*;
 import bham.bioshock.minigame.worlds.World;
 import java.io.Serializable;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Stream;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -21,6 +21,9 @@ public abstract class Entity implements Serializable {
 
   private static final long serialVersionUID = 7916524444980988734L;
 
+  /** ID of the entity */
+  private UUID id;
+  
   protected int width = 50;
   protected int height = 50;
   
@@ -45,6 +48,7 @@ public abstract class Entity implements Serializable {
   private Objective objective = null;
   
   public Entity(World w, float x, float y, boolean isStatic, EntityType type) {
+    this.id = UUID.randomUUID();
     this.isStatic = isStatic;
     this.type = type;
     pos = new Position(x, y);
@@ -56,6 +60,10 @@ public abstract class Entity implements Serializable {
   
   public Entity(World w, float x, float y, EntityType type) {
     this(w, x, y, false, type);
+  }
+  
+  public UUID getId() {
+    return id;
   }
   
   public void setCollisionHandler(CollisionHandler collisionHandler) {
