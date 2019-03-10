@@ -1,14 +1,23 @@
 package bham.bioshock.server.handlers;
 
+import bham.bioshock.common.consts.GridPoint;
+import bham.bioshock.common.consts.GridPoint.Type;
 import bham.bioshock.common.models.Coordinates;
 import bham.bioshock.common.models.GameBoard;
 import bham.bioshock.common.models.Player;
+import bham.bioshock.common.models.Player.Move;
 import bham.bioshock.common.models.store.Store;
+import bham.bioshock.common.pathfinding.AStarPathfinding;
 import bham.bioshock.communication.Action;
 import bham.bioshock.communication.Command;
+import bham.bioshock.communication.server.BoardAi;
 import bham.bioshock.communication.server.ServerHandler;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Random;
+
+import com.badlogic.gdx.math.Path;
 
 public class GameBoardHandler {
 
@@ -40,6 +49,7 @@ public class GameBoardHandler {
     
     GameBoard gameBoard = store.getGameBoard();
     // Generate a grid when starting the game
+
     if (gameBoard == null) {
       gameBoard = new GameBoard(); 
       generateGrid(gameBoard, players);
@@ -63,9 +73,9 @@ public class GameBoardHandler {
 
     // Update the store
     store.setGameBoard(gameBoard);
-    Player p = store.getPlayer(movingPlayer.getId());
-    p.setCoordinates(movingPlayer.getCoordinates());
-    p.setFuel(movingPlayer.getFuel());
+    Player currentPlayer = store.getPlayer(movingPlayer.getId());
+    currentPlayer.setCoordinates(movingPlayer.getCoordinates());
+    currentPlayer.setFuel(movingPlayer.getFuel());
 
     // Send out new game board and moving player to players
     ArrayList<Serializable> response = new ArrayList<>();
@@ -74,6 +84,33 @@ public class GameBoardHandler {
     
     handler.sendToAll(new Action(Command.MOVE_PLAYER_ON_BOARD, response));
 
+    if (movingPlayer.isCpu()) {
+      int waitTime = calculateMoveTime(currentPlayer.getBoardMove());
+      new Thread(() -> {
+        try {
+          Thread.sleep(waitTime);
+          endTurn();
+        } catch (InterruptedException e) {
+          e.printStackTrace();
+        }
+      }).start();
+    }
+  }
+
+  private int calculateMoveTime(ArrayList<Move> boardMove) {
+    // Players move 3 tiles per second + 500 to prevent race condition
+    if (boardMove != null)
+      return (boardMove.size() * 1000)/3 + 500;
+    else
+      return 0;
+  }
+
+  public void endTurn() {
     store.nextTurn();
+    // Handle if the next player is a CPU
+    Player movingPlayer = store.getMovingPlayer();
+    if (movingPlayer.isCpu()) {
+      new BoardAi(store, this).run();
+    }
   }
 }

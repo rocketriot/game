@@ -73,6 +73,24 @@ public class GameBoard implements Serializable {
     return false;
   }
 
+  /**
+   * returns the planet object if there is a planet adjacent to the passed in coordinates
+   * @param pos the coordinates of the grid point to be checked
+   * @return the planet object which is adjacent to that position or null if one does not exist
+   */
+  public Planet getAdjacentPlanet(Coordinates pos) {
+    // Next to the planet
+    for (Coordinates p : pos.getNearby()) {
+      if (pos.getX() > 0 && pos.getX() < GRID_SIZE - 1 && pos.getY() > 0 && pos.getY() < GRID_SIZE - 1) {
+        if (getGridPoint(p).isType(GridPoint.Type.PLANET)) {
+          return (Planet) getGridPoint(p).getValue();
+        }
+      }
+    }
+
+    return null;
+  }
+
   /** Sets a point to a random entity */
   private void generateGridPoint(int x, int y) {
     // Do nothing if point was already generated
@@ -88,7 +106,7 @@ public class GameBoard implements Serializable {
 
     // Generate a fuel box
     if (randomFloat <= 0.015) {
-      Fuel fuel = new Fuel(new Coordinates(0, 0));
+      Fuel fuel = new Fuel(new Coordinates(x, y));
       grid[x][y] = new GridPoint(GridPoint.Type.FUEL, fuel);
 
       return;

@@ -1,6 +1,18 @@
 package bham.bioshock.minigame;
 
 import java.util.ArrayList;
+
+import bham.bioshock.client.Assets;
+import bham.bioshock.client.Router;
+import bham.bioshock.common.consts.Config;
+import bham.bioshock.common.models.store.MinigameStore;
+import bham.bioshock.common.models.store.Store;
+import bham.bioshock.minigame.models.Bullet;
+import bham.bioshock.minigame.models.Entity;
+import bham.bioshock.minigame.models.Gun;
+import bham.bioshock.minigame.models.Rocket;
+import bham.bioshock.minigame.objectives.Objective;
+import bham.bioshock.minigame.worlds.World;
 import java.util.Collection;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
@@ -15,15 +27,9 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
-import bham.bioshock.client.Router;
 import bham.bioshock.client.scenes.MinigameHud;
-import bham.bioshock.common.consts.Config;
-import bham.bioshock.common.models.store.MinigameStore;
-import bham.bioshock.common.models.store.Store;
 import bham.bioshock.minigame.models.*;
-import bham.bioshock.minigame.objectives.Objective;
 import bham.bioshock.minigame.physics.CollisionHandler;
-import bham.bioshock.minigame.worlds.World;
 
 public class Renderer {
   private Astronaut mainPlayer;
@@ -86,7 +92,7 @@ public class Renderer {
   }
 
   private void setupUI() {
-    Skin skin = new Skin(Gdx.files.internal("app/assets/skins/neon/skin/neon-ui.json"));
+    Skin skin = new Skin(Gdx.files.internal(Assets.skin));
     hud = new MinigameHud(batch, skin, GAME_WORLD_WIDTH, GAME_WORLD_HEIGHT, store, router);
   }
 

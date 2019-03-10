@@ -145,15 +145,15 @@ public class MainMenuScreen extends ScreenMaster {
 
   private void showHostDialogue() {
 
-    TextField textField = new TextField("", skin, "login");
+    TextField textField = new TextField("", skin);
 
-    Dialog diag = new Dialog("Host Game", skin) {
+    Dialog diag = new Dialog("", skin) {
 
       protected void result(Object object) {
         if (object.equals(true)) {
           String host_name = textField.getText();
           if (host_name.equals("")) {
-            alert("Please Enter a Host Name");
+            alert("Please enter your name");
           } else {
             // show join screen
             SoundController.playSound("menuSelect");
@@ -165,7 +165,7 @@ public class MainMenuScreen extends ScreenMaster {
       }
     };
 
-    diag.text(new Label("Please enter a host name", skin));
+    diag.text(new Label("Enter your name:", skin, "window"));
     diag.getContentTable().add(textField);
     diag.button("OK", true);
     diag.button("Cancel", false);
@@ -175,7 +175,7 @@ public class MainMenuScreen extends ScreenMaster {
 
   private void showJoinDialogue() {
 
-    TextField textField = new TextField("", skin, "login");
+    TextField textField = new TextField("", skin);
 
     Dialog diag = new Dialog("Join Game", skin) {
 
@@ -185,7 +185,7 @@ public class MainMenuScreen extends ScreenMaster {
           String username = textField.getText();
 
           if (username.equals("")) {
-            alert("Please Enter a Username");
+            alert("Please enter your name");
           } else {
             SoundController.playSound("menuSelect");
             router.call(Route.JOIN_SCREEN, username);
@@ -198,9 +198,9 @@ public class MainMenuScreen extends ScreenMaster {
 
     };
 
-    diag.text(new Label("Please enter a username", skin));
+    diag.text(new Label("Enter your name:", skin, "window"));
     diag.getContentTable().add(textField);
-    diag.button("OK", true);
+    diag.button("Done", true);
     diag.button("Cancel", false);
 
     diag.show(stage);

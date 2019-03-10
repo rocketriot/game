@@ -18,6 +18,7 @@ public enum Command {
   GET_GAME_BOARD,
   UPDATE_GAME_BOARD,
   MOVE_PLAYER_ON_BOARD,
+  END_TURN,
   
   // Minigame
   MINIGAME_START,

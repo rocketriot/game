@@ -27,7 +27,7 @@ public class Store {
   /** The ID of the player that the client is controlling, only used client-side */
   private UUID mainPlayerId;
   /** The game's round */
-  private int round = 0;
+  private int round = 1;
   /** The next player's turn */
   private int turn = 0;
 
@@ -111,6 +111,21 @@ public class Store {
   public Player getMovingPlayer() {
     return players.get(turn % players.size());
   }
+
+  /**
+   * Method which returns whether it's the main player's turn
+   * @return Whether it's the mainPlayer's turn
+   */
+  public boolean isMainPlayersTurn() {
+    return getMainPlayer().equals(getMovingPlayer());
+  }
+
+  /**
+   * Method which returns whether it's the passed in player's turn
+   * @param player the player being checked
+   * @return Whether it's the passed in player's turns
+   */
+  public boolean isThisPlayersTurn(Player player) { return player.equals(getMovingPlayer()); }
 
   /** After a player has finished their turn, set the next turn */
   public void nextTurn() {

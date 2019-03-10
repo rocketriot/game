@@ -105,6 +105,9 @@ public class ServerHandler {
         case MINIGAME_BULLET:
           minigameHandler.bulletShot(action, service.Id());
           break;
+        case END_TURN:
+          gameBoardHandler.endTurn();
+          break;
         case MINIGAME_DIRECT_START:
           joinHandler.minigameDirectStart(action, gameBoardHandler, minigameHandler);
           break;
