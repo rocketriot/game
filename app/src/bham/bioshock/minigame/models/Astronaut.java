@@ -145,7 +145,6 @@ public class Astronaut extends Entity {
 
       if (dieFront && dyingFront.isAnimationFinished(dieTime)
           || dyingBack.isAnimationFinished(dieTime)) {
-        System.out.println(dieTime);
         state = State.LOADED;
         setRotation(0);
         stepsGenerator.updateFromServer(new SpeedVector(), respawn);
