@@ -78,7 +78,10 @@ public class HowToScreen extends ScreenMaster {
   @Override
   public void show() {
     super.show();
+    
+    drawBackButton();
     assemble();
+    
     Gdx.input.setInputProcessor(stage);
   }
 

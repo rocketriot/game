@@ -144,6 +144,7 @@ public class JoinScreen extends ScreenMaster {
   @Override
   public void show() {
     super.show();
+    drawBackButton();
   }
 
   /* RENDER */

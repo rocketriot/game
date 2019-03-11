@@ -1,7 +1,6 @@
 package bham.bioshock.client.screens;
 
 import bham.bioshock.client.Assets;
-import bham.bioshock.client.Route;
 import bham.bioshock.client.Router;
 import bham.bioshock.client.controllers.SoundController;
 import com.badlogic.gdx.Gdx;
@@ -11,7 +10,6 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -51,10 +49,6 @@ public abstract class ScreenMaster implements Screen {
     background = new Texture(Gdx.files.internal("app/assets/backgrounds/menu.png"));
 
     setupFonts();
-
-    addBackButton();
-    // set the back button to take you to main menu - for now
-    setPrevious();
     // drawBackground();
   }
 
@@ -90,10 +84,12 @@ public abstract class ScreenMaster implements Screen {
     batch.end();
   }
 
-  protected void addBackButton() {
-    // add a button that takes the user back to the previous screen
+  /** Adds a button that takes the user back to the previous screen */
+  protected void drawBackButton() {
     backButton = new TextButton("Back", skin);
     stage.addActor(backButton);
+
+    setPrevious();
   }
 
   protected void setPrevious() {

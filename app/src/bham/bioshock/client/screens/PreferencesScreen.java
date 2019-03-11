@@ -79,6 +79,8 @@ public class PreferencesScreen extends ScreenMaster {
     stage.clear();
     super.show();
 
+    drawBackButton();
+
     drawButtons();
     Gdx.input.setInputProcessor(stage);
     if (musicEnabled) {
