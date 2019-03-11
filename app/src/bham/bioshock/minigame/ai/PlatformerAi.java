@@ -23,20 +23,20 @@ public class PlatformerAi extends MinigameAI {
 
     }
 
-    private void moveTowardsMainPlayer(float delta) {
+    private void moveTowardsMainPlayer() {
         Astronaut host = localStore.getMainPlayer();
 
         PlanetPosition hostPP = host.getPlanetPos();
-        PlanetPosition pp = astronaut.getPlanetPos();
+        PlanetPosition pp = astronaut.get().getPlanetPos();
 
         double angleDelta = hostPP.angle - pp.angle;
         double angle = (angleDelta + 180) % 360 - 180;
 
         for(int i=0; i<2; i++) {
             if(angle < 0) {
-                astronaut.moveLeft(delta);
+                astronaut.moveLeft();
             } else {
-                astronaut.moveRight(delta);
+                astronaut.moveRight();
             }
         }
     }
@@ -46,7 +46,7 @@ public class PlatformerAi extends MinigameAI {
         /*
         we need an ai to move as if a player would, by jumping up to platforms
          */
-        PlanetPosition pp = astronaut.getPlanetPos();
+        PlanetPosition pp = astronaut.get().getPlanetPos();
 
     }
 }

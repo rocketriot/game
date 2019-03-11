@@ -1,12 +1,18 @@
 package bham.bioshock.minigame.objectives;
 
 import bham.bioshock.common.Position;
+import bham.bioshock.common.models.Player;
+import bham.bioshock.common.models.store.MinigameStore;
 import bham.bioshock.minigame.models.Astronaut;
+import bham.bioshock.minigame.models.EntityType;
+import bham.bioshock.minigame.models.Goal;
 import bham.bioshock.minigame.models.Platform;
 import bham.bioshock.minigame.worlds.World;
+import javafx.geometry.Pos;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 public class Platformer extends Objective {
@@ -19,15 +25,34 @@ public class Platformer extends Objective {
     private float maxBoost = 3f;
     private Astronaut winner;
     private Position goalPosition;
+    private Goal goal;
 
     public Platformer(World world) {
         super(world);
         this.positions = this.getWorld().getPlayerPositions();
+        generateGoalPosition(world);
     }
 
     @Override
     public Astronaut getWinner() {
-        return winner;
+        //if the winner is set, return the winner, if not, return the closest player
+        if(winner != null) { return winner; }
+        else {
+            Position goalPos = goal.getPos();
+            float best = 99999999f;
+            Astronaut bestP = null;
+            Iterator it = getPlayers().iterator();
+            while(it.hasNext()) {
+                Astronaut player = (Astronaut) it.next();
+                Position playerPos = player.getPos();
+                float diff = playerPos.sqDistanceFrom(goalPos);
+                if(diff < best) {
+                    best = diff;
+                    bestP = player;
+                }
+            }
+            return bestP;
+        }
     }
 
     @Override
@@ -45,14 +70,23 @@ public class Platformer extends Objective {
             frozenFor.put(player, 0f);
             speedBoost.put(player, 1f);
         });
-        generateGoalPosition();
+    }
+
+    @Override
+    public void seed(MinigameStore store) {
+        store.addEntity(goal);
+    }
+
+    @Override
+    public void captured(Astronaut a) {
+        return;
     }
 
     public Position getGoalPosition() {
         return goalPosition;
     }
 
-    private void generateGoalPosition() {
+    private void generateGoalPosition(World world) {
         /* generate a feasable position for the end goal */
         ArrayList<Platform> platforms = this.getWorld().getPlatforms();
         Position highestPlatform = platforms.get(0).getPos();
@@ -64,6 +98,8 @@ public class Platformer extends Objective {
         }
         /* set the goal to the highest platform */
         goalPosition = highestPlatform;
+        goal = new Goal(world, highestPlatform.x, highestPlatform.y, true, EntityType.GOAL);
+
     }
 
 
