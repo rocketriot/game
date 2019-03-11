@@ -44,16 +44,12 @@ public class MainMenuScreen extends ScreenMaster {
 
   }
 
-
-
-
   private void drawButtons() {
     Container<Table> tableContainer = new Container<>();
     float container_width = screen_width * 0.8f;
     float container_height = screen_height * 0.9f;
     tableContainer.setSize(container_width, container_height);
-    tableContainer.setPosition((screen_width - container_width) / 2.0f,
-        (screen_height - container_height) / 2.0f);
+    tableContainer.setPosition((screen_width - container_width) / 2.0f, (screen_height - container_height) / 2.0f);
 
     // Table to hold menu button, will change this to a better style
     Table table = new Table(skin);
@@ -138,10 +134,11 @@ public class MainMenuScreen extends ScreenMaster {
 
     Dialog dialog = new Dialog("", skin) {
       protected void result(Object object) {
-        if (object.equals(false)) return;
+        if (object.equals(false))
+          return;
 
         String host_name = textField.getText();
-        
+
         if (host_name.equals("")) {
           alert("Please enter your name");
           return;
@@ -166,7 +163,8 @@ public class MainMenuScreen extends ScreenMaster {
 
     Dialog dialog = new Dialog("Join Game", skin) {
       protected void result(Object object) {
-        if (object.equals(false)) return;
+        if (object.equals(false))
+          return;
 
         String username = textField.getText();
 
