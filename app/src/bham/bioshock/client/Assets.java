@@ -2,6 +2,8 @@ package bham.bioshock.client;
 
 public class Assets {
   public static final String gameBackground = "app/assets/backgrounds/game.png";
+  public static final String menuBackground = "app/assets/backgrounds/menu.png";
+  
   public static final String skin = "app/assets/skin/skin.json";
   public static final String font = "app/assets/fonts/font.otf";
 

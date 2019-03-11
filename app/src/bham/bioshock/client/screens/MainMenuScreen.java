@@ -23,8 +23,6 @@ public class MainMenuScreen extends ScreenMaster {
   private TextButton exit;
   private TextButton join;
 
-
-
   public MainMenuScreen(Router router) {
     super(router);
     // set the stage, which will react to user inputs
@@ -38,17 +36,7 @@ public class MainMenuScreen extends ScreenMaster {
     super.show();
     drawButtons();
     addListeners();
-
   }
-
-  @Override
-  public void pause() {}
-
-  @Override
-  public void resume() {}
-
-  @Override
-  public void hide() {}
 
   @Override
   public void render(float delta) {
@@ -110,7 +98,9 @@ public class MainMenuScreen extends ScreenMaster {
     host.addListener(new ChangeListener() {
       @Override
       public void changed(ChangeEvent event, Actor actor) {
-        /** Bring up a dialogue to ask the user for a host name then start the new server */
+        /**
+         * Bring up a dialogue to ask the user for a host name then start the new server
+         */
         SoundController.playSound("menuSelect");
         showHostDialogue();
       }
@@ -144,70 +134,57 @@ public class MainMenuScreen extends ScreenMaster {
   }
 
   private void showHostDialogue() {
-
     TextField textField = new TextField("", skin);
 
-    Dialog diag = new Dialog("", skin) {
-
+    Dialog dialog = new Dialog("", skin) {
       protected void result(Object object) {
-        if (object.equals(true)) {
-          String host_name = textField.getText();
-          if (host_name.equals("")) {
-            alert("Please enter your name");
-          } else {
-            // show join screen
-            SoundController.playSound("menuSelect");
-            router.call(Route.HOST_GAME, host_name);
-          }
-        } else {
-          SoundController.playSound("menuSelect");
+        if (object.equals(false)) return;
+
+        String host_name = textField.getText();
+        
+        if (host_name.equals("")) {
+          alert("Please enter your name");
+          return;
         }
+
+        // show join screen
+        SoundController.playSound("menuSelect");
+        router.call(Route.HOST_GAME, host_name);
       }
     };
 
-    diag.text(new Label("Enter your name:", skin, "window"));
-    diag.getContentTable().add(textField);
-    diag.button("OK", true);
-    diag.button("Cancel", false);
+    dialog.text(new Label("Enter your name:", skin, "window"));
+    dialog.getContentTable().add(textField);
+    dialog.button("OK", true);
+    dialog.button("Cancel", false);
 
-    diag.show(stage);
+    dialog.show(stage);
   }
 
   private void showJoinDialogue() {
-
     TextField textField = new TextField("", skin);
 
-    Dialog diag = new Dialog("Join Game", skin) {
-
+    Dialog dialog = new Dialog("Join Game", skin) {
       protected void result(Object object) {
+        if (object.equals(false)) return;
 
-        if (object.equals(true)) {
-          String username = textField.getText();
+        String username = textField.getText();
 
-          if (username.equals("")) {
-            alert("Please enter your name");
-          } else {
-            SoundController.playSound("menuSelect");
-            router.call(Route.JOIN_SCREEN, username);
-          }
-
-        } else {
-          SoundController.playSound("menuSelect");
+        if (username.equals("")) {
+          alert("Please enter your name");
+          return;
         }
-      }
 
+        SoundController.playSound("menuSelect");
+        router.call(Route.JOIN_SCREEN, username);
+      }
     };
 
-    diag.text(new Label("Enter your name:", skin, "window"));
-    diag.getContentTable().add(textField);
-    diag.button("Done", true);
-    diag.button("Cancel", false);
+    dialog.text(new Label("Enter your name:", skin, "window"));
+    dialog.getContentTable().add(textField);
+    dialog.button("Done", true);
+    dialog.button("Cancel", false);
 
-    diag.show(stage);
+    dialog.show(stage);
   }
-
-
-
-
-
 }
