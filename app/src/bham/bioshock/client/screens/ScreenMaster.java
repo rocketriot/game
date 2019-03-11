@@ -5,13 +5,9 @@ import bham.bioshock.client.Router;
 import bham.bioshock.client.controllers.SoundController;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
-import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
@@ -27,9 +23,6 @@ public abstract class ScreenMaster implements Screen {
   protected float screen_height;
 
   protected Texture background;
-
-  protected BitmapFont font12;
-  protected BitmapFont font18;
 
   protected TextButton backButton;
 
@@ -48,29 +41,7 @@ public abstract class ScreenMaster implements Screen {
     // Create background
     background = new Texture(Gdx.files.internal("app/assets/backgrounds/menu.png"));
 
-    setupFonts();
     // drawBackground();
-  }
-
-  /** Set's up all the fonts needed for the screen */
-  private void setupFonts() {
-    FileHandle fontSource = Gdx.files.internal("app/assets/fonts/BebasNeueThin.otf");
-    font12 = generateFont(fontSource, 12);
-    font18 = generateFont(fontSource, 18);
-  }
-
-  /** Generates a bitmap font from source */
-  private BitmapFont generateFont(FileHandle source, int size) {
-    // Specify font size
-    FreeTypeFontParameter parameter = new FreeTypeFontParameter();
-    parameter.size = size;
-
-    // Generate font
-    FreeTypeFontGenerator generator = new FreeTypeFontGenerator(source);
-    BitmapFont font = generator.generateFont(parameter);
-    generator.dispose();
-
-    return font;
   }
 
   protected void drawBackground() {
