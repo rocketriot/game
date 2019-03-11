@@ -1,5 +1,6 @@
 package bham.bioshock.client.screens;
 
+import bham.bioshock.client.Assets;
 import bham.bioshock.client.Route;
 import bham.bioshock.client.Router;
 import bham.bioshock.client.controllers.SoundController;
@@ -34,7 +35,7 @@ public abstract class ScreenMaster implements Screen {
 
   protected TextButton backButton;
 
-  protected Skin skin = new Skin(Gdx.files.internal("app/assets/skins/neon/skin/neon-ui.json"));
+  protected Skin skin = new Skin(Gdx.files.internal(Assets.skin));
 
   public ScreenMaster(Router router) {
     this.router = router;
@@ -151,9 +152,8 @@ public abstract class ScreenMaster implements Screen {
 
     };
 
-    diag.text(new Label(alert_text, skin));
+    diag.text(new Label(alert_text, skin, "window"));
     diag.button("OK", true);
-    // diag.button("Cancel", false);
 
     diag.show(stage);
   }

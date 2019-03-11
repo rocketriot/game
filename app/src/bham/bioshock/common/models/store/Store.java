@@ -1,18 +1,13 @@
 package bham.bioshock.common.models.store;
 
-import bham.bioshock.client.AppPreferences;
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map.Entry;
-
-import bham.bioshock.common.models.Coordinates;
-import bham.bioshock.common.models.GameBoard;
-import bham.bioshock.common.models.Player;
+import java.util.UUID;
 import com.badlogic.gdx.Screen;
 import com.google.inject.Singleton;
-import java.util.ArrayList;
-import java.util.UUID;
-import java.util.stream.Collectors;
+import bham.bioshock.client.AppPreferences;
+import bham.bioshock.common.models.GameBoard;
+import bham.bioshock.common.models.Player;
 
 /** Stores all of the models */
 @Singleton
@@ -32,7 +27,7 @@ public class Store {
   /** The ID of the player that the client is controlling, only used client-side */
   private UUID mainPlayerId;
   /** The game's round */
-  private int round = 0;
+  private int round = 1;
   /** The next player's turn */
   private int turn = 0;
 
@@ -117,6 +112,21 @@ public class Store {
     return players.get(turn % players.size());
   }
 
+  /**
+   * Method which returns whether it's the main player's turn
+   * @return Whether it's the mainPlayer's turn
+   */
+  public boolean isMainPlayersTurn() {
+    return getMainPlayer().equals(getMovingPlayer());
+  }
+
+  /**
+   * Method which returns whether it's the passed in player's turn
+   * @param player the player being checked
+   * @return Whether it's the passed in player's turns
+   */
+  public boolean isThisPlayersTurn(Player player) { return player.equals(getMovingPlayer()); }
+
   /** After a player has finished their turn, set the next turn */
   public void nextTurn() {
     // If all players have had their turn, go to next round
@@ -147,10 +157,13 @@ public class Store {
   }
 
   public List<UUID> getCpuPlayers() {
-    return players.stream()
-      .filter(p -> p.isCpu())
-      .map(p -> p.getId())
-      .collect(Collectors.toList());
+    List<UUID> cpuPlayers = new ArrayList<>();
+    for(Player p : players) {
+      if(p.isCpu()) {
+        cpuPlayers.add(p.getId());
+      }
+    }
+    return cpuPlayers;
   }
   
   public JoinScreenStore getJoinScreenStore() {
@@ -160,4 +173,5 @@ public class Store {
   public void setJoinScreenStore(JoinScreenStore joinScreenStore) {
     this.joinScreenStore = joinScreenStore;
   }
+
 }

@@ -8,13 +8,15 @@ import java.util.HashMap;
 
 public class Rocket extends Entity {
 
+  private static final long serialVersionUID = 471939014038953098L;
+  
   private static HashMap<Integer, Texture> textures = new HashMap<>();
   private Integer color;
   private TextureRegion texture;
 
-  public Rocket(World w, float _x, float _y, int _color) {
-    super(w, _x, _y);
-    color = _color;
+  public Rocket(World w, float x, float y, int color) {
+    super(w, x, y, EntityType.ROCKET);
+    this.color = color;
     width = 400;
     height = 400;
     collisionHeight = 400;

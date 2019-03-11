@@ -471,7 +471,7 @@ public class JoinScreen extends ScreenMaster {
     private float frameDuration = 1.5f;
 
     public RocketAnimation(World w, float x, float y, int mainPlayerIndex) {
-      super(w, x, y);
+      super(w, x, y, false, null);
       setSpeed(0, rocketSpeed);
       setRotation(rocketRotation);
 
@@ -502,11 +502,6 @@ public class JoinScreen extends ScreenMaster {
 
     public int getHeight() {
       return rocketHeight;
-    }
-
-    @Override
-    public boolean isFlying() {
-      return true;
     }
 
     @Override

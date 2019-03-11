@@ -1,0 +1,86 @@
+{
+com.badlogic.gdx.graphics.g2d.BitmapFont: {
+	font-18-bold: {
+		file: font-18-bold.fnt
+	}
+}
+com.badlogic.gdx.graphics.Color: {
+	black: {
+		r: 0.105882354
+		g: 0.105882354
+		b: 0.105882354
+		a: 1
+	}
+	cyan: {
+		r: 0
+		g: 0.8039216
+		b: 0.80784315
+		a: 1
+	}
+	white: {
+		r: 1
+		g: 1
+		b: 1
+		a: 1
+	}
+}
+com.badlogic.gdx.scenes.scene2d.ui.CheckBox$CheckBoxStyle: {
+	default: {
+		checkboxOn: checkbox-selected
+		checkboxOff: checkbox
+		font: font-18-bold
+		fontColor: white
+	}
+}
+com.badlogic.gdx.scenes.scene2d.ui.Label$LabelStyle: {
+	default: {
+		font: font-18-bold
+		fontColor: white
+	}
+	window: {
+		font: font-18-bold
+		fontColor: black
+	}
+}
+com.badlogic.gdx.scenes.scene2d.ui.Slider$SliderStyle: {
+	default-horizontal: {
+		background: slider-background
+		knob: slider-knob
+		knobBefore: slider-before
+		knobAfter: slider-after
+	}
+}
+com.badlogic.gdx.scenes.scene2d.ui.TextButton$TextButtonStyle: {
+	default: {
+		font: font-18-bold
+		fontColor: white
+		downFontColor: white
+		up: button
+		down: button-pressed
+		over: button-over
+	}
+	window: {
+		font: font-18-bold
+		fontColor: cyan
+	}
+}
+com.badlogic.gdx.scenes.scene2d.ui.TextField$TextFieldStyle: {
+	default: {
+		font: font-18-bold
+		fontColor: black
+		background: textfield
+	}
+}
+com.badlogic.gdx.scenes.scene2d.ui.TextTooltip$TextTooltipStyle: {
+	default: {
+		label: default
+	}
+}
+com.badlogic.gdx.scenes.scene2d.ui.Window$WindowStyle: {
+	default: {
+		background: popup
+		titleFont: font-18-bold
+		titleFontColor: white
+	}
+}
+}

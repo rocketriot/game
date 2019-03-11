@@ -4,7 +4,6 @@ import bham.bioshock.client.BoardGame;
 import bham.bioshock.client.Route;
 import bham.bioshock.client.Router;
 import bham.bioshock.client.screens.GameBoardScreen;
-import bham.bioshock.common.Direction;
 import bham.bioshock.common.consts.GridPoint;
 import bham.bioshock.common.models.*;
 import bham.bioshock.common.models.store.Store;
@@ -28,7 +27,7 @@ public class GameBoardController extends Controller {
     this.router = router;
   }
 
-  /* Start the game */
+  /** Start the game */
   public void show() {
     router.call(Route.FADE_OUT, "mainMenu");
     router.call(Route.START_MUSIC, "boardGame");
@@ -55,7 +54,6 @@ public class GameBoardController extends Controller {
         new AStarPathfinding(
             grid, mainPlayer.getCoordinates(), gridSize, gridSize, store.getPlayers());
     pathFinder.setStartPosition(mainPlayer.getCoordinates());
-    Coordinates startCoords = mainPlayer.getCoordinates();
 
     // pathsize - 1 since path includes start position
     ArrayList<Coordinates> path = pathFinder.pathfind(destination);
@@ -63,10 +61,6 @@ public class GameBoardController extends Controller {
 
     // Handle if player doesn't have enough fuel
     if (mainPlayer.getFuel() < pathCost || pathCost == -10) return;
-
-    // Update player coordinates and fuel
-    mainPlayer.setCoordinates(destination);
-    mainPlayer.decreaseFuel(pathCost);
 
     // Get grid point the user landed on
     GridPoint gridPoint = gameBoard.getGridPoint(destination);
@@ -76,13 +70,11 @@ public class GameBoardController extends Controller {
       // Decrease players amount of fuel
       Fuel fuel = (Fuel) gridPoint.getValue();
       mainPlayer.increaseFuel(fuel.getValue());
-
-      // Remove fuel from grid
-      gameBoard.removeGridPoint(destination);
     }
 
-    // Generate and add the BoardMove object and add it to the mainPlayer
-    generateMove(path, destination, startCoords);
+    mainPlayer.createBoardMove(path);
+    mainPlayer.setCoordinates(destination);
+    mainPlayer.decreaseFuel(pathCost);
 
     // Send the updated grid to the server
     ArrayList<Serializable> arguments = new ArrayList<>();
@@ -91,13 +83,9 @@ public class GameBoardController extends Controller {
     clientService.send(new Action(Command.MOVE_PLAYER_ON_BOARD, arguments));
   }
 
-  /** Skips a players turn by sending a move with the same coordinates */
-  public void skipTurn() {
-    // TODO TEMP SOLUTION
-    ArrayList<Serializable> arguments = new ArrayList<>();
-    arguments.add(store.getGameBoard());
-    arguments.add(store.getMainPlayer());
-    clientService.send(new Action(Command.MOVE_PLAYER_ON_BOARD, arguments));
+  /** Ends the players turn */
+  public void endTurn() {
+    clientService.send(new Action(Command.END_TURN));
   }
 
   /** Player move received from the server */
@@ -106,67 +94,6 @@ public class GameBoardController extends Controller {
     Player p = store.getPlayer(movingPlayer.getId());
     p.setCoordinates(movingPlayer.getCoordinates());
     p.setFuel(movingPlayer.getFuel());
-    
-    store.nextTurn();
-  }
-
-  private void generateMove(
-      ArrayList<Coordinates> path, Coordinates destination, Coordinates startPosition) {
-    ArrayList<Direction> directions = new ArrayList<>();
-    ArrayList<Coordinates> position = new ArrayList<>();
-    Coordinates lastPosition = startPosition;
-    Direction currentDir = Direction.NONE;
-
-    for (Coordinates c : path) {
-      Coordinates moveDir = c.sub(lastPosition);
-      lastPosition = c;
-      if (moveDir.getX() == 0) {
-        if (moveDir.getY() > 0) {
-          if (currentDir.equals(Direction.NONE)) {
-            currentDir = Direction.UP;
-          } else if (!currentDir.equals(Direction.UP)) {
-            directions.add(currentDir);
-            position.add(lastPosition);
-            currentDir = Direction.UP;
-          }
-        } else if (moveDir.getY() < 0) {
-          if (currentDir.equals(Direction.NONE)) {
-            currentDir = Direction.DOWN;
-          } else if (!currentDir.equals(Direction.DOWN)) {
-            directions.add(currentDir);
-            position.add(lastPosition);
-            currentDir = Direction.DOWN;
-          }
-        } else {
-          directions.add(Direction.NONE);
-          position.add(lastPosition);
-        }
-      } else {
-        if (moveDir.getX() > 0) {
-          if (currentDir.equals(Direction.NONE)) {
-            currentDir = Direction.RIGHT;
-          } else if (!currentDir.equals(Direction.RIGHT)) {
-            directions.add(currentDir);
-            position.add(lastPosition);
-            currentDir = Direction.RIGHT;
-          }
-        } else if (moveDir.getX() < 0) {
-          if (currentDir.equals(Direction.NONE)) {
-            currentDir = Direction.LEFT;
-          } else if (!currentDir.equals(Direction.LEFT)) {
-            directions.add(currentDir);
-            position.add(lastPosition);
-            currentDir = Direction.LEFT;
-          }
-        }
-      }
-    }
-    if (!currentDir.equals(Direction.NONE)) {
-      directions.add(currentDir);
-      position.add(lastPosition);
-    }
-    BoardMove boardMove = new BoardMove(directions, position, startPosition, destination);
-    store.getMainPlayer().setBoardMove(boardMove);
   }
 
   public void miniGameWon(Player player, Planet planet) {
@@ -178,6 +105,10 @@ public class GameBoardController extends Controller {
     planet.setPlayerCaptured(player);
     player.setPlanetsCaptured(player.getPlanetsCaptured() + 1);
     player.setPoints(player.getPoints() + 100);
+
+    if(store.isMainPlayersTurn()) {
+      router.call(Route.END_TURN);
+    }
   }
 
   public void miniGameLost(Player player) {
@@ -192,6 +123,10 @@ public class GameBoardController extends Controller {
 
     Coordinates newCoordinates = new Coordinates(x, y);
     player.setCoordinates(newCoordinates);
+
+    if(store.isMainPlayersTurn()) {
+      router.call(Route.END_TURN);
+    }
   }
 
   public boolean hasReceivedGrid() {

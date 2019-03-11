@@ -46,22 +46,4 @@ public class ClientReceiver extends Thread {
       System.exit(0);
     }
   }
-
-  /**
-   * Print the message to the console
-   *
-   * @param message to be printed
-   */
-  private void print(String message) {
-    System.out.println(message);
-  }
-
-  /**
-   * Print a message to the stream
-   *
-   * @param message to be printed
-   */
-  public void printMessage(String message) {
-    print(message);
-  }
 }

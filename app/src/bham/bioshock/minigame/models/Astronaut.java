@@ -1,35 +1,40 @@
 package bham.bioshock.minigame.models;
-import bham.bioshock.client.controllers.SoundController;
-import bham.bioshock.common.Position;
-import bham.bioshock.minigame.PlayerTexture;
-import bham.bioshock.minigame.physics.CollisionBoundary;
-import bham.bioshock.minigame.worlds.World;
-import java.util.UUID;
+import java.util.List;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Intersector.MinimumTranslationVector;
+import bham.bioshock.client.controllers.SoundController;
+import bham.bioshock.common.Position;
+import bham.bioshock.communication.Sendable;
+import bham.bioshock.minigame.PlayerTexture;
+import bham.bioshock.minigame.physics.CollisionBoundary;
+import bham.bioshock.minigame.physics.SpeedVector;
+import bham.bioshock.minigame.physics.Step;
+import bham.bioshock.minigame.worlds.World;
+import static java.util.stream.Collectors.toList;
 
 public class Astronaut extends Entity {
 
+  private static final long serialVersionUID = -5131439342109870021L;
   private static final int FRAMES = 11;
   private static Animation<TextureRegion> walkAnimation;
   private static Animation<TextureRegion> walkGunAnimation;
   private static TextureRegion frontTexture;
   private static TextureRegion frontGunTexture;
-  private final double JUMP_FORCE = 700;
   float animationTime;
   private PlayerTexture dir = PlayerTexture.FRONT;
-  private float v = 700f;
   private boolean haveGun = false;
   private CollisionBoundary legs;
+  private String name;
+  private Move move = new Move();
+
 
   public Astronaut(World w, float x, float y) {
-    super(w, x, y);
+    super(w, x, y, EntityType.ASTRONAUT);
     width = 150;
     height = 150;
     animationTime = 0;
@@ -42,26 +47,42 @@ public class Astronaut extends Entity {
   public Astronaut(World w, Position p) {
     this(w, p.x, p.y);
   }
-
-  public void moveLeft(float delta) {
-    if (!isFlying()) {
-      speed.apply(angleFromCenter() + 270, v * GROUND_FRICTION );
-    }
-    dir = PlayerTexture.LEFT;
+  
+  public void setName(String name) {
+    this.name = name;
   }
 
-  public void moveRight(float delta) {
-    if (!isFlying()) {
-      speed.apply(angleFromCenter() + 90, v * GROUND_FRICTION);
-    }
-    dir = PlayerTexture.RIGHT;
+  public void moveLeft(boolean value) {
+    move.movingLeft = value;
+  }
+  
+  public void moveRight(boolean value) {
+    move.movingRight = value;
   }
 
-  public void jump(float delta) {
-    if (!isFlying() && speed.getValueFor(angleFromCenter()) < JUMP_FORCE * 3/4 ) {
-      SoundController.playSound("jump");
-      speed.apply(angleFromCenter(), JUMP_FORCE);
+  public void jump(boolean value) {
+    if(value) {
+      SoundController.playSound("jump");      
     }
+    move.jumping = value;
+  }
+  
+  public List<Step> getFutureSteps() {
+    return stepsGenerator.getFutureSteps().collect(toList());
+  }
+  
+  public void moveChange() {
+    if(move.movingLeft) {
+      dir = PlayerTexture.LEFT; 
+      stepsGenerator.moveLeft();
+    } else if(move.movingRight) {
+      dir = PlayerTexture.RIGHT;
+      stepsGenerator.moveRight();
+    } else {
+      stepsGenerator.moveStop();
+      dir = PlayerTexture.FRONT;
+    }
+    stepsGenerator.jump(move.jumping);
   }
   
   public void resetDirection() {
@@ -82,24 +103,24 @@ public class Astronaut extends Entity {
     animationTime += delta;
   }
 
-  public PlayerTexture getDirection() {
-    return dir;
-  }
-
-  public void setDirection(PlayerTexture t) {
-    dir = t;
+  public Move getMove() {
+    return move;
   }
   
   @Override
   public void drawDebug(ShapeRenderer shapeRenderer) {
     super.drawDebug(shapeRenderer);
-    legs.draw(shapeRenderer, Color.MAGENTA);
+    legs.draw(shapeRenderer, Color.MAGENTA);     
   }
-
+  
   public void setPosition(Position p) {
     pos = p;
-    collisionBoundary.update(pos, getRotation());
-    legs.update(pos, getRotation());
+    if(collisionBoundary != null) {
+      collisionBoundary.update(pos, getRotation());      
+    }
+    if(legs != null) {
+      legs.update(pos, getRotation());      
+    }
   }
 
   
@@ -153,48 +174,75 @@ public class Astronaut extends Entity {
     return new Animation<TextureRegion>(0.1f, frames);
   }
 
+  @Override
+  public boolean canColideWith(Entity e) {
+    switch(e.type) {
+      case ASTRONAUT:
+      case BULLET:
+      case GUN:
+      case PLATFORM:
+      case FLAG:
+        return true;
+      default:
+        return false;
+    }
+  }
+  
   /** Collisions **/
   @Override
   public void handleCollision(Entity e) {
-
-    if(e.isA(Bullet.class)) {
-      // Collision check
-      MinimumTranslationVector v = checkCollision(e);
-      if(v == null) return;
-      
-      collide(.2f, v);
-      getObjective().gotShot(this, ((Bullet) e).getShooter());
-    } else if(e.isA(Astronaut.class) || e.isA(Rocket.class)) {
-      // Collision check
-      MinimumTranslationVector v = checkCollision(e);
-      if(v == null) return;
-      
-      collide(0.8f, v);
-    } else if(e.isA(Gun.class)) {
-      // Collision check
-      MinimumTranslationVector v = checkCollision(e);
-      if(v == null) return;
-      
-      e.state = State.REMOVED;
-      haveGun = true;
-    } else if(e.isA(StaticEntity.class)) {
-      
-      // Standard collision check
-      MinimumTranslationVector v = checkCollision(e);
-      if(v!= null)
-      {
-        pos.x += v.normal.x * v.depth;
-        pos.y += v.normal.y * v.depth;
+    switch(e.type) {
+      case GUN:
+        haveGun = true;
+        e.remove();
+        break;
+      case BULLET:
+        if(!e.state.equals(State.REMOVING)) {
+          getObjective().gotShot(this, ((Bullet) e).getShooter());          
+        }
+        break;
+      case FLAG:
+        this.getObjective().captured(this);
+        e.state = State.REMOVED;
+        break;
+      default:
+        break;
+    }
+  }
+  
+  @Override
+  public void handleCollisionMove(Step step, MinimumTranslationVector v, Entity e) {
+    switch(e.type) { 
+      case BULLET:
+        if(!e.state.equals(State.REMOVING)) {
+          collisionHandler.collide(step, 0.2f, v);          
+        }
+        break;
+      case ASTRONAUT:
+        collisionHandler.collide(step, .8f, v);
+        break;
+      case ROCKET:
+        collisionHandler.collide(step, .3f, v);
+        break;
+      case PLATFORM:
+        // Standard collision check
+        step.position.x += v.normal.x * v.depth;
+        step.position.y += v.normal.y * v.depth;
+    
+        collisionHandler.collide(step, 0f, v);      
         
-        collide(0f, v);
-      }
-      
-      // Check collision with legs
-      MinimumTranslationVector vlegs = new MinimumTranslationVector();
-      if (legs.collideWith(e.collisionBoundary, vlegs)) {        
-        // Standing on the platform
-        super.onGround = true;
-      }
+        // Check collision with legs
+        MinimumTranslationVector vlegs = new MinimumTranslationVector();
+        CollisionBoundary legs = this.legs.clone();
+        legs.update(step.position, this.getRotation(step.position.x, step.position.y));
+        
+        if (legs.collideWith(e.collisionBoundary, vlegs)) {
+          // Standing on the platform
+          step.setOnGround(true);
+        }
+        break;
+      default:
+        break;
     }
   }
 
@@ -208,6 +256,22 @@ public class Astronaut extends Entity {
 
     walkAnimation = textureToAnimation(walkSheet);
     walkGunAnimation = textureToAnimation(walkGunSheet);
+  }
+
+  public void updateFromServer(SpeedVector speed, Position pos, Move move,
+      Boolean haveGun) {
+    this.haveGun = haveGun;
+    this.move = move;
+    this.moveChange();
+    stepsGenerator.updateFromServer(speed, pos);
+  }
+  
+  public static class Move extends Sendable {
+
+    private static final long serialVersionUID = 3668803304780843571L;
+    public boolean jumping = false;
+    public boolean movingLeft = false;
+    public boolean movingRight = false;
   }
 
 }

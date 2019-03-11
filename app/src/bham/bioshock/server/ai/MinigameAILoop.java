@@ -11,7 +11,7 @@ public class MinigameAILoop extends Thread {
 
   private ArrayList<MinigameAI> aiHandlers = new ArrayList<>();
 
-  private int LOOP_TIME = 100;
+  private int LOOP_TIME = 1000;
 
   @Override
   public void run() {
@@ -21,9 +21,11 @@ public class MinigameAILoop extends Thread {
         long timeDelta = System.currentTimeMillis() - currentTime;
         currentTime = System.currentTimeMillis();
 
-        // If the handler is defined, call it
-        for (MinigameAI handler : aiHandlers) {
-          handler.run((float) (timeDelta / 1000));
+        synchronized(aiHandlers) {
+          // If the handler is defined, call it
+          for (MinigameAI handler : aiHandlers) {
+            handler.run((float) (timeDelta / 1000));
+          }
         }
 
         sleep(LOOP_TIME);
@@ -39,7 +41,9 @@ public class MinigameAILoop extends Thread {
   }
 
   public void registerHandler(MinigameAI ais) {
-    aiHandlers.add(ais);
+    synchronized(aiHandlers) {
+      aiHandlers.add(ais);      
+    }
   }
 
 }

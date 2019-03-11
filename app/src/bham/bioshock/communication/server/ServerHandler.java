@@ -2,6 +2,7 @@ package bham.bioshock.communication.server;
 
 import bham.bioshock.common.models.store.Store;
 import bham.bioshock.communication.Action;
+import bham.bioshock.minigame.Clock;
 import bham.bioshock.server.Server;
 import bham.bioshock.server.handlers.GameBoardHandler;
 import bham.bioshock.server.handlers.JoinScreenHandler;
@@ -48,7 +49,7 @@ public class ServerHandler {
   public void sendToAllExcept(Action action, UUID id) {
     synchronized(connections) {
       for(ServerService s : connections) {
-        if(s.Id() != id) {
+        if(!s.Id().equals(id)) {
           s.send(action);        
         }
       }
@@ -58,13 +59,15 @@ public class ServerHandler {
   public void sendTo(UUID clientId, Action action) {
     synchronized(connections) {
       for(ServerService s : connections) {
-        if(s.Id() == clientId) {
+        if(s.Id().equals(clientId)) {
           s.send(action);
           return;
         }
       }
     }
   }
+
+
 
   public void handleRequest(Action action, ServerService service) {
     logger.trace("Server received: " + action);
@@ -101,6 +104,9 @@ public class ServerHandler {
           break;
         case MINIGAME_BULLET:
           minigameHandler.bulletShot(action, service.Id());
+          break;
+        case END_TURN:
+          gameBoardHandler.endTurn();
           break;
         case MINIGAME_DIRECT_START:
           joinHandler.minigameDirectStart(action, gameBoardHandler, minigameHandler);
