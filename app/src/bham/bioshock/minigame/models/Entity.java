@@ -201,7 +201,7 @@ public abstract class Entity implements Serializable {
       speed = step.vector;
       
       for(Entity e : step.getCollisions() ) {
-        this.handleCollision(e);
+        handleCollision(e);
       }
     }
     
@@ -212,7 +212,9 @@ public abstract class Entity implements Serializable {
   /*
    * Default behaviour for the collision. Can be overwritten by the subclass
    */
-  public void handleCollisionMove(Step step, MinimumTranslationVector v, Entity e) {}
+  public boolean handleCollisionMove(Step step, MinimumTranslationVector v, Entity e) {
+    return false;
+  }
   
   public void handleCollision(Entity e) {};
 

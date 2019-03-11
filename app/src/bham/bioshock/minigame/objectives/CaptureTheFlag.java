@@ -7,6 +7,7 @@ import bham.bioshock.common.Position;
 import bham.bioshock.common.models.store.MinigameStore;
 import bham.bioshock.minigame.models.Astronaut;
 import bham.bioshock.minigame.models.Flag;
+import bham.bioshock.minigame.models.Gun;
 import bham.bioshock.minigame.worlds.World;
 
 public class CaptureTheFlag extends Objective {
@@ -31,7 +32,6 @@ public class CaptureTheFlag extends Objective {
 
 
     this.flag = new Flag(world, flagPosition.x, flagPosition.y);
-
   }
 
   @Override
@@ -46,7 +46,14 @@ public class CaptureTheFlag extends Objective {
     if (checkIfdead(player)) {
       setFlagPosition(player.getPos());
       flag.setIsRemoved(false);
-      player.setPosition(respawnPosition);
+      boolean hadGun = player.haveGun();
+      player.killAndRespawn(respawnPosition);
+      if(hadGun) {
+        Gun gun = new Gun(getWorld(), player.getX(), player.getY());
+        gun.load();
+        this.localSore.addEntity(gun);
+      }
+      
       getRouter().call(Route.MINIGAME_MOVE);
       setPlayerHealth(initialHealth, player);
 
@@ -67,6 +74,7 @@ public class CaptureTheFlag extends Objective {
 
   @Override
   public void seed(MinigameStore store) {
+    super.seed(store);
     store.addEntity(flag);
   }
 
