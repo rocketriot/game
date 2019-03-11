@@ -121,7 +121,7 @@ public class Platformer extends Objective {
         }
     }
 
-    public void reachedEnd(Astronaut winner) {
+    public void reachedGoal(Astronaut winner) {
         this.winner = winner;
     }
 
@@ -134,5 +134,6 @@ public class Platformer extends Objective {
     public float getSpeedBoost(Astronaut player) {
         return speedBoost.get(player);
     }
+
 
 }
