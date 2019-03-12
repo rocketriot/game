@@ -4,19 +4,11 @@ import bham.bioshock.client.Route;
 import bham.bioshock.client.Router;
 import bham.bioshock.client.controllers.SoundController;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Animation;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
-import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
 public class MainMenuScreen extends ScreenMaster {
-
-  // buttons
   private TextButton host;
   private TextButton howto;
   private TextButton preferences;
@@ -25,37 +17,29 @@ public class MainMenuScreen extends ScreenMaster {
 
   public MainMenuScreen(Router router) {
     super(router);
-    // set the stage, which will react to user inputs
-    stage = new Stage(new ScreenViewport());
-    batch = new SpriteBatch();
+
     router.call(Route.START_MUSIC, "mainMenu");
   }
 
   @Override
   public void show() {
     super.show();
+
     drawButtons();
-    addListeners();
   }
 
   @Override
   public void render(float delta) {
     super.render(delta);
-
   }
 
   private void drawButtons() {
     Container<Table> tableContainer = new Container<>();
-    float container_width = screen_width * 0.8f;
-    float container_height = screen_height * 0.9f;
-    tableContainer.setSize(container_width, container_height);
-    tableContainer.setPosition((screen_width - container_width) / 2.0f, (screen_height - container_height) / 2.0f);
+    tableContainer.setFillParent(true);
+    tableContainer.center();
 
     // Table to hold menu button, will change this to a better style
     Table table = new Table(skin);
-
-    // adding buttons
-    // skins to be styled later
 
     host = new TextButton("Host Game", skin);
     join = new TextButton("Join Game", skin);
@@ -63,8 +47,6 @@ public class MainMenuScreen extends ScreenMaster {
     preferences = new TextButton("Preferences", skin);
     exit = new TextButton("Exit", skin);
 
-    // add the buttons to the table
-    table.row();
     table.add(host).fillX().uniform();
     table.row();
     table.add(join).fillX().uniform();
@@ -77,12 +59,11 @@ public class MainMenuScreen extends ScreenMaster {
 
     tableContainer.setActor(table);
     stage.addActor(tableContainer);
+    
+    addListeners();
   }
 
   private void addListeners() {
-    Router router = this.router;
-
-    // add change listeners for the buttons
     exit.addListener(new ChangeListener() {
       @Override
       public void changed(ChangeEvent event, Actor actor) {
@@ -98,7 +79,7 @@ public class MainMenuScreen extends ScreenMaster {
          * Bring up a dialogue to ask the user for a host name then start the new server
          */
         SoundController.playSound("menuSelect");
-        showHostDialogue();
+        showDialogue("host");
       }
     });
 
@@ -121,15 +102,14 @@ public class MainMenuScreen extends ScreenMaster {
     join.addListener(new ChangeListener() {
       @Override
       public void changed(ChangeEvent event, Actor actor) {
-        // Do something to add a new player...
         SoundController.playSound("menuSelect");
-        showJoinDialogue();
+        showDialogue("join");
       }
     });
-
   }
 
-  private void showHostDialogue() {
+  /** Displays a dialogue to either host or join a game */
+  private void showDialogue(String type) {
     TextField textField = new TextField("", skin);
 
     Dialog dialog = new Dialog("", skin) {
@@ -137,50 +117,24 @@ public class MainMenuScreen extends ScreenMaster {
         if (object.equals(false))
           return;
 
-        String host_name = textField.getText();
+        String text = textField.getText();
 
-        if (host_name.equals("")) {
+        if (text.equals("")) {
           alert("Please enter your name");
           return;
         }
 
-        // show join screen
         SoundController.playSound("menuSelect");
-        router.call(Route.HOST_GAME, host_name);
+        
+
+        if (type.equals("host")) router.call(Route.HOST_GAME, text);
+        if (type.equals("join")) router.call(Route.JOIN_SCREEN, text);
       }
     };
 
     dialog.text(new Label("Enter your name:", skin, "window"));
     dialog.getContentTable().add(textField);
     dialog.button("OK", true);
-    dialog.button("Cancel", false);
-
-    dialog.show(stage);
-  }
-
-  private void showJoinDialogue() {
-    TextField textField = new TextField("", skin);
-
-    Dialog dialog = new Dialog("Join Game", skin) {
-      protected void result(Object object) {
-        if (object.equals(false))
-          return;
-
-        String username = textField.getText();
-
-        if (username.equals("")) {
-          alert("Please enter your name");
-          return;
-        }
-
-        SoundController.playSound("menuSelect");
-        router.call(Route.JOIN_SCREEN, username);
-      }
-    };
-
-    dialog.text(new Label("Enter your name:", skin, "window"));
-    dialog.getContentTable().add(textField);
-    dialog.button("Done", true);
     dialog.button("Cancel", false);
 
     dialog.show(stage);

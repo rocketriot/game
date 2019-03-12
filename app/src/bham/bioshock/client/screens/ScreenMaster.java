@@ -3,15 +3,19 @@ package bham.bioshock.client.screens;
 import bham.bioshock.client.Assets;
 import bham.bioshock.client.Router;
 import bham.bioshock.client.controllers.SoundController;
+import bham.bioshock.common.consts.Config;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
 public abstract class ScreenMaster implements Screen {
   protected Stage stage;
@@ -30,8 +34,13 @@ public abstract class ScreenMaster implements Screen {
 
   public ScreenMaster(Router router) {
     this.router = router;
+    
+    stage = new Stage(new ScreenViewport());
+    batch = new SpriteBatch();
+    
     this.screen_width = Gdx.graphics.getWidth();
     this.screen_height = Gdx.graphics.getHeight();
+    
   }
 
   @Override
@@ -50,7 +59,7 @@ public abstract class ScreenMaster implements Screen {
     Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
     batch.begin();
-    batch.draw(background, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+    batch.draw(background, 0, 0, Config.GAME_WORLD_WIDTH, Config.GAME_WORLD_HEIGHT);
     batch.end();
   }
 
