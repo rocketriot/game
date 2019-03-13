@@ -89,9 +89,23 @@ public class JoinScreen extends ScreenMaster {
     setUpHolder();
     setUpPlayerContainers();
     addStartGameButton();
+    //addPlayerLabel();
 
     rocketMap = store.getJoinScreenStore().getRocketMap();
     world = new JoinScreenWorld();
+
+  }
+
+  private void addPlayerLabel() {
+    Table nameTable = new Table();
+    nameTable.setDebug(true);
+    nameTable.center();
+    nameTable.top();
+    nameTable.setWidth(stage.getWidth());
+    Label pl = new Label(mainPlayer.getUsername(), skin);
+    nameTable.add(pl);
+    nameTable.pad(20);
+    stage.addActor(nameTable);
 
   }
 
@@ -183,10 +197,14 @@ public class JoinScreen extends ScreenMaster {
     private int padding = 20;
 
     public Holder() {
-      // this.setDebug(true);
+      //this.setDebug(true);
       this.setFillParent(true);
       this.pad(padding);
       playerContainers = new ArrayList<>();
+
+      Label pl = new Label(mainPlayer.getUsername(), skin);
+      add(pl).colspan(4).padBottom(20);
+      row();
     }
 
     public void addPlayerContainer(PlayerContainer pc) {
