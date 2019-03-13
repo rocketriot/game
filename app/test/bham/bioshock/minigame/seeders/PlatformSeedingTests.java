@@ -19,7 +19,7 @@ public class PlatformSeedingTests {
   }
 
   @Test
-  public void platformsGenerated(){
+  public void platformsGenerated() {
     assertTrue(world.getPlatforms().size() > 0);
   }
 

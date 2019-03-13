@@ -49,7 +49,7 @@ public class WeaponSeeder {
   private void generateWeapon(int minAngle, int maxAngle) {
     Random generator = new Random();
 
-    float angle = (float) generator.nextInt((maxAngle - minAngle) + 1) + minAngle;
+    float angle = (float) generator.nextInt(maxAngle - minAngle) + minAngle;
     float distance = 2250;
     PlanetPosition weaponPPos = new PlanetPosition(angle, distance);
     Position weaponPos = world.convert(weaponPPos);
