@@ -26,7 +26,8 @@ abstract public class World implements Serializable {
   public double getAngleTo(double x, double y) {
     double worldX = gravityCenter().x;
     double worldY = gravityCenter().y;
-    return Vector.angleBetween(worldX, worldY, x, y);
+    double angle = Vector.angleBetween(worldX, worldY, x, y);
+    return angle < 0 ? angle + 360 : angle;
   }
 
   /**
