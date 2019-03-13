@@ -3,14 +3,10 @@ package bham.bioshock.client.screens;
 import bham.bioshock.client.Router;
 import bham.bioshock.client.XMLInteraction;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Container;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.utils.viewport.ScreenViewport;
-import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -30,8 +26,6 @@ public class HowToScreen extends ScreenMaster {
   public HowToScreen(Router router) {
     super(router);
 
-    stage = new Stage(new ScreenViewport());
-    batch = new SpriteBatch();
     descriptionFromFile = xmlInteraction.xmlToDescription();
   }
 
@@ -78,7 +72,10 @@ public class HowToScreen extends ScreenMaster {
   @Override
   public void show() {
     super.show();
+    
+    drawBackButton();
     assemble();
+    
     Gdx.input.setInputProcessor(stage);
   }
 

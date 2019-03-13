@@ -65,9 +65,6 @@ public class JoinScreen extends ScreenMaster {
     this.store = store;
     this.mainPlayer = mainPlayer;
 
-    stage = new Stage(new ScreenViewport());
-    batch = new SpriteBatch();
-
     mainPlayerSet = false;
 
     loadTextures = new Texture[store.MAX_PLAYERS];
@@ -144,6 +141,7 @@ public class JoinScreen extends ScreenMaster {
   @Override
   public void show() {
     super.show();
+    drawBackButton();
   }
 
   /* RENDER */
