@@ -5,11 +5,9 @@ import bham.bioshock.minigame.PlanetPosition;
 import java.util.ArrayList;
 import com.badlogic.gdx.graphics.Texture;
 import bham.bioshock.common.Position;
-import bham.bioshock.minigame.MapSeeder;
 import bham.bioshock.minigame.models.Gun;
 import bham.bioshock.minigame.models.Platform;
 import bham.bioshock.minigame.models.Rocket;
-import bham.bioshock.minigame.objectives.Objective;
 import bham.bioshock.minigame.physics.Vector;
 
 abstract public class World implements Serializable {

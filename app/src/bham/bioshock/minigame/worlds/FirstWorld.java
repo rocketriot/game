@@ -1,13 +1,15 @@
 package bham.bioshock.minigame.worlds;
 
+import bham.bioshock.minigame.PlanetPosition;
+import bham.bioshock.minigame.seeders.PlatformSeeder;
 import java.util.ArrayList;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import bham.bioshock.common.Position;
-import bham.bioshock.minigame.MapSeeder;
 import bham.bioshock.minigame.models.Gun;
 import bham.bioshock.minigame.models.Platform;
 import bham.bioshock.minigame.models.Rocket;
+import java.util.Collections;
 
 public class FirstWorld extends World {
 
@@ -34,7 +36,7 @@ public class FirstWorld extends World {
     guns.add(new Gun(this, -2070, -3100));
     guns.add(new Gun(this, 0, -3000));
     
-    MapSeeder seeder = new MapSeeder(this);
+    PlatformSeeder seeder = new PlatformSeeder(this);
     seeder.seed();
     platforms = seeder.getPlatforms();
   }
@@ -78,5 +80,20 @@ public class FirstWorld extends World {
   public Texture getTexture() {
     return new Texture(Gdx.files.internal("app/assets/minigame/planet1.png"));
   }
-  
+
+  /**
+   * Method to get the platform path to a platform
+   * @param platform the paltform you want to get to
+   * @return the platform path
+   */
+  public ArrayList<Platform> getPlatformPath(Platform platform){
+    ArrayList<Platform> path = new ArrayList<>();
+    Platform currentParent = new Platform(null, new PlanetPosition(0, 0), 0, 0);
+    while (currentParent != null){
+      currentParent = platform.getParent();
+      path.add(currentParent);
+    }
+    Collections.reverse(path);
+    return path;
+  }
 }
