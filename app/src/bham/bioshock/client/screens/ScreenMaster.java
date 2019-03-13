@@ -15,6 +15,7 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
 public abstract class ScreenMaster implements Screen {
@@ -35,8 +36,10 @@ public abstract class ScreenMaster implements Screen {
   public ScreenMaster(Router router) {
     this.router = router;
     
-    stage = new Stage(new ScreenViewport());
+    FitViewport viewport = new FitViewport(Config.GAME_WORLD_WIDTH, Config.GAME_WORLD_HEIGHT);
+    stage = new Stage(viewport);
     batch = new SpriteBatch();
+    batch.getProjectionMatrix().setToOrtho2D(0, 0, Config.GAME_WORLD_WIDTH, Config.GAME_WORLD_HEIGHT);
     
     this.screen_width = Gdx.graphics.getWidth();
     this.screen_height = Gdx.graphics.getHeight();
