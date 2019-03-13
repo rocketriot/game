@@ -47,7 +47,7 @@ public class Renderer {
   private final int GAME_WORLD_HEIGHT = Config.GAME_WORLD_HEIGHT;
   private Store store;
   private Router router;
-  private static boolean DEBUG_MODE = false;
+  private static boolean DEBUG_MODE = true;
   private MinigameStore minigameStore;
   
   private MinigameHud hud;
@@ -146,8 +146,10 @@ public class Renderer {
     
     batch.begin();
     drawPlanet();
-    entities.forEach(e -> e.draw(batch, delta));      
+    entities.forEach(e -> e.draw(batch, delta));
     batch.end();
+    
+    entities.forEach(e -> e.afterDrawing(cam.combined));
 
     // Draw the ui
     this.batch.setProjectionMatrix(hud.stage.getCamera().combined);
