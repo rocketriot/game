@@ -6,6 +6,7 @@ import java.util.stream.Stream;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import bham.bioshock.common.Position;
+import bham.bioshock.minigame.PlanetPosition;
 import bham.bioshock.minigame.models.Astronaut.Move;
 import bham.bioshock.minigame.models.Entity;
 import bham.bioshock.minigame.worlds.World;
@@ -86,7 +87,7 @@ public class StepsGenerator {
     }
   }
 
-  private void reset() {
+  protected void reset() {
     synchronized(steps) {
       steps.clear();
       lastStep = null;
@@ -144,6 +145,19 @@ public class StepsGenerator {
       synchronized(steps) {
         steps.clear();
         lastStep = step;        
+      }
+      // Make sure that doesn't go underground
+      Position p = step.position;
+      double angle = world.getAngleTo(p.x, p.y) + 180;
+      if(!entity.isFlying(p.x, p.y)) {
+        step.vector.stop(angle);
+      }
+      if(entity.distanceFromGround(p.x, p.y) < 0) {
+        PlanetPosition pp = world.convert(p);
+        pp.fromCenter -= entity.distanceFromGround(p.x, p.y);
+        Position newp = world.convert(pp);
+        step.position.x = newp.x;
+        step.position.y = newp.y;
       }
     }
   }

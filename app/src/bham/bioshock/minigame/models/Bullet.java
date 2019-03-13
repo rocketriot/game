@@ -122,23 +122,26 @@ public class Bullet extends Entity {
   }
   
   @Override
-  public void handleCollisionMove(Step step, MinimumTranslationVector v, Entity e) {
+  public boolean handleCollisionMove(Step step, MinimumTranslationVector v, Entity e) {
+    if(e.is(State.REMOVING)) return false;
     switch(e.type) { 
       case BULLET:
-        collisionHandler.collide(step, 1f, v);
-        break;
+        if(!e.is(State.REMOVING)) {
+          collisionHandler.collide(step, 1f, v);
+        }
+        return false;
       case ASTRONAUT:
-        collisionHandler.collide(step, .1f, v);
-        break;
+        return true;
       case PLATFORM:
         collisionHandler.collide(step, .2f, v);
-        break;
+        return true;
       case ROCKET:
         collisionHandler.collide(step, .9f, v);
-        break;
+        return true;
       default:
         break;
     }
+    return false;
   }
   
 }
