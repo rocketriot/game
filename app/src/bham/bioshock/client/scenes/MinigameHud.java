@@ -83,7 +83,7 @@ public class MinigameHud implements Disposable {
         fuelLabel = new Label(fuelString, skin);
         fuelGroup.addActor(fuelLabel);
         fuelGroup.addActor(fuelBar);
-        
+
         topTable.add(fuelGroup).padLeft(PADDING).width(stage.getWidth()/4).left().top();
     }
 
