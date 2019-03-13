@@ -82,6 +82,11 @@ public class Platformer extends Objective {
         return;
     }
 
+    @Override
+    public String instructions() {
+        return null;
+    }
+
     public Position getGoalPosition() {
         return goalPosition;
     }

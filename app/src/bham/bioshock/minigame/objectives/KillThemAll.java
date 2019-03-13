@@ -54,7 +54,6 @@ public class KillThemAll extends Objective {
 
   @Override
   public void seed(MinigameStore store) {
-    super.seed(store);
     return;
   }
 

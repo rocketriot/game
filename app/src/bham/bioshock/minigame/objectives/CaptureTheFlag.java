@@ -73,7 +73,6 @@ public class CaptureTheFlag extends Objective {
 
   @Override
   public void seed(MinigameStore store) {
-    super.seed(store);
     store.addEntity(flag);
   }
 
