@@ -2,25 +2,45 @@ package bham.bioshock.minigame.seeders;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import bham.bioshock.minigame.models.Platform;
 import bham.bioshock.minigame.worlds.World;
+import java.util.ArrayList;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 
+/**
+ * The Platform seeding tests.
+ */
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class PlatformSeedingTests {
 
+  /**
+   * The World.
+   */
   World world;
 
+  /**
+   * The Platforms.
+   */
+  ArrayList<Platform> platforms = new ArrayList<>();
+
+  /**
+   * Sets up the world and gets the platforms from it.
+   */
   @BeforeAll
   public void setupTests() {
     world = new TestingWorld();
     ((TestingWorld) world).seedPlatforms();
+    platforms = world.getPlatforms();
   }
 
+  /**
+   * Platforms generated.
+   */
   @Test
   public void platformsGenerated() {
-    assertTrue(world.getPlatforms().size() > 0);
+    assertTrue(platforms.size() > 0);
   }
 
 }

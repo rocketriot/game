@@ -10,12 +10,25 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 
+/**
+ * The Weapon seeding tests.
+ */
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class WeaponSeedingTests {
 
+  /**
+   * The World.
+   */
   World world;
+
+  /**
+   * The Guns.
+   */
   ArrayList<Gun> guns = new ArrayList<>();
 
+  /**
+   * Sets up the world and gets the guns from it.
+   */
   @BeforeAll
   public void setupTests() {
     world = new TestingWorld();
@@ -23,11 +36,17 @@ public class WeaponSeedingTests {
     guns = world.getGuns();
   }
 
+  /**
+   * Checks if the correct number of guns has been spawned.
+   */
   @Test
   public void correctNumber() {
     assertEquals(4, guns.size());
   }
 
+  /**
+   * Checks if the guns have been spawned in the correct palces in the world.
+   */
   @Test
   public void correctQuarters() {
     boolean quarter1 = false;
