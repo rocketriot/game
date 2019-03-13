@@ -39,9 +39,12 @@ public class CollisionHandler {
     
     MinimumTranslationVector v = checkCollision(step.position, entity, e);
     if(v != null) {
-      entity.handleCollisionMove(step, v, e);
+      boolean shouldResolve = entity.handleCollisionMove(step, v, e);
       step.addColide(e);
-      return v;
+      if(shouldResolve) {
+        return v;        
+      }
+      return null;
     }
     return null;
   }
@@ -139,8 +142,9 @@ public class CollisionHandler {
    * @param step
    * @param elastic
    * @param v vector
+   * @return 
    */
-  public void collide(Step step, float elastic, MinimumTranslationVector v) {
+  public Direction collide(Step step, float elastic, MinimumTranslationVector v) {
     Direction colPlace;
     Position pdelta = new Position(
         step.position.x + v.normal.x*v.depth, 
@@ -190,6 +194,8 @@ public class CollisionHandler {
       default:
         break;
     }
+    
+    return colPlace;
   }
 
 }

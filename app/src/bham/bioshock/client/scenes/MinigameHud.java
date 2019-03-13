@@ -79,18 +79,15 @@ public class MinigameHud implements Disposable {
         fuelGroup.addActor(fuelLabel);
         fuelGroup.addActor(fuelBar);
 
-        System.out.println("fuelbar X Pos: "+ fuelGroup.getX() + "width: "+fuelGroup.getWidth() + " height: "+fuelGroup.getHeight() + "Y POS: "+ fuelGroup.getY());
-
-
         topTable.add(fuelGroup).padLeft(PADDING).width(stage.getWidth()/4).left().top();
     }
 
 
     private void updateFuel() {
         float fuel = store.getMainPlayer().getFuel();
-        fuelBar.setValue(fuel);
+       fuelBar.setValue(fuel);
         fuelString = "Fuel: " + fuel + "/100.0";
-        fuelLabel.setText(fuelString);
+       fuelLabel.setText(fuelString);
     }
 
 
