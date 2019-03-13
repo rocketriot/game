@@ -1,14 +1,10 @@
 package bham.bioshock.minigame.objectives;
-import bham.bioshock.client.Route;
+
 import bham.bioshock.client.Router;
 import bham.bioshock.common.models.store.MinigameStore;
 import bham.bioshock.minigame.worlds.World;
-
 import bham.bioshock.minigame.models.Astronaut;
 import bham.bioshock.minigame.worlds.World;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-
 import java.io.Serializable;
 import java.util.Collection;
 
@@ -20,6 +16,7 @@ public abstract class Objective implements Serializable {
 
   private World world;
   private Router router;
+  protected MinigameStore localSore;
 
   public Objective(World world) {
     this.world = world;
@@ -44,7 +41,6 @@ public abstract class Objective implements Serializable {
 
   public Router getRouter(){return this.router;}
 
-
   /**
    * Called everytime a player is shot
    * @param player: the player who got shot
@@ -53,6 +49,7 @@ public abstract class Objective implements Serializable {
   public abstract void gotShot(Astronaut player, Astronaut killer);
 
   public abstract void initialise();
+
   /**
    * Seeds the minigame store with the additional entities required to each objective
    * @param store

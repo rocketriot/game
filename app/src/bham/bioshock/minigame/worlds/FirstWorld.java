@@ -1,6 +1,7 @@
 package bham.bioshock.minigame.worlds;
 
 import java.util.ArrayList;
+import java.util.Random;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import bham.bioshock.common.Position;
@@ -21,6 +22,7 @@ public class FirstWorld extends World {
   ArrayList<Gun> guns = new ArrayList<>();
   ArrayList<Platform> platforms = new ArrayList<>();
   Position gravityCenter = new Position(0, 0);
+  Texture texture;
 
   public FirstWorld() {
     playerPositions[0] = new Position(-2300, 0);
@@ -76,7 +78,14 @@ public class FirstWorld extends World {
 
   @Override
   public Texture getTexture() {
-    return new Texture(Gdx.files.internal("app/assets/minigame/planet1.png"));
+    if(texture != null) {
+      return texture;
+    }
+    Random r = new Random();
+    int id = r.nextInt(100) % 2;
+    Texture t = new Texture(Gdx.files.internal("app/assets/minigame/planet"+ (id + 1) +".png"));;
+    texture = t;
+    return t;
   }
   
 }

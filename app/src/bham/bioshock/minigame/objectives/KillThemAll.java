@@ -22,7 +22,6 @@ public class KillThemAll extends Objective {
   public KillThemAll(World world) {
     super(world);
     this.positions = this.getWorld().getPlayerPositions();
-    setRandonRespawnPosition();
   }
 
   @Override
@@ -36,7 +35,7 @@ public class KillThemAll extends Objective {
   public void gotShot(Astronaut player, Astronaut killer) {
     if (checkIfdead(player)) {
       addKill(killer);
-      player.setPosition(respawnPosition);
+      player.killAndRespawn(getRandonRespawnPosition());
       getRouter().call(Route.MINIGAME_MOVE);
       setPlayerHealth(initialHealth, player);
     } else {
@@ -55,6 +54,7 @@ public class KillThemAll extends Objective {
 
   @Override
   public void seed(MinigameStore store) {
+    super.seed(store);
     return;
   }
 
@@ -83,10 +83,10 @@ public class KillThemAll extends Objective {
     kills.computeIfPresent(p, (k, v) -> (v + 1));
   }
 
-  private void setRandonRespawnPosition() {
+  private Position getRandonRespawnPosition() {
     Random r = new Random();
     int i = Math.abs(r.nextInt()%4);
-    respawnPosition = positions[i];
+    return positions[i];
   }
 
 }

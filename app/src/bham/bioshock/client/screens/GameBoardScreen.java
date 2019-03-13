@@ -551,7 +551,7 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
           }
         };
 
-    dialog.text(new Label("Do you want to attempt to capture this planet?", skin));
+    dialog.text(new Label("Do you want to attempt to capture this planet?", skin, "window"));
     dialog.button("Yes", true);
     dialog.button("No", false);
 

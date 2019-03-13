@@ -3,7 +3,9 @@ package bham.bioshock.client.scenes;
 import bham.bioshock.client.Router;
 import bham.bioshock.client.screens.StatsContainer;
 import bham.bioshock.common.models.store.Store;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
@@ -34,6 +36,8 @@ public class MinigameHud implements Disposable {
 
 
     private Table topTable;
+    private VerticalGroup weaponsGroup;
+    Image weaponImage;
 
 
     public MinigameHud(SpriteBatch batch, Skin skin, int gameWidth, int gameHeight, Store store, Router router) {
@@ -50,6 +54,7 @@ public class MinigameHud implements Disposable {
 
         setupTopBar();
         setupFuelBar();
+        setupWeaponContainer();
         setupStatsContainer();
 
     }
@@ -79,25 +84,40 @@ public class MinigameHud implements Disposable {
         fuelGroup.addActor(fuelLabel);
         fuelGroup.addActor(fuelBar);
 
-        System.out.println("fuelbar X Pos: "+ fuelGroup.getX() + "width: "+fuelGroup.getWidth() + " height: "+fuelGroup.getHeight() + "Y POS: "+ fuelGroup.getY());
-
-
         topTable.add(fuelGroup).padLeft(PADDING).width(stage.getWidth()/4).left().top();
     }
 
+    private void setupWeaponContainer() {
+
+        weaponsGroup = new VerticalGroup();
+        weaponImage = new Image(new Texture(Gdx.files.internal("app/assets/minigame/gun.png")));
+        weaponImage.setSize(20,20);
+
+        topTable.add(weaponsGroup).padLeft(PADDING).width(stage.getWidth()/8).left().top();;
+    }
 
     private void updateFuel() {
         float fuel = store.getMainPlayer().getFuel();
-        fuelBar.setValue(fuel);
+       fuelBar.setValue(fuel);
         fuelString = "Fuel: " + fuel + "/100.0";
-        fuelLabel.setText(fuelString);
+       fuelLabel.setText(fuelString);
     }
 
 
     public void updateHud() {
         updateFuel();
+        if(store.getMinigameStore().getMainPlayer().haveGun()) {
+            showWeapon(true);
+        }
+
         statsContainer.updateAll();
         startText.render();
+    }
+
+    private void showWeapon(boolean hasGun) {
+        if(hasGun) {
+            weaponsGroup.addActor(weaponImage);
+        }
     }
 
     public Stage getStage() {
