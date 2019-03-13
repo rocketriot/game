@@ -1,8 +1,6 @@
-package bham.bioshock.minigame.seeding;
+package bham.bioshock.minigame.seeders;
 
 import bham.bioshock.minigame.PlanetPosition;
-import bham.bioshock.minigame.seeders.PlatformSeeder;
-import bham.bioshock.minigame.seeders.WeaponSeeder;
 import bham.bioshock.minigame.worlds.World;
 import java.util.ArrayList;
 import com.badlogic.gdx.Gdx;
@@ -22,22 +20,19 @@ public class TestingWorld extends World {
   double GRAVITY = 1500;
   Position[] playerPositions = new Position[4];
   ArrayList<Rocket> rockets = new ArrayList<>();
-  ArrayList<Gun> guns = new ArrayList<>();
-  ArrayList<Platform> platforms = new ArrayList<>();
+  ArrayList<Gun> guns;
+  ArrayList<Platform> platforms;
   Position gravityCenter = new Position(0, 0);
 
-  public TestingWorld() {
-    playerPositions[0] = new Position(-2300, 0);
-    playerPositions[1] = new Position(0, -2000);
-    playerPositions[2] = new Position(2000, 0);
-    playerPositions[3] = new Position(0, 2000);
+  PlatformSeeder seeder;
+  WeaponSeeder wSeeder;
 
-    PlatformSeeder seeder = new PlatformSeeder(this);
-    WeaponSeeder wSeeder = new WeaponSeeder(this);
+  public TestingWorld() {
+
+    seeder = new PlatformSeeder(this);
+    wSeeder = new WeaponSeeder(this);
     seeder.seed();
     wSeeder.seed();
-    platforms = seeder.getPlatforms();
-    guns = wSeeder.getGuns();
   }
 
   @Override
@@ -94,5 +89,15 @@ public class TestingWorld extends World {
     }
     Collections.reverse(path);
     return path;
+  }
+
+  public void seedWeapons(){
+    wSeeder.seed();
+    guns = wSeeder.getGuns();
+  }
+
+  public void seedPlatforms(){
+    seeder.seed();
+    platforms = seeder.getPlatforms();
   }
 }

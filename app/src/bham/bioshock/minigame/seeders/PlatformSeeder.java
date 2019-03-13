@@ -84,7 +84,7 @@ public class PlatformSeeder {
     // set the bounds of the number of platforms
     switch (frequency) {
       case "Low":
-        lowerBound = 0;
+        lowerBound = 1;
         upperBound = 5;
         break;
       case "Medium":
