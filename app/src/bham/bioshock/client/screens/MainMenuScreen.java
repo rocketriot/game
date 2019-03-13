@@ -7,6 +7,7 @@ import bham.bioshock.client.controllers.SoundController;
 import bham.bioshock.common.consts.Config;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -23,6 +24,10 @@ public class MainMenuScreen extends ScreenMaster {
 
   public MainMenuScreen(Router router) {
     super(router);
+
+    Pixmap pm = new Pixmap(Gdx.files.internal(Assets.cursor));
+    Gdx.graphics.setCursor(Gdx.graphics.newCursor(pm, 0, 0));
+    pm.dispose();
 
     router.call(Route.START_MUSIC, "mainMenu");
   }

@@ -4,6 +4,7 @@ public class Assets {
   // General
   public static final String skin = "app/assets/skin/skin.json";
   public static final String font = "app/assets/fonts/font.otf";
+  public static final String cursor = "app/assets/ui/cursor.png";
 
   // Backgrounds
   public static final String gameBackground = "app/assets/backgrounds/game.png";
