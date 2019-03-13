@@ -1,19 +1,27 @@
 package bham.bioshock.client.screens;
 
+import bham.bioshock.client.Assets;
 import bham.bioshock.client.Route;
 import bham.bioshock.client.Router;
 import bham.bioshock.client.controllers.SoundController;
+import bham.bioshock.common.consts.Config;
+
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.Texture.TextureFilter;
+import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
-import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.scenes.scene2d.utils.SpriteDrawable;
 
 public class MainMenuScreen extends ScreenMaster {
-  private TextButton host;
-  private TextButton howto;
-  private TextButton preferences;
-  private TextButton exit;
-  private TextButton join;
+  private Image logo;
+  private Image hostButton;
+  private Image joinButton;
+  private Image howToPlayButton;
+  private Image preferencesButton;
+  private Image exitButton;
 
   public MainMenuScreen(Router router) {
     super(router);
@@ -33,77 +41,65 @@ public class MainMenuScreen extends ScreenMaster {
     super.render(delta);
   }
 
-  private void drawButtons() {
-    Container<Table> tableContainer = new Container<>();
-    tableContainer.setFillParent(true);
-    tableContainer.center();
+  /** Generates an asset given an asset and screen coordinates */
+  private Image drawAsset(String asset, int x, int y, ClickListener clickListener) {
+    // Generate texture
+    Texture texture = new Texture(asset);
+    texture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 
-    // Table to hold menu button, will change this to a better style
-    Table table = new Table(skin);
+    // Generate image
+    Image image = new Image(texture);
+    image.setPosition(x, y);
 
-    host = new TextButton("Host Game", skin);
-    join = new TextButton("Join Game", skin);
-    howto = new TextButton("How to Play", skin);
-    preferences = new TextButton("Preferences", skin);
-    exit = new TextButton("Exit", skin);
+    if (clickListener != null)
+      image.addListener(clickListener);
 
-    table.add(host).fillX().uniform();
-    table.row();
-    table.add(join).fillX().uniform();
-    table.row();
-    table.add(howto).fillX().uniform();
-    table.row();
-    table.add(preferences).fillX().uniform();
-    table.row();
-    table.add(exit).fillX().uniform();
+    // Add to screen
+    stage.addActor(image);
 
-    tableContainer.setActor(table);
-    stage.addActor(tableContainer);
-    
-    addListeners();
+    return image;
   }
 
-  private void addListeners() {
-    exit.addListener(new ChangeListener() {
-      @Override
-      public void changed(ChangeEvent event, Actor actor) {
-        SoundController.playSound("menuSelect");
-        Gdx.app.exit();
-      }
-    });
+  private void drawButtons() {
+    logo = drawAsset(Assets.logo, (Config.GAME_WORLD_WIDTH / 2) - 258, Config.GAME_WORLD_HEIGHT - 550, null);
 
-    host.addListener(new ChangeListener() {
+    hostButton = drawAsset(Assets.hostButton, 200, 300, new ClickListener() {
       @Override
-      public void changed(ChangeEvent event, Actor actor) {
-        /**
-         * Bring up a dialogue to ask the user for a host name then start the new server
-         */
+      public void clicked(InputEvent event, float x, float y) {
         SoundController.playSound("menuSelect");
         showDialogue("host");
       }
     });
 
-    howto.addListener(new ChangeListener() {
+    joinButton = drawAsset(Assets.joinButton, 725, 50, new ClickListener() {
       @Override
-      public void changed(ChangeEvent event, Actor actor) {
+      public void clicked(InputEvent event, float x, float y) {
+        SoundController.playSound("menuSelect");
+        showDialogue("join");
+      }
+    });
+
+    howToPlayButton = drawAsset(Assets.howToPlayButton, 1200, 250, new ClickListener() {
+      @Override
+      public void clicked(InputEvent event, float x, float y) {
         SoundController.playSound("menuSelect");
         router.call(Route.HOW_TO);
       }
     });
 
-    preferences.addListener(new ChangeListener() {
+    preferencesButton = drawAsset(Assets.preferencesButton, Config.GAME_WORLD_WIDTH - 427, 0, new ClickListener() {
       @Override
-      public void changed(ChangeEvent event, Actor actor) {
+      public void clicked(InputEvent event, float x, float y) {
         SoundController.playSound("menuSelect");
         router.call(Route.PREFERENCES);
       }
     });
 
-    join.addListener(new ChangeListener() {
+    exitButton = drawAsset(Assets.exitButton, 0, 0, new ClickListener() {
       @Override
-      public void changed(ChangeEvent event, Actor actor) {
+      public void clicked(InputEvent event, float x, float y) {
         SoundController.playSound("menuSelect");
-        showDialogue("join");
+        Gdx.app.exit();
       }
     });
   }
@@ -125,10 +121,11 @@ public class MainMenuScreen extends ScreenMaster {
         }
 
         SoundController.playSound("menuSelect");
-        
 
-        if (type.equals("host")) router.call(Route.HOST_GAME, text);
-        if (type.equals("join")) router.call(Route.JOIN_SCREEN, text);
+        if (type.equals("host"))
+          router.call(Route.HOST_GAME, text);
+        if (type.equals("join"))
+          router.call(Route.JOIN_SCREEN, text);
       }
     };
 
