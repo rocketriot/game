@@ -8,6 +8,7 @@ import bham.bioshock.minigame.models.Astronaut;
 import bham.bioshock.minigame.worlds.World;
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.UUID;
 
 
 public abstract class Objective implements Serializable {
@@ -22,7 +23,7 @@ public abstract class Objective implements Serializable {
 
   private Collection<Astronaut> players;
 
-  public abstract Astronaut getWinner();
+  public abstract UUID getWinner();
 
   public void setPlayers(Collection<Astronaut> players) {
     this.players = players;

@@ -7,8 +7,9 @@ import bham.bioshock.client.XMLInteraction;
 import bham.bioshock.common.models.store.Store;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
-
 import java.util.HashMap;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Future;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -50,6 +51,11 @@ public class SoundController extends Controller {
   private AppPreferences preferences;
 
   private XMLInteraction xmlInteraction = new XMLInteraction();
+
+  /**
+   * Future use for music fade-out concurrency
+   */
+  private CompletableFuture<Void> fade;
 
   /**
    * Hashmaps that store the sound variables with their names, whether they are playing and the id
@@ -101,13 +107,25 @@ public class SoundController extends Controller {
    */
   public void startMusic(String music) {
     if (!musicPlaying.get(music) && musicEnabled) {
-      long id = this.music.get(music).loop(musicVolume);
-      musicIds.put(music, id);
 
-      if (musicPlaying.keySet().contains(music)) {
-        musicPlaying.replace(music, true);
+      Runnable start = () -> {
+        long id = this.music.get(music).loop(musicVolume);
+        musicIds.put(music, id);
+
+        if (musicPlaying.keySet().contains(music)) {
+          musicPlaying.replace(music, true);
+        } else {
+          musicPlaying.put(music, true);
+        }
+      };
+
+
+      if (fade == null || fade.isDone()) {
+        start.run();
       } else {
-        musicPlaying.put(music, true);
+        fade.thenRun(() -> {
+          start.run();
+        });
       }
     }
   }
@@ -174,18 +192,24 @@ public class SoundController extends Controller {
    * @param music The name of the music that you want to fade out
    * @throws InterruptedException the interrupted exception
    */
-  public void fadeOut(String music) throws InterruptedException {
+  public void fadeOut(String music) {
     if (musicPlaying.get(music)) {
-      int fadeTime = 20;
-      float currentVolume = musicVolume;
-      float step = currentVolume / fadeTime;
 
-      for (int i = 0; i < fadeTime; i++) {
-        currentVolume -= step;
-        adjustCurrentVolume(music, musicIds.get(music), currentVolume);
-        Thread.sleep(100);
-      }
-      stopMusic(music);
+      fade = CompletableFuture.runAsync(() -> {
+        try {
+          int fadeTime = 10;
+          float currentVolume = musicVolume;
+          float step = currentVolume / fadeTime;
+
+          for (int i = 0; i < fadeTime; i++) {
+            currentVolume -= step;
+            adjustCurrentVolume(music, musicIds.get(music), currentVolume);
+            Thread.sleep(100);
+          }
+        } catch (InterruptedException e) {
+        }
+        stopMusic(music);
+      });
     }
   }
 

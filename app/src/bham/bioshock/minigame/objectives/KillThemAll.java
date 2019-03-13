@@ -10,6 +10,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Random;
+import java.util.UUID;
 
 
 public class KillThemAll extends Objective {
@@ -25,9 +26,13 @@ public class KillThemAll extends Objective {
   }
 
   @Override
-  public Astronaut getWinner() {
-    return Collections.max(kills.entrySet(), Comparator.comparingInt(HashMap.Entry::getValue))
+  public UUID getWinner() {
+    Astronaut a = Collections.max(kills.entrySet(), Comparator.comparingInt(HashMap.Entry::getValue))
         .getKey();
+    if(a == null) {
+      return null;
+    }
+    return a.getId();
   }
 
 

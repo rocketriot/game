@@ -2,6 +2,7 @@ package bham.bioshock.minigame.objectives;
 
 import java.util.HashMap;
 import java.util.Random;
+import java.util.UUID;
 import bham.bioshock.client.Route;
 import bham.bioshock.common.Position;
 import bham.bioshock.common.models.store.MinigameStore;
@@ -35,8 +36,9 @@ public class CaptureTheFlag extends Objective {
   }
 
   @Override
-  public Astronaut getWinner() {
-    return flagOwner;
+  public UUID getWinner() {
+    Astronaut a = flagOwner;
+    return a == null ? null : a.getId();
   }
 
   // router call minigame move

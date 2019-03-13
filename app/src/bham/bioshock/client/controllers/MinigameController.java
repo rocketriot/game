@@ -5,6 +5,7 @@ import bham.bioshock.client.Route;
 import bham.bioshock.client.Router;
 import bham.bioshock.client.screens.MinigameScreen;
 import bham.bioshock.common.Position;
+import bham.bioshock.common.models.Player;
 import bham.bioshock.common.models.store.MinigameStore;
 import bham.bioshock.common.models.store.Store;
 import bham.bioshock.communication.Action;
@@ -38,8 +39,8 @@ public class MinigameController extends Controller {
   }
 
 
-  public void sendStart() {
-    clientService.send(new Action(Command.MINIGAME_START));
+  public void sendStart(UUID planetId) {
+    clientService.send(new Action(Command.MINIGAME_START, planetId));
   }
   
   public void directStart() {
@@ -106,10 +107,19 @@ public class MinigameController extends Controller {
   public void end(ArrayList<Serializable> arguments){
     // end the minigame and send players back to the board
     UUID playerId = (UUID) arguments.get(0);
-    int newScore = (int) arguments.get(1);
-    store.getPlayer(playerId).setPoints(newScore);
-
+    UUID planetId = (UUID) arguments.get(1);
+    int points = (int) arguments.get(2);
+    
+    // Only if there's a winner
+    if(playerId != null) {
+      Player p = store.getPlayer(playerId);
+      p.addPoints(points);
+      UUID[] planetOwner = new UUID[] { playerId, planetId };
+      router.call(Route.SET_PLANET_OWNER, planetOwner);      
+    }
+    router.call(Route.FADE_OUT, "minigame");
     router.call(Route.GAME_BOARD_SHOW);
+    router.call(Route.END_TURN);
     store.resetMinigameStore();
   }
 }

@@ -24,7 +24,9 @@ public class ServerSender {
    */
   public void send(Action action) {
     try {
-      client.writeObject(action);
+      synchronized (this) {
+        client.writeObject(action);        
+      }
     } catch (IOException e) {
       System.err.println("Can't send a message " + e.getMessage());
     }

@@ -99,9 +99,6 @@ public class ServerHandler {
         case MINIGAME_PLAYER_MOVE:
           minigameHandler.playerMove(action, service.Id());
           break;
-        case MINIGAME_END:
-          minigameHandler.endMinigame(action, service.Id());
-          break;
         case MINIGAME_BULLET:
           minigameHandler.bulletShot(action, service.Id());
           break;

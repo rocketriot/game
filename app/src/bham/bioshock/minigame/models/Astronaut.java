@@ -1,6 +1,7 @@
 package bham.bioshock.minigame.models;
 
 import java.util.List;
+import java.util.UUID;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
@@ -43,7 +44,7 @@ public class Astronaut extends Entity {
   private Direction shotDirection;
 
 
-  public Astronaut(World w, float x, float y) {
+  public Astronaut(World w, float x, float y, UUID id) {
     super(w, x, y, EntityType.ASTRONAUT);
     width = 150;
     height = 150;
@@ -52,10 +53,11 @@ public class Astronaut extends Entity {
     update(0);
     collisionWidth = 65;
     collisionHeight = 150 + fromGround;
+    this.id = id;
   }
 
-  public Astronaut(World w, Position p) {
-    this(w, p.x, p.y);
+  public Astronaut(World w, Position p, UUID id) {
+    this(w, p.x, p.y, id);
   }
 
   public void setName(String name) {

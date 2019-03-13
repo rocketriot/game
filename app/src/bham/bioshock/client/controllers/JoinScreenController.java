@@ -23,7 +23,6 @@ import org.apache.logging.log4j.Logger;
 
 public class JoinScreenController extends Controller {
 
-
     private static final Logger logger = LogManager.getLogger(JoinScreenController.class);
 
     private ClientService clientService;
