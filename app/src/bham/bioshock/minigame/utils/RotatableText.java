@@ -51,10 +51,10 @@ public class RotatableText {
 //    BitmapFont font = new BitmapFont(handle);
 
     // get the glypth info
-    font.isFlipped();
+//    font.isFlipped();
     
-    mx4Font.setToRotation(new Vector3(0, 1, 0), 90);
-    batch.setTransformMatrix(mx4Font);
+//    mx4Font.setToRotation(new Vector3(0, 1, 0), 90);
+//    batch.setTransformMatrix(mx4Font);
     batch.begin();
     font.draw(batch, "TEEST", pos.x, pos.y);
     batch.end();
