@@ -95,21 +95,21 @@ public class FuelBar extends HudElement {
     sr.setProjectionMatrix(batch.getProjectionMatrix());
 
     // 75% to 100%
-    sr.setColor(new Color(0xFF433EFF));
+    sr.setColor(new Color(0xFFE04AFF));
     sr.rect(fuelXCoordinate, fuelPadding + 50f, fuelWidth, height);
-
+    
     // 50% to 75%
-    sr.setColor(new Color(0xFF8343FF));
+    sr.setColor(new Color(0xFFA947FF));
     float height2 = Float.min(fuelMaxHeight * 0.75f, height);
     sr.rect(fuelXCoordinate, fuelPadding + 50f, fuelWidth, height2);
-
+    
     // 25% to 50%
-    sr.setColor(new Color(0xFFA947FF));
+    sr.setColor(new Color(0xFF8343FF));
     float height3 = Float.min(fuelMaxHeight * 0.50f, height);
     sr.rect(fuelXCoordinate, fuelPadding + 50f, fuelWidth, height3);
-
+    
     // 0% to 25%
-    sr.setColor(new Color(0xFFE04AFF));
+    sr.setColor(new Color(0xFF433EFF));
     float height4 = Float.min(fuelMaxHeight * 0.25f, height);
     sr.rect(fuelXCoordinate, fuelPadding + 50f, fuelWidth, height4);
 

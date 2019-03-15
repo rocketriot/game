@@ -41,6 +41,9 @@ public class Player extends Sendable {
   /** Object containing infomation about a players move */
   private ArrayList<Move> boardMove;
 
+  /** The fuel cost for moving one grid space */
+  public static final float FUEL_GRID_COST = 10f;
+
   /** The maximum amount of fuel a player hold at one time */
   public static final float MAX_FUEL = 100f;
 
