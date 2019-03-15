@@ -247,12 +247,15 @@ public abstract class Entity implements Serializable {
 
   
   public void draw(SpriteBatch batch, float delta) {
-    Sprite sprite = getSprite();
-    sprite.setRegion(getTexture());
-    sprite.setPosition(getX() - (sprite.getWidth() / 2), getY());
-    sprite.setRotation((float) getRotation());
-    sprite.draw(batch);
-    update(delta);
+
+// check if dispayed
+      Sprite sprite = getSprite();
+      sprite.setRegion(getTexture());
+      sprite.setPosition(getX() - (sprite.getWidth() / 2), getY());
+      sprite.setRotation((float) getRotation());
+      sprite.draw(batch);
+      update(delta);
+
   }
 
   public enum State {

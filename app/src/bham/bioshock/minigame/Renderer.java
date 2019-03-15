@@ -41,6 +41,7 @@ public class Renderer {
   private Stage stage;
   private SpriteBatch batch;
   private SpriteBatch backgroundBatch;
+  private SpriteBatch fontBatch;
   private Viewport viewport;
   private double camRotation;
   private final int GAME_WORLD_WIDTH = Config.GAME_WORLD_WIDTH;
@@ -49,7 +50,6 @@ public class Renderer {
   private Router router;
   private static boolean DEBUG_MODE = false;
   private MinigameStore minigameStore;
-  
   private MinigameHud hud;
   private World world;
 
@@ -79,7 +79,8 @@ public class Renderer {
 
     batch = new SpriteBatch();
     backgroundBatch = new SpriteBatch();
-    
+    fontBatch = new SpriteBatch();
+
     CollisionHandler collisionHandler = new CollisionHandler(minigameStore);
 
     setupUI();
@@ -109,14 +110,14 @@ public class Renderer {
     stage = new Stage(viewport);
 
     background = new Sprite(new Texture(Gdx.files.internal("app/assets/backgrounds/game.png")));
-    
+
     for (Entity e : getEntities()) {
       e.load();
       e.setCollisionHandler(collisionHandler);
       e.setObjective(objective);
     }
   }
-  
+
   public Collection<Entity> getEntities() {
     Collection<Entity> entities = new ArrayList<>(minigameStore.countEntities());
     entities.addAll(minigameStore.getEntities());
@@ -135,7 +136,7 @@ public class Renderer {
     cam.update();
 
     Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-    
+
     Collection<Entity> entities = getEntities();
 
     drawBackground();
@@ -143,8 +144,7 @@ public class Renderer {
     if (DEBUG_MODE) {
       entities.forEach(e -> e.drawDebug(shapeRenderer));
     }
-    
-    
+
     batch.begin();
     drawPlanet();
     entities.forEach(e -> e.draw(batch, delta));
@@ -166,7 +166,7 @@ public class Renderer {
     float radius = (float) world.getPlanetRadius()+530;
     batch.draw(worldTexture, -radius, -radius, radius*2, radius*2);
   }
-  
+
   public void drawBackground() {
     backgroundBatch.begin();
     backgroundBatch.draw(background, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
@@ -176,10 +176,8 @@ public class Renderer {
   public void resize(int width, int height) {
     stage.getViewport().update(width, height, true);
   }
-
-
-
-
 }
+
+
 
 

@@ -1,8 +1,5 @@
 package bham.bioshock.server.handlers;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.UUID;
 import bham.bioshock.common.models.Player;
 import bham.bioshock.common.models.store.Store;
 import bham.bioshock.communication.Action;
@@ -10,11 +7,19 @@ import bham.bioshock.communication.Command;
 import bham.bioshock.communication.server.ServerHandler;
 import bham.bioshock.minigame.Clock;
 import bham.bioshock.minigame.ai.KillEveryoneAI;
+import bham.bioshock.minigame.ai.PlatformerAi;
 import bham.bioshock.minigame.objectives.CaptureTheFlag;
+import bham.bioshock.minigame.objectives.KillThemAll;
 import bham.bioshock.minigame.objectives.Objective;
+import bham.bioshock.minigame.objectives.Platformer;
 import bham.bioshock.minigame.worlds.FirstWorld;
 import bham.bioshock.minigame.worlds.World;
 import bham.bioshock.server.ai.MinigameAILoop;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Random;
+import java.util.UUID;
 
 public class MinigameHandler {
 
@@ -33,14 +38,47 @@ public class MinigameHandler {
   public void startMinigame(Action action) {
     // Create a world for the minigame
     World w = new FirstWorld();
-    Objective o = new CaptureTheFlag(w);
-    //
+    Objective o;
     aiLoop = new MinigameAILoop();
-    aiLoop.start();
 
-    for (UUID id : store.getCpuPlayers()) {
-      aiLoop.registerHandler(new KillEveryoneAI(id, store, handler));
+    Random rand = new Random();
+
+
+    switch(rand.nextInt(4)) {
+      case 1:
+        o = new CaptureTheFlag(w);
+        for (UUID id : store.getCpuPlayers()) {
+          //NOTE CHANGE TO CAPTURE the flag
+          aiLoop.registerHandler(new KillEveryoneAI(id, store, handler));
+        }
+        System.out.println("PLAYING CAPTURE THE FLAG");
+        break;
+      case 2:
+        o = new Platformer(w);
+        for (UUID id : store.getCpuPlayers()) {
+          aiLoop.registerHandler(new PlatformerAi(id, store, handler));
+        }
+        System.out.println("PLAYING PLATFORMER");
+        break;
+      case 3:
+        o = new KillThemAll(w);
+        for (UUID id : store.getCpuPlayers()) {
+          aiLoop.registerHandler(new KillEveryoneAI(id, store, handler));
+        }
+        System.out.println("PLAYING KILL THEM ALL");
+        break;
+      default:
+        o = new CaptureTheFlag(w);
+        for (UUID id : store.getCpuPlayers()) {
+          //NOTE CHANGE TO CAPTURE the flag
+          aiLoop.registerHandler(new KillEveryoneAI(id, store, handler));
+        }
+        System.out.println("PLAYING CAPTURE THE FLAG");
+        break;
     }
+    //
+
+    aiLoop.start();
 
     Serializable arg = (Serializable) w;
     Serializable arg2 = (Serializable) o;
@@ -49,6 +87,7 @@ public class MinigameHandler {
     arguments.add(arg);
     arguments.add(arg2);
     handler.sendToAll(new Action(Command.MINIGAME_START, arguments));
+  
   }
 
   /*

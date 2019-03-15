@@ -24,6 +24,7 @@ public class MinigameStore {
 
   private Skin skin;
   private Objective objective;
+  private boolean started;
 
   public MinigameStore() {
     players = new HashMap<>();
@@ -121,6 +122,14 @@ public class MinigameStore {
 
   public void addEntity(Entity e) {
     entities.add(e);
+  }
+
+  public void started(){
+    this.started = true;
+  }
+
+  public boolean isStarted(){
+    return this.started;
   }
 
 }
