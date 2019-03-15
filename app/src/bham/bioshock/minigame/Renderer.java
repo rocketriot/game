@@ -27,7 +27,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
-import bham.bioshock.client.scenes.MinigameHud;
+import bham.bioshock.client.scenes.minigame.MinigameHud;
 import bham.bioshock.minigame.models.*;
 import bham.bioshock.minigame.physics.CollisionHandler;
 
@@ -96,7 +96,7 @@ public class Renderer {
 
   private void setupUI() {
     Skin skin = new Skin(Gdx.files.internal(Assets.skin));
-    hud = new MinigameHud(batch, skin, GAME_WORLD_WIDTH, GAME_WORLD_HEIGHT, store, router);
+    hud = new MinigameHud(batch, skin, store, router);
   }
 
 
@@ -156,7 +156,7 @@ public class Renderer {
     // Draw the ui
     this.batch.setProjectionMatrix(hud.stage.getCamera().combined);
     hud.getStage().act(delta);
-    hud.updateHud();
+    hud.update();
     hud.getStage().draw();
     minigameStore.getEntities().removeIf(e -> e.isRemoved());
     minigameStore.getStaticEntities().removeIf(e -> e.isRemoved());

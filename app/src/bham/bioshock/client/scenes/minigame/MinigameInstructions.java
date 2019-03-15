@@ -1,4 +1,4 @@
-package bham.bioshock.client.scenes;
+package bham.bioshock.client.scenes.minigame;
 
 import bham.bioshock.client.FontGenerator;
 import bham.bioshock.common.consts.Config;

@@ -1,7 +1,8 @@
-package bham.bioshock.client.scenes;
+package bham.bioshock.client.scenes.minigame;
 
 import bham.bioshock.client.Router;
 import bham.bioshock.client.screens.StatsContainer;
+import bham.bioshock.common.consts.Config;
 import bham.bioshock.common.models.store.Store;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -13,15 +14,10 @@ import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 
 public class MinigameHud implements Disposable {
-
-    private Store store;
-    private Router router;
-
     private final Skin skin;
-    private final float gameWidth;
-    private final float gameHeight;
     public Stage stage;
     public FitViewport viewport;
+    private Store store;
 
     private ProgressBar fuelBar;
     private String fuelString;
@@ -40,14 +36,11 @@ public class MinigameHud implements Disposable {
     Image weaponImage;
 
 
-    public MinigameHud(SpriteBatch batch, Skin skin, int gameWidth, int gameHeight, Store store, Router router) {
+    public MinigameHud(SpriteBatch batch, Skin skin, Store store, Router router) {
         this.store = store;
-        this.router = router;
         this.skin = skin;
-        this.gameWidth = gameWidth;
-        this.gameHeight = gameHeight;
 
-        viewport = new FitViewport(this.gameWidth, this.gameHeight, new OrthographicCamera());
+        viewport = new FitViewport(Config.GAME_WORLD_WIDTH, Config.GAME_WORLD_HEIGHT, new OrthographicCamera());
         stage = new Stage(viewport, batch);
 
         startText = new MinigameInstructions(batch, store);
@@ -104,7 +97,7 @@ public class MinigameHud implements Disposable {
     }
 
 
-    public void updateHud() {
+    public void update() {
         updateFuel();
         if(store.getMinigameStore().getMainPlayer().haveGun()) {
             showWeapon(true);

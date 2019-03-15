@@ -1,8 +1,7 @@
-package bham.bioshock.client.scenes.gameboard;
+package bham.bioshock.client.scenes;
 
 import bham.bioshock.client.Router;
 import bham.bioshock.common.consts.Config;
-import bham.bioshock.common.models.Player;
 import bham.bioshock.common.models.store.Store;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -13,16 +12,12 @@ import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 
 public class Hud implements Disposable {
-  private final Skin skin;
-  public Stage stage;
-  public FitViewport viewport;
-  private Store store;
+  protected final Skin skin;
+  protected Stage stage;
+  protected FitViewport viewport;
+  protected Store store;
 
-  private FuelBar fuelBar;
-  private ScoreBoard scoreBoard;
   private PauseMenu pauseMenu;
-  private TurnStartText turnStartText;
-  private SkipTurnButton skipTurnButton;
 
   public Hud(SpriteBatch batch, Skin skin, Store store, Router router) {
     this.store = store;
@@ -32,21 +27,11 @@ public class Hud implements Disposable {
     viewport = new FitViewport(Config.GAME_WORLD_WIDTH, Config.GAME_WORLD_HEIGHT, camera);
     stage = new Stage(viewport, batch);
 
-    turnStartText = new TurnStartText(batch, store);
     pauseMenu = new PauseMenu(stage, batch, skin, store, router);
-    scoreBoard = new ScoreBoard(stage, batch, skin, store, router);
-    fuelBar = new FuelBar(stage, batch, skin, store, router);
-    skipTurnButton = new SkipTurnButton(stage, batch, skin, store, router);
   }
 
-  public void updateHud() {
-    Player mainPlayer = store.getMainPlayer();
-
-    scoreBoard.render(store.getRound(), store.getPlayers(), store.getMovingPlayer());
-    fuelBar.render(mainPlayer.getFuel());
+  public void update() {
     pauseMenu.render();
-    turnStartText.render();
-    skipTurnButton.render();
   }
 
   public Stage getStage() {
@@ -79,5 +64,9 @@ public class Hud implements Disposable {
 
   public boolean isPaused() {
     return pauseMenu.isPaused();
+  }
+
+  public FitViewport getViewport() {
+    return viewport;
   }
 }

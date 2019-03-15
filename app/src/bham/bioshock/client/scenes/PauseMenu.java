@@ -1,4 +1,4 @@
-package bham.bioshock.client.scenes.gameboard.hud;
+package bham.bioshock.client.scenes;
 
 import bham.bioshock.client.Assets;
 import bham.bioshock.client.Route;
@@ -24,7 +24,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 
-public class PauseMenu extends HudElement{
+public class PauseMenu extends HudElement {
   private ShapeRenderer sr;
 
   private boolean isPaused;
