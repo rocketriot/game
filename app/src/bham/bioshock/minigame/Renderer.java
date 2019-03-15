@@ -55,7 +55,8 @@ public class Renderer {
 
   private Objective objective;
   private Texture worldTexture;
-
+  private SpriteBatch textBatch;
+  
   public Renderer(Store store, Router router) {
     this.store = store;
     this.minigameStore = store.getMinigameStore();
@@ -64,6 +65,7 @@ public class Renderer {
     mainPlayer = minigameStore.getMainPlayer();
 
     shapeRenderer = new ShapeRenderer();
+    textBatch = new SpriteBatch();
 
     world = minigameStore.getWorld();
     worldTexture = world.getTexture();
@@ -128,7 +130,6 @@ public class Renderer {
     shapeRenderer.setProjectionMatrix(cam.combined);
 
     cam.position.lerp(lerpTarget.set(mainPlayer.getX(), mainPlayer.getY(), 0), 3f * delta);
-
     double rotation = -world.getAngleTo(cam.position.x, cam.position.y);
     cam.rotate((float) (camRotation - rotation));
     camRotation = rotation;
@@ -146,10 +147,11 @@ public class Renderer {
 
     batch.begin();
     drawPlanet();
-
     entities.forEach(e -> e.draw(batch, delta));
-
     batch.end();
+    
+    textBatch.setProjectionMatrix(cam.combined);
+    entities.forEach(e -> e.afterDrawing(textBatch));
 
     // Draw the ui
     this.batch.setProjectionMatrix(hud.stage.getCamera().combined);

@@ -261,6 +261,8 @@ public abstract class Entity implements Serializable {
   public enum State {
     CREATED, LOADED, REMOVED, REMOVING,
   }
+
+  public void afterDrawing(SpriteBatch batch) {}
   
 }
 

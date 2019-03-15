@@ -1,5 +1,6 @@
 package bham.bioshock.minigame.models;
 
+import static java.util.stream.Collectors.toList;
 import java.util.List;
 import java.util.UUID;
 import com.badlogic.gdx.Gdx;
@@ -15,13 +16,13 @@ import bham.bioshock.client.controllers.SoundController;
 import bham.bioshock.common.Direction;
 import bham.bioshock.common.Position;
 import bham.bioshock.communication.Sendable;
+import bham.bioshock.minigame.PlanetPosition;
 import bham.bioshock.minigame.PlayerTexture;
-import bham.bioshock.minigame.models.Entity.State;
 import bham.bioshock.minigame.physics.CollisionBoundary;
 import bham.bioshock.minigame.physics.SpeedVector;
 import bham.bioshock.minigame.physics.Step;
+import bham.bioshock.minigame.utils.RotatableText;
 import bham.bioshock.minigame.worlds.World;
-import static java.util.stream.Collectors.toList;
 
 public class Astronaut extends Entity {
 
@@ -34,9 +35,10 @@ public class Astronaut extends Entity {
   private PlayerTexture dir = PlayerTexture.FRONT;
   private boolean haveGun = false;
   private CollisionBoundary legs;
-  private String name;
   private Move move = new Move();
   private Position respawn;
+  private RotatableText name;
+  
   static Animation<TextureRegion> dyingFront;
   static Animation<TextureRegion> dyingBack;
   private boolean dieFront = true;
@@ -61,7 +63,7 @@ public class Astronaut extends Entity {
   }
 
   public void setName(String name) {
-    this.name = name;
+    this.name = new RotatableText(name);
   }
 
   public void moveLeft(boolean value) {
@@ -136,7 +138,7 @@ public class Astronaut extends Entity {
       } else {
         anim = dyingBack.getKeyFrame(dieTime, false);
       }
-//      setRotation( (dieTime / 0.71f)*90 );
+
       collisionBoundary.update(respawn, delta);
       collisionBoundary.update(pos, getRotation() - (dieTime / 0.71f)*90);
       Sprite sprite = getSprite();
@@ -155,6 +157,15 @@ public class Astronaut extends Entity {
     } else {
       super.draw(batch, delta);
     }
+  }
+  
+  @Override
+  public void afterDrawing(SpriteBatch batch) {
+    PlanetPosition pp = world.convert(pos);
+    pp.fromCenter += height + 20;
+    
+    name.update(world.convert(pp), getRotation());
+    name.draw(batch);
   }
 
   public void setPosition(Position p) {
