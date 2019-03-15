@@ -17,8 +17,9 @@ public class MinigameInstructions {
   private BitmapFont font;
   private BitmapFont timerFont;
   private boolean showPrompt = false;
-  private boolean ShowPrompt2 = false;
+  private boolean showPrompt2 = false;
   private float duration;
+  private float duration2;
   private boolean displayed;
   private FontGenerator fontGenerator;
   private int fontSize = 72;
@@ -44,6 +45,7 @@ public class MinigameInstructions {
   /**
    * Render the instructions once at the beginning
    * Render the timer for the game
+   * Render message for the last 10 seconds
    */
   public void render() {
     checkIfDisplayed();
@@ -61,6 +63,22 @@ public class MinigameInstructions {
 
       if (duration <= 0) {
         showPrompt = false;
+      }
+    }
+
+    if(showPrompt2){
+      batch.begin();
+
+      int x = Config.GAME_WORLD_WIDTH / 8;
+      int y = Config.GAME_WORLD_HEIGHT / 2;
+
+      font.draw(batch, "Hurry up! \n Only 10 seconds left!", x, y);
+      batch.end();
+
+      duration2  -= Gdx.graphics.getDeltaTime();
+
+      if (duration2 <= 0) {
+        showPrompt2 = false;
       }
     }
   }
@@ -104,7 +122,7 @@ public class MinigameInstructions {
     timerFont.draw(batch, "0" + initialMinute +":" + displayedSeconds, xTimer, yTimer);
 
     if(initialMinute == 0 && displayedTime <=10)
-      System.out.println("10 ");
+      showPrompt2 =true;
     batch.end();
   }
 }
