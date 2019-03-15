@@ -50,7 +50,7 @@ public class MinigameHud implements Disposable {
         stage = new Stage(viewport, batch);
 
         setupTopBar();
-        setupFuelBar();
+        //setupFuelBar();
         setupStatsContainer();
     }
 
@@ -95,7 +95,7 @@ public class MinigameHud implements Disposable {
 
 
     public void updateHud() {
-        updateFuel();
+        //updateFuel();
         statsContainer.updateAll();
     }
 
