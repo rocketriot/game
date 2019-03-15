@@ -73,6 +73,9 @@ public class ClientHandler implements IClientHandler {
             router.call(Route.GAME_BOARD_SAVE, gameBoard);
             break;
           }
+          case UPDATE_TURN: {
+            router.call(Route.UPDATE_TURN);
+          }
           case MINIGAME_START: {
             router.call(Route.START_MINIGAME, action.getArguments());
             break;

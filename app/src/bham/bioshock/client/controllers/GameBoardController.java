@@ -84,6 +84,11 @@ public class GameBoardController extends Controller {
     clientService.send(new Action(Command.END_TURN));
   }
 
+  /** Handles server message to end turn */
+  public void updateTurn() {
+    store.nextTurn();
+  }
+
   /** Player move received from the server */
   public void moveReceived(Player movingPlayer) {
     // Update the model

@@ -84,17 +84,15 @@ public class GameBoardHandler {
     
     handler.sendToAll(new Action(Command.MOVE_PLAYER_ON_BOARD, response));
 
-    if (movingPlayer.isCpu()) {
-      int waitTime = calculateMoveTime(currentPlayer.getBoardMove());
-      new Thread(() -> {
-        try {
-          Thread.sleep(waitTime);
-          endTurn();
-        } catch (InterruptedException e) {
-          e.printStackTrace();
-        }
-      }).start();
-    }
+    int waitTime = calculateMoveTime(currentPlayer.getBoardMove());
+    new Thread(() -> {
+      try {
+        Thread.sleep(waitTime);
+        endTurn();
+      } catch (InterruptedException e) {
+        e.printStackTrace();
+      }
+    }).start();
   }
 
   private int calculateMoveTime(ArrayList<Move> boardMove) {
@@ -107,6 +105,7 @@ public class GameBoardHandler {
 
   public void endTurn() {
     store.nextTurn();
+    handler.sendToAll(new Action(Command.UPDATE_TURN));
     // Handle if the next player is a CPU
     Player movingPlayer = store.getMovingPlayer();
     if (movingPlayer.isCpu()) {
