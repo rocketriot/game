@@ -1,5 +1,6 @@
 package bham.bioshock.minigame.models;
 
+import static java.util.stream.Collectors.toList;
 import java.util.List;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
@@ -10,19 +11,17 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Intersector.MinimumTranslationVector;
-import com.badlogic.gdx.math.Matrix4;
 import bham.bioshock.client.controllers.SoundController;
 import bham.bioshock.common.Direction;
 import bham.bioshock.common.Position;
 import bham.bioshock.communication.Sendable;
+import bham.bioshock.minigame.PlanetPosition;
 import bham.bioshock.minigame.PlayerTexture;
-import bham.bioshock.minigame.models.Entity.State;
 import bham.bioshock.minigame.physics.CollisionBoundary;
 import bham.bioshock.minigame.physics.SpeedVector;
 import bham.bioshock.minigame.physics.Step;
 import bham.bioshock.minigame.utils.RotatableText;
 import bham.bioshock.minigame.worlds.World;
-import static java.util.stream.Collectors.toList;
 
 public class Astronaut extends Entity {
 
@@ -137,7 +136,7 @@ public class Astronaut extends Entity {
       } else {
         anim = dyingBack.getKeyFrame(dieTime, false);
       }
-//      setRotation( (dieTime / 0.71f)*90 );
+
       collisionBoundary.update(respawn, delta);
       collisionBoundary.update(pos, getRotation() - (dieTime / 0.71f)*90);
       Sprite sprite = getSprite();
@@ -159,9 +158,12 @@ public class Astronaut extends Entity {
   }
   
   @Override
-  public void afterDrawing(Matrix4 camMatrix) {
-    name.update(pos, getRotation());
-    name.draw(camMatrix);
+  public void afterDrawing(SpriteBatch batch) {
+    PlanetPosition pp = world.convert(pos);
+    pp.fromCenter += height + 20;
+    
+    name.update(world.convert(pp), getRotation());
+    name.draw(batch);
   }
 
   public void setPosition(Position p) {

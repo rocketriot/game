@@ -16,7 +16,6 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Intersector.MinimumTranslationVector;
-import com.badlogic.gdx.math.Matrix4;
 
 public abstract class Entity implements Serializable {
 
@@ -260,7 +259,7 @@ public abstract class Entity implements Serializable {
     CREATED, LOADED, REMOVED, REMOVING,
   }
 
-  public void afterDrawing(Matrix4 combined) {}
+  public void afterDrawing(SpriteBatch batch) {}
   
 }
 
