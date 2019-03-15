@@ -15,6 +15,7 @@ public class MinigameInstructions {
   private SpriteBatch batch;
   private Store store;
   private BitmapFont font;
+  private BitmapFont timerFont;
   private boolean showPrompt = false;
   private float duration;
   private boolean displayed;
@@ -36,6 +37,7 @@ public class MinigameInstructions {
   private void setup() {
     fontGenerator = new FontGenerator();
     font = fontGenerator.generate(fontSize, Color.WHITE);
+    timerFont = fontGenerator.generate(fontSize, Color.YELLOW);
   }
 
   /**
@@ -79,12 +81,11 @@ public class MinigameInstructions {
    * Displays timer for the minigame.
    */
   private void displayTimer() {
-    int xTimer = Config.GAME_WORLD_WIDTH / 2;
-    int yTimer = Config.GAME_WORLD_HEIGHT;
+    int xTimer = Config.GAME_WORLD_WIDTH / 2 - 100;
+    int yTimer = Config.GAME_WORLD_HEIGHT - 100;
 
     timer += Gdx.graphics.getDeltaTime();
     float displayedTime = 60 - timer;
-    System.out.println(displayedTime);
 
     if(timer > 59){
       initialMinute --;
@@ -99,7 +100,7 @@ public class MinigameInstructions {
       displayedSeconds = "0" + displayedSeconds;
 
     batch.begin();
-    font.draw(batch, "0" + initialMinute +":" + displayedSeconds, xTimer, yTimer);
+    timerFont.draw(batch, "0" + initialMinute +":" + displayedSeconds, xTimer, yTimer);
     batch.end();
   }
 }
