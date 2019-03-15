@@ -17,6 +17,7 @@ public class MinigameInstructions {
   private BitmapFont font;
   private BitmapFont timerFont;
   private boolean showPrompt = false;
+  private boolean ShowPrompt2 = false;
   private float duration;
   private boolean displayed;
   private FontGenerator fontGenerator;
@@ -101,6 +102,9 @@ public class MinigameInstructions {
 
     batch.begin();
     timerFont.draw(batch, "0" + initialMinute +":" + displayedSeconds, xTimer, yTimer);
+
+    if(initialMinute == 0 && displayedTime <=10)
+      System.out.println("10 ");
     batch.end();
   }
 }
