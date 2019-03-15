@@ -1,9 +1,22 @@
 package bham.bioshock.client;
 
 public class Assets {
-  public static final String gameBackground = "app/assets/backgrounds/game.png";
+  // General
   public static final String skin = "app/assets/skin/skin.json";
   public static final String font = "app/assets/fonts/font.otf";
+  public static final String cursor = "app/assets/ui/cursor.png";
+
+  // Backgrounds
+  public static final String gameBackground = "app/assets/backgrounds/game.png";
+  public static final String menuBackground = "app/assets/backgrounds/menu.png";
+  
+  // Main Menu
+  public static final String logo = "app/assets/ui/main-menu/logo.png";
+  public static final String hostButton = "app/assets/ui/main-menu/host-game.png";
+  public static final String joinButton = "app/assets/ui/main-menu/join-game.png";
+  public static final String preferencesButton = "app/assets/ui/main-menu/preferences.png";
+  public static final String howToPlayButton = "app/assets/ui/main-menu/how-to-play.png";
+  public static final String exitButton = "app/assets/ui/main-menu/exit.png";
 
   // Game Board assets
   public static final String planetsFolder = "app/assets/entities/planets";

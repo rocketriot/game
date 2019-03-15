@@ -41,7 +41,6 @@ public class CaptureTheFlag extends Objective {
     return a == null ? null : a.getId();
   }
 
-  // router call minigame move
 
   @Override
   public void gotShot(Astronaut player, Astronaut killer) {
@@ -76,13 +75,20 @@ public class CaptureTheFlag extends Objective {
 
   @Override
   public void seed(MinigameStore store) {
-    super.seed(store);
     store.addEntity(flag);
   }
 
   @Override
   public void captured(Astronaut a) {
     setFlagOwner(a);
+  }
+
+  @Override
+  public String instructions() {
+    String instructions = "You have 3 minutes to capture the flag! \n " +
+            "If an astronaut has it, shot him to steal the flag!";
+
+    return instructions;
   }
 
   private void setRandonRespawnPosition() {
