@@ -1,19 +1,18 @@
 package bham.bioshock.minigame.objectives;
 
 import bham.bioshock.common.Position;
-import bham.bioshock.common.models.Player;
 import bham.bioshock.common.models.store.MinigameStore;
 import bham.bioshock.minigame.models.Astronaut;
 import bham.bioshock.minigame.models.EntityType;
 import bham.bioshock.minigame.models.Goal;
 import bham.bioshock.minigame.models.Platform;
 import bham.bioshock.minigame.worlds.World;
-import javafx.geometry.Pos;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.UUID;
 
 public class Platformer extends Objective {
 
@@ -34,14 +33,14 @@ public class Platformer extends Objective {
     }
 
     @Override
-    public Astronaut getWinner() {
+    public UUID getWinner() {
         //if the winner is set, return the winner, if not, return the closest player
-        if(winner != null) { return winner; }
+        if(winner != null) { return winner.getId(); }
         else {
             Position goalPos = goal.getPos();
             float best = 99999999f;
             Astronaut bestP = null;
-            Iterator it = getPlayers().iterator();
+            Iterator<Astronaut> it = getPlayers().iterator();
             while(it.hasNext()) {
                 Astronaut player = (Astronaut) it.next();
                 Position playerPos = player.getPos();
@@ -51,7 +50,7 @@ public class Platformer extends Objective {
                     bestP = player;
                 }
             }
-            return bestP;
+            return bestP != null ? bestP.getId() : null;
         }
     }
 

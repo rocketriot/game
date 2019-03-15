@@ -16,6 +16,7 @@ import com.google.inject.Inject;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.UUID;
 
 public class GameBoardController extends Controller {
   private IClientService clientService;
@@ -41,6 +42,13 @@ public class GameBoardController extends Controller {
 
   public void savePlayers(ArrayList<Player> players) {
     store.setPlayers(players);
+  }
+  
+  public void setOwner(UUID[] planetOwner) {
+    UUID playerId = planetOwner[0];
+    UUID planetId = planetOwner[1];
+    
+    store.setPlanetOwner(playerId, planetId);
   }
 
   public void move(Coordinates destination) {

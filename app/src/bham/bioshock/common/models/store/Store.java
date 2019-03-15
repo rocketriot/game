@@ -7,6 +7,7 @@ import com.badlogic.gdx.Screen;
 import com.google.inject.Singleton;
 import bham.bioshock.client.AppPreferences;
 import bham.bioshock.common.models.GameBoard;
+import bham.bioshock.common.models.Planet;
 import bham.bioshock.common.models.Player;
 
 /** Stores all of the models */
@@ -110,6 +111,12 @@ public class Store {
   /** Get's the player who's turn it is */
   public Player getMovingPlayer() {
     return players.get(turn % players.size());
+  }
+  
+  public void setPlanetOwner(UUID playerId, UUID planetId) {
+    Planet planet = gameBoard.getPlanet(planetId);
+    Player p = getPlayer(playerId);
+    planet.setPlayerCaptured(p);
   }
 
   /**

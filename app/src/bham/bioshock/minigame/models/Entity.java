@@ -22,7 +22,7 @@ public abstract class Entity implements Serializable {
   private static final long serialVersionUID = 7916524444980988734L;
 
   /** ID of the entity */
-  private UUID id;
+  protected UUID id;
   
   protected int width = 50;
   protected int height = 50;

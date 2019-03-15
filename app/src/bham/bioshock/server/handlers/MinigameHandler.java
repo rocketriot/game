@@ -1,6 +1,12 @@
 package bham.bioshock.server.handlers;
 
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.UUID;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import bham.bioshock.common.models.Player;
+import bham.bioshock.common.models.store.MinigameStore;
 import bham.bioshock.common.models.store.Store;
 import bham.bioshock.communication.Action;
 import bham.bioshock.communication.Command;
@@ -22,10 +28,15 @@ import java.util.Random;
 import java.util.UUID;
 
 public class MinigameHandler {
-
+  
+  private static final Logger logger = LogManager.getLogger(MinigameHandler.class);
+  
   Store store;
   ServerHandler handler;
   MinigameAILoop aiLoop;
+  Thread minigameTimer;
+  Clock clock;
+  UUID planetId;
 
   public MinigameHandler(Store store, ServerHandler handler) {
     this.store = store;
@@ -38,11 +49,15 @@ public class MinigameHandler {
   public void startMinigame(Action action) {
     // Create a world for the minigame
     World w = new FirstWorld();
+    if(action.getArguments().size() != 0) {
+      planetId = (UUID) action.getArgument(0);      
+    } else {
+      logger.error("Starting minigame without a planet ID (That's OK. for tests)!");
+    }
     Objective o;
     aiLoop = new MinigameAILoop();
 
     Random rand = new Random();
-
 
     switch(rand.nextInt(4)) {
       case 1:
@@ -76,8 +91,41 @@ public class MinigameHandler {
         System.out.println("PLAYING CAPTURE THE FLAG");
         break;
     }
-    //
+    
+    /** SETUP MINIGAME END */
+    clock = new Clock();
+    long t = System.currentTimeMillis();
 
+    clock.at(60f, new Clock.TimeListener() {
+      @Override
+      public void handle(Clock.TimeUpdateEvent event) {
+        if(minigameTimer != null) {
+          minigameTimer.interrupt();
+        }
+        MinigameStore localStore = store.getMinigameStore();
+        Objective o = localStore.getObjective();
+        endMinigame(o.getWinner());
+      }
+    });
+    
+    minigameTimer = new Thread() {
+      private long time;
+
+      public void run() {
+        time = System.currentTimeMillis();
+        try {
+          while (!isInterrupted()) {
+            long delta = (System.currentTimeMillis() - time);
+            clock.update(delta);
+            Thread.sleep(1000);
+          }
+        } catch (InterruptedException e) {
+          // Clock interrupted
+        }
+      }
+    };
+
+    minigameTimer.start();
     aiLoop.start();
 
     Serializable arg = (Serializable) w;
@@ -104,30 +152,15 @@ public class MinigameHandler {
     handler.sendToAllExcept(action, playerId);
   }
 
-  private void checkTime(float delta) {
-    Clock clock = new Clock();
-    clock.update(delta);
-
-
-    clock.at(1800f, new Clock.TimeListener() {
-      @Override
-      public void handle(Clock.TimeUpdateEvent event) {
-        store.getMinigameStore().getObjective().getWinner();
-      }
-    });
-  }
-
   /**
    * Method to end the minigame and send the players back to the main board
    */
-  public void endMinigame(Action action, UUID playerId) {
-    Player player = store.getPlayer(playerId);
-    player.addPoints(100);
-    store.resetMinigameStore();
-
+  public void endMinigame(UUID playerId) {
     ArrayList<Serializable> args = new ArrayList<>();
     args.add(playerId);
-    args.add(player.getPoints());
+    args.add(planetId);
+    args.add(100);
+    planetId = null;
 
     aiLoop.finish();
     handler.sendToAll(new Action(Command.MINIGAME_END, args));

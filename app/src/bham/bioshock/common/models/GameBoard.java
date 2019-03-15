@@ -5,7 +5,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Random;
+import java.util.UUID;
 
 /** Stores the data required for the main game board */
 public class GameBoard implements Serializable {
@@ -15,6 +17,8 @@ public class GameBoard implements Serializable {
   private static final long serialVersionUID = 5775730008817100527L;
 
   public final int GRID_SIZE = 36;
+  
+  private ArrayList<Planet> planets = new ArrayList<>();
 
   /** A grid containing the locations of all the planets, players, fuel boxes etc */
   private GridPoint[][] grid;
@@ -118,6 +122,7 @@ public class GameBoard implements Serializable {
       if (isEnoughSpace(x, y, Planet.WIDTH, Planet.HEIGHT)) {
         // Create a new planet
         Planet planet = new Planet("test", new Coordinates(x, y));
+        planets.add(planet);
 
         // Add the planet to the 3x3 space it takes up on the grid
         for (int i = x; i < x + 3; i++)
@@ -181,6 +186,15 @@ public class GameBoard implements Serializable {
       return grid[x][y];
     }
     logger.error("No coordinates " + coordinates + " in the grid!");
+    return null;
+  }
+  
+  public Planet getPlanet(UUID id) {
+    for(Planet p : planets) {
+      if(p.getId().equals(id)) {
+        return p;
+      }
+    }
     return null;
   }
 }
