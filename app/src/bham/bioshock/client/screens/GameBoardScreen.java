@@ -26,8 +26,8 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.utils.viewport.FitViewport;
-
 import java.util.ArrayList;
+import java.util.UUID;
 
 public class GameBoardScreen extends ScreenMaster implements InputProcessor {
   private final InputMultiplexer inputMultiplexer;
@@ -90,7 +90,7 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
     this.viewport.apply();
 
     // Center the camera on the middle of the grid
-    camera.position.set(Config.GAME_WORLD_WIDTH/4, Config.GAME_WORLD_HEIGHT/2.25f, 0);
+    camera.position.set(Config.GAME_WORLD_WIDTH / 4, Config.GAME_WORLD_HEIGHT / 2.25f, 0);
 
     drawPlayer = new DrawPlayer(batch);
     drawPlanet = new DrawPlanet(batch);
@@ -109,6 +109,21 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
     this.inputMultiplexer.addProcessor(this);
   }
 
+  private boolean checkIfNearPlanet(Player player) {
+    GameBoard gameBoard = store.getGameBoard();
+    Planet p = gameBoard.getAdjacentPlanet(player.getCoordinates());
+    if (p == null)
+      return false;
+    Player planetPlayer = p.getPlayerCaptured();
+    UUID planetPlayerId = planetPlayer == null ? null : planetPlayer.getId();
+    // Show minigame prompt if next to planet
+    if (planetPlayerId == null || !planetPlayerId.equals(player.getId())) {
+      showMinigamePrompt(p.getId());
+      return true;
+    }
+    return false;
+  }
+
   /** Draws the player move */
   private void drawPlayerMove(Player player) {
     router.call(Route.LOOP_SOUND, "rocket");
@@ -120,13 +135,17 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
       player.clearBoardMove();
       router.call(Route.STOP_SOUND, "rocket");
 
-      // Only show minigame prompt and end turn if this client's player's turns
       if (store.isMainPlayersTurn()) {
-        // Show minigame prompt if next to planet
-        if (gameBoard.isNextToThePlanet(player.getCoordinates())
-            && player.equals(store.getMainPlayer())) {
-          showMinigamePrompt();
-        } else {
+        boolean nextTurn = true;
+
+        // Only show minigame prompt and end turn if this client's player's turns
+        if (store.isMainPlayersTurn() && player.equals(store.getMainPlayer())) {
+          boolean shown = checkIfNearPlanet(player);
+          if (shown) {
+            nextTurn = false;
+          }
+        }
+        if (nextTurn) {
           router.call(Route.END_TURN);
         }
       }
@@ -157,6 +176,9 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
 
       // Remove the completed move
       boardMove.remove(0);
+
+      // Decrease the player's fuel
+      player.decreaseFuel(Player.FUEL_GRID_COST);
     }
 
     // Get the value of the grid point that the player has landed on
@@ -365,6 +387,7 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
 
   /**
    * Checks if the input x and y values would result in a valid camera movement
+   * 
    * @param x movement in x direction
    * @param y movement in y direction
    * @return whether it's a valid camera move
@@ -375,7 +398,7 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
 
     if (cameraX + x < 80 || cameraY + y < 300) {
       return false;
-    } else if (cameraX + x > PPS/0.03f || cameraY + y > (PPS - 10)/0.025f) {
+    } else if (cameraX + x > PPS / 0.03f || cameraY + y > (PPS - 10) / 0.025f) {
       return false;
     }
     return true;
@@ -403,7 +426,8 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
 
   private boolean startMove(Vector3 mouse) {
     // Check a left click was performed
-    if (!Gdx.input.isButtonPressed(Input.Buttons.LEFT)) return false;
+    if (!Gdx.input.isButtonPressed(Input.Buttons.LEFT))
+      return false;
 
     // Get player coordinates
     Player player = store.getMainPlayer();
@@ -411,9 +435,7 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
     int playerY = player.getCoordinates().getY();
 
     // Handle when mouse click is within player grid point
-    if (playerX * PPS <= mouse.x
-        && mouse.x <= (playerX + 1) * PPS
-        && playerY * PPS <= mouse.y
+    if (playerX * PPS <= mouse.x && mouse.x <= (playerX + 1) * PPS && playerY * PPS <= mouse.y
         && mouse.y <= (playerY + 1) * PPS) {
       playerSelected = true;
       pathRenderer.clearPath();
@@ -424,10 +446,12 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
 
   private boolean endMove(Vector3 mouse) {
     // Check a left click was performed
-    if (!Gdx.input.isButtonPressed(Input.Buttons.LEFT)) return false;
+    if (!Gdx.input.isButtonPressed(Input.Buttons.LEFT))
+      return false;
 
     // Check it's the client's turn to move
-    if (!store.isMainPlayersTurn()) return false;
+    if (!store.isMainPlayersTurn())
+      return false;
 
     // Check if click is on the grid
     if (0 <= mouse.x && mouse.x <= gridSize * PPS && 0 <= mouse.y && mouse.y <= gridSize * PPS) {
@@ -467,7 +491,8 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
 
   @Override
   public boolean touchDragged(int screenX, int screenY, int pointer) {
-    if (hud.isPaused()) return false;
+    if (hud.isPaused())
+      return false;
 
     // Mouse camera panning
     if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
@@ -488,20 +513,21 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
   @Override
   public boolean mouseMoved(int screenX, int screenY) {
     // Check if player is selected
-    if (!playerSelected) return false;
+    if (!playerSelected)
+      return false;
 
     // Get the board coordinates of where the mouse is positioned
     Vector3 mouse = getMouseCoordinates(screenX, screenY);
     Coordinates coordinates = new Coordinates((int) mouse.x / PPS, (int) mouse.y / PPS);
 
     // Do nothing if the mouse is in the same position as where the player currently is at
-    if (coordinates.isEqual(store.getMainPlayer().getCoordinates())) return false;
+    if (coordinates.isEqual(store.getMainPlayer().getCoordinates()))
+      return false;
 
     // Ensure the mouse is clicking on the board
-    if (coordinates.getX() >= gridSize
-        || coordinates.getX() < 0
-        || coordinates.getY() >= gridSize
-        || coordinates.getY() < 0) return false;
+    if (coordinates.getX() >= gridSize || coordinates.getX() < 0 || coordinates.getY() >= gridSize
+        || coordinates.getY() < 0)
+      return false;
 
     // Pathfind to where the mouse is located
     pathRenderer.generatePath(store.getMainPlayer().getCoordinates(), coordinates);
@@ -510,7 +536,8 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
 
   @Override
   public boolean scrolled(int amount) {
-    if (hud.isPaused()) return false;
+    if (hud.isPaused())
+      return false;
 
     // Zoom code
     if ((PPS -= amount) <= ((Config.GAME_WORLD_HEIGHT / gridSize) - 4)) {
@@ -533,25 +560,24 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
   }
 
   /** Method to ask the user whether they want to start the minigame or not */
-  private void showMinigamePrompt() {
-    Dialog dialog =
-        new Dialog("", skin) {
+  private void showMinigamePrompt(UUID planetId) {
+    Dialog dialog = new Dialog("", skin) {
 
-          protected void result(Object object) {
+      protected void result(Object object) {
 
-            if (object.equals(true)) {
-              SoundController.playSound("menuSelect");
-              router.call(Route.SEND_MINIGAME_START);
-            } else {
-              SoundController.playSound("menuSelect");
-              System.out.println("Minigame not started");
-              // Ends the turn
-              router.call(Route.END_TURN);
-            }
-          }
-        };
+        if (object.equals(true)) {
+          SoundController.playSound("menuSelect");
+          router.call(Route.SEND_MINIGAME_START, planetId);
+        } else {
+          SoundController.playSound("menuSelect");
+          System.out.println("Minigame not started");
+          // Ends the turn
+          router.call(Route.END_TURN);
+        }
+      }
+    };
 
-    dialog.text(new Label("Do you want to attempt to capture this planet?", skin));
+    dialog.text(new Label("Do you want to attempt to capture this planet?", skin, "window"));
     dialog.button("Yes", true);
     dialog.button("No", false);
 

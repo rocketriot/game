@@ -1,5 +1,6 @@
 package bham.bioshock.server.handlers;
 
+import bham.bioshock.client.controllers.JoinScreenController;
 import bham.bioshock.common.models.Player;
 import bham.bioshock.common.models.store.Store;
 import bham.bioshock.communication.Action;
@@ -9,9 +10,11 @@ import bham.bioshock.communication.server.ServerService;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.UUID;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class JoinScreenHandler {
-
+  
   Store store;
   ServerHandler handler;
   
@@ -98,6 +101,7 @@ public class JoinScreenHandler {
     } catch (InterruptedException e) {
       e.printStackTrace();
     }
+    
     minigameHandler.startMinigame(new Action(Command.MINIGAME_START));
   }
   

@@ -10,6 +10,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Random;
+import java.util.UUID;
 
 
 public class KillThemAll extends Objective {
@@ -22,13 +23,16 @@ public class KillThemAll extends Objective {
   public KillThemAll(World world) {
     super(world);
     this.positions = this.getWorld().getPlayerPositions();
-    setRandonRespawnPosition();
   }
 
   @Override
-  public Astronaut getWinner() {
-    return Collections.max(kills.entrySet(), Comparator.comparingInt(HashMap.Entry::getValue))
+  public UUID getWinner() {
+    Astronaut a = Collections.max(kills.entrySet(), Comparator.comparingInt(HashMap.Entry::getValue))
         .getKey();
+    if(a == null) {
+      return null;
+    }
+    return a.getId();
   }
 
 
@@ -36,7 +40,7 @@ public class KillThemAll extends Objective {
   public void gotShot(Astronaut player, Astronaut killer) {
     if (checkIfdead(player)) {
       addKill(killer);
-      player.setPosition(respawnPosition);
+      player.killAndRespawn(getRandonRespawnPosition());
       getRouter().call(Route.MINIGAME_MOVE);
       setPlayerHealth(initialHealth, player);
     } else {
@@ -61,6 +65,13 @@ public class KillThemAll extends Objective {
   @Override
   public void captured(Astronaut a) { return;}
 
+  @Override
+  public String instructions() {
+    String instructions = "You have 3 minutes to kills as many astronauts as possible! \n" +
+            "To kill an astronaut shot him until he loses health";
+    return instructions;
+  }
+
 
   private boolean checkIfdead(Astronaut p) {
     if (health.get(p) - 5.0f <= 0)
@@ -76,10 +87,10 @@ public class KillThemAll extends Objective {
     kills.computeIfPresent(p, (k, v) -> (v + 1));
   }
 
-  private void setRandonRespawnPosition() {
+  private Position getRandonRespawnPosition() {
     Random r = new Random();
     int i = Math.abs(r.nextInt()%4);
-    respawnPosition = positions[i];
+    return positions[i];
   }
 
 }

@@ -16,6 +16,7 @@ import com.google.inject.Inject;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.UUID;
 
 public class GameBoardController extends Controller {
   private IClientService clientService;
@@ -42,6 +43,13 @@ public class GameBoardController extends Controller {
   public void savePlayers(ArrayList<Player> players) {
     store.setPlayers(players);
   }
+  
+  public void setOwner(UUID[] planetOwner) {
+    UUID playerId = planetOwner[0];
+    UUID planetId = planetOwner[1];
+    
+    store.setPlanetOwner(playerId, planetId);
+  }
 
   public void move(Coordinates destination) {
     GameBoard gameBoard = store.getGameBoard();
@@ -62,19 +70,7 @@ public class GameBoardController extends Controller {
     // Handle if player doesn't have enough fuel
     if (mainPlayer.getFuel() < pathCost || pathCost == -10) return;
 
-    // Get grid point the user landed on
-    GridPoint gridPoint = gameBoard.getGridPoint(destination);
-
-    // Check if the player landed on a fuel box
-    if (gridPoint.isType(GridPoint.Type.FUEL)) {
-      // Decrease players amount of fuel
-      Fuel fuel = (Fuel) gridPoint.getValue();
-      mainPlayer.increaseFuel(fuel.getValue());
-    }
-
     mainPlayer.createBoardMove(path);
-    mainPlayer.setCoordinates(destination);
-    mainPlayer.decreaseFuel(pathCost);
 
     // Send the updated grid to the server
     ArrayList<Serializable> arguments = new ArrayList<>();

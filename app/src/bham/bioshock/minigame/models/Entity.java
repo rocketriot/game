@@ -22,7 +22,7 @@ public abstract class Entity implements Serializable {
   private static final long serialVersionUID = 7916524444980988734L;
 
   /** ID of the entity */
-  private UUID id;
+  protected UUID id;
   
   protected int width = 50;
   protected int height = 50;
@@ -201,7 +201,7 @@ public abstract class Entity implements Serializable {
       speed = step.vector;
       
       for(Entity e : step.getCollisions() ) {
-        this.handleCollision(e);
+        handleCollision(e);
       }
     }
     
@@ -212,7 +212,9 @@ public abstract class Entity implements Serializable {
   /*
    * Default behaviour for the collision. Can be overwritten by the subclass
    */
-  public void handleCollisionMove(Step step, MinimumTranslationVector v, Entity e) {}
+  public boolean handleCollisionMove(Step step, MinimumTranslationVector v, Entity e) {
+    return false;
+  }
   
   public void handleCollision(Entity e) {};
 
@@ -245,17 +247,22 @@ public abstract class Entity implements Serializable {
 
   
   public void draw(SpriteBatch batch, float delta) {
-    Sprite sprite = getSprite();
-    sprite.setRegion(getTexture());
-    sprite.setPosition(getX() - (sprite.getWidth() / 2), getY());
-    sprite.setRotation((float) getRotation());
-    sprite.draw(batch);
-    update(delta);
+
+// check if dispayed
+      Sprite sprite = getSprite();
+      sprite.setRegion(getTexture());
+      sprite.setPosition(getX() - (sprite.getWidth() / 2), getY());
+      sprite.setRotation((float) getRotation());
+      sprite.draw(batch);
+      update(delta);
+
   }
 
   public enum State {
     CREATED, LOADED, REMOVED, REMOVING,
   }
+
+  public void afterDrawing(SpriteBatch batch) {}
   
 }
 

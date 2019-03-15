@@ -19,6 +19,7 @@ public enum Command {
   UPDATE_GAME_BOARD,
   MOVE_PLAYER_ON_BOARD,
   END_TURN,
+  SET_PLANET_OWNER,
   
   // Minigame
   MINIGAME_START,

@@ -2,11 +2,13 @@ package bham.bioshock.minigame.objectives;
 
 import java.util.HashMap;
 import java.util.Random;
+import java.util.UUID;
 import bham.bioshock.client.Route;
 import bham.bioshock.common.Position;
 import bham.bioshock.common.models.store.MinigameStore;
 import bham.bioshock.minigame.models.Astronaut;
 import bham.bioshock.minigame.models.Flag;
+import bham.bioshock.minigame.models.Gun;
 import bham.bioshock.minigame.worlds.World;
 
 public class CaptureTheFlag extends Objective {
@@ -31,22 +33,28 @@ public class CaptureTheFlag extends Objective {
 
 
     this.flag = new Flag(world, flagPosition.x, flagPosition.y);
-
   }
 
   @Override
-  public Astronaut getWinner() {
-    return flagOwner;
+  public UUID getWinner() {
+    Astronaut a = flagOwner;
+    return a == null ? null : a.getId();
   }
 
-  // router call minigame move
 
   @Override
   public void gotShot(Astronaut player, Astronaut killer) {
     if (checkIfdead(player)) {
       setFlagPosition(player.getPos());
       flag.setIsRemoved(false);
-      player.setPosition(respawnPosition);
+      boolean hadGun = player.haveGun();
+      player.killAndRespawn(respawnPosition);
+      if(hadGun) {
+        Gun gun = new Gun(getWorld(), player.getX(), player.getY());
+        gun.load();
+        this.localSore.addEntity(gun);
+      }
+      
       getRouter().call(Route.MINIGAME_MOVE);
       setPlayerHealth(initialHealth, player);
 
@@ -73,6 +81,14 @@ public class CaptureTheFlag extends Objective {
   @Override
   public void captured(Astronaut a) {
     setFlagOwner(a);
+  }
+
+  @Override
+  public String instructions() {
+    String instructions = "You have 3 minutes to capture the flag! \n " +
+            "If an astronaut has it, shot him to steal the flag!";
+
+    return instructions;
   }
 
   private void setRandonRespawnPosition() {

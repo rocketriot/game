@@ -93,6 +93,10 @@ public class ClientHandler implements IClientHandler {
             router.call(Route.JOIN_SCREEN_UPDATE, action.getArguments());
             break;
           }
+          case SET_PLANET_OWNER: {
+            router.call(Route.SET_PLANET_OWNER, action.getArgument(0));
+            break;
+          }
           default: {
             System.out.println("Received unhandled command: " + action.getCommand().toString());
           }}

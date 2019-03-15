@@ -1,28 +1,27 @@
 package bham.bioshock.client.screens;
 
 import bham.bioshock.client.Assets;
-import bham.bioshock.client.Route;
 import bham.bioshock.client.Router;
 import bham.bioshock.client.controllers.SoundController;
+import bham.bioshock.common.consts.Config;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
-import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.badlogic.gdx.utils.viewport.FitViewport;
 
 public abstract class ScreenMaster implements Screen {
   protected Stage stage;
   protected Batch batch;
   protected Stack stack;
+  protected FitViewport viewport;
   protected Router router;
 
   protected float screen_width;
@@ -30,17 +29,21 @@ public abstract class ScreenMaster implements Screen {
 
   protected Texture background;
 
-  protected BitmapFont font12;
-  protected BitmapFont font18;
-
   protected TextButton backButton;
 
   protected Skin skin = new Skin(Gdx.files.internal(Assets.skin));
 
   public ScreenMaster(Router router) {
     this.router = router;
+    
+    viewport = new FitViewport(Config.GAME_WORLD_WIDTH, Config.GAME_WORLD_HEIGHT);
+    stage = new Stage(viewport);
+    batch = new SpriteBatch();
+    batch.getProjectionMatrix().setToOrtho2D(0, 0, Config.GAME_WORLD_WIDTH, Config.GAME_WORLD_HEIGHT);
+    
     this.screen_width = Gdx.graphics.getWidth();
     this.screen_height = Gdx.graphics.getHeight();
+    
   }
 
   @Override
@@ -48,52 +51,27 @@ public abstract class ScreenMaster implements Screen {
     Gdx.input.setInputProcessor(stage);
     
     // Create background
-    background = new Texture(Gdx.files.internal("app/assets/backgrounds/menu.png"));
+    background = new Texture(Gdx.files.internal(Assets.menuBackground));
 
-    setupFonts();
-
-    addBackButton();
-    // set the back button to take you to main menu - for now
-    setPrevious();
     // drawBackground();
   }
 
-  /** Set's up all the fonts needed for the screen */
-  private void setupFonts() {
-    FileHandle fontSource = Gdx.files.internal("app/assets/fonts/BebasNeueThin.otf");
-    font12 = generateFont(fontSource, 12);
-    font18 = generateFont(fontSource, 18);
-  }
-
-  /** Generates a bitmap font from source */
-  private BitmapFont generateFont(FileHandle source, int size) {
-    // Specify font size
-    FreeTypeFontParameter parameter = new FreeTypeFontParameter();
-    parameter.size = size;
-
-    // Generate font
-    FreeTypeFontGenerator generator = new FreeTypeFontGenerator(source);
-    BitmapFont font = generator.generateFont(parameter);
-    generator.dispose();
-
-    return font;
-  }
-
   protected void drawBackground() {
-    // render background
     // clear the screen
     Gdx.gl.glClearColor(0, 0, 0, 0);
     Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
     batch.begin();
-    batch.draw(background, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+    batch.draw(background, 0, 0, Config.GAME_WORLD_WIDTH, Config.GAME_WORLD_HEIGHT);
     batch.end();
   }
 
-  protected void addBackButton() {
-    // add a button that takes the user back to the previous screen
+  /** Adds a button that takes the user back to the previous screen */
+  protected void drawBackButton() {
     backButton = new TextButton("Back", skin);
     stage.addActor(backButton);
+
+    setPrevious();
   }
 
   protected void setPrevious() {
