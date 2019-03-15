@@ -5,7 +5,7 @@ import bham.bioshock.client.Route;
 import bham.bioshock.client.Router;
 import bham.bioshock.client.controllers.SoundController;
 import bham.bioshock.client.gameLogic.gameboard.*;
-import bham.bioshock.client.scenes.gameboard.hud.Hud;
+import bham.bioshock.client.scenes.gameboard.Hud;
 import bham.bioshock.common.Direction;
 import bham.bioshock.common.consts.Config;
 import bham.bioshock.common.consts.GridPoint;
