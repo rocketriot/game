@@ -2,8 +2,6 @@ package bham.bioshock.client.scenes;
 
 import bham.bioshock.client.Router;
 import bham.bioshock.client.screens.StatsContainer;
-import bham.bioshock.common.models.Player;
-import bham.bioshock.common.models.store.MinigameStore;
 import bham.bioshock.common.models.store.Store;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -13,9 +11,6 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.viewport.FitViewport;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
 
 public class MinigameHud implements Disposable {
 
@@ -33,6 +28,8 @@ public class MinigameHud implements Disposable {
     private Label fuelLabel;
 
     private StatsContainer statsContainer;
+    private MinigameInstructions startText;
+
 
 
     private final int PADDING = 50;
@@ -53,10 +50,13 @@ public class MinigameHud implements Disposable {
         viewport = new FitViewport(this.gameWidth, this.gameHeight, new OrthographicCamera());
         stage = new Stage(viewport, batch);
 
+        startText = new MinigameInstructions(batch, store);
+
         setupTopBar();
         setupFuelBar();
         setupWeaponContainer();
         setupStatsContainer();
+
     }
 
     private void setupTopBar() {
@@ -111,6 +111,7 @@ public class MinigameHud implements Disposable {
         }
 
         statsContainer.updateAll();
+        startText.render();
     }
 
     private void showWeapon(boolean hasGun) {
@@ -127,4 +128,8 @@ public class MinigameHud implements Disposable {
     public void dispose() {
         stage.dispose();
     }
+
+
+
+
 }

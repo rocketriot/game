@@ -54,12 +54,18 @@ public class KillThemAll extends Objective {
 
   @Override
   public void seed(MinigameStore store) {
-    super.seed(store);
     return;
   }
 
   @Override
   public void captured(Astronaut a) { return;}
+
+  @Override
+  public String instructions() {
+    String instructions = "You have 3 minutes to kills as many astronauts as possible! \n" +
+            "To kill an astronaut shot him until he loses health";
+    return instructions;
+  }
 
 
   private boolean checkIfdead(Astronaut p) {
