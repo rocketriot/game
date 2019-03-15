@@ -21,6 +21,7 @@ public class MinigameInstructions {
   private FontGenerator fontGenerator;
   private int fontSize = 72;
   private float timer = 0;
+  private int initialMinute =2;
 
 
   public MinigameInstructions(SpriteBatch batch, Store store) {
@@ -39,6 +40,7 @@ public class MinigameInstructions {
 
   /**
    * Render the instructions once at the beginning
+   * Render the timer for the game
    */
   public void render() {
     checkIfDisplayed();
@@ -73,16 +75,31 @@ public class MinigameInstructions {
     }
   }
 
+  /**
+   * Displays timer for the minigame.
+   */
   private void displayTimer() {
     int xTimer = Config.GAME_WORLD_WIDTH / 2;
     int yTimer = Config.GAME_WORLD_HEIGHT;
 
     timer += Gdx.graphics.getDeltaTime();
+    float displayedTime = 60 - timer;
+    System.out.println(displayedTime);
+
+    if(timer > 59){
+      initialMinute --;
+      timer =1;
+    }
 
     DecimalFormat df = new DecimalFormat("##");
 
+    String displayedSeconds = df.format(displayedTime);
+
+    if(displayedSeconds.length() ==1 )
+      displayedSeconds = "0" + displayedSeconds;
+
     batch.begin();
-    font.draw(batch, "00:" + df.format(60 - timer), xTimer, yTimer);
+    font.draw(batch, "0" + initialMinute +":" + displayedSeconds, xTimer, yTimer);
     batch.end();
   }
 }
