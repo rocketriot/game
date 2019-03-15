@@ -1,52 +1,30 @@
 package bham.bioshock.client.scenes.minigame;
 
 import bham.bioshock.client.Router;
+import bham.bioshock.client.scenes.Hud;
 import bham.bioshock.client.screens.StatsContainer;
-import bham.bioshock.common.consts.Config;
 import bham.bioshock.common.models.store.Store;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
-import com.badlogic.gdx.utils.Disposable;
-import com.badlogic.gdx.utils.viewport.FitViewport;
 
-public class MinigameHud implements Disposable {
-    private final Skin skin;
-    public Stage stage;
-    public FitViewport viewport;
-    private Store store;
-
-    private ProgressBar fuelBar;
-    private String fuelString;
-    private Label fuelLabel;
-
+public class MinigameHud extends Hud {
     private StatsContainer statsContainer;
     private MinigameInstructions startText;
 
-
-
     private final int PADDING = 50;
-
 
     private Table topTable;
     private VerticalGroup weaponsGroup;
     Image weaponImage;
 
-
     public MinigameHud(SpriteBatch batch, Skin skin, Store store, Router router) {
-        this.store = store;
-        this.skin = skin;
-
-        viewport = new FitViewport(Config.GAME_WORLD_WIDTH, Config.GAME_WORLD_HEIGHT, new OrthographicCamera());
-        stage = new Stage(viewport, batch);
+        super(batch, skin, store, router);
 
         startText = new MinigameInstructions(batch, store);
 
         setupTopBar();
-        setupFuelBar();
         setupWeaponContainer();
         setupStatsContainer();
 
@@ -56,50 +34,33 @@ public class MinigameHud implements Disposable {
         topTable = new Table();
         topTable.setFillParent(true);
         topTable.top();
-        //topTable.setDebug(true);
+        // topTable.setDebug(true);
         topTable.padTop(PADDING);
         stage.addActor(topTable);
 
     }
+
     private void setupStatsContainer() {
         statsContainer = new StatsContainer(store);
-        System.out.println("stats X Pos: "+ statsContainer.getX() + "width: "+statsContainer.getWidth() + " height: "+statsContainer.getHeight()+ "Y POS: "+ statsContainer.getY());
+        System.out.println("stats X Pos: " + statsContainer.getX() + "width: " + statsContainer.getWidth() + " height: "
+                + statsContainer.getHeight() + "Y POS: " + statsContainer.getY());
         topTable.add(statsContainer).padRight(PADDING).right().top().expand();
-    }
-
-    private void setupFuelBar() {
-        VerticalGroup fuelGroup = new VerticalGroup();
-        fuelBar = new ProgressBar(0, 100, 1, false, skin);
-        float fuel = store.getMainPlayer().getFuel();
-        fuelBar.setValue(fuel);
-        fuelString = "Fuel: " + fuel + "/100.0";
-        fuelLabel = new Label(fuelString, skin);
-        fuelGroup.addActor(fuelLabel);
-        fuelGroup.addActor(fuelBar);
-
-        topTable.add(fuelGroup).padLeft(PADDING).width(stage.getWidth()/4).left().top();
     }
 
     private void setupWeaponContainer() {
 
         weaponsGroup = new VerticalGroup();
         weaponImage = new Image(new Texture(Gdx.files.internal("app/assets/minigame/gun.png")));
-        weaponImage.setSize(20,20);
+        weaponImage.setSize(20, 20);
 
-        topTable.add(weaponsGroup).padLeft(PADDING).width(stage.getWidth()/8).left().top();;
+        topTable.add(weaponsGroup).padLeft(PADDING).width(stage.getWidth() / 8).left().top();
+        ;
     }
-
-    private void updateFuel() {
-        float fuel = store.getMainPlayer().getFuel();
-       fuelBar.setValue(fuel);
-        fuelString = "Fuel: " + fuel + "/100.0";
-       fuelLabel.setText(fuelString);
-    }
-
 
     public void update() {
-        updateFuel();
-        if(store.getMinigameStore().getMainPlayer().haveGun()) {
+        super.update();
+
+        if (store.getMinigameStore().getMainPlayer().haveGun()) {
             showWeapon(true);
         }
 
@@ -108,21 +69,8 @@ public class MinigameHud implements Disposable {
     }
 
     private void showWeapon(boolean hasGun) {
-        if(hasGun) {
+        if (hasGun) {
             weaponsGroup.addActor(weaponImage);
         }
     }
-
-    public Stage getStage() {
-        return stage;
-    }
-
-    @Override
-    public void dispose() {
-        stage.dispose();
-    }
-
-
-
-
 }

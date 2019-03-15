@@ -154,7 +154,7 @@ public class Renderer {
     entities.forEach(e -> e.afterDrawing(textBatch));
 
     // Draw the ui
-    this.batch.setProjectionMatrix(hud.stage.getCamera().combined);
+    this.batch.setProjectionMatrix(hud.getStage().getCamera().combined);
     hud.getStage().act(delta);
     hud.update();
     hud.getStage().draw();
@@ -177,7 +177,3 @@ public class Renderer {
     stage.getViewport().update(width, height, true);
   }
 }
-
-
-
-
