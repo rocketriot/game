@@ -1,4 +1,4 @@
-package bham.bioshock;
+package bham.bioshock.common;
 
 import bham.bioshock.common.consts.*;
 import bham.bioshock.common.models.*;
@@ -267,70 +267,6 @@ public class PathfindingTests {
         pathfinder.setGameGrid(emptyGrid, new ArrayList<>());
 
         assertTrue(foundPath.isEmpty());
-    }
-
-    @Test
-    public void pathToPlanetCore(){
-        Coordinates startPosition = new Coordinates(18, 0);
-        pathfinder.setStartPosition(startPosition);
-        Coordinates goalPosition = new Coordinates(18, 18);
-
-        // create a 3x3 planet
-        for (int x = 17; x < 20; x++){
-            for (int y = 17; y < 20; y++){
-                emptyGrid[x][y].setType(GridPoint.Type.PLANET);
-            }
-        }
-        pathfinder.setGameGrid(emptyGrid, new ArrayList<>());
-
-        ArrayList<Coordinates> truePath = new ArrayList<>();
-        for (int i = 0; i < 17; i++){
-            Coordinates currentCoord = new Coordinates(18, i);
-            truePath.add(currentCoord);
-        }
-        ArrayList<Coordinates> foundPath = pathfinder.pathfind(goalPosition);
-
-        // remove the planet
-        for (int x = 17; x < 20; x++){
-            for (int y = 17; y < 20; y++){
-                emptyGrid[x][y].setType(GridPoint.Type.EMPTY);
-            }
-        }
-        pathfinder.setGameGrid(emptyGrid, new ArrayList<>());
-
-        assertTrue(checkPaths(truePath, foundPath));
-    }
-
-    @Test
-    public void pathToPlanetEdge(){
-        Coordinates startPosition = new Coordinates(18, 0);
-        pathfinder.setStartPosition(startPosition);
-        Coordinates goalPosition = new Coordinates(19, 19);
-
-        // create a 3x3 planet
-        for (int x = 17; x < 20; x++){
-            for (int y = 17; y < 20; y++){
-                emptyGrid[x][y].setType(GridPoint.Type.PLANET);
-            }
-        }
-        pathfinder.setGameGrid(emptyGrid, new ArrayList<>());
-
-        ArrayList<Coordinates> truePath = new ArrayList<>();
-        for (int i = 0; i < 17; i++){
-            Coordinates currentCoord = new Coordinates(18, i);
-            truePath.add(currentCoord);
-        }
-        ArrayList<Coordinates> foundPath = pathfinder.pathfind(goalPosition);
-
-        // remove the planet
-        for (int x = 17; x < 20; x++){
-            for (int y = 17; y < 20; y++){
-                emptyGrid[x][y].setType(GridPoint.Type.EMPTY);
-            }
-        }
-        pathfinder.setGameGrid(emptyGrid, new ArrayList<>());
-
-        assertTrue(checkPaths(truePath, foundPath));
     }
 
     // method to compare two arraylists of coordinates because the default methods don't work

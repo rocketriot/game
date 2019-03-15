@@ -1,9 +1,8 @@
-package bham.bioshock.minigame.worlds;
+package bham.bioshock.minigame.seeders;
 
 import bham.bioshock.minigame.PlanetPosition;
-import bham.bioshock.minigame.seeders.PlatformSeeder;
+import bham.bioshock.minigame.worlds.World;
 import java.util.ArrayList;
-import java.util.Random;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import bham.bioshock.common.Position;
@@ -12,35 +11,28 @@ import bham.bioshock.minigame.models.Platform;
 import bham.bioshock.minigame.models.Rocket;
 import java.util.Collections;
 
-public class FirstWorld extends World {
+public class TestingWorld extends World {
 
   private static final long serialVersionUID = -5432716795106522826L;
-  
+
   Position GRAVITY_POS = new Position(0f, 0f);
   double PLANET_RADIUS = 2000;
   double GRAVITY = 1500;
   Position[] playerPositions = new Position[4];
   ArrayList<Rocket> rockets = new ArrayList<>();
-  ArrayList<Gun> guns = new ArrayList<>();
-  ArrayList<Platform> platforms = new ArrayList<>();
+  ArrayList<Gun> guns;
+  ArrayList<Platform> platforms;
   Position gravityCenter = new Position(0, 0);
-  Texture texture;
 
-  public FirstWorld() {
-    playerPositions[0] = new Position(-2300, 0);
-    playerPositions[1] = new Position(0, -2000);
-    playerPositions[2] = new Position(2000, 0);
-    playerPositions[3] = new Position(0, 2000);
+  PlatformSeeder seeder;
+  WeaponSeeder wSeeder;
 
-    guns.add(new Gun(this, -2070, -100));
-    guns.add(new Gun(this, 2070, -100));
-    guns.add(new Gun(this, 2070, 3000));
-    guns.add(new Gun(this, -2070, -3100));
-    guns.add(new Gun(this, 0, -3000));
-    
-    PlatformSeeder seeder = new PlatformSeeder(this);
+  public TestingWorld() {
+
+    seeder = new PlatformSeeder(this);
+    wSeeder = new WeaponSeeder(this);
     seeder.seed();
-    platforms = seeder.getPlatforms();
+    wSeeder.seed();
   }
 
   @Override
@@ -73,21 +65,14 @@ public class FirstWorld extends World {
     return guns;
   }
 
-  
+
   public ArrayList<Platform> getPlatforms() {
     return platforms;
   }
 
   @Override
   public Texture getTexture() {
-    if(texture != null) {
-      return texture;
-    }
-    Random r = new Random();
-    int id = r.nextInt(100) % 2;
-    Texture t = new Texture(Gdx.files.internal("app/assets/minigame/planet"+ (id + 1) +".png"));;
-    texture = t;
-    return t;
+    return new Texture(Gdx.files.internal("app/assets/minigame/planet1.png"));
   }
 
   /**
@@ -104,5 +89,15 @@ public class FirstWorld extends World {
     }
     Collections.reverse(path);
     return path;
+  }
+
+  public void seedWeapons(){
+    wSeeder.seed();
+    guns = wSeeder.getGuns();
+  }
+
+  public void seedPlatforms(){
+    seeder.seed();
+    platforms = seeder.getPlatforms();
   }
 }
