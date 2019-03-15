@@ -84,32 +84,40 @@ public class GameBoardHandler {
     
     handler.sendToAll(new Action(Command.MOVE_PLAYER_ON_BOARD, response));
 
-    int waitTime = calculateMoveTime(currentPlayer.getBoardMove());
-    new Thread(() -> {
-      try {
-        Thread.sleep(waitTime);
-        endTurn();
-      } catch (InterruptedException e) {
-        e.printStackTrace();
-      }
-    }).start();
+    if (movingPlayer.isCpu()) {
+      int waitTime = calculateMoveTime(currentPlayer.getBoardMove());
+      new Thread(() -> {
+        try {
+          Thread.sleep(waitTime);
+          endTurn();
+        } catch (InterruptedException e) {
+          e.printStackTrace();
+        }
+      }).start();
+    }
   }
 
   private int calculateMoveTime(ArrayList<Move> boardMove) {
     // Players move 3 tiles per second + 500 to prevent race condition
     if (boardMove != null)
-      return (boardMove.size() * 1000)/3 + 500;
+      return (boardMove.size() * 1000)/3;
     else
       return 0;
   }
 
   public void endTurn() {
-    store.nextTurn();
     handler.sendToAll(new Action(Command.UPDATE_TURN));
     // Handle if the next player is a CPU
-    Player movingPlayer = store.getMovingPlayer();
-    if (movingPlayer.isCpu()) {
-      new BoardAi(store, this).run();
-    }
+    int waitTime = 500;
+    new Thread(() -> {
+      try {
+        Thread.sleep(waitTime);
+        Player movingPlayer = store.getMovingPlayer();
+        if (movingPlayer.isCpu());
+          new BoardAi(store, this).run();
+      } catch (InterruptedException e) {
+        e.printStackTrace();
+      }
+    }).start();
   }
 }
