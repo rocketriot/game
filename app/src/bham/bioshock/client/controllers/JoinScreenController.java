@@ -13,10 +13,12 @@ import bham.bioshock.communication.Action;
 import bham.bioshock.communication.Command;
 import bham.bioshock.communication.client.ClientService;
 import bham.bioshock.communication.client.CommunicationClient;
+import bham.bioshock.communication.client.ReconnectionThread;
 import com.google.inject.Inject;
 import java.io.Serializable;
 import java.net.ConnectException;
 import java.util.ArrayList;
+import java.util.Optional;
 import java.util.UUID;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -25,7 +27,6 @@ public class JoinScreenController extends Controller {
 
   private static final Logger logger = LogManager.getLogger(JoinScreenController.class);
 
-  private ClientService clientService;
   private CommunicationClient commClient;
   private ClientHandler clientHandler;
   private BoardGame game;
@@ -58,11 +59,20 @@ public class JoinScreenController extends Controller {
     }
   }
 
-  public void disconnectPlayer() {
-    commClient.getConnection().send(new Action(Command.DISCONNECT));
+  public void disconnectPlayer() {  
+    commClient.disconnect();
+  }
+  
+  public void disconnect() {
+    disconnectPlayer();
+    store.removeAllPlayers();
+    router.back();
   }
 
   public void removePlayer(UUID id) {
+    if(JoinScreen.class.isInstance(game.getScreen())) {
+      ((JoinScreen) game.getScreen()).removePlayer(id);      
+    }
     store.removePlayer(id);
   }
 
@@ -73,7 +83,11 @@ public class JoinScreenController extends Controller {
     for (Player player : players) {
       logger.debug("Player: " + player.getUsername() + " connected");
       store.addPlayer(player);
-      ((JoinScreen) game.getScreen()).addPlayer(player);
+      if(JoinScreen.class.isInstance(game.getScreen())) {
+        ((JoinScreen) game.getScreen()).addPlayer(player);
+      } else {
+        logger.fatal("Player can't be added because JoinScreen is not shown");
+      }
     }
   }
 
@@ -82,19 +96,28 @@ public class JoinScreenController extends Controller {
    */
   public void connectToServer(Player player) throws ConnectException {
     // Create server connection
-    clientService = commClient.connect();
-    clientService.registerHandler(clientHandler);
+    ClientService service = commClient.connect();
+    service.registerHandler(clientHandler);
+    
+    ReconnectionThread reconnect = new ReconnectionThread(commClient, router);
+    reconnect.start();
+    commClient.setReconnectionThread(reconnect);
 
     // Add the player to the server
-    clientService.send(new Action(Command.REGISTER, player));
+    service.send(new Action(Command.REGISTER, player));
   }
 
   /**
    * Handle when the server tells the client to start the game
    */
   public void start() {
-    commClient.getConnection().send(new Action(Command.START_GAME));
-    logger.debug("Ready to start! Waiting for the board");
+    Optional<ClientService> clientService = commClient.getConnection();
+    if(clientService.isPresent()) {
+      clientService.get().send(new Action(Command.START_GAME));
+      logger.debug("Ready to start! Waiting for the board");      
+    } else {
+      logger.fatal("ClientService doesn't exists!");
+    }
   }
 
 
@@ -106,8 +129,12 @@ public class JoinScreenController extends Controller {
     arguments.add((Serializable) animation.getPosition());
     arguments.add((Serializable) (float) animation.getRotation());
 
-    clientService = commClient.getConnection();
-    clientService.send(new Action(Command.JOIN_SCREEN_MOVE, arguments));
+    Optional<ClientService> clientService = commClient.getConnection();
+    if(clientService.isPresent()) {
+      clientService.get().send(new Action(Command.JOIN_SCREEN_MOVE, arguments));      
+    } else {
+      logger.fatal("ClientService doesn't exists!");
+    }
   }
 
   public void updateRocket(ArrayList<Serializable> arguments) {

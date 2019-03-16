@@ -8,6 +8,7 @@ import bham.bioshock.server.handlers.GameBoardHandler;
 import bham.bioshock.server.handlers.JoinScreenHandler;
 import bham.bioshock.server.handlers.MinigameHandler;
 import java.util.ArrayList;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import org.apache.logging.log4j.LogManager;
@@ -90,6 +91,12 @@ public class ServerHandler {
   }
 
 
+  /**
+   * Register new player
+   * 
+   * @param action
+   * @param service
+   */
   private void registerPlayer(Action action, ServerService service) {
     if (action.getCommand().equals(Command.REGISTER)) {
       joinHandler.registerPlayer(action, service);
@@ -98,6 +105,29 @@ public class ServerHandler {
     }
   }
 
+  /**
+   * Unregister player, remove the connection and send information to all clients
+   * @param serverService
+   */
+  public void unregister(ServerService serverService) {
+    Optional<UUID> clientId = serverService.Id();
+    if(clientId.isPresent()) {
+      connected.remove(clientId.get());
+      joinHandler.disconnectPlayer(clientId.get());      
+    } else {
+      connecting.remove(serverService);      
+    }
+  }
+  
+  public void stopAll() {
+    for (ServerService s : connected.values()) {
+      s.abort();
+    }
+    for (ServerService s : connecting) {
+      s.abort();
+    }
+  }
+  
   /**
    * Handle received action
    * 
@@ -116,9 +146,6 @@ public class ServerHandler {
     UUID clientId = service.Id().get();
 
     switch (action.getCommand()) {
-      case REMOVE_PLAYER:
-        joinHandler.disconnectPlayer(clientId);
-        break;
       case JOIN_SCREEN_MOVE:
         joinHandler.moveRocket(action, clientId);
         break;
@@ -152,4 +179,5 @@ public class ServerHandler {
         break;
     }
   }
+
 }

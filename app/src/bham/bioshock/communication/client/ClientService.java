@@ -1,7 +1,6 @@
 package bham.bioshock.communication.client;
 
 import bham.bioshock.communication.Action;
-import bham.bioshock.communication.Command;
 import bham.bioshock.communication.common.ActionHandler;
 import bham.bioshock.communication.common.Receiver;
 import bham.bioshock.communication.common.Sender;
@@ -21,7 +20,7 @@ public class ClientService extends Thread implements IClientService, ActionHandl
 
   private Sender sender;
   private Receiver receiver;
-  private Socket server;
+  private Socket socket;
   private ObjectInputStream fromServer;
   private ObjectOutputStream toServer;
 
@@ -37,12 +36,12 @@ public class ClientService extends Thread implements IClientService, ActionHandl
    * @param toServer stream to server
    * @param client main client
    */
-  public void create(Socket _server, ObjectInputStream _fromServer, ObjectOutputStream _toServer) {
+  public ClientService(Socket socket, ObjectInputStream fromServer, ObjectOutputStream toServer) {
     connectionCreated = true;
     // save socket and streams for communication
-    server = _server;
-    fromServer = _fromServer;
-    toServer = _toServer;
+    this.socket = socket;
+    this.fromServer = fromServer;
+    this.toServer = toServer;
 
     // Create two client object to send and receive messages
     receiver = new Receiver(this, fromServer);
@@ -67,11 +66,12 @@ public class ClientService extends Thread implements IClientService, ActionHandl
         }
       }
     } catch (InterruptedException e) {
-      logger.error("Client service was interrupted");
+      logger.trace("Client service was interrupted");
+    } finally {
+      // wait for the threads to terminate and close the streams
+      close();
     }
 
-    // wait for the threads to terminate and close the streams
-    close();
   }
 
   public void registerHandler(IClientHandler handler) {
@@ -94,33 +94,45 @@ public class ClientService extends Thread implements IClientService, ActionHandl
       return;
     }
     sender.send(action);
-    
-    if(action.getCommand().equals(Command.DISCONNECT)) {
-      sender.interrupt();
-      close();
-    }
   }
 
   /**
-   *  Wait for the threads to terminate and than close the sockets and streams 
+   * Server disconnected, close connection
    */
-  public void close() {
+  @Override
+  public void abort() {
+    this.interrupt();
+  }
+
+  /**
+   * Wait for the threads to terminate and than close the sockets and streams
+   */
+  private void close() {
     try {
+      sender.interrupt();
       sender.join();
       logger.debug("Client sender ended");
-      toServer.close();
-      fromServer.close();
-      server.close();
+      // Try to close all used sockets. Ignore errors
+      try {
+        toServer.close();
+      } catch (IOException e) {
+      };
+      try {
+        fromServer.close();
+      } catch (IOException e) {
+      };
+      try {
+        socket.close();
+      } catch (IOException e) {
+      };
+
       receiver.join();
       logger.debug("Client receiver ended");
-    } catch (IOException e) {
-      logger.error("Something wrong " + e.getMessage());
-      System.exit(0);
     } catch (InterruptedException e) {
       logger.error("Unexpected interruption " + e.getMessage());
-      System.exit(0);
     }
     logger.debug("Client disconnected");
+    connectionCreated = false;
   }
 
 }

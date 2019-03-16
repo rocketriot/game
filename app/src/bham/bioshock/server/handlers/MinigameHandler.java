@@ -84,21 +84,24 @@ public class MinigameHandler {
     }
     
     aiLoop.start();
-    setupMinigameEnd();
+    if(planetId != null) {
+      setupMinigameEnd();      
+    }
 
     ArrayList<Serializable> arguments = new ArrayList<>();
     arguments.add((Serializable) w);
     arguments.add((Serializable) o);
     handler.sendToAll(new Action(Command.MINIGAME_START, arguments));
-  
   }
   
+  /**
+   * Starts a clock ending the minigame
+   */
   private void setupMinigameEnd() {
-    /** SETUP MINIGAME END */
     clock = new Clock();
     long t = System.currentTimeMillis();
 
-    clock.at(60f, new Clock.TimeListener() {
+    clock.at(180f, new Clock.TimeListener() {
       @Override
       public void handle(Clock.TimeUpdateEvent event) {
         if(minigameTimer != null) {
@@ -106,9 +109,7 @@ public class MinigameHandler {
         }
         MinigameStore localStore = store.getMinigameStore();
         Objective o = localStore.getObjective();
-        if(planetId != null) {
-          endMinigame(o.getWinner());          
-        }
+        endMinigame(o.getWinner());          
       }
     });
     
@@ -120,7 +121,7 @@ public class MinigameHandler {
         try {
           while (!isInterrupted()) {
             long delta = (System.currentTimeMillis() - time);
-            clock.update(delta);
+            clock.update((int) delta);
             Thread.sleep(1000);
           }
         } catch (InterruptedException e) {
@@ -131,15 +132,15 @@ public class MinigameHandler {
     minigameTimer.start();
   }
 
-  /*
+  /**
    * Sync player movement and position
    */
   public void playerMove(Action action, UUID playerId) {
     handler.sendToAllExcept(action, playerId);
   }
 
-  /*
-   * Sync player movement and position
+  /**
+   * Create new bullet
    */
   public void bulletShot(Action action, UUID playerId) {
     handler.sendToAllExcept(action, playerId);

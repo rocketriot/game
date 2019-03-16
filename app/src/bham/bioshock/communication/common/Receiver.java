@@ -41,7 +41,9 @@ public class Receiver extends Thread {
         }
       }
     } catch (IOException e) {
-      logger.error("Something went wrong with the client " + e.getMessage());
+      logger.error("Receiver ("+getId()+") disconnected " + e.getMessage());
+    } finally {
+      actionHandler.abort();
     }
 
     logger.trace("Server receiver ending");

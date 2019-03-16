@@ -11,7 +11,6 @@ public enum Command {
   // Creating a game
   SERVER_FULL,
   REGISTER,
-  DISCONNECT,
   ADD_PLAYER,
   REMOVE_PLAYER,
   START_GAME,
