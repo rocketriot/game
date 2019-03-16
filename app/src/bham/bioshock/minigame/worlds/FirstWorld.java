@@ -97,7 +97,8 @@ public class FirstWorld extends World {
    */
   public ArrayList<Platform> getPlatformPath(Platform platform){
     ArrayList<Platform> path = new ArrayList<>();
-    Platform currentParent = new Platform(null, new PlanetPosition(0, 0), 0, 0);
+    path.add(platform);
+    Platform currentParent = platform.getParent();
     while (currentParent != null){
       currentParent = platform.getParent();
       path.add(currentParent);
