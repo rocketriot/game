@@ -176,6 +176,9 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
 
       // Remove the completed move
       boardMove.remove(0);
+
+      // Decrease the player's fuel
+      player.decreaseFuel(Player.FUEL_GRID_COST);
     }
 
     // Get the value of the grid point that the player has landed on
