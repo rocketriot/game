@@ -15,7 +15,6 @@ public class MinigameInstructions {
   private SpriteBatch batch;
   private Store store;
   private BitmapFont font;
-  private BitmapFont timerFont;
   private boolean showPrompt = false;
   private boolean showPrompt2 = false;
   private float duration;
@@ -23,8 +22,6 @@ public class MinigameInstructions {
   private boolean displayed;
   private FontGenerator fontGenerator;
   private int fontSize = 72;
-  private float timer = 0;
-  private int initialMinute =2;
 
 
   public MinigameInstructions(SpriteBatch batch, Store store) {
@@ -39,7 +36,6 @@ public class MinigameInstructions {
   private void setup() {
     fontGenerator = new FontGenerator();
     font = fontGenerator.generate(fontSize, Color.WHITE);
-    timerFont = fontGenerator.generate(fontSize, Color.YELLOW);
   }
 
   /**
@@ -49,7 +45,6 @@ public class MinigameInstructions {
    */
   public void render() {
     checkIfDisplayed();
-    displayTimer();
     if (showPrompt) {
       batch.begin();
       int x = Config.GAME_WORLD_WIDTH / 8;
@@ -94,36 +89,6 @@ public class MinigameInstructions {
       displayed = true;
       showPrompt = true;
     }
-  }
-
-  /**
-   * Displays timer for the minigame.
-   */
-  private void displayTimer() {
-    int xTimer = Config.GAME_WORLD_WIDTH / 2 - 100;
-    int yTimer = Config.GAME_WORLD_HEIGHT - 100;
-
-    timer += Gdx.graphics.getDeltaTime();
-    float displayedTime = 60 - timer;
-
-    if(timer > 59){
-      initialMinute --;
-      timer =1;
-    }
-
-    DecimalFormat df = new DecimalFormat("##");
-
-    String displayedSeconds = df.format(displayedTime);
-
-    if(displayedSeconds.length() ==1 )
-      displayedSeconds = "0" + displayedSeconds;
-
-    batch.begin();
-    timerFont.draw(batch, "0" + initialMinute +":" + displayedSeconds, xTimer, yTimer);
-
-    if(initialMinute == 0 && displayedTime <=10)
-      showPrompt2 =true;
-    batch.end();
   }
 }
 
