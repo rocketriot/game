@@ -27,7 +27,12 @@ public class Assets {
   public static final String particleEffectsFolder = "app/assets/particle-effects";
   public static final String particleEffect = "app/assets/particle-effects/rocket-trail.p";
   
-  // HUD assets
-  public static final String turnPointer = "app/assets/ui/turn-pointer.png";
+  // General HUD assets
   public static final String pauseIcon = "app/assets/ui/icons/pause.png";  
+  
+  // Gameboard HUD assets
+  public static final String turnPointer = "app/assets/ui/turn-pointer.png";
+
+  // Minigame HUD assets
+  public static final String gun = "app/assets/minigame/gun.png";
 }
