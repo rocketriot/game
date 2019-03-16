@@ -92,7 +92,7 @@ public class FirstWorld extends World {
 
   /**
    * Method to get the platform path to a platform
-   * @param platform the paltform you want to get to
+   * @param platform the platform you want to get to
    * @return the platform path
    */
   public ArrayList<Platform> getPlatformPath(Platform platform){
