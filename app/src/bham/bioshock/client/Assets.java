@@ -28,7 +28,7 @@ public class Assets {
   public static final String particleEffect = "app/assets/particle-effects/rocket-trail.p";
   
   // General HUD assets
-  public static final String pauseIcon = "app/assets/ui/icons/pause.png";  
+  public static final String pauseIcon = "app/assets/ui/pause.png";  
   
   // Gameboard HUD assets
   public static final String turnPointer = "app/assets/ui/turn-pointer.png";
