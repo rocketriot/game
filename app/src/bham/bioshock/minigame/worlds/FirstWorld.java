@@ -15,7 +15,7 @@ import java.util.Collections;
 public class FirstWorld extends World {
 
   private static final long serialVersionUID = -5432716795106522826L;
-  
+
   Position GRAVITY_POS = new Position(0f, 0f);
   double PLANET_RADIUS = 2000;
   double GRAVITY = 1500;
@@ -37,7 +37,7 @@ public class FirstWorld extends World {
     guns.add(new Gun(this, 2070, 3000));
     guns.add(new Gun(this, -2070, -3100));
     guns.add(new Gun(this, 0, -3000));
-    
+
     PlatformSeeder seeder = new PlatformSeeder(this);
     seeder.seed();
     platforms = seeder.getPlatforms();
@@ -73,35 +73,36 @@ public class FirstWorld extends World {
     return guns;
   }
 
-  
+
   public ArrayList<Platform> getPlatforms() {
     return platforms;
   }
 
   @Override
   public Texture getTexture() {
-    if(texture != null) {
+    if (texture != null) {
       return texture;
     }
     Random r = new Random();
     int id = r.nextInt(100) % 2;
-    Texture t = new Texture(Gdx.files.internal("app/assets/minigame/planet"+ (id + 1) +".png"));;
+    Texture t = new Texture(Gdx.files.internal("app/assets/minigame/planet" + (id + 1) + ".png"));
+    ;
     texture = t;
     return t;
   }
 
   /**
-   * Method to get the platform path to a platform
-   * @param platform the platform you want to get to
-   * @return the platform path
+   * Method to get the platform path to a platform inclusive
+   *
+   * @param platform the goal platform
+   * @return the path
    */
-  public ArrayList<Platform> getPlatformPath(Platform platform){
+  public ArrayList<Platform> getPlatformPath(Platform platform) {
     ArrayList<Platform> path = new ArrayList<>();
-    path.add(platform);
-    Platform currentParent = platform.getParent();
-    while (currentParent != null){
-      currentParent = platform.getParent();
+    Platform currentParent = platform;
+    while (currentParent.equals(null)) {
       path.add(currentParent);
+      currentParent = platform.getParent();
     }
     Collections.reverse(path);
     return path;
