@@ -23,100 +23,99 @@ import org.apache.logging.log4j.Logger;
 
 public class JoinScreenController extends Controller {
 
-    private static final Logger logger = LogManager.getLogger(JoinScreenController.class);
+  private static final Logger logger = LogManager.getLogger(JoinScreenController.class);
 
-    private ClientService clientService;
-    private CommunicationClient commClient;
-    private ClientHandler clientHandler;
-    private BoardGame game;
+  private ClientService clientService;
+  private CommunicationClient commClient;
+  private ClientHandler clientHandler;
+  private BoardGame game;
 
-    @Inject
-    public JoinScreenController(Store store, Router router, BoardGame game,
-                                CommunicationClient commClient, ClientHandler clientHandler) {
-        super(store, router, game);
-        this.clientHandler = clientHandler;
-        this.commClient = commClient;
-        this.game = game;
+  @Inject
+  public JoinScreenController(Store store, Router router, BoardGame game,
+      CommunicationClient commClient, ClientHandler clientHandler) {
+    super(store, router, game);
+    this.clientHandler = clientHandler;
+    this.commClient = commClient;
+    this.game = game;
+  }
+
+  public void show(String username) {
+    // Create a new player
+    Player player = new Player(username);
+
+    // Save player to the store
+    store.setMainPlayer(player);
+
+    store.setJoinScreenStore(new JoinScreenStore());
+    // Create connection to the server
+    try {
+      connectToServer(player);
+      setScreen(new JoinScreen(router, store, player));
+    } catch (ConnectException e) {
+      // Server cannot be started
+      logger.error(e.getMessage());
+      router.call(Route.ALERT, e.getMessage());
     }
+  }
 
-    public void show(String username) {
-        // Create a new player
-        Player player = new Player(username);
+  public void disconnectPlayer() {
+    commClient.getConnection().send(new Action(Command.DISCONNECT));
+  }
 
-        // Save player to the store
-        store.setMainPlayer(player);
+  public void removePlayer(UUID id) {
+    store.removePlayer(id);
+  }
 
-        store.setJoinScreenStore(new JoinScreenStore());
-        // Create connection to the server
-        try {
-            connectToServer(player);
-            setScreen(new JoinScreen(router, store, player));
-
-        } catch (ConnectException e) {
-            // No server started
-            logger.error(e.getMessage());
-            router.call(Route.ALERT, e.getMessage());
-        }
+  /**
+   * Handle when the server tells us a new player was added to the game
+   */
+  public void addPlayer(ArrayList<Player> players) {
+    for (Player player : players) {
+      logger.debug("Player: " + player.getUsername() + " connected");
+      store.addPlayer(player);
+      ((JoinScreen) game.getScreen()).addPlayer(player);
     }
+  }
 
-    public void disconnectPlayer() {
-        commClient.getConnection().send(new Action(Command.REMOVE_PLAYER));
-    }
+  /**
+   * Create a connection with the server and wait in lobby when a username is entered
+   */
+  public void connectToServer(Player player) throws ConnectException {
+    // Create server connection
+    clientService = commClient.connect();
+    clientService.registerHandler(clientHandler);
 
-    public void removePlayer(UUID id) {
-        store.removePlayer(id);
-    }
+    // Add the player to the server
+    clientService.send(new Action(Command.REGISTER, player));
+  }
 
-    /**
-     * Handle when the server tells us a new player was added to the game
-     */
-    public void addPlayer(ArrayList<Player> players) {
-        for (Player player : players) {
-            logger.debug("Player: " + player.getUsername() + " connected");
-            store.addPlayer(player);
-            ((JoinScreen)game.getScreen()).addPlayer(player);
-        }
-    }
-
-    /**
-     * Create a connection with the server and wait in lobby when a username is entered
-     */
-    public void connectToServer(Player player) throws ConnectException {
-        // Create server connection
-        clientService = commClient.connect(player.getUsername());
-        clientService.registerHandler(clientHandler);
-
-        // Add the player to the server
-        clientService.send(new Action(Command.ADD_PLAYER, player));
-    }
-
-    /**
-     * Handle when the server tells the client to start the game
-     */
-    public void start() {
-        commClient.getConnection().send(new Action(Command.START_GAME));
-        logger.debug("Ready to start! Waiting for the board");
-    }
+  /**
+   * Handle when the server tells the client to start the game
+   */
+  public void start() {
+    commClient.getConnection().send(new Action(Command.START_GAME));
+    logger.debug("Ready to start! Waiting for the board");
+  }
 
 
-    public void rocketMove(UUID playerId) throws ConnectException {
+  public void rocketMove(UUID playerId) throws ConnectException {
 
-        ArrayList<Serializable> arguments = new ArrayList<>();
-        arguments.add((Serializable) playerId);
-        JoinScreen.RocketAnimation animation = ((JoinScreen)game.getScreen()).getMainPlayerAnimation();
-        arguments.add((Serializable) animation.getPosition());
-        arguments.add((Serializable) (float) animation.getRotation());
+    ArrayList<Serializable> arguments = new ArrayList<>();
+    arguments.add((Serializable) playerId);
+    JoinScreen.RocketAnimation animation = ((JoinScreen) game.getScreen()).getMainPlayerAnimation();
+    arguments.add((Serializable) animation.getPosition());
+    arguments.add((Serializable) (float) animation.getRotation());
 
-        clientService = commClient.getConnection();
-        clientService.send(new Action(Command.JOIN_SCREEN_MOVE, arguments));
-    }
+    clientService = commClient.getConnection();
+    clientService.send(new Action(Command.JOIN_SCREEN_MOVE, arguments));
+  }
 
-    public void updateRocket(ArrayList<Serializable> arguments) {
-        UUID id = (UUID) arguments.get(0);
-        Position pos = (Position) arguments.get(1);
-        float rotation = (float) arguments.get(2);
+  public void updateRocket(ArrayList<Serializable> arguments) {
+    UUID id = (UUID) arguments.get(0);
+    Position pos = (Position) arguments.get(1);
+    float rotation = (float) arguments.get(2);
 
-        store.getJoinScreenStore().updateRocket(pos, rotation, id);
-    }
+    store.getJoinScreenStore().updateRocket(pos, rotation, id);
+  }
 
 }

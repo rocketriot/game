@@ -7,7 +7,6 @@ import com.google.inject.Singleton;
 import bham.bioshock.common.models.store.Store;
 import bham.bioshock.communication.Config;
 import bham.bioshock.communication.server.CommunicationMaker;
-import bham.bioshock.communication.server.ServerHandler;
 
 @Singleton
 public class Server {

@@ -3,6 +3,7 @@ package bham.bioshock.minigame.objectives;
 import java.util.HashMap;
 import java.util.Random;
 import java.util.UUID;
+import org.nd4j.linalg.primitives.Optional;
 import bham.bioshock.client.Route;
 import bham.bioshock.common.Position;
 import bham.bioshock.common.models.store.MinigameStore;
@@ -18,27 +19,25 @@ public class CaptureTheFlag extends Objective {
   private Position respawnPosition;
   private HashMap<Astronaut, Float> health = new HashMap<>();
   private float initialHealth = 50.0f;
-  private Position[] positions;
   private Position flagPosition;
   private Flag flag;
-  private Astronaut flagOwner = null;
+  private Optional<Astronaut> flagOwner = Optional.empty();
 
 
   public CaptureTheFlag(World world) {
-    super(world);
-    this.positions = this.getWorld().getPlayerPositions();
     setRandonRespawnPosition();
     Position p = new Position(-2350.0f, 100.0f);
     setFlagPosition(p);
 
-
-    this.flag = new Flag(world, flagPosition.x, flagPosition.y);
+    flag = new Flag(world, flagPosition.x, flagPosition.y);
   }
 
   @Override
   public UUID getWinner() {
-    Astronaut a = flagOwner;
-    return a == null ? null : a.getId();
+    if(flagOwner.isPresent()) {
+      return flagOwner.get().getId();
+    }
+    return null;
   }
 
 
@@ -50,12 +49,12 @@ public class CaptureTheFlag extends Objective {
       boolean hadGun = player.haveGun();
       player.killAndRespawn(respawnPosition);
       if(hadGun) {
-        Gun gun = new Gun(getWorld(), player.getX(), player.getY());
+        Gun gun = new Gun(world, player.getX(), player.getY());
         gun.load();
-        this.localSore.addEntity(gun);
+        this.localStore.addEntity(gun);
       }
       
-      getRouter().call(Route.MINIGAME_MOVE);
+      router.call(Route.MINIGAME_MOVE);
       setPlayerHealth(initialHealth, player);
 
     } else {
@@ -65,13 +64,12 @@ public class CaptureTheFlag extends Objective {
 
   }
 
-  @Override
-  public void initialise() {
-    getPlayers().forEach(player -> {
-      health.put(player, initialHealth);
-    });
-
-  }
+//  @Override
+//  public void initialise() {
+//    getPlayers().forEach(player -> {
+//      health.put(player, initialHealth);
+//    });
+//  }
 
   @Override
   public void seed(MinigameStore store) {
@@ -94,7 +92,7 @@ public class CaptureTheFlag extends Objective {
   private void setRandonRespawnPosition() {
     Random r = new Random();
     int i = Math.abs(r.nextInt() % 4);
-    respawnPosition = positions[i];
+    respawnPosition = world.getPlayerPositions()[i];
   }
 
   private boolean checkIfdead(Astronaut p) {
@@ -112,6 +110,6 @@ public class CaptureTheFlag extends Objective {
   }
 
   public void setFlagOwner(Astronaut owner) {
-    this.flagOwner = owner;
+    this.flagOwner = Optional.of(owner);
   }
 }

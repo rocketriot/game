@@ -1,78 +1,102 @@
 package bham.bioshock.communication.server;
 
 import bham.bioshock.communication.Action;
-import java.io.IOException;
+import bham.bioshock.communication.common.ActionHandler;
+import bham.bioshock.communication.common.Receiver;
+import bham.bioshock.communication.common.Sender;
+import bham.bioshock.server.ServerHandler;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.Optional;
 import java.util.UUID;
-import java.util.concurrent.PriorityBlockingQueue;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /** Executes the actions received by ServerReceiver. */
-public class ServerService extends Thread {
+public class ServerService extends Thread implements ActionHandler {
+  private static final Logger logger = LogManager.getLogger(ServerService.class);
 
-  private ServerSender sender;
-  private ServerReceiver receiver;
-  private PriorityBlockingQueue<Action> queue = new PriorityBlockingQueue<>();
+  /** Thread sending messages */
+  private Sender sender;
+  /** Thread receiving messages */
+  private Receiver receiver;
+
+  /** Queue with received and not yet handled actions */
+  private BlockingQueue<Action> queue = new LinkedBlockingQueue<>();
+
   private ServerHandler handler;
-  private UUID id;
+  private Optional<UUID> id = Optional.empty();
 
-  public ServerService(
-      ObjectInputStream fromClient, ObjectOutputStream toClient, ServerHandler handler) {
-    // Sender and receiver for sending and receiving messages to/from user
-    this.sender = new ServerSender(toClient);
+  public ServerService(ObjectInputStream fromClient, ObjectOutputStream toClient,
+      ServerHandler handler) {
 
-    // Receiver for getting messages from user
-    this.receiver = new ServerReceiver(this, fromClient);
+    this.sender = new Sender(toClient);
+    this.receiver = new Receiver(this, fromClient);
 
     this.handler = handler;
   }
 
+  /** Save related player ID */
+  public void saveId(UUID id) {
+    this.id = Optional.of(id);
+  }
+
+  /**
+   * Returns related player ID
+   * 
+   * @return ID of the related player
+   */
+  public Optional<UUID> Id() {
+    return id;
+  }
+
   public void run() {
-    // start the receiver thread
+    // start supporting threads
     receiver.start();
+    sender.start();
 
     try {
-      while (true) {
+      while (!isInterrupted()) {
         // Execute actions from queue
         execute(queue.take());
       }
-      // wait for the receiver to end
     } catch (InterruptedException e) {
-      receiver.interrupt(); // end if receiver ends
-      // This shouldn't actually happen
-      System.err.println("ServerService was interrupted");
+      receiver.interrupt();
+      sender.interrupt();
+      logger.trace("ServerService was interrupted");
     }
 
-    System.out.println("ServerService ending");
+    logger.trace("ServerService ending");
   }
 
-  public void saveId(UUID id) {
-    this.id = id;
-  }
-  
-  public UUID Id() {
-    return id;
-  }
-  
-  public void store(Action action) {
+  /**
+   * Adds new action to the waiting queue
+   * 
+   * @param action
+   */
+  @Override
+  public void handle(Action action) {
     queue.add(action);
   }
 
+  /**
+   * Sends an action to the related client
+   * 
+   * @param action
+   */
   public void send(Action action) {
     sender.send(action);
   }
 
-  public void reset() throws IOException {
-    sender.reset();
-  }
-  
   /**
    * Delegates the execution to the appropriate method
-   *
+   * 
    * @param action to be executed
    */
   private void execute(Action action) {
-
     handler.handleRequest(action, this);
   }
+
 }

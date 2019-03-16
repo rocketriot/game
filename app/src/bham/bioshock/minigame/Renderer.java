@@ -41,7 +41,7 @@ public class Renderer {
   private Stage stage;
   private SpriteBatch batch;
   private SpriteBatch backgroundBatch;
-  private SpriteBatch fontBatch;
+  private SpriteBatch textBatch;
   private Viewport viewport;
   private double camRotation;
   private final int GAME_WORLD_WIDTH = Config.GAME_WORLD_WIDTH;
@@ -53,9 +53,7 @@ public class Renderer {
   private MinigameHud hud;
   private World world;
 
-  private Objective objective;
   private Texture worldTexture;
-  private SpriteBatch textBatch;
   
   public Renderer(Store store, Router router) {
     this.store = store;
@@ -65,21 +63,17 @@ public class Renderer {
     mainPlayer = minigameStore.getMainPlayer();
 
     shapeRenderer = new ShapeRenderer();
-    textBatch = new SpriteBatch();
 
     world = minigameStore.getWorld();
     worldTexture = world.getTexture();
-
-    this.objective = minigameStore.getObjective();
-    this.objective.initialise();
 
     cam = new OrthographicCamera();
     camRotation = 0;
     cam.update();
 
     batch = new SpriteBatch();
+    textBatch = new SpriteBatch();
     backgroundBatch = new SpriteBatch();
-    fontBatch = new SpriteBatch();
 
     CollisionHandler collisionHandler = new CollisionHandler(minigameStore);
 
@@ -111,10 +105,14 @@ public class Renderer {
 
     background = new Sprite(new Texture(Gdx.files.internal("app/assets/backgrounds/game.png")));
 
+    Objective objective = minigameStore.getObjective();
+    
     for (Entity e : getEntities()) {
       e.load();
       e.setCollisionHandler(collisionHandler);
-      e.setObjective(objective);
+      if(objective != null) {
+        e.setObjective(minigameStore.getObjective());        
+      }
     }
   }
 
@@ -127,6 +125,7 @@ public class Renderer {
 
   public void render(float delta) {
     batch.setProjectionMatrix(cam.combined);
+    textBatch.setProjectionMatrix(cam.combined);
     shapeRenderer.setProjectionMatrix(cam.combined);
 
     cam.position.lerp(lerpTarget.set(mainPlayer.getX(), mainPlayer.getY(), 0), 3f * delta);
@@ -145,14 +144,11 @@ public class Renderer {
       entities.forEach(e -> e.drawDebug(shapeRenderer));
     }
 
-    batch.begin();
     drawPlanet();
-    entities.forEach(e -> e.draw(batch, delta));
-    batch.end();
+    entities.forEach(e -> e.draw(batch));
+    entities.forEach(e -> e.afterDraw(textBatch));
+    entities.forEach(e -> e.update(delta));
     
-    textBatch.setProjectionMatrix(cam.combined);
-    entities.forEach(e -> e.afterDrawing(textBatch));
-
     // Draw the ui
     this.batch.setProjectionMatrix(hud.stage.getCamera().combined);
     hud.getStage().act(delta);
@@ -163,12 +159,15 @@ public class Renderer {
   }
 
   public void drawPlanet() {
+    batch.begin();
     float radius = (float) world.getPlanetRadius()+530;
     batch.draw(worldTexture, -radius, -radius, radius*2, radius*2);
+    batch.end();
   }
 
   public void drawBackground() {
     backgroundBatch.begin();
+    backgroundBatch.disableBlending();
     backgroundBatch.draw(background, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
     backgroundBatch.end();
   }

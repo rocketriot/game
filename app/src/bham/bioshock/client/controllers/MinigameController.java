@@ -90,9 +90,9 @@ public class MinigameController extends Controller {
   public void show(ArrayList<Serializable> arr) {
     World w = (World) arr.get(0);
     Objective o = (Objective) arr.get(1);
-    o.setRouter(router);
     MinigameStore localStore = new MinigameStore();
     localStore.seed(store, w, o);
+    o.init(w, router, localStore);
 
     store.setMinigameStore(localStore);
     router.call(Route.FADE_OUT, "boardGame");

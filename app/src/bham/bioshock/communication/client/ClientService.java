@@ -1,26 +1,31 @@
 package bham.bioshock.communication.client;
 
 import bham.bioshock.communication.Action;
+import bham.bioshock.communication.Command;
+import bham.bioshock.communication.common.ActionHandler;
+import bham.bioshock.communication.common.Receiver;
+import bham.bioshock.communication.common.Sender;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
-import java.util.concurrent.PriorityBlockingQueue;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 /** Interprets commands received from server */
-public class ClientService extends Thread implements IClientService {
+public class ClientService extends Thread implements IClientService, ActionHandler {
 
   private static final Logger logger = LogManager.getLogger(ClientService.class);
 
-  private ClientSender sender;
-  private ClientReceiver receiver;
+  private Sender sender;
+  private Receiver receiver;
   private Socket server;
   private ObjectInputStream fromServer;
   private ObjectOutputStream toServer;
 
-  private PriorityBlockingQueue<Action> queue = new PriorityBlockingQueue<>();
+  private BlockingQueue<Action> queue = new LinkedBlockingQueue<>();
   private IClientHandler handler;
   private boolean connectionCreated = false;
 
@@ -40,8 +45,8 @@ public class ClientService extends Thread implements IClientService {
     toServer = _toServer;
 
     // Create two client object to send and receive messages
-    receiver = new ClientReceiver(this, fromServer);
-    sender = new ClientSender(toServer);
+    receiver = new Receiver(this, fromServer);
+    sender = new Sender(toServer);
   }
 
   public boolean isCreated() {
@@ -55,7 +60,7 @@ public class ClientService extends Thread implements IClientService {
     receiver.start();
 
     try {
-      while (true) {
+      while (!isInterrupted()) {
         // Execute action from a blocking queue
         if (handler != null) {
           handler.execute(queue.take());
@@ -73,7 +78,8 @@ public class ClientService extends Thread implements IClientService {
     this.handler = handler;
   }
 
-  public void store(Action action) {
+  @Override
+  public void handle(Action action) {
     queue.add(action);
   }
 
@@ -88,9 +94,16 @@ public class ClientService extends Thread implements IClientService {
       return;
     }
     sender.send(action);
+    
+    if(action.getCommand().equals(Command.DISCONNECT)) {
+      sender.interrupt();
+      close();
+    }
   }
 
-  /** Wait for the threads to terminate and than close the sockets and streams */
+  /**
+   *  Wait for the threads to terminate and than close the sockets and streams 
+   */
   public void close() {
     try {
       sender.join();
@@ -107,6 +120,7 @@ public class ClientService extends Thread implements IClientService {
       logger.error("Unexpected interruption " + e.getMessage());
       System.exit(0);
     }
-    logger.debug("Client ended. Goodbye.");
+    logger.debug("Client disconnected");
   }
+
 }

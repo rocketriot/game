@@ -12,6 +12,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Intersector.MinimumTranslationVector;
+import com.badlogic.gdx.scenes.scene2d.Group;
 import bham.bioshock.client.controllers.SoundController;
 import bham.bioshock.common.Direction;
 import bham.bioshock.common.Position;
@@ -31,6 +32,8 @@ public class Astronaut extends Entity {
   private static Animation<TextureRegion> walkGunAnimation;
   private static TextureRegion frontTexture;
   private static TextureRegion frontGunTexture;
+  private static TextureRegion[] hearts = new TextureRegion[5];
+  private Sprite health;
   float animationTime;
   private PlayerTexture dir = PlayerTexture.FRONT;
   private boolean haveGun = false;
@@ -115,6 +118,12 @@ public class Astronaut extends Entity {
     if (!loaded)
       return;
     super.update(delta);
+    
+    if (is(State.REMOVING)) {
+      collisionBoundary.update(respawn, delta);
+      collisionBoundary.update(pos, getRotation() - (dieTime / 0.71f)*90);
+      dieTime += delta;
+    }
     legs.update(pos, getRotation());
     animationTime += delta;
   }
@@ -130,7 +139,7 @@ public class Astronaut extends Entity {
   }
 
   @Override
-  public void draw(SpriteBatch batch, float delta) {
+  public void draw(SpriteBatch batch) {
     if (is(State.REMOVING)) {
       TextureRegion anim;
       if(dieFront) {
@@ -139,32 +148,48 @@ public class Astronaut extends Entity {
         anim = dyingBack.getKeyFrame(dieTime, false);
       }
 
-      collisionBoundary.update(respawn, delta);
-      collisionBoundary.update(pos, getRotation() - (dieTime / 0.71f)*90);
       Sprite sprite = getSprite();
       sprite.setRegion(anim);
       sprite.setPosition(getX() - (sprite.getWidth() / 2), getY());
       sprite.setRotation((float) getRotation());
+      batch.begin();
       sprite.draw(batch);
-
+      batch.end();
+      
       if (dieFront && dyingFront.isAnimationFinished(dieTime)
           || dyingBack.isAnimationFinished(dieTime)) {
         state = State.LOADED;
         setRotation(0);
         stepsGenerator.updateFromServer(new SpeedVector(), respawn);
       }
-      dieTime += delta;
+      
     } else {
-      super.draw(batch, delta);
+      drawHealth(batch);
+      super.draw(batch);
     }
   }
   
   @Override
-  public void afterDrawing(SpriteBatch batch) {
+  public void afterDraw(SpriteBatch batch) {
+    drawName(batch);
+  }
+  
+  private void drawHealth(SpriteBatch batch) {
     PlanetPosition pp = world.convert(pos);
-    pp.fromCenter += height + 20;
-    
-    name.update(world.convert(pp), getRotation());
+    pp.fromCenter += height;
+    Position lifePos = world.convert(pp);
+    health.setPosition(lifePos.x - (health.getWidth() / 2), lifePos.y);
+    health.setRotation((float) getRotation());
+    batch.begin();
+    health.draw(batch);
+    batch.end();
+  }
+  
+  private void drawName(SpriteBatch batch) {
+    PlanetPosition pp = world.convert(pos);
+    pp.fromCenter += height + 40;
+    Position namePosition = world.convert(pp);
+    name.update(namePosition, getRotation());
     name.draw(batch);
   }
 
@@ -180,9 +205,14 @@ public class Astronaut extends Entity {
 
 
   public void load() {
-    super.load();
+    super.load();    
     legs = new CollisionBoundary(collisionWidth + 10, collisionHeight / 10);
     legs.update(pos, getRotation());
+    
+    health = new Sprite(hearts[0]);
+    float healthWidth = 50;
+    health.setSize(healthWidth, (health.getHeight()/health.getWidth()) * healthWidth);
+    health.setOrigin(health.getWidth()/2, 0);
   }
 
   /**
@@ -256,10 +286,14 @@ public class Astronaut extends Entity {
         }
         break;
       case BULLET:
-        getObjective().gotShot(this, ((Bullet) e).getShooter());  
+        if(objective.isPresent()) {
+          objective.get().gotShot(this, ((Bullet) e).getShooter());            
+        }
         break;
       case FLAG:
-        this.getObjective().captured(this);
+        if(objective.isPresent()) {
+          objective.get().captured(this);
+        }
         e.state = State.REMOVED;
         break;
       default:
@@ -308,7 +342,12 @@ public class Astronaut extends Entity {
     TextureRegion[][] walkGunSheet = splittedTexture("app/assets/minigame/astronaut_gun.png", 11);
     TextureRegion[][] dieFront = splittedTexture("app/assets/minigame/die_front.png", 10);
     TextureRegion[][] dieBack = splittedTexture("app/assets/minigame/die_back.png", 12);
-
+    TextureRegion[][] h = splittedTexture("app/assets/minigame/hearts.png", 5);
+    
+    for(int i=0; i<h[0].length; i++) {
+      hearts[i] = h[0][i];
+    }
+    
     frontTexture = walkSheet[0][0];
     frontGunTexture = walkGunSheet[0][0];
 

@@ -18,7 +18,7 @@ public class CommunicationClient {
 
   public static String hostAddress;
   public static int port = Config.PORT;
-  private ClientService service = new ClientService();;
+  private ClientService service = new ClientService();
 
   public ClientService getConnection() {
     return service;
@@ -51,7 +51,7 @@ public class CommunicationClient {
   }
 
 
-  public ClientService connect(String userName) throws ConnectException {
+  public ClientService connect() throws ConnectException {
     if (Config.SERVER_ADDRESS.length() == 0) {
       ClientConnectThread c = new ClientConnectThread();
       long waiting = 0;

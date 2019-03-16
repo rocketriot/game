@@ -15,56 +15,49 @@ import java.util.UUID;
 
 public abstract class Objective implements Serializable {
 
-  private World world;
-  private Router router;
-  protected MinigameStore localSore;
-
-  public Objective(World world) {
-    this.world = world;
-  }
-
-  private Collection<Astronaut> players;
+  protected transient World world;
+  protected transient Router router;
+  protected transient MinigameStore localStore;
 
   public abstract UUID getWinner();
 
-  public void setPlayers(Collection<Astronaut> players) {
-    this.players = players;
-    initialise();
+  public void init(World world, Router router, MinigameStore store) {
+    this.world = world;
+    this.router = router;
+    this.localStore = store;
   }
 
-  public void setRouter(Router router){this.router = router;}
 
   public Collection<Astronaut> getPlayers() {
-    return this.players;
+    return localStore.getPlayers();
   }
-
-  public World getWorld(){return this.world;}
-
-  public Router getRouter(){return this.router;}
 
   /**
    * Called everytime a player is shot
+   * 
    * @param player: the player who got shot
    * @param killer: the player who shot
    */
   public abstract void gotShot(Astronaut player, Astronaut killer);
 
-  public abstract void initialise();
 
   /**
    * Seeds the minigame store with the additional entities required to each objective
+   * 
    * @param store
    */
   public abstract void seed(MinigameStore store);
 
   /**
    * Called when the flag is captured
+   * 
    * @param a: the player who got the flag
    */
   public abstract void captured(Astronaut a);
 
   /**
    * The instructions of each objective
+   * 
    * @return the instruction String
    */
   public abstract String instructions();

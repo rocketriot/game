@@ -1,23 +1,16 @@
 package bham.bioshock.server.handlers;
 
-import bham.bioshock.common.consts.GridPoint;
-import bham.bioshock.common.consts.GridPoint.Type;
+import java.io.Serializable;
+import java.util.ArrayList;
 import bham.bioshock.common.models.Coordinates;
 import bham.bioshock.common.models.GameBoard;
 import bham.bioshock.common.models.Player;
 import bham.bioshock.common.models.Player.Move;
 import bham.bioshock.common.models.store.Store;
-import bham.bioshock.common.pathfinding.AStarPathfinding;
 import bham.bioshock.communication.Action;
 import bham.bioshock.communication.Command;
 import bham.bioshock.communication.server.BoardAi;
-import bham.bioshock.communication.server.ServerHandler;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Random;
-
-import com.badlogic.gdx.math.Path;
+import bham.bioshock.server.ServerHandler;
 
 public class GameBoardHandler {
 

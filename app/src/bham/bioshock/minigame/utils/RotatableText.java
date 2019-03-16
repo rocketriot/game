@@ -20,7 +20,7 @@ public class RotatableText {
   public RotatableText(String text) {
     this.text = text;
     FontGenerator gen = new FontGenerator();
-    font = gen.generate(25);
+    font = gen.generate(18);
     rotation = 180f;
     pos = new Position(0,0); 
     layout = new GlyphLayout();
