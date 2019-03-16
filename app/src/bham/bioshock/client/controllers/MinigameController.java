@@ -1,5 +1,9 @@
 package bham.bioshock.client.controllers;
 
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.UUID;
+import com.google.inject.Inject;
 import bham.bioshock.client.BoardGame;
 import bham.bioshock.client.Route;
 import bham.bioshock.client.Router;
@@ -11,20 +15,11 @@ import bham.bioshock.common.models.store.Store;
 import bham.bioshock.communication.Action;
 import bham.bioshock.communication.Command;
 import bham.bioshock.communication.client.ClientService;
-import bham.bioshock.minigame.PlayerTexture;
 import bham.bioshock.minigame.models.Astronaut.Move;
 import bham.bioshock.minigame.models.Bullet;
-import bham.bioshock.minigame.objectives.CaptureTheFlag;
 import bham.bioshock.minigame.objectives.Objective;
 import bham.bioshock.minigame.physics.SpeedVector;
-import bham.bioshock.minigame.physics.Step;
-import bham.bioshock.minigame.worlds.FirstWorld;
 import bham.bioshock.minigame.worlds.World;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
-import com.google.inject.Inject;
 
 public class MinigameController extends Controller {
 
@@ -91,8 +86,11 @@ public class MinigameController extends Controller {
     World w = (World) arr.get(0);
     Objective o = (Objective) arr.get(1);
     MinigameStore localStore = new MinigameStore();
+    
+    // Initialise objective 
     localStore.seed(store, w, o);
     o.init(w, router, localStore);
+    o.seed(localStore);
 
     store.setMinigameStore(localStore);
     router.call(Route.FADE_OUT, "boardGame");

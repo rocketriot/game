@@ -464,7 +464,7 @@ public class JoinScreen extends ScreenMaster {
     @Override
     public void load() {
       this.loaded = true;
-      state = State.LOADED;
+      setState(State.LOADED);
       if (getTexture() != null) {
         sprite = new Sprite(getTexture());
         sprite.setSize(rocketWidth, rocketHeight);

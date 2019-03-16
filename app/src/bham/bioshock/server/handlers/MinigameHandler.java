@@ -54,7 +54,7 @@ public class MinigameHandler {
 
     Random rand = new Random();
 
-    switch(rand.nextInt(4)) {
+    switch(rand.nextInt(100)%4) {
       case 1:
         o = new CaptureTheFlag(w);
         for (UUID id : store.getCpuPlayers()) {
@@ -69,7 +69,7 @@ public class MinigameHandler {
         }
         break;
       case 3:
-        o = new KillThemAll(w);
+        o = new KillThemAll();
         for (UUID id : store.getCpuPlayers()) {
           aiLoop.registerHandler(new KillEveryoneAI(id, store, handler));
         }
@@ -85,7 +85,7 @@ public class MinigameHandler {
     
     aiLoop.start();
     if(planetId != null) {
-      setupMinigameEnd();      
+      setupMinigameEnd();
     }
 
     ArrayList<Serializable> arguments = new ArrayList<>();

@@ -15,7 +15,7 @@ public class Bullet extends Entity {
   
   private static TextureRegion texture;
   public boolean isFired = false;
-  public static final int launchSpeed = 1200;
+  public static final int launchSpeed = 1000;
   static Animation<TextureRegion> splash;
   static int FRAMES = 5;
   private float animationTime = 0;
@@ -39,14 +39,14 @@ public class Bullet extends Entity {
       return;
     }
     if (!isFlying(getX(), getY())) {
-      state = State.REMOVING;
+      setState(State.REMOVING);
       speed.stop(speed.getSpeedAngle());
     }
     if (is(State.REMOVING)) {
       animationTime += d;
     }
     if (splash.isAnimationFinished(animationTime)) {
-      state = State.REMOVED;
+      this.remove();
     }
   }
 
@@ -114,7 +114,7 @@ public class Bullet extends Entity {
   public void handleCollision(Entity e) {
     switch(e.type) {
       case ASTRONAUT:
-        state = State.REMOVING;
+        e.handleCollision(this);
         break;
       default:
         break;

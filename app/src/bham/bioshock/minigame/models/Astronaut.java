@@ -2,6 +2,7 @@ package bham.bioshock.minigame.models;
 
 import static java.util.stream.Collectors.toList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
@@ -19,6 +20,7 @@ import bham.bioshock.common.Position;
 import bham.bioshock.communication.Sendable;
 import bham.bioshock.minigame.PlanetPosition;
 import bham.bioshock.minigame.PlayerTexture;
+import bham.bioshock.minigame.objectives.Objective;
 import bham.bioshock.minigame.physics.CollisionBoundary;
 import bham.bioshock.minigame.physics.SpeedVector;
 import bham.bioshock.minigame.physics.Step;
@@ -47,6 +49,7 @@ public class Astronaut extends Entity {
   private boolean dieFront = true;
   private float dieTime;
   private Direction shotDirection;
+  private transient Optional<Entity> item = Optional.empty();
 
 
   public Astronaut(World w, float x, float y, UUID id) {
@@ -113,6 +116,13 @@ public class Astronaut extends Entity {
   public void setGun(Boolean b) {
     this.haveGun = b;
   }
+  
+  public void setItem(Entity e) {
+    this.item = Optional.of(e);
+  }
+  public void removeItem() {
+    this.item = Optional.empty();
+  }
 
   public void update(float delta) {
     if (!loaded)
@@ -152,37 +162,49 @@ public class Astronaut extends Entity {
       sprite.setRegion(anim);
       sprite.setPosition(getX() - (sprite.getWidth() / 2), getY());
       sprite.setRotation((float) getRotation());
-      batch.begin();
       sprite.draw(batch);
-      batch.end();
       
       if (dieFront && dyingFront.isAnimationFinished(dieTime)
           || dyingBack.isAnimationFinished(dieTime)) {
-        state = State.LOADED;
         setRotation(0);
         stepsGenerator.updateFromServer(new SpeedVector(), respawn);
+        setState(State.LOADED);
       }
       
     } else {
+      drawItem(batch);
       drawHealth(batch);
       super.draw(batch);
     }
   }
-  
+
   @Override
   public void afterDraw(SpriteBatch batch) {
     drawName(batch);
   }
   
+  private void drawItem(SpriteBatch batch) {
+    if(!item.isPresent()) return;
+    PlanetPosition pp = world.convert(pos);
+    pp.fromCenter += height + 60;
+    Position p = world.convert(pp);
+    Entity e = item.get();
+    e.getPos().x = p.x;
+    e.getPos().y = p.y;
+  }
+  
   private void drawHealth(SpriteBatch batch) {
+    if(!objective.isPresent()) return;
+    Objective o = objective.get();
+    int value = o.getHealth(getId());
+    
     PlanetPosition pp = world.convert(pos);
     pp.fromCenter += height;
     Position lifePos = world.convert(pp);
+    health.setRegion(hearts[Math.min(4, Math.max(0, 4-value))]);
     health.setPosition(lifePos.x - (health.getWidth() / 2), lifePos.y);
     health.setRotation((float) getRotation());
-    batch.begin();
     health.draw(batch);
-    batch.end();
   }
   
   private void drawName(SpriteBatch batch) {
@@ -289,12 +311,12 @@ public class Astronaut extends Entity {
         if(objective.isPresent()) {
           objective.get().gotShot(this, ((Bullet) e).getShooter());            
         }
+        e.setState(State.REMOVING);
         break;
       case FLAG:
         if(objective.isPresent()) {
           objective.get().captured(this);
         }
-        e.state = State.REMOVED;
         break;
       default:
         break;
@@ -305,7 +327,7 @@ public class Astronaut extends Entity {
   public boolean handleCollisionMove(Step step, MinimumTranslationVector v, Entity e) {
     switch (e.type) {
       case BULLET:
-        if (e.state.equals(State.REMOVING)) return false;
+        if (e.is(State.REMOVING)) return false;
         collisionHandler.collide(step, 0.2f, v);
         return false;
       case ASTRONAUT:
@@ -373,6 +395,7 @@ public class Astronaut extends Entity {
   }
 
   public void killAndRespawn(Position pos) {
+    if(is(State.REMOVING)) return;
     dieTime = 0;
     dieFront = true;
     if(shotDirection != null && shotDirection == Direction.LEFT) {
@@ -385,8 +408,9 @@ public class Astronaut extends Entity {
       }
     }
     
+    item = Optional.empty();
     haveGun = false;
-    state = State.REMOVING;
+    setState(State.REMOVING);
     this.respawn = pos;
   }
 

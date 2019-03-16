@@ -172,6 +172,7 @@ public class ServerHandler {
         gameBoardHandler.endTurn();
         break;
       case MINIGAME_DIRECT_START:
+        server.stopDiscovery();
         joinHandler.minigameDirectStart(action, gameBoardHandler, minigameHandler);
         break;
       default:

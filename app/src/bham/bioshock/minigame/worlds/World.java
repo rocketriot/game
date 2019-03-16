@@ -66,10 +66,11 @@ abstract public class World implements Serializable {
   }
 
   /**
-   * Calculate angle ratio.
+   * Calculate angle ratio - in the distance R from the planet center
+   * Used to calculate angle given the length (X) distance
    *
    * @param r the ratio
-   * @return the double
+   * @return ratio between pixels and angle
    */
   public double angleRatio(double r) {
     return 180 / (Math.PI * r);

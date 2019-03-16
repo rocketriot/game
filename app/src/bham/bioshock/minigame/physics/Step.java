@@ -31,4 +31,10 @@ public class Step {
   public ArrayList<Entity> getCollisions() {
     return collides;
   }
+
+  public void updatePos(Position pos) {
+    this.position.x = pos.x;
+    this.position.y = pos.y;
+  }
+
 }

@@ -1,60 +1,51 @@
 package bham.bioshock.minigame.objectives;
 
-import bham.bioshock.client.Route;
-import bham.bioshock.client.Router;
-import bham.bioshock.common.Position;
-import bham.bioshock.common.models.store.MinigameStore;
-import bham.bioshock.minigame.models.Astronaut;
-import bham.bioshock.minigame.worlds.World;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.Random;
 import java.util.UUID;
+import bham.bioshock.client.Route;
+import bham.bioshock.client.Router;
+import bham.bioshock.common.models.store.MinigameStore;
+import bham.bioshock.minigame.models.Astronaut;
+import bham.bioshock.minigame.worlds.World;
 
 
 public class KillThemAll extends Objective {
-  private Position respawnPosition;
-  private HashMap<Astronaut, Float> health = new HashMap<>();
-  private HashMap<Astronaut, Integer> kills = new HashMap<>();
-  private float initialHealth = 100.0f;
-  private Position[] positions;
+  private static final long serialVersionUID = 5035692465754355325L;
 
-  public KillThemAll(World world) {
-    positions = world.getPlayerPositions();
-  }
+  private HashMap<UUID, Float> health = new HashMap<>();
+  private HashMap<UUID, Integer> kills = new HashMap<>();
+  private float initialHealth = 100.0f;
 
   @Override
   public UUID getWinner() {
-    Astronaut a = Collections.max(kills.entrySet(), Comparator.comparingInt(HashMap.Entry::getValue))
+    UUID id = Collections.max(kills.entrySet(), Comparator.comparingInt(HashMap.Entry::getValue))
         .getKey();
-    if(a == null) {
-      return null;
-    }
-    return a.getId();
+    return id;
   }
 
+  @Override
+  public void init(World world, Router router, MinigameStore store) {
+    super.init(world, router, store);
+    store.getPlayers().forEach(player -> {
+      health.put(player.getId(), initialHealth);
+      kills.put(player.getId(), 0);
+    });
+  }
 
   @Override
   public void gotShot(Astronaut player, Astronaut killer) {
-    if (checkIfdead(player)) {
-      addKill(killer);
-      player.killAndRespawn(getRandonRespawnPosition());
+    super.gotShot(player, killer);
+    if (isDead(player.getId())) {
+      if(!player.getId().equals(killer.getId())) {
+        addKill(killer);        
+      }
+      killAndRespawnPlayer(player, getRandomRespawn());
       router.call(Route.MINIGAME_MOVE);
-      setPlayerHealth(initialHealth, player);
-    } else {
-      float newHealth = health.get(player) - 5.0f;
-      setPlayerHealth(newHealth, player);
     }
   }
 
-//  @Override
-//  public void initialise() {
-//    getPlayers().forEach(player -> {
-//      health.put(player, initialHealth);
-//      kills.put(player, 0);
-//    });
-//  }
 
   @Override
   public void seed(MinigameStore store) {
@@ -62,34 +53,19 @@ public class KillThemAll extends Objective {
   }
 
   @Override
-  public void captured(Astronaut a) { return;}
+  public void captured(Astronaut a) {
+    return;
+  }
 
   @Override
   public String instructions() {
-    String instructions = "You have 3 minutes to kills as many astronauts as possible! \n" +
-            "To kill an astronaut shot him until he loses health";
+    String instructions = "You have 3 minutes to kills as many astronauts as possible! \n"
+        + "To kill an astronaut shot him until he loses health";
     return instructions;
   }
 
-
-  private boolean checkIfdead(Astronaut p) {
-    if (health.get(p) - 5.0f <= 0)
-      return true;
-    return false;
-  }
-
-  private void setPlayerHealth(float newHealth, Astronaut p) {
-    health.computeIfPresent(p, (k, v) -> newHealth);
-  }
-
   private void addKill(Astronaut p) {
-    kills.computeIfPresent(p, (k, v) -> (v + 1));
-  }
-
-  private Position getRandonRespawnPosition() {
-    Random r = new Random();
-    int i = Math.abs(r.nextInt()%4);
-    return positions[i];
+    kills.computeIfPresent(p.getId(), (k, v) -> (v + 1));
   }
 
 }

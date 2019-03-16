@@ -60,8 +60,7 @@ public class MinigameStore {
     entities.addAll(world.getGuns());
     entities.addAll(getPlayers());
 
-    this.objective = o;
-    o.seed(this);
+    objective = o;
   }
 
 

@@ -145,7 +145,9 @@ public class Renderer {
     }
 
     drawPlanet();
+    batch.begin();
     entities.forEach(e -> e.draw(batch));
+    batch.end();
     entities.forEach(e -> e.afterDraw(textBatch));
     entities.forEach(e -> e.update(delta));
     

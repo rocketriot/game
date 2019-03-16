@@ -11,15 +11,15 @@ import bham.bioshock.communication.server.ServerService;
 import bham.bioshock.server.ServerHandler;
 
 public class JoinScreenHandler {
-  
+
   Store store;
   ServerHandler handler;
-  
+
   public JoinScreenHandler(Store store, ServerHandler handler) {
     this.store = store;
     this.handler = handler;
   }
-  
+
   /**
    * Registers new player
    * 
@@ -27,7 +27,7 @@ public class JoinScreenHandler {
    * @param service
    */
   public void registerPlayer(Action action, ServerService service) {
-    if(store.getPlayers().size() >= 4) {
+    if (store.getPlayers().size() >= 4) {
       service.send(new Action(Command.SERVER_FULL));
       return;
     }
@@ -35,7 +35,7 @@ public class JoinScreenHandler {
     handler.registerClient(player.getId(), service);
     addPlayer(player);
   }
-  
+
   /**
    * Adds a player to the server and sends the player to all the clients
    *
@@ -61,7 +61,7 @@ public class JoinScreenHandler {
   public void disconnectPlayer(UUID clientId) {
     handler.sendToAll(new Action(Command.REMOVE_PLAYER, clientId));
   }
-  
+
   private ArrayList<Player> createCpuPlayers() {
     ArrayList<Player> cpuPlayers = new ArrayList<>();
     int storedPlayersNum = store.getPlayers().size();
@@ -72,14 +72,14 @@ public class JoinScreenHandler {
       int number = storedPlayersNum + cpuPlayers.size();
 
 
-      Player player = new Player("Player " + (number+1), true);
+      Player player = new Player("Player " + (number + 1), true);
 
       // Set the texture ID of the player
       int textureId = number;
       player.setTextureID(textureId);
       cpuPlayers.add(player);
     }
-    
+
     return cpuPlayers;
   }
 
@@ -88,27 +88,27 @@ public class JoinScreenHandler {
     ArrayList<Player> cpuPlayers = createCpuPlayers();
     // Send the board and the players
     gameBoardHandler.getGameBoard(action, cpuPlayers);
-    
+
     // Tell the clients to start the game
     handler.sendToAll(new Action(Command.START_GAME));
   }
-  
-  public void minigameDirectStart(Action action, 
-      GameBoardHandler gameBoardHandler, MinigameHandler minigameHandler) {
+
+  public void minigameDirectStart(Action action, GameBoardHandler gameBoardHandler,
+      MinigameHandler minigameHandler) {
     ArrayList<Player> cpuPlayers = createCpuPlayers();
     // Send the board and the players
     gameBoardHandler.getGameBoard(action, cpuPlayers);
-    
+
     // Wait for the board
     try {
       Thread.sleep(1000);
     } catch (InterruptedException e) {
       e.printStackTrace();
     }
-    
+
     minigameHandler.startMinigame(new Action(Command.MINIGAME_START));
   }
-  
+
   public void moveRocket(Action action, UUID player) {
     handler.sendToAllExcept(action, player);
   }

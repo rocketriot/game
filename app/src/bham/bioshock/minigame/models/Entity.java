@@ -2,6 +2,7 @@ package bham.bioshock.minigame.models;
 
 import bham.bioshock.common.Position;
 import bham.bioshock.minigame.PlanetPosition;
+import bham.bioshock.minigame.models.Entity.State;
 import bham.bioshock.minigame.objectives.Objective;
 import bham.bioshock.minigame.physics.*;
 import bham.bioshock.minigame.worlds.World;
@@ -44,8 +45,8 @@ public abstract class Entity implements Serializable {
 
   protected transient StepsGenerator stepsGenerator;
 
-  protected State state = State.CREATED;
-  protected Optional<Objective> objective = Optional.empty();
+  private State state = State.CREATED;
+  protected transient Optional<Objective> objective = Optional.empty();
 
   public Entity(World w, float x, float y, boolean isStatic, EntityType type) {
     this.id = UUID.randomUUID();
@@ -83,17 +84,19 @@ public abstract class Entity implements Serializable {
 
   public void remove() {
     state = State.REMOVED;
+    stepsGenerator.stop();
+  }
+  
+  protected void setState(State s) {
+    if(s.equals(State.REMOVED)) {
+      remove();
+    } else {
+      state = s;      
+    }
   }
 
   public boolean isRemoved() {
     return state.equals(State.REMOVED);
-  }
-
-  public void setIsRemoved(boolean removed) {
-    if (removed)
-      state = State.REMOVED;
-    else
-      state = State.LOADED;
   }
 
   public Position getPos() {
@@ -156,7 +159,7 @@ public abstract class Entity implements Serializable {
 
   public void load() {
     this.loaded = true;
-    state = State.LOADED;
+    setState(State.LOADED);
     if (getTexture() != null) {
       sprite = new Sprite(getTexture());
       sprite.setSize(width, height);
@@ -198,9 +201,11 @@ public abstract class Entity implements Serializable {
   }
 
   public void update(float delta) {
-    if (!loaded || isStatic)
-      return;
-    Step step = stepsGenerator.getStep(delta);
+    Step step = null;
+    if (loaded && !isStatic) {
+      step = stepsGenerator.getStep(delta);;
+    }
+
     if (step != null) {
       pos = step.position;
       speed = step.vector;
@@ -209,7 +214,7 @@ public abstract class Entity implements Serializable {
         handleCollision(e);
       }
     }
-
+    
     collisionBoundary.update(pos, getRotation());
   }
 
@@ -255,13 +260,11 @@ public abstract class Entity implements Serializable {
 
 
   public void draw(SpriteBatch batch) {
-    batch.begin();
     Sprite sprite = getSprite();
     sprite.setRegion(getTexture());
     sprite.setPosition(getX() - (sprite.getWidth() / 2), getY());
     sprite.setRotation((float) getRotation());
     sprite.draw(batch);
-    batch.end();
   }
 
   public void afterDraw(SpriteBatch batch) {};
