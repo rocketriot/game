@@ -7,6 +7,7 @@ import bham.bioshock.minigame.models.Rocket;
 
 import java.util.ArrayList;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 
 
@@ -56,5 +57,8 @@ public class JoinScreenWorld extends World {
     @Override
     public Texture getTexture() {
       return null;
+    }
+    @Override
+    public void afterDraw(SpriteBatch batch) {
     }
 }

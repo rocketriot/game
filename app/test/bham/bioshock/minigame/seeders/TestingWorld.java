@@ -5,6 +5,7 @@ import bham.bioshock.minigame.worlds.World;
 import java.util.ArrayList;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import bham.bioshock.common.Position;
 import bham.bioshock.minigame.models.Gun;
 import bham.bioshock.minigame.models.Platform;
@@ -99,5 +100,9 @@ public class TestingWorld extends World {
   public void seedPlatforms(){
     seeder.seed();
     platforms = seeder.getPlatforms();
+  }
+
+  @Override
+  public void afterDraw(SpriteBatch batch) {
   }
 }

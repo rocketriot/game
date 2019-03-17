@@ -17,7 +17,7 @@ import bham.bioshock.minigame.objectives.CaptureTheFlag;
 import bham.bioshock.minigame.objectives.KillThemAll;
 import bham.bioshock.minigame.objectives.Objective;
 import bham.bioshock.minigame.objectives.Platformer;
-import bham.bioshock.minigame.worlds.FirstWorld;
+import bham.bioshock.minigame.worlds.RandomWorld;
 import bham.bioshock.minigame.worlds.World;
 import bham.bioshock.server.ServerHandler;
 import bham.bioshock.server.ai.MinigameAILoop;
@@ -43,7 +43,7 @@ public class MinigameHandler {
    */
   public void startMinigame(Action action) {
     // Create a world for the minigame
-    World w = new FirstWorld();
+    World w = new RandomWorld();
     if(action.getArguments().size() != 0) {
       planetId = (UUID) action.getArgument(0);      
     } else {

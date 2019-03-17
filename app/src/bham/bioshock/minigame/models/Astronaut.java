@@ -14,6 +14,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Intersector.MinimumTranslationVector;
 import com.badlogic.gdx.scenes.scene2d.Group;
+import bham.bioshock.client.Assets;
 import bham.bioshock.client.controllers.SoundController;
 import bham.bioshock.common.Direction;
 import bham.bioshock.common.Position;
@@ -30,11 +31,10 @@ import bham.bioshock.minigame.worlds.World;
 public class Astronaut extends Entity {
 
   private static final long serialVersionUID = -5131439342109870021L;
-  private static Animation<TextureRegion> walkAnimation;
-  private static Animation<TextureRegion> walkGunAnimation;
-  private static TextureRegion frontTexture;
-  private static TextureRegion frontGunTexture;
+  private static AstronautTextures[] textures;
   private static TextureRegion[] hearts = new TextureRegion[5];
+  
+  private AstronautTextures texture; 
   private Sprite health;
   float animationTime;
   private PlayerTexture dir = PlayerTexture.FRONT;
@@ -44,15 +44,14 @@ public class Astronaut extends Entity {
   private Position respawn;
   private RotatableText name;
   
-  static Animation<TextureRegion> dyingFront;
-  static Animation<TextureRegion> dyingBack;
   private boolean dieFront = true;
+  private int colour;
   private float dieTime;
   private Direction shotDirection;
   private transient Optional<Entity> item = Optional.empty();
 
 
-  public Astronaut(World w, float x, float y, UUID id) {
+  public Astronaut(World w, float x, float y, UUID id, int colour) {
     super(w, x, y, EntityType.ASTRONAUT);
     width = 150;
     height = 150;
@@ -61,11 +60,12 @@ public class Astronaut extends Entity {
     update(0);
     collisionWidth = 65;
     collisionHeight = 150 + fromGround;
+    this.colour = colour;
     this.id = id;
   }
 
-  public Astronaut(World w, Position p, UUID id) {
-    this(w, p.x, p.y, id);
+  public Astronaut(World w, Position p, UUID id, int colour) {
+    this(w, p.x, p.y, id, colour);
   }
 
   public void setName(String name) {
@@ -153,9 +153,9 @@ public class Astronaut extends Entity {
     if (is(State.REMOVING)) {
       TextureRegion anim;
       if(dieFront) {
-        anim = dyingFront.getKeyFrame(dieTime, false);        
+        anim = texture.dyingFront.getKeyFrame(dieTime, false);        
       } else {
-        anim = dyingBack.getKeyFrame(dieTime, false);
+        anim = texture.dyingBack.getKeyFrame(dieTime, false);
       }
 
       Sprite sprite = getSprite();
@@ -164,8 +164,8 @@ public class Astronaut extends Entity {
       sprite.setRotation((float) getRotation());
       sprite.draw(batch);
       
-      if (dieFront && dyingFront.isAnimationFinished(dieTime)
-          || dyingBack.isAnimationFinished(dieTime)) {
+      if (dieFront && texture.dyingFront.isAnimationFinished(dieTime)
+          || texture.dyingBack.isAnimationFinished(dieTime)) {
         setRotation(0);
         stepsGenerator.updateFromServer(new SpeedVector(), respawn);
         setState(State.LOADED);
@@ -227,6 +227,7 @@ public class Astronaut extends Entity {
 
 
   public void load() {
+    texture = textures[colour];
     super.load();    
     legs = new CollisionBoundary(collisionWidth + 10, collisionHeight / 10);
     legs.update(pos, getRotation());
@@ -256,14 +257,14 @@ public class Astronaut extends Entity {
 
   private TextureRegion getTexture(boolean withGun) {
     if (withGun && dir.equals(PlayerTexture.FRONT)) {
-      return frontGunTexture;
+      return texture.frontGunTexture;
     } else if (dir.equals(PlayerTexture.FRONT)) {
-      return frontTexture;
+      return texture.frontTexture;
     } else if (withGun) {
-      return walkGunAnimation.getKeyFrame(animationTime, true);
+      return texture.walkGunAnimation.getKeyFrame(animationTime, true);
     }
 
-    return walkAnimation.getKeyFrame(animationTime, true);
+    return texture.walkAnimation.getKeyFrame(animationTime, true);
   }
 
 
@@ -360,23 +361,31 @@ public class Astronaut extends Entity {
 
 
   public static void loadTextures() {
-    TextureRegion[][] walkSheet = splittedTexture("app/assets/minigame/astronaut.png", 11);
-    TextureRegion[][] walkGunSheet = splittedTexture("app/assets/minigame/astronaut_gun.png", 11);
-    TextureRegion[][] dieFront = splittedTexture("app/assets/minigame/die_front.png", 10);
-    TextureRegion[][] dieBack = splittedTexture("app/assets/minigame/die_back.png", 12);
-    TextureRegion[][] h = splittedTexture("app/assets/minigame/hearts.png", 5);
+    String[] colours = new String[] { "blue", "green", "orange", "red" };
+    textures = new AstronautTextures[colours.length];
     
+    for(int i=0; i<colours.length; i++) {
+      AstronautTextures t = new AstronautTextures();
+      TextureRegion[][] walkSheet = splittedTexture(Assets.astroBase + colours[i] + Assets.astroWalk, 11);
+      TextureRegion[][] walkGunSheet = splittedTexture(Assets.astroBase + colours[i] + Assets.astroGun, 11);
+      TextureRegion[][] dieFront = splittedTexture(Assets.astroBase + colours[i] + Assets.astroFFall, 10);
+      TextureRegion[][] dieBack = splittedTexture(Assets.astroBase + colours[i] + Assets.astroFall, 12);
+      
+      t.frontTexture = walkSheet[0][0];
+      t.frontGunTexture = walkGunSheet[0][0];
+
+      t.walkAnimation = textureToAnimation(walkSheet, 11, 1, 0.1f);
+      t.walkGunAnimation = textureToAnimation(walkGunSheet, 11, 1, 0.1f);
+      t.dyingFront = textureToAnimation(dieFront, 10, 0, 0.05f);
+      t.dyingBack = textureToAnimation(dieBack, 12, 0, 0.05f);
+      textures[i] = t;
+    }
+    
+    TextureRegion[][] h = splittedTexture("app/assets/minigame/hearts.png", 5);
     for(int i=0; i<h[0].length; i++) {
       hearts[i] = h[0][i];
     }
-    
-    frontTexture = walkSheet[0][0];
-    frontGunTexture = walkGunSheet[0][0];
-
-    walkAnimation = textureToAnimation(walkSheet, 11, 1, 0.1f);
-    walkGunAnimation = textureToAnimation(walkGunSheet, 11, 1, 0.1f);
-    dyingFront = textureToAnimation(dieFront, 10, 0, 0.05f);
-    dyingBack = textureToAnimation(dieBack, 12, 0, 0.05f);
+ 
   }
 
   public void updateFromServer(SpeedVector speed, Position pos, Move move, Boolean haveGun) {
@@ -384,14 +393,6 @@ public class Astronaut extends Entity {
     this.move = move;
     this.moveChange();
     stepsGenerator.updateFromServer(speed, pos);
-  }
-
-  public static class Move extends Sendable {
-
-    private static final long serialVersionUID = 3668803304780843571L;
-    public boolean jumping = false;
-    public boolean movingLeft = false;
-    public boolean movingRight = false;
   }
 
   public void killAndRespawn(Position pos) {
@@ -412,6 +413,23 @@ public class Astronaut extends Entity {
     haveGun = false;
     setState(State.REMOVING);
     this.respawn = pos;
+  }
+  
+  public static class Move extends Sendable {
+
+    private static final long serialVersionUID = 3668803304780843571L;
+    public boolean jumping = false;
+    public boolean movingLeft = false;
+    public boolean movingRight = false;
+  }
+  
+  private static class AstronautTextures {
+    Animation<TextureRegion> walkAnimation;
+    Animation<TextureRegion> walkGunAnimation;
+    Animation<TextureRegion> dyingFront;
+    Animation<TextureRegion> dyingBack;
+    TextureRegion frontTexture;
+    TextureRegion frontGunTexture;
   }
 
 }
