@@ -94,6 +94,10 @@ public class StepsGenerator {
     }
   }
   
+  public void stop() {
+    generator.interrupt();
+  }
+  
   public Stream<Step> getFutureSteps() {
     return steps.stream();
   }
@@ -115,27 +119,39 @@ public class StepsGenerator {
   public Step getStep(float delta) {
     int num = ((int) (delta / UNIT)) + 1;
     
-    try {
-      int size = steps.size();
-      // Remove first n steps
-      for (int i = 0; i < Math.min(size, num)-1; i++) {
-        steps.poll();
-      }
-
-      
-      Step s = steps.take();
-      checkDynamicCollisions(s); 
-      return s;
-      
-    } catch (InterruptedException e) {
-      logger.fatal("Interrupted while getting a step");
+    int size = steps.size();
+    // Remove first n steps
+    for (int i = 0; i < Math.min(size, num)-1; i++) {
+      steps.poll();
     }
+    
+    Step s = null;
+    try {
+      s = steps.take(); 
+    } catch (InterruptedException e) {
+      
+    }
+    
+    fixUnderground(s);
+        
+    if(s != null) {
+      checkDynamicCollisions(s); 
+      return s;      
+    }
+
     return null;
   }
   
   public void checkCollisions(Step step) {
     if(collisionHandler == null) return;
     collisionHandler.applyCollisions(step, entity);
+  }
+  
+  private void fixUnderground(Step step) {
+    double dist = entity.distanceFromGround(step.position.x, step.position.y);
+    if(dist < -10) {
+      step.updatePos(step.position.move(world).up((float) -(dist+10)).pos());
+    }
   }
   
   public void checkDynamicCollisions(Step step) {

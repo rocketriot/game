@@ -1,49 +1,53 @@
 package bham.bioshock.server.handlers;
 
-import bham.bioshock.client.controllers.JoinScreenController;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.UUID;
 import bham.bioshock.common.models.Player;
 import bham.bioshock.common.models.store.Store;
 import bham.bioshock.communication.Action;
 import bham.bioshock.communication.Command;
-import bham.bioshock.communication.server.ServerHandler;
 import bham.bioshock.communication.server.ServerService;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.UUID;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import bham.bioshock.server.ServerHandler;
 
 public class JoinScreenHandler {
-  
+
   Store store;
   ServerHandler handler;
-  
+
   public JoinScreenHandler(Store store, ServerHandler handler) {
     this.store = store;
     this.handler = handler;
   }
-  
+
+  /**
+   * Registers new player
+   * 
+   * @param action
+   * @param service
+   */
+  public void registerPlayer(Action action, ServerService service) {
+    if (store.getPlayers().size() >= 4) {
+      service.send(new Action(Command.SERVER_FULL));
+      return;
+    }
+    Player player = (Player) action.getArgument(0);
+    handler.registerClient(player.getId(), service);
+    addPlayer(player);
+  }
+
   /**
    * Adds a player to the server and sends the player to all the clients
    *
    * @throws Exception
    */
-  public void addPlayer(Action action, ServerService service) throws Exception {
-    Player player = (Player) action.getArgument(0);
-    if(store.getPlayers().size() >= 4) {
-      handler.sendTo(service.Id(), new Action(Command.SERVER_FULL));
-      return;
-    }
-
-    // Save client's ID
-    service.saveId(player.getId());
-
+  private void addPlayer(Player player) {
     // Set the texture ID of the player
     int textureId = store.getPlayers().size();
     player.setTextureID(textureId);
 
     // Send all connected clients the new player
-    handler.sendToAllExcept(action, service.Id());
+    handler.sendToAllExcept(new Action(Command.ADD_PLAYER, player), player.getId());
 
     // Send all connected players to the new player
     ArrayList<Serializable> arguments = new ArrayList<>();
@@ -54,10 +58,10 @@ public class JoinScreenHandler {
     handler.sendTo(player.getId(), new Action(Command.ADD_PLAYER, arguments));
   }
 
-  public void disconnectPlayer(ServerService service) {
-    handler.sendToAll(new Action(Command.REMOVE_PLAYER, service.Id()));
+  public void disconnectPlayer(UUID clientId) {
+    handler.sendToAll(new Action(Command.REMOVE_PLAYER, clientId));
   }
-  
+
   private ArrayList<Player> createCpuPlayers() {
     ArrayList<Player> cpuPlayers = new ArrayList<>();
     int storedPlayersNum = store.getPlayers().size();
@@ -68,14 +72,14 @@ public class JoinScreenHandler {
       int number = storedPlayersNum + cpuPlayers.size();
 
 
-      Player player = new Player("Player " + (number+1), true);
+      Player player = new Player("Player " + (number + 1), true);
 
       // Set the texture ID of the player
       int textureId = number;
       player.setTextureID(textureId);
       cpuPlayers.add(player);
     }
-    
+
     return cpuPlayers;
   }
 
@@ -84,28 +88,29 @@ public class JoinScreenHandler {
     ArrayList<Player> cpuPlayers = createCpuPlayers();
     // Send the board and the players
     gameBoardHandler.getGameBoard(action, cpuPlayers);
-    
+
     // Tell the clients to start the game
     handler.sendToAll(new Action(Command.START_GAME));
   }
-  
-  public void minigameDirectStart(Action action, 
-      GameBoardHandler gameBoardHandler, MinigameHandler minigameHandler) {
+
+  public void minigameDirectStart(Action action, GameBoardHandler gameBoardHandler,
+      MinigameHandler minigameHandler) {
     ArrayList<Player> cpuPlayers = createCpuPlayers();
     // Send the board and the players
     gameBoardHandler.getGameBoard(action, cpuPlayers);
-    
+
     // Wait for the board
     try {
       Thread.sleep(1000);
     } catch (InterruptedException e) {
       e.printStackTrace();
     }
-    
+
     minigameHandler.startMinigame(new Action(Command.MINIGAME_START));
   }
-  
+
   public void moveRocket(Action action, UUID player) {
     handler.sendToAllExcept(action, player);
   }
+
 }

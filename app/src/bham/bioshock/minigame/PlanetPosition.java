@@ -24,4 +24,6 @@ public class PlanetPosition {
     this.angle = angle;
     this.fromCenter = fromCenter;
   }
+  
+  
 }

@@ -27,7 +27,7 @@ public class BoardGameModule extends AbstractModule {
   
   @Provides
   ClientService provideClientService(CommunicationClient client) {
-    return client.getConnection();
+    return client.getConnection().orElse(null);
   }
   
   

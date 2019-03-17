@@ -8,10 +8,10 @@ import bham.bioshock.common.models.store.MinigameStore;
 import bham.bioshock.common.models.store.Store;
 import bham.bioshock.communication.Action;
 import bham.bioshock.communication.Command;
-import bham.bioshock.communication.server.ServerHandler;
 import bham.bioshock.minigame.models.Astronaut;
 import bham.bioshock.minigame.models.Astronaut.Move;
 import bham.bioshock.minigame.physics.Step;
+import bham.bioshock.server.ServerHandler;
 
 abstract public class MinigameAI {
 

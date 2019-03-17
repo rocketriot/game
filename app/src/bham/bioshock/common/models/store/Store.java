@@ -31,6 +31,8 @@ public class Store {
   private int round = 1;
   /** The next player's turn */
   private int turn = 0;
+  /** If the game is reconnecting with the server */
+  private boolean reconnecting = false;
 
   /** Minigame World */
   private MinigameStore minigameStore;
@@ -180,5 +182,15 @@ public class Store {
   public void setJoinScreenStore(JoinScreenStore joinScreenStore) {
     this.joinScreenStore = joinScreenStore;
   }
+
+  public void reconnecting(boolean isLoading) {
+    this.reconnecting = isLoading;
+  }
+  
+  public Boolean isReconnecting() {
+    return reconnecting;
+  }
+  
+  
 
 }

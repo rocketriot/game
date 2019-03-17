@@ -8,10 +8,12 @@ import java.net.Socket;
 import java.net.SocketTimeoutException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import bham.bioshock.server.ServerHandler;
 
 public class CommunicationMaker extends Thread {
   
   private static final Logger logger = LogManager.getLogger(CommunicationMaker.class);
+  
   private boolean connecting = false;
   private ServerSocket serverSocket = null;
   private ServerHandler handler;
@@ -29,7 +31,11 @@ public class CommunicationMaker extends Thread {
     return service;
   }
 
-  public void discoverClients() {
+  /**
+   * Starts discovery thread which sends UDP packets to all
+   * available interfaces
+   */
+  private void discoverClients() {
     discoveryThread = new Thread(new DiscoveryThread());
     discoveryThread.start();
   }
@@ -38,6 +44,18 @@ public class CommunicationMaker extends Thread {
     return serverSocket != null;
   }
   
+  public void startSearch(ServerHandler handler, ServerSocket serverSocket) {
+    this.handler = handler;
+    this.serverSocket = serverSocket;
+    connecting = true;
+    
+    discoverClients();
+    start();
+  }
+  
+  /**
+   * Establishing new connection through a socket
+   */
   public void run() {
     logger.debug("Server started!");
     try {
@@ -49,39 +67,38 @@ public class CommunicationMaker extends Thread {
           // Create streams and objects for sending messages to and from client
           ServerService service = createNewConnection(socket, handler);
           handler.register(service);
-        } catch(SocketTimeoutException e) {
-          
-        }
+        } catch(SocketTimeoutException e) {}
       }
     } catch (IOException e) {
       logger.error("IO error " + e.getMessage());
-      close();
     } finally {
-      // Stop the discovery thread
-      discoveryThread.interrupt();      
+      close();   
     } 
     logger.debug("Search finished");
   }
-
-  public void startSearch(ServerHandler handler, ServerSocket serverSocket) {
-    connecting = true;
-    this.handler = handler;
-    this.serverSocket = serverSocket;
-    
-    this.discoverClients();
-    this.start();
-  }
   
+  /**
+   * Abort client discovery process
+   */
   public void stopDiscovery() {
     connecting = false; 
   }
   
-  public void close() {
+  /**
+   * Close all used sockets
+   */
+  private void close() {
+    // Stop related discovery thread
+    if(discoveryThread != null) {
+      discoveryThread.interrupt();         
+    }  
+    
+    // Close the socket
     if(serverSocket == null) return;
     try {
       serverSocket.close();
     } catch(IOException e) {
-      logger.error(e.getMessage());
+      logger.error("Error while closing discovery socket: " + e.getMessage());
     } finally {
       serverSocket = null;
     }

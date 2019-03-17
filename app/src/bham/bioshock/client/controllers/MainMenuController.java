@@ -37,6 +37,8 @@ public class MainMenuController extends Controller {
 
   /** Renders main menu */
   public void show() {
+    server.stop();
+    store.reconnecting(false);
     setScreen(new MainMenuScreen(router));
   }
 
