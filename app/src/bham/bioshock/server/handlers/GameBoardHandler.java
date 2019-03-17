@@ -1,23 +1,18 @@
 package bham.bioshock.server.handlers;
 
-import bham.bioshock.common.consts.GridPoint;
-import bham.bioshock.common.consts.GridPoint.Type;
 import bham.bioshock.common.models.Coordinates;
 import bham.bioshock.common.models.GameBoard;
 import bham.bioshock.common.models.Player;
 import bham.bioshock.common.models.Player.Move;
 import bham.bioshock.common.models.store.Store;
-import bham.bioshock.common.pathfinding.AStarPathfinding;
 import bham.bioshock.communication.Action;
 import bham.bioshock.communication.Command;
 import bham.bioshock.communication.server.BoardAi;
 import bham.bioshock.communication.server.ServerHandler;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Random;
 
-import com.badlogic.gdx.math.Path;
+import java.util.UUID;
 
 public class GameBoardHandler {
 
@@ -89,7 +84,7 @@ public class GameBoardHandler {
       new Thread(() -> {
         try {
           Thread.sleep(waitTime);
-          endTurn();
+          endTurn(movingPlayer.getId());
         } catch (InterruptedException e) {
           e.printStackTrace();
         }
@@ -105,12 +100,21 @@ public class GameBoardHandler {
       return 0;
   }
 
-  public void endTurn() {
-    store.nextTurn();
+  public void endTurn(UUID id) {
+    handler.sendToAll(new Action(Command.UPDATE_TURN));
     // Handle if the next player is a CPU
-    Player movingPlayer = store.getMovingPlayer();
-    if (movingPlayer.isCpu()) {
-      new BoardAi(store, this).run();
-    }
+    new Thread(() -> {
+      try {
+        int waitTime = 100;
+        while(store.getMovingPlayer().getId().equals(id)) {
+          Thread.sleep(waitTime);
+        }
+
+        if (store.getMovingPlayer().isCpu())
+          new BoardAi(store, this).run();
+      } catch (InterruptedException e) {
+        e.printStackTrace();
+      }
+    }).start();
   }
 }

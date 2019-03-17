@@ -109,7 +109,7 @@ public class MinigameHud implements Disposable {
         if(store.getMinigameStore().getMainPlayer().haveGun()) {
             showWeapon(true);
         }
-
+        
         statsContainer.updateAll();
         startText.render();
     }
