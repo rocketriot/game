@@ -8,7 +8,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.*;
 
 public class MinigameHud extends Hud {
     private MinigameInstructions minigameInstructions;
-    private HealthBar healthBar;
     private WeaponContainer weaponContainer;
     private Clock clock;
 
@@ -16,7 +15,6 @@ public class MinigameHud extends Hud {
         super(batch, skin, store, router);
 
         minigameInstructions = new MinigameInstructions(batch, store);
-        healthBar = new HealthBar(stage, batch, skin, store, router);
         weaponContainer = new WeaponContainer(stage, batch, skin, store, router);
         clock = new Clock(stage, batch, skin, store, router);
     }
@@ -26,7 +24,6 @@ public class MinigameHud extends Hud {
         super.update();
 
         minigameInstructions.render();
-        healthBar.render();
         weaponContainer.render();
         clock.render();
     }
