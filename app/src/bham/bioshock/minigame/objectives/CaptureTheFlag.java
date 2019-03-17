@@ -1,8 +1,8 @@
 package bham.bioshock.minigame.objectives;
 
+import java.util.Optional;
 import java.util.Random;
 import java.util.UUID;
-import org.nd4j.linalg.primitives.Optional;
 import bham.bioshock.client.Router;
 import bham.bioshock.common.Position;
 import bham.bioshock.common.models.store.MinigameStore;
