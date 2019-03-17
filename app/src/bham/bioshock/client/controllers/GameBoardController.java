@@ -81,7 +81,14 @@ public class GameBoardController extends Controller {
 
   /** Ends the players turn */
   public void endTurn() {
-    clientService.send(new Action(Command.END_TURN));
+    ArrayList<Serializable> arguments = new ArrayList<>();
+    arguments.add(store.getMainPlayer().getId());
+    clientService.send(new Action(Command.END_TURN, arguments));
+  }
+
+  /** Handles server message to end turn */
+  public void updateTurn() {
+    store.nextTurn();
   }
 
   /** Player move received from the server */

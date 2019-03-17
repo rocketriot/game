@@ -11,6 +11,11 @@ import bham.bioshock.communication.Action;
 import bham.bioshock.communication.Command;
 import bham.bioshock.communication.server.BoardAi;
 import bham.bioshock.server.ServerHandler;
+import bham.bioshock.communication.server.ServerHandler;
+import java.io.Serializable;
+import java.util.ArrayList;
+
+import java.util.UUID;
 
 public class GameBoardHandler {
 
@@ -82,7 +87,7 @@ public class GameBoardHandler {
       new Thread(() -> {
         try {
           Thread.sleep(waitTime);
-          endTurn();
+          endTurn(movingPlayer.getId());
         } catch (InterruptedException e) {
           e.printStackTrace();
         }
@@ -98,12 +103,21 @@ public class GameBoardHandler {
       return 0;
   }
 
-  public void endTurn() {
-    store.nextTurn();
+  public void endTurn(UUID id) {
+    handler.sendToAll(new Action(Command.UPDATE_TURN));
     // Handle if the next player is a CPU
-    Player movingPlayer = store.getMovingPlayer();
-    if (movingPlayer.isCpu()) {
-      new BoardAi(store, this).run();
-    }
+    new Thread(() -> {
+      try {
+        int waitTime = 100;
+        while(store.getMovingPlayer().getId().equals(id)) {
+          Thread.sleep(waitTime);
+        }
+
+        if (store.getMovingPlayer().isCpu())
+          new BoardAi(store, this).run();
+      } catch (InterruptedException e) {
+        e.printStackTrace();
+      }
+    }).start();
   }
 }

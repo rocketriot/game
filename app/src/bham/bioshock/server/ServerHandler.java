@@ -169,7 +169,7 @@ public class ServerHandler {
         minigameHandler.bulletShot(action, clientId);
         break;
       case END_TURN:
-        gameBoardHandler.endTurn();
+        gameBoardHandler.endTurn((UUID) action.getArgument(0));
         break;
       case MINIGAME_DIRECT_START:
         server.stopDiscovery();
