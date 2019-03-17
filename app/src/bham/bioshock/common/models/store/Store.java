@@ -120,7 +120,7 @@ public class Store {
   }
 
   /**
-   * Method which returns whether it's the main player's turn
+   * Returns whether it's the main player's turn
    * @return Whether it's the mainPlayer's turn
    */
   public boolean isMainPlayersTurn() {
@@ -128,7 +128,7 @@ public class Store {
   }
 
   /**
-   * Method which returns whether it's the passed in player's turn
+   * Returns whether it's the passed in player's turn
    * @param player the player being checked
    * @return Whether it's the passed in player's turns
    */

@@ -2,7 +2,6 @@ package bham.bioshock.communication.server;
 
 import bham.bioshock.common.models.store.Store;
 import bham.bioshock.communication.Action;
-import bham.bioshock.minigame.Clock;
 import bham.bioshock.server.Server;
 import bham.bioshock.server.handlers.GameBoardHandler;
 import bham.bioshock.server.handlers.JoinScreenHandler;
@@ -103,7 +102,7 @@ public class ServerHandler {
           minigameHandler.bulletShot(action, service.Id());
           break;
         case END_TURN:
-          gameBoardHandler.endTurn();
+          gameBoardHandler.endTurn((UUID) action.getArgument(0));
           break;
         case MINIGAME_DIRECT_START:
           joinHandler.minigameDirectStart(action, gameBoardHandler, minigameHandler);
