@@ -9,7 +9,7 @@ import java.util.UUID;
 public class EntityTests {
   
   private Astronaut createPlayer() {
-    Astronaut p = new Astronaut(new FirstWorld(), 0, 0, UUID.randomUUID());
+    Astronaut p = new Astronaut(new RandomWorld(), 0, 0, UUID.randomUUID(), 0);
     p.load();
     return p;
   }

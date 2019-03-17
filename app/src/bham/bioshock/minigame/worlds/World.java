@@ -4,6 +4,7 @@ import java.io.Serializable;
 import bham.bioshock.minigame.PlanetPosition;
 import java.util.ArrayList;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import bham.bioshock.common.Position;
 import bham.bioshock.minigame.models.Gun;
 import bham.bioshock.minigame.models.Platform;
@@ -15,7 +16,19 @@ import bham.bioshock.minigame.physics.Vector;
  */
 abstract public class World implements Serializable {
 
-
+  private static final long serialVersionUID = 4046769956963960819L;
+  protected int textureOffset = 530;
+  
+  /**
+   * Draws planet texture on the screen
+   * 
+   * @param batch
+   */
+  public void draw(SpriteBatch batch) {
+    float radius = (float) getPlanetRadius()+textureOffset;
+    batch.draw(getTexture(), -radius, -radius, radius*2, radius*2);
+  }
+  
   /**
    * Gets angle to an x and y coordinate.
    *
@@ -146,5 +159,7 @@ abstract public class World implements Serializable {
    * @return the texture
    */
   abstract public Texture getTexture();
+
+  public abstract void afterDraw(SpriteBatch batch);
 
 }
