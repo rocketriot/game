@@ -16,6 +16,7 @@ import bham.bioshock.minigame.worlds.World;
 import java.util.Collection;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
+import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -31,7 +32,7 @@ import bham.bioshock.client.scenes.minigame.MinigameHud;
 import bham.bioshock.minigame.models.*;
 import bham.bioshock.minigame.physics.CollisionHandler;
 
-public class Renderer {
+public class Renderer implements InputProcessor {
   private Astronaut mainPlayer;
 
   ShapeRenderer shapeRenderer;
@@ -82,8 +83,9 @@ public class Renderer {
 
     // Setup the input processing
     InputMultiplexer multiplexer = new InputMultiplexer();
-    multiplexer.addProcessor(hud.getStage());
+    multiplexer.addProcessor(this);
     multiplexer.addProcessor(stage);
+    multiplexer.addProcessor(hud.getStage());
     multiplexer.addProcessor(new InputListener(minigameStore, router, collisionHandler));
     Gdx.input.setInputProcessor(multiplexer);
   }
@@ -176,5 +178,47 @@ public class Renderer {
 
   public void resize(int width, int height) {
     stage.getViewport().update(width, height, true);
+  }
+
+  @Override
+  public boolean keyDown(int keycode) {
+    return false;
+  }
+
+  @Override
+  public boolean keyUp(int keycode) {
+    return false;
+  }
+
+  @Override
+  public boolean keyTyped(char character) {
+    return false;
+  }
+
+  @Override
+  public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+    hud.touchDown(screenX, screenY, pointer, button);
+
+    return false;
+  }
+
+  @Override
+  public boolean touchUp(int screenX, int screenY, int pointer, int button) {
+    return false;
+  }
+
+  @Override
+  public boolean touchDragged(int screenX, int screenY, int pointer) {
+    return false;
+  }
+
+  @Override
+  public boolean mouseMoved(int screenX, int screenY) {
+    return false;
+  }
+
+  @Override
+  public boolean scrolled(int amount) {
+    return false;
   }
 }
