@@ -7,6 +7,7 @@ import java.io.ObjectOutputStream;
 import java.net.ConnectException;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.Optional;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import com.google.inject.Singleton;
@@ -18,14 +19,25 @@ public class CommunicationClient {
 
   public static String hostAddress;
   public static int port = Config.PORT;
-  private ClientService service = new ClientService();;
+  private ClientService service = null;
+  private ReconnectionThread reconnect = null;
 
-  public ClientService getConnection() {
-    return service;
+  public Optional<ClientService> getConnection() {
+    if(service == null) {
+      return Optional.empty();
+    }
+    return Optional.of(service);
+  }
+  
+  public void setReconnectionThread(ReconnectionThread reconnect) {
+    if(reconnect != null) {
+      reconnect.interrupt();
+    }
+    this.reconnect = reconnect;
   }
 
   public ClientService createConnection() throws ConnectException {
-    if (service.isCreated()) {
+    if (service != null && service.isCreated()) {
       return service;
     }
     // Open sockets:
@@ -44,14 +56,14 @@ public class CommunicationClient {
     }
 
     // We are connected to the server, create a service to get and send messages
-    service.create(server, fromServer, toServer);
+    service = new ClientService(server, fromServer, toServer);
     service.start();
     logger.debug("Client connected!");
     return service;
   }
 
 
-  public ClientService connect(String userName) throws ConnectException {
+  public ClientService connect() throws ConnectException {
     if (Config.SERVER_ADDRESS.length() == 0) {
       ClientConnectThread c = new ClientConnectThread();
       long waiting = 0;
@@ -85,5 +97,15 @@ public class CommunicationClient {
 
   public static void setHostAddress(String address) {
     hostAddress = address;
+  }
+
+  public void disconnect() {
+    if(reconnect != null) {
+      reconnect.interrupt();
+      reconnect = null;
+    }
+    if(service != null) {
+      service.abort();
+    }
   }
 }

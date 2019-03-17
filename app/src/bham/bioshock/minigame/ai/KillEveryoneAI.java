@@ -4,9 +4,9 @@ import java.util.UUID;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import bham.bioshock.common.models.store.Store;
-import bham.bioshock.communication.server.ServerHandler;
 import bham.bioshock.minigame.PlanetPosition;
 import bham.bioshock.minigame.models.Astronaut;
+import bham.bioshock.server.ServerHandler;
 
 public class KillEveryoneAI extends MinigameAI {
 

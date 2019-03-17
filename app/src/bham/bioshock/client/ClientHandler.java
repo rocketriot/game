@@ -4,15 +4,12 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.UUID;
-
-import bham.bioshock.minigame.objectives.Objective;
+import com.badlogic.gdx.Gdx;
 import com.google.inject.Inject;
 import bham.bioshock.common.models.GameBoard;
 import bham.bioshock.common.models.Player;
 import bham.bioshock.communication.Action;
 import bham.bioshock.communication.client.IClientHandler;
-import bham.bioshock.minigame.worlds.World;
-import com.badlogic.gdx.Gdx;
 
 public class ClientHandler implements IClientHandler {
   
@@ -72,6 +69,9 @@ public class ClientHandler implements IClientHandler {
             router.call(Route.MOVE_RECEIVED, movingPlayer);
             router.call(Route.GAME_BOARD_SAVE, gameBoard);
             break;
+          }
+          case UPDATE_TURN: {
+            router.call(Route.UPDATE_TURN);
           }
           case MINIGAME_START: {
             router.call(Route.START_MINIGAME, action.getArguments());

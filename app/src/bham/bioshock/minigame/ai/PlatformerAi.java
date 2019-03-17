@@ -2,24 +2,20 @@ package bham.bioshock.minigame.ai;
 
 import bham.bioshock.common.Position;
 import bham.bioshock.common.models.store.Store;
-import bham.bioshock.communication.server.ServerHandler;
 import bham.bioshock.minigame.PlanetPosition;
 import bham.bioshock.minigame.models.Astronaut;
 import bham.bioshock.minigame.objectives.Platformer;
-
+import bham.bioshock.server.ServerHandler;
 import java.util.UUID;
 
 public class PlatformerAi extends MinigameAI {
-    private Position goalPosition;
-
     public PlatformerAi(UUID id, Store store, ServerHandler handler) {
         super(id, store, handler);
-
-        goalPosition = ((Platformer) localStore.getObjective()).getGoalPosition();
     }
-
+    
     @Override
     public void update(float delta) {
+        Position goalPosition = ((Platformer) localStore.getObjective()).getGoalPosition();
 
     }
 

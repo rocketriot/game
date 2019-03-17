@@ -10,6 +10,7 @@ public enum Command {
 
   // Creating a game
   SERVER_FULL,
+  REGISTER,
   ADD_PLAYER,
   REMOVE_PLAYER,
   START_GAME,
@@ -17,6 +18,7 @@ public enum Command {
   // Game board
   GET_GAME_BOARD,
   UPDATE_GAME_BOARD,
+  UPDATE_TURN,
   MOVE_PLAYER_ON_BOARD,
   END_TURN,
   SET_PLANET_OWNER,

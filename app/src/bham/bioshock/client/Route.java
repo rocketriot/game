@@ -1,8 +1,6 @@
 package bham.bioshock.client;
 
-import bham.bioshock.client.controllers.Controller;
 import bham.bioshock.client.controllers.*;
-import com.badlogic.gdx.audio.Sound;
 
 public enum Route {
 //@formatter:off
@@ -15,10 +13,12 @@ public enum Route {
   
   HOW_TO                      (HowToController.class,         "show"),
   LOADING                     (LoadingController.class,       "show"),
+  RECONNECT                   (LoadingController.class,       "reconnect"),    
   PREFERENCES                 (PreferencesController.class,   "show"),
   PREFERENCES_WITH_BACK_ROUTE (PreferencesController.class,   "showWithBackRoute"),
   
   JOIN_SCREEN                 (JoinScreenController.class,    "show"),
+  DISCONNECT                  (JoinScreenController.class,    "disconnect"),
   ADD_PLAYER                  (JoinScreenController.class,    "addPlayer"),
   REMOVE_PLAYER               (JoinScreenController.class,    "removePlayer"),
   DISCONNECT_PLAYER           (JoinScreenController.class,    "disconnectPlayer"),
@@ -32,6 +32,7 @@ public enum Route {
   PLAYERS_SAVE                (GameBoardController.class,     "savePlayers"),
   GAME_BOARD_SHOW             (GameBoardController.class,     "show"),
   END_TURN                    (GameBoardController.class,     "endTurn"),
+  UPDATE_TURN                 (GameBoardController.class,     "updateTurn"),
   SET_PLANET_OWNER            (GameBoardController.class,     "setOwner"),
 
   DIRECT_MINIGAME_START       (MinigameController.class,      "directStart"), // FOR TESTS ONLY

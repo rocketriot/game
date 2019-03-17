@@ -9,7 +9,7 @@ public class Flag extends Entity {
 
   private static final long serialVersionUID = -374379982329919955L;
   
-  private static TextureRegion texture;
+  public static TextureRegion texture;
 
   public Flag(World w, float x, float y) {
     super(w, x, y, true, EntityType.FLAG);

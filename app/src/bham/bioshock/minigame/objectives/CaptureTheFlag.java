@@ -1,117 +1,79 @@
 package bham.bioshock.minigame.objectives;
 
-import java.util.HashMap;
 import java.util.Random;
 import java.util.UUID;
-import bham.bioshock.client.Route;
+import org.nd4j.linalg.primitives.Optional;
+import bham.bioshock.client.Router;
 import bham.bioshock.common.Position;
 import bham.bioshock.common.models.store.MinigameStore;
+import bham.bioshock.minigame.PlanetPosition;
 import bham.bioshock.minigame.models.Astronaut;
 import bham.bioshock.minigame.models.Flag;
-import bham.bioshock.minigame.models.Gun;
+import bham.bioshock.minigame.models.Entity.State;
 import bham.bioshock.minigame.worlds.World;
 
 public class CaptureTheFlag extends Objective {
 
   private static final long serialVersionUID = 1940697858386232981L;
 
-  private Position respawnPosition;
-  private HashMap<Astronaut, Float> health = new HashMap<>();
-  private float initialHealth = 50.0f;
-  private Position[] positions;
   private Position flagPosition;
-  private Flag flag;
-  private Astronaut flagOwner = null;
-
+  private transient Flag flag;
+  private transient Optional<UUID> flagOwner = Optional.empty();
 
   public CaptureTheFlag(World world) {
-    super(world);
-    this.positions = this.getWorld().getPlayerPositions();
-    setRandonRespawnPosition();
-    Position p = new Position(-2350.0f, 100.0f);
-    setFlagPosition(p);
-
-
-    this.flag = new Flag(world, flagPosition.x, flagPosition.y);
+    Random r = new Random();
+    float angle = (r.nextInt(1000) % 360);
+    float distance = (float) (world.getPlanetRadius() + r.nextInt(500));
+    flagPosition = world.convert(new PlanetPosition(angle, distance));
   }
 
   @Override
   public UUID getWinner() {
-    Astronaut a = flagOwner;
-    return a == null ? null : a.getId();
+    if (flagOwner.isPresent()) {
+      return flagOwner.get();
+    }
+    return null;
   }
 
+  @Override
+  public void init(World world, Router router, MinigameStore store) {
+    super.init(world, router, store);
+    flagOwner = Optional.empty();
+  }
 
   @Override
   public void gotShot(Astronaut player, Astronaut killer) {
-    if (checkIfdead(player)) {
-      setFlagPosition(player.getPos());
-      flag.setIsRemoved(false);
-      boolean hadGun = player.haveGun();
-      player.killAndRespawn(respawnPosition);
-      if(hadGun) {
-        Gun gun = new Gun(getWorld(), player.getX(), player.getY());
-        gun.load();
-        this.localSore.addEntity(gun);
+    super.gotShot(player, killer);
+    if (isDead(player.getId())) {
+      flagPosition = (Position) player.getPos();
+      killAndRespawnPlayer(player, getRandomRespawn());
+
+      if (flagOwner.isPresent() && flagOwner.get().equals(player.getId())) {
+        flag.getPos().x = flagPosition.x;
+        flag.getPos().y = flagPosition.y;
+        flagOwner = Optional.empty();
       }
-      
-      getRouter().call(Route.MINIGAME_MOVE);
-      setPlayerHealth(initialHealth, player);
-
-    } else {
-      float newHealth = health.get(player) - 10.0f;
-      setPlayerHealth(newHealth, player);
     }
-
-  }
-
-  @Override
-  public void initialise() {
-    getPlayers().forEach(player -> {
-      health.put(player, initialHealth);
-    });
-
   }
 
   @Override
   public void seed(MinigameStore store) {
+    flag = new Flag(world, flagPosition.x, flagPosition.y);
     store.addEntity(flag);
   }
 
   @Override
   public void captured(Astronaut a) {
-    setFlagOwner(a);
+    if(a.is(State.REMOVING)) return;
+    this.flagOwner = Optional.of(a.getId());
+    a.setItem(flag);
   }
 
   @Override
   public String instructions() {
-    String instructions = "You have 3 minutes to capture the flag! \n " +
-            "If an astronaut has it, shot him to steal the flag!";
+    String instructions = "You have 3 minutes to capture the flag! \n "
+        + "If an astronaut has it, shot him to steal the flag!";
 
     return instructions;
-  }
-
-  private void setRandonRespawnPosition() {
-    Random r = new Random();
-    int i = Math.abs(r.nextInt() % 4);
-    respawnPosition = positions[i];
-  }
-
-  private boolean checkIfdead(Astronaut p) {
-    if (health.get(p) - 5.0f <= 0)
-      return true;
-    return false;
-  }
-
-  private void setPlayerHealth(float newHealth, Astronaut p) {
-    health.computeIfPresent(p, (k, v) -> newHealth);
-  }
-
-  private void setFlagPosition(Position p) {
-    flagPosition = p;
-  }
-
-  public void setFlagOwner(Astronaut owner) {
-    this.flagOwner = owner;
   }
 }

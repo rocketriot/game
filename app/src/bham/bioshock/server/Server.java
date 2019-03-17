@@ -7,19 +7,18 @@ import com.google.inject.Singleton;
 import bham.bioshock.common.models.store.Store;
 import bham.bioshock.communication.Config;
 import bham.bioshock.communication.server.CommunicationMaker;
-import bham.bioshock.communication.server.ServerHandler;
 
 @Singleton
 public class Server {
   private ServerHandler handler;
   private CommunicationMaker connMaker;
   private ServerSocket serverSocket;
-  
+
   @Inject
   public Server(Store store) {
     this.handler = new ServerHandler(store, this);
   }
-  
+
   public Boolean start() {
     try {
       serverSocket = new ServerSocket(Config.PORT);
@@ -31,15 +30,21 @@ public class Server {
 
     return true;
   }
-  
+
   public void stopDiscovery() {
-    connMaker.stopDiscovery();
+    if (connMaker != null) {
+      connMaker.stopDiscovery();
+    }
   }
-  
+
   public void stop() {
-    try {
-      serverSocket.close();
-    } catch (IOException e) {
+    stopDiscovery();
+    handler.stopAll();
+    if (serverSocket != null) {
+      try {
+        serverSocket.close();
+      } catch (IOException e) {
+      }
     }
   }
 }
