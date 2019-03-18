@@ -72,6 +72,7 @@ public class ClientHandler implements IClientHandler {
           }
           case UPDATE_TURN: {
             router.call(Route.UPDATE_TURN);
+            break;
           }
           case MINIGAME_START: {
             router.call(Route.START_MINIGAME, action.getArguments());
