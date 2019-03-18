@@ -164,9 +164,6 @@ public class ServerHandler {
         server.stopDiscovery();
         joinHandler.startGame(action, gameBoardHandler);
         break;
-      case GET_GAME_BOARD:
-        gameBoardHandler.getGameBoard(action, null);
-        break;
       case MOVE_PLAYER_ON_BOARD:
         gameBoardHandler.movePlayer(action);
         break;

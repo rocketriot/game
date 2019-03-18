@@ -10,6 +10,8 @@ import bham.bioshock.common.models.GameBoard;
 import bham.bioshock.common.models.Player;
 import bham.bioshock.communication.Action;
 import bham.bioshock.communication.client.IClientHandler;
+import bham.bioshock.communication.messages.GameBoardMessage;
+import bham.bioshock.communication.messages.MovePlayerOnBoardMessage;
 
 public class ClientHandler implements IClientHandler {
   
@@ -42,32 +44,17 @@ public class ClientHandler implements IClientHandler {
             break;
           }
           case GET_GAME_BOARD: {
-            ArrayList<Serializable> arguments = action.getArguments();
-            ArrayList<Player> players = new ArrayList<>();
-            Iterator<Serializable> itr = arguments.iterator();
-            int i = 0;
+            GameBoardMessage data = (GameBoardMessage) action.getMessage();
+            GameBoard gameBoard = data.getGameBoard();
+            ArrayList<Player> players = data.getPlayers();
             
-            while(itr.hasNext()) {
-              if(i == 0) {
-                GameBoard gameBoard = (GameBoard) itr.next();
-                router.call(Route.GAME_BOARD_SAVE, gameBoard);
-              } else {
-                Player player = (Player) itr.next();
-                players.add(player);
-              }
-              i++;
-            }
-
+            router.call(Route.GAME_BOARD_SAVE, gameBoard);
             router.call(Route.PLAYERS_SAVE, players);     
             break;
           }
           case MOVE_PLAYER_ON_BOARD: {
-            ArrayList<Serializable> arguments = action.getArguments();
-            GameBoard gameBoard = (GameBoard) arguments.get(0);
-            Player movingPlayer = (Player) arguments.get(1);
-
-            router.call(Route.MOVE_RECEIVED, movingPlayer);
-            router.call(Route.GAME_BOARD_SAVE, gameBoard);
+            MovePlayerOnBoardMessage m = (MovePlayerOnBoardMessage) action.getMessage();
+            router.call(Route.MOVE_RECEIVED, m.getCoordinates());
             break;
           }
           case UPDATE_TURN: {

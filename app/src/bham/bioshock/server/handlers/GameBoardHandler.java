@@ -10,6 +10,7 @@ import bham.bioshock.common.models.Player.Move;
 import bham.bioshock.common.models.store.Store;
 import bham.bioshock.communication.Action;
 import bham.bioshock.communication.Command;
+import bham.bioshock.communication.messages.GameBoardMessage;
 import bham.bioshock.communication.messages.MovePlayerOnBoardMessage;
 import bham.bioshock.communication.server.BoardAi;
 import bham.bioshock.server.ServerHandler;
@@ -47,21 +48,11 @@ public class GameBoardHandler {
       players.addAll(additionalPlayers);
     }
     
-    GameBoard gameBoard = store.getGameBoard();
     // Generate a grid when starting the game
+    GameBoard gameBoard = new GameBoard(); 
+    generateGrid(gameBoard, players);
 
-    if (gameBoard == null) {
-      gameBoard = new GameBoard(); 
-      generateGrid(gameBoard, players);
-    }
-
-    ArrayList<Serializable> response = new ArrayList<>();
-    response.add(gameBoard);
-    for (Player p : players) {
-      response.add(p);
-    }
-
-    handler.sendToAll(new Action(Command.GET_GAME_BOARD, response));
+    handler.sendToAll(new GameBoardMessage(gameBoard, players));
   }
 
   /** Handles a player moving on their turn */
@@ -78,7 +69,7 @@ public class GameBoardHandler {
     currentPlayer.setFuel(movingPlayer.getFuel());
 
     // Send out new game board and moving player to players
-    handler.sendToAll(new MovePlayerOnBoardMessage(movingPlayer));
+//    handler.sendToAll(new MovePlayerOnBoardMessage(movingPlayer));
 
     if (movingPlayer.isCpu()) {
       int waitTime = calculateMoveTime(currentPlayer.getBoardMove());
