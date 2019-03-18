@@ -1,5 +1,6 @@
 package bham.bioshock.server.handlers;
 
+import bham.bioshock.common.models.Planet;
 import java.io.Serializable;
 import java.util.ArrayList;
 import bham.bioshock.common.models.Coordinates;
@@ -19,10 +20,13 @@ public class GameBoardHandler {
 
   Store store;
   ServerHandler handler;
+  MinigameHandler minigameHandler;
 
-  public GameBoardHandler(Store store, ServerHandler handler) {
+  public GameBoardHandler(Store store, ServerHandler handler,
+      MinigameHandler minigameHandler) {
     this.store = store;
     this.handler = handler;
+    this.minigameHandler = minigameHandler;
   }
   
   private void generateGrid(GameBoard board, ArrayList<Player> players) {
@@ -81,12 +85,24 @@ public class GameBoardHandler {
       new Thread(() -> {
         try {
           Thread.sleep(waitTime);
-          endTurn(movingPlayer.getId());
+          Planet planet;
+          if ((planet = gameBoard.getAdjacentPlanet(currentPlayer.getCoordinates(), currentPlayer)) != null) {
+            startMinigame(gameBoard, currentPlayer, planet, minigameHandler);
+          } else {
+            endTurn(movingPlayer.getId());
+          }
         } catch (InterruptedException e) {
           e.printStackTrace();
         }
       }).start();
     }
+  }
+
+  private void startMinigame(GameBoard gameBoard, Player currentPlayer,
+      Planet planet, MinigameHandler minigameHandler) {
+    ArrayList<Serializable> arg = new ArrayList<>();
+    arg.add(planet.getId());
+    minigameHandler.startMinigame(new Action(Command.MINIGAME_START, arg), currentPlayer.getId(), this);
   }
 
   private int calculateMoveTime(ArrayList<Move> boardMove) {
