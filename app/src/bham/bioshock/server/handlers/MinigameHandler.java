@@ -101,7 +101,7 @@ public class MinigameHandler {
     clock = new Clock();
     long t = System.currentTimeMillis();
 
-    clock.at(10f, new Clock.TimeListener() {
+    clock.at(60f, new Clock.TimeListener() {
       @Override
       public void handle(Clock.TimeUpdateEvent event) {
         if(minigameTimer != null) {
