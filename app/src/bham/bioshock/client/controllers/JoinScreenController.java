@@ -14,6 +14,7 @@ import bham.bioshock.communication.Command;
 import bham.bioshock.communication.client.ClientService;
 import bham.bioshock.communication.client.CommunicationClient;
 import bham.bioshock.communication.client.ReconnectionThread;
+import bham.bioshock.communication.messages.AddPlayerMessage.JoiningPlayer;
 import com.google.inject.Inject;
 import java.io.Serializable;
 import java.net.ConnectException;
@@ -79,9 +80,11 @@ public class JoinScreenController extends Controller {
   /**
    * Handle when the server tells us a new player was added to the game
    */
-  public void addPlayer(ArrayList<Player> players) {
-    for (Player player : players) {
-      logger.debug("Player: " + player.getUsername() + " connected");
+  public void addPlayer(ArrayList<JoiningPlayer> players) {
+    for (JoiningPlayer p : players) {
+      logger.debug("Player: " + p.username + " connected");
+      Player player = new Player(p.playerId, p.username, p.isCpu);
+      player.setTextureID(p.textureId);
       store.addPlayer(player);
       if(JoinScreen.class.isInstance(game.getScreen())) {
         ((JoinScreen) game.getScreen()).addPlayer(player);

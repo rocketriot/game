@@ -1,8 +1,6 @@
 package bham.bioshock.client;
 
-import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.UUID;
 import com.badlogic.gdx.Gdx;
 import com.google.inject.Inject;
@@ -10,6 +8,7 @@ import bham.bioshock.common.models.GameBoard;
 import bham.bioshock.common.models.Player;
 import bham.bioshock.communication.Action;
 import bham.bioshock.communication.client.IClientHandler;
+import bham.bioshock.communication.messages.AddPlayerMessage;
 import bham.bioshock.communication.messages.GameBoardMessage;
 import bham.bioshock.communication.messages.MovePlayerOnBoardMessage;
 
@@ -27,11 +26,8 @@ public class ClientHandler implements IClientHandler {
       () -> {
         switch (action.getCommand()) {
           case ADD_PLAYER: {
-            ArrayList<Player> players = new ArrayList<>();
-            for(Serializable p : action.getArguments()) {
-              players.add((Player) p);
-            }
-            router.call(Route.ADD_PLAYER, players);
+            AddPlayerMessage data = (AddPlayerMessage) action.getMessage();
+            router.call(Route.ADD_PLAYER, data.players);
             break;
           }
           case REMOVE_PLAYER: {

@@ -16,6 +16,8 @@ import bham.bioshock.common.models.store.Store;
 import bham.bioshock.communication.Action;
 import bham.bioshock.communication.Command;
 import bham.bioshock.communication.client.ClientService;
+import bham.bioshock.communication.messages.BulletShotMessage;
+import bham.bioshock.communication.messages.MinigamePlayerMoveMessage;
 import bham.bioshock.minigame.models.Astronaut.Move;
 import bham.bioshock.minigame.models.Bullet;
 import bham.bioshock.minigame.objectives.Objective;
@@ -44,14 +46,7 @@ public class MinigameController extends Controller {
   }
   
   public void playerMove() {
-    ArrayList<Serializable> arguments = new ArrayList<>();
-    arguments.add((Serializable) store.getMainPlayer().getId());
-    arguments.add((Serializable) localStore.getMainPlayer().getSpeedVector());
-    arguments.add((Serializable) localStore.getMainPlayer().getPos());
-    arguments.add((Serializable) localStore.getMainPlayer().getMove());
-    arguments.add((Serializable) localStore.getMainPlayer().haveGun());
-    
-    clientService.send(new Action(Command.MINIGAME_PLAYER_MOVE, arguments));
+    clientService.send(new MinigamePlayerMoveMessage(localStore.getMainPlayer()));
   }
   
   public void updatePlayer(Action action) {
@@ -64,20 +59,15 @@ public class MinigameController extends Controller {
     localStore.updatePlayer(action.whenCreated(), playerId, speed, pos, move, haveGun);
   }
   
-  public void bulletShot(Bullet bullet) {
-    ArrayList<Serializable> arguments = new ArrayList<>();
-    arguments.add((Serializable) bullet.getSpeedVector());
-    arguments.add((Serializable) bullet.getPos());
-    
-    clientService.send(new Action(Command.MINIGAME_BULLET, arguments));
+  public void bulletShot(Bullet bullet) {   
+    clientService.send(new BulletShotMessage(bullet));
   }
   
-  public void bulletCreate(ArrayList<Serializable> arguments) {
-    SpeedVector sv = (SpeedVector) arguments.get(0);
-    Position p = (Position) arguments.get(1);
+  public void bulletCreate(BulletShotMessage data) {
+    Position p = data.position;
     
     Bullet b = new Bullet(localStore.getWorld(), p.x, p.y,localStore.getMainPlayer());
-    b.setSpeedVector(sv);
+    b.setSpeedVector(data.speedVector);
     b.load();
     localStore.addEntity(b);
   }

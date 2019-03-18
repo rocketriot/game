@@ -1,6 +1,7 @@
 package bham.bioshock.communication.client;
 
 import bham.bioshock.communication.Action;
+import bham.bioshock.communication.Command;
 import bham.bioshock.communication.common.ActionHandler;
 import bham.bioshock.communication.common.Receiver;
 import bham.bioshock.communication.common.Sender;
@@ -104,6 +105,15 @@ public class ClientService extends Thread implements IClientService, ActionHandl
    */
   public void send(Message message) {
     send(Action.of(message));
+  }
+  
+  /**
+   * Send a command to the server
+   *
+   * @param action to be sent
+   */
+  public void send(Command command) {
+    send(new Action(command));
   }
 
   /**

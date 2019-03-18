@@ -1,12 +1,12 @@
 package bham.bioshock.server.handlers;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.UUID;
 import bham.bioshock.common.models.Player;
 import bham.bioshock.common.models.store.Store;
 import bham.bioshock.communication.Action;
 import bham.bioshock.communication.Command;
+import bham.bioshock.communication.messages.AddPlayerMessage;
 import bham.bioshock.communication.server.ServerService;
 import bham.bioshock.server.ServerHandler;
 
@@ -47,15 +47,12 @@ public class JoinScreenHandler {
     player.setTextureID(textureId);
 
     // Send all connected clients the new player
-    handler.sendToAllExcept(new Action(Command.ADD_PLAYER, player), player.getId());
-
+    handler.sendToAllExcept(new AddPlayerMessage(player), player.getId());
+    
+    ArrayList<Player> players = store.getPlayers();
+    players.add(player);
     // Send all connected players to the new player
-    ArrayList<Serializable> arguments = new ArrayList<>();
-    for (Player p : store.getPlayers()) {
-      arguments.add(p);
-    }
-    arguments.add(player);
-    handler.sendTo(player.getId(), new Action(Command.ADD_PLAYER, arguments));
+    handler.sendTo(player.getId(), new AddPlayerMessage(players));
   }
 
   public void disconnectPlayer(UUID clientId) {
