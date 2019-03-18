@@ -2,6 +2,7 @@ package bham.bioshock.server.handlers;
 
 import bham.bioshock.common.consts.GridPoint;
 import bham.bioshock.common.consts.GridPoint.Type;
+import bham.bioshock.common.models.Planet;
 import bham.bioshock.common.pathfinding.AStarPathfinding;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -60,8 +61,8 @@ public class GameBoardHandler {
   /** Handles a player moving on their turn */
   public void movePlayer(Action action, UUID playerID) {
     // Get the goal coordinates of the move
-    ArrayList<Serializable> arguments = action.getArguments();
-    Coordinates goalCoords = (Coordinates) arguments.get(0);
+    MovePlayerOnBoardMessage data = (MovePlayerOnBoardMessage) action.getMessage();
+    Coordinates goalCoords = data.getCoordinates();
 
     Player currentPlayer = store.getPlayer(playerID);
     Coordinates startCoords = currentPlayer.getCoordinates();
@@ -80,6 +81,7 @@ public class GameBoardHandler {
     GridPoint.Type goalType = gameBoard.getGridPoint(goalCoords).getType();
     if (pathCost <= currentPlayer.getFuel() && (goalType.equals(Type.EMPTY) || goalType.equals(Type.FUEL))) {
 
+      MovePlayerOnBoardMessage response = new MovePlayerOnBoardMessage(goalCoords, playerID);
       handler.sendToAll(new Action(Command.MOVE_PLAYER_ON_BOARD, response));
 
       if (currentPlayer.isCpu()) {
