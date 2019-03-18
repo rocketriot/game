@@ -111,17 +111,13 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
 
   private boolean checkIfNearPlanet(Player player) {
     GameBoard gameBoard = store.getGameBoard();
-    Planet p = gameBoard.getAdjacentPlanet(player.getCoordinates());
+    Planet p = gameBoard.getAdjacentPlanet(player.getCoordinates(), player);
     if (p == null)
       return false;
-    Player planetPlayer = p.getPlayerCaptured();
-    UUID planetPlayerId = planetPlayer == null ? null : planetPlayer.getId();
-    // Show minigame prompt if next to planet
-    if (planetPlayerId == null || !planetPlayerId.equals(player.getId())) {
+    else {
       showMinigamePrompt(p.getId());
       return true;
     }
-    return false;
   }
 
   /** Draws the player move */
