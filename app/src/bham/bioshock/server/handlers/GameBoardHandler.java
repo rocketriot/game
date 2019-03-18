@@ -105,7 +105,7 @@ public class GameBoardHandler {
       Planet planet, MinigameHandler minigameHandler) {
     ArrayList<Serializable> arg = new ArrayList<>();
     arg.add(planet.getId());
-    minigameHandler.startMinigame(new Action(Command.MINIGAME_START, arg));
+    minigameHandler.startMinigame(new Action(Command.MINIGAME_START, arg), currentPlayer.getId(), this);
   }
 
   private int calculateMoveTime(ArrayList<Move> boardMove) {
