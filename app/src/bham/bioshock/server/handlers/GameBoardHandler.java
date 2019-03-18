@@ -79,7 +79,8 @@ public class GameBoardHandler {
     float pathCost = (path.size() - 1) * 10;
 
     GridPoint.Type goalType = gameBoard.getGridPoint(goalCoords).getType();
-    if (pathCost <= currentPlayer.getFuel() && (goalType.equals(Type.EMPTY) || goalType.equals(Type.FUEL))) {
+    if (pathCost <= currentPlayer.getFuel() && (goalType.equals(Type.EMPTY) || goalType
+        .equals(Type.FUEL))) {
 
       MovePlayerOnBoardMessage response = new MovePlayerOnBoardMessage(goalCoords, playerID);
       handler.sendToAll(new Action(Command.MOVE_PLAYER_ON_BOARD, response));
@@ -89,7 +90,13 @@ public class GameBoardHandler {
         new Thread(() -> {
           try {
             Thread.sleep(waitTime);
-            endTurn(currentPlayer.getId());
+            Planet planet;
+            if ((planet = gameBoard
+                .getAdjacentPlanet(currentPlayer.getCoordinates(), currentPlayer)) != null) {
+              startMinigame(gameBoard, currentPlayer, planet, minigameHandler);
+            } else {
+              endTurn(currentPlayer.getId());
+            }
           } catch (InterruptedException e) {
             e.printStackTrace();
           }

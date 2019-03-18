@@ -41,7 +41,6 @@ public class BoardAi extends Thread {
     ArrayList<MoveVal> possibleMoves = generatePossibleMoves(store);
 
     // Picks the best move from the list
-    //TODO Make this random?
     MoveVal bestMove = null;
     for (MoveVal mv: possibleMoves) {
       if (bestMove == null) {
