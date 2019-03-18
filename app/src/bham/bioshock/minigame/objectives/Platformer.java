@@ -3,10 +3,7 @@ package bham.bioshock.minigame.objectives;
 import bham.bioshock.client.Router;
 import bham.bioshock.common.Position;
 import bham.bioshock.common.models.store.MinigameStore;
-import bham.bioshock.minigame.models.Astronaut;
-import bham.bioshock.minigame.models.EntityType;
-import bham.bioshock.minigame.models.Goal;
-import bham.bioshock.minigame.models.Platform;
+import bham.bioshock.minigame.models.*;
 import bham.bioshock.minigame.worlds.FirstWorld;
 import bham.bioshock.minigame.worlds.World;
 
@@ -21,7 +18,7 @@ public class Platformer extends Objective {
   private HashMap<UUID, Float> speedBoost = new HashMap<>();
   private float maxFreeze = 3f;
   private float maxBoost = 3f;
-  private UUID winner;
+  private transient Optional<UUID> winner = Optional.empty();
   private Goal goal;
   private Platform goalPlatform;
 
@@ -32,9 +29,10 @@ public class Platformer extends Objective {
   @Override
   public UUID getWinner() {
     // if the winner is set, return the winner, if not, return the closest player
-    if (winner != null) {
-      return winner;
-    } else {
+    if (winner.isPresent()) {
+      return winner.get();
+    }
+    else {
       Position goalPos = goal.getPos();
       float best = 99999999f;
       Astronaut bestP = null;
@@ -69,6 +67,7 @@ public class Platformer extends Objective {
        frozenFor.put(player.getId(), 0f);
        speedBoost.put(player.getId(), 1f);
      });
+     winner = Optional.empty();
   }
 
 
@@ -79,6 +78,11 @@ public class Platformer extends Objective {
 
   @Override
   public void captured(Astronaut a) {
+    if(a.is(Entity.State.REMOVING)) return;
+    this.winner = Optional.of(a.getId());
+    a.setItem(goal);
+
+    //make a method that ends the game
     return;
   }
 
@@ -128,9 +132,6 @@ public class Platformer extends Objective {
     }
   }
 
-  public void reachedGoal(Astronaut winner) {
-    this.winner = winner.getId();
-  }
 
   public void boostSpeed(UUID playerId, float boost) {
     if (speedBoost.get(playerId) == null || !(speedBoost.get(playerId) >= boost)) {

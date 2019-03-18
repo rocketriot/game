@@ -1,19 +1,20 @@
 package bham.bioshock.minigame.ai;
 
-import bham.bioshock.common.Position;
 import bham.bioshock.common.models.store.Store;
 import bham.bioshock.minigame.PlanetPosition;
 import bham.bioshock.minigame.models.Astronaut;
+import bham.bioshock.minigame.models.Entity;
 import bham.bioshock.minigame.models.Platform;
 import bham.bioshock.minigame.objectives.Platformer;
 import bham.bioshock.server.ServerHandler;
 
 import java.util.ArrayList;
+import java.util.Optional;
 import java.util.UUID;
 
 public class PlatformerAi extends MinigameAI {
     private Platform goalPlatform;
-    private Platform currentPlatform;
+    private ArrayList<Platform> pathToGoal;
 
     public PlatformerAi(UUID id, Store store, ServerHandler handler) {
         super(id, store, handler);
@@ -23,8 +24,9 @@ public class PlatformerAi extends MinigameAI {
     public void update(float delta) {
         if (goalPlatform == null) {
             goalPlatform = ((Platformer) localStore.getObjective()).getGoalPlatform();
+            pathToGoal = ((Platformer) localStore.getObjective()).getPathToGoal();
         }
-        moveTowardsGoal(delta, goalPlatform);
+        moveTowardsGoal(delta);
 
     }
 
@@ -47,16 +49,31 @@ public class PlatformerAi extends MinigameAI {
     }
 
 
-    private void moveTowardsGoal(float delta, Platform goal) {
+    private void moveTowardsGoal(float delta) {
         /*
         we need an ai to move as if a player would, by jumping up to platforms
          */
         PlanetPosition pp = astronaut.get().getPlanetPos();
 
-        ArrayList<Platform> path = ((Platformer) localStore.getObjective()).getPathToGoal();
-        //TEST
-        if(path.size() > 0) {
-            moveToPlatform(delta, path.get(0));
+        //need to check which platform the astronaut is on (it may have fallen off), then set the goal to the next one in path
+        int index;
+        Optional<Entity> astronautOn = astronaut.get().getOnPlatform();
+
+        if(astronautOn.isPresent()) {
+            index = pathToGoal.indexOf(astronautOn.get()) + 1;
+            System.out.println("ASTRONAUT IS ON: "+astronautOn.get().toString());
+        }
+        else {
+            index = 0;
+        }
+
+
+        if(index > pathToGoal.size()) {
+            System.out.print("REACHED THE GOAL PLATFORM");
+        }
+        else {
+            Platform localGoal = pathToGoal.get(index);
+            moveToPlatform(delta, localGoal);
         }
 
 
@@ -84,7 +101,7 @@ public class PlatformerAi extends MinigameAI {
         /*
         if(astronaut.get().isOnPlatform(platform))
          */
-        astronaut.get().isOnPlatform(platform);
+        //astronaut.get().isOnPlatform(platform);
         astronaut.jump();
     }
 

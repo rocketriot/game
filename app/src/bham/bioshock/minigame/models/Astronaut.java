@@ -51,7 +51,7 @@ public class Astronaut extends Entity {
   private float dieTime;
   private Direction shotDirection;
   private transient Optional<Entity> item = Optional.empty();
-  private Platform currentPlatform;
+  private transient Optional<Entity> currentPlatform = Optional.empty();
 
 
   public Astronaut(World w, float x, float y, UUID id) {
@@ -138,6 +138,7 @@ public class Astronaut extends Entity {
     }
     legs.update(pos, getRotation());
     animationTime += delta;
+    removePlatform();
   }
 
   public Move getMove() {
@@ -292,6 +293,7 @@ public class Astronaut extends Entity {
       case GUN:
       case PLATFORM:
       case FLAG:
+      case GOAL:
         return true;
       default:
         return false;
@@ -316,6 +318,11 @@ public class Astronaut extends Entity {
         e.setState(State.REMOVING);
         break;
       case FLAG:
+        if(objective.isPresent()) {
+          objective.get().captured(this);
+        }
+        break;
+      case GOAL:
         if(objective.isPresent()) {
           objective.get().captured(this);
         }
@@ -419,10 +426,13 @@ public class Astronaut extends Entity {
 
 
   private void setOnPlatform(Platform platform) {
-    currentPlatform = platform;
+    currentPlatform = Optional.of(platform);
   }
-  public boolean isOnPlatform(Platform platform) {
-    return currentPlatform == platform;
+  private void removePlatform() {
+    currentPlatform = Optional.empty();
+  }
+  public Optional<Entity> getOnPlatform() {
+    return currentPlatform;
   }
 
 }

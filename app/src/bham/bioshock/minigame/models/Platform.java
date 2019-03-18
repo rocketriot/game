@@ -86,4 +86,8 @@ public class Platform extends StaticEntity {
   public Platform getParent() {
     return parent;
   }
+
+  public String toString() {
+    return "Platform "+getPlanetPos().toString();
+  }
 }
