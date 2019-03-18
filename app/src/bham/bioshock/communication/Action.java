@@ -6,6 +6,7 @@ import java.time.ZoneOffset;
 import java.util.ArrayList;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import bham.bioshock.communication.messages.Message;
 
 /**
  * Used to communication between client an server is sent by ClientSender or ServerSender must
@@ -18,6 +19,9 @@ public class Action implements Serializable, Comparable<Action> {
 
   /** Type of action */
   private Command command;
+  
+  /** Message */
+  private Message message;
 
   /** Arguments for action */
   private ArrayList<Serializable> arguments;
@@ -47,6 +51,11 @@ public class Action implements Serializable, Comparable<Action> {
     
     arguments = args;
   }
+  
+  public Action(Command _command, Message m) {
+    created = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC);
+    this.message = m;
+  }
 
   public Action(Command _command) {
     this(_command, new ArrayList<>());
@@ -74,6 +83,10 @@ public class Action implements Serializable, Comparable<Action> {
   
   public long whenCreated() {
     return created;
+  }
+  
+  public Message getMessage() {
+    return message;
   }
 
   /**
@@ -107,5 +120,9 @@ public class Action implements Serializable, Comparable<Action> {
   public int compareTo(Action o) {
     long diff = this.created - o.created;
     return diff > 0 ? -1 : 1;
+  }
+
+  public static Action of(Message m) {
+    return new Action(m.command, m);
   }
 }

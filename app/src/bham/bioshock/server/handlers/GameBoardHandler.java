@@ -12,6 +12,8 @@ import bham.bioshock.common.models.Player.Move;
 import bham.bioshock.common.models.store.Store;
 import bham.bioshock.communication.Action;
 import bham.bioshock.communication.Command;
+import bham.bioshock.communication.messages.GameBoardMessage;
+import bham.bioshock.communication.messages.MovePlayerOnBoardMessage;
 import bham.bioshock.communication.server.BoardAi;
 import bham.bioshock.server.ServerHandler;
 
@@ -21,10 +23,13 @@ public class GameBoardHandler {
 
   Store store;
   ServerHandler handler;
+  MinigameHandler minigameHandler;
 
-  public GameBoardHandler(Store store, ServerHandler handler) {
+  public GameBoardHandler(Store store, ServerHandler handler,
+      MinigameHandler minigameHandler) {
     this.store = store;
     this.handler = handler;
+    this.minigameHandler = minigameHandler;
   }
   
   private void generateGrid(GameBoard board, ArrayList<Player> players) {
@@ -45,21 +50,11 @@ public class GameBoardHandler {
       players.addAll(additionalPlayers);
     }
     
-    GameBoard gameBoard = store.getGameBoard();
     // Generate a grid when starting the game
+    GameBoard gameBoard = new GameBoard(); 
+    generateGrid(gameBoard, players);
 
-    if (gameBoard == null) {
-      gameBoard = new GameBoard(); 
-      generateGrid(gameBoard, players);
-    }
-
-    ArrayList<Serializable> response = new ArrayList<>();
-    response.add(gameBoard);
-    for (Player p : players) {
-      response.add(p);
-    }
-
-    handler.sendToAll(new Action(Command.GET_GAME_BOARD, response));
+    handler.sendToAll(new GameBoardMessage(gameBoard, players));
   }
 
   /** Handles a player moving on their turn */
@@ -99,6 +94,13 @@ public class GameBoardHandler {
         }).start();
       }
     }
+  }
+
+  private void startMinigame(GameBoard gameBoard, Player currentPlayer,
+      Planet planet, MinigameHandler minigameHandler) {
+    ArrayList<Serializable> arg = new ArrayList<>();
+    arg.add(planet.getId());
+    minigameHandler.startMinigame(new Action(Command.MINIGAME_START, arg), currentPlayer.getId(), this);
   }
 
   private int calculateMoveTime(ArrayList<Move> boardMove) {

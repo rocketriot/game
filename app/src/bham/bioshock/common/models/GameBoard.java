@@ -78,20 +78,23 @@ public class GameBoard implements Serializable {
   }
 
   /**
-   * returns the planet object if there is a planet adjacent to the passed in coordinates
+   * returns the planet object if there is a capturable planet adjacent to the passed in coordinates
    * @param pos the coordinates of the grid point to be checked
+   * @param player the player of which to check planet ownership against
    * @return the planet object which is adjacent to that position or null if one does not exist
    */
-  public Planet getAdjacentPlanet(Coordinates pos) {
+  public Planet getAdjacentPlanet(Coordinates pos, Player player) {
     // Next to the planet
     for (Coordinates p : pos.getNearby()) {
       if (pos.getX() > 0 && pos.getX() < GRID_SIZE - 1 && pos.getY() > 0 && pos.getY() < GRID_SIZE - 1) {
         if (getGridPoint(p).isType(GridPoint.Type.PLANET)) {
-          return (Planet) getGridPoint(p).getValue();
+          Planet planet = (Planet) getGridPoint(p).getValue();
+          if (planet.getPlayerCaptured() == null || !planet.getPlayerCaptured().equals(player)) {
+            return planet;
+          }
         }
       }
     }
-
     return null;
   }
 

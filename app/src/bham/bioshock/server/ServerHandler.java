@@ -3,6 +3,7 @@ package bham.bioshock.server;
 import bham.bioshock.common.models.store.Store;
 import bham.bioshock.communication.Action;
 import bham.bioshock.communication.Command;
+import bham.bioshock.communication.messages.Message;
 import bham.bioshock.communication.server.ServerService;
 import bham.bioshock.server.handlers.GameBoardHandler;
 import bham.bioshock.server.handlers.JoinScreenHandler;
@@ -29,8 +30,8 @@ public class ServerHandler {
   public ServerHandler(Store store, Server server) {
     this.server = server;
     joinHandler = new JoinScreenHandler(store, this);
-    gameBoardHandler = new GameBoardHandler(store, this);
     minigameHandler = new MinigameHandler(store, this);
+    gameBoardHandler = new GameBoardHandler(store, this, minigameHandler);
   }
 
   /**
@@ -65,6 +66,16 @@ public class ServerHandler {
       s.send(action);
     }
   }
+  
+  /**
+  * Sends the action to all clients except the one specified
+  * 
+  * @param clientId
+  * @param action
+  */
+ public void sendToAll(Message m) {
+   sendToAll(Action.of(m));
+ }
 
   /**
    * Sends the action to all clients except the one specified
@@ -153,14 +164,11 @@ public class ServerHandler {
         server.stopDiscovery();
         joinHandler.startGame(action, gameBoardHandler);
         break;
-      case GET_GAME_BOARD:
-        gameBoardHandler.getGameBoard(action, null);
-        break;
       case MOVE_PLAYER_ON_BOARD:
         gameBoardHandler.movePlayer(action, clientId);
         break;
       case MINIGAME_START:
-        minigameHandler.startMinigame(action);
+        minigameHandler.startMinigame(action, clientId, gameBoardHandler);
         break;
       case MINIGAME_PLAYER_MOVE:
         minigameHandler.playerMove(action, clientId);
@@ -173,7 +181,7 @@ public class ServerHandler {
         break;
       case MINIGAME_DIRECT_START:
         server.stopDiscovery();
-        joinHandler.minigameDirectStart(action, gameBoardHandler, minigameHandler);
+        joinHandler.minigameDirectStart(action, clientId, gameBoardHandler, minigameHandler);
         break;
       default:
         logger.error("Received unhandled command: " + action.getCommand().toString());

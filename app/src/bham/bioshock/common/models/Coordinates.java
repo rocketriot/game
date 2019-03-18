@@ -1,11 +1,11 @@
 package bham.bioshock.common.models;
 
-import java.io.Serializable;
 import java.util.ArrayList;
-import bham.bioshock.communication.Sendable;
+import java.io.Serializable;
 
 /** Stores x and y coordinates */
-public class Coordinates extends Sendable {
+public class Coordinates implements Serializable {
+  
   private static final long serialVersionUID = 5775730008817100527L;
 
   private int x;
@@ -47,6 +47,16 @@ public class Coordinates extends Sendable {
 
   public Coordinates difference(Coordinates toSub) {
     return (new Coordinates(this.x - toSub.getX(), this.y - toSub.getY()));
+  }
+
+  /**
+   * Calculates the distance between this coordinate and another
+   * @param point the coordinate being compared to this object
+   * @return the distance between the point and this object
+   */
+  public float calcDistance(Coordinates point) {
+    Coordinates diff = this.difference(point);
+    return (Math.abs(diff.x) + Math.abs(diff.y));
   }
 
   public String toString() {
