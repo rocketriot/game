@@ -35,7 +35,7 @@ public class Clock {
   }
   
   public void at(float second, TimeListener listener) {
-    listener.setAt(second * 1000);
+    listener.setAt(second);
     if(!listeners.contains(listener)) {
       listeners.add(listener);      
     }
