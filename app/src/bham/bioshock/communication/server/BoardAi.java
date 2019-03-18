@@ -51,6 +51,9 @@ public class BoardAi extends Thread {
         bestMove = mv;
       }
     }
+    if (bestMove == null) {
+      possibleMoves = generatePossibleMoves(store);
+    }
 
     // Generate a boardMove for the chosen move
     ArrayList<Coordinates> movePath = bestMove.getPath();

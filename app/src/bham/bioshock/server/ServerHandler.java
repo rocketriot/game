@@ -34,6 +34,15 @@ public class ServerHandler {
   }
 
   /**
+   * Get the minigame handler
+   *
+   * @return the minigame handler
+   */
+  public MinigameHandler getMinigameHandler() {
+    return this.minigameHandler;
+  }
+
+  /**
    * Used by ConnectionMaker to register new service
    * 
    * @param service
