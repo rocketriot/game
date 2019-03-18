@@ -1,17 +1,16 @@
 package bham.bioshock.minigame.objectives;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.UUID;
 import bham.bioshock.client.Router;
 import bham.bioshock.common.Position;
 import bham.bioshock.common.models.store.MinigameStore;
 import bham.bioshock.minigame.models.Astronaut;
-import bham.bioshock.minigame.models.Flag;
+import bham.bioshock.minigame.models.EntityType;
+import bham.bioshock.minigame.models.Goal;
 import bham.bioshock.minigame.models.Platform;
+import bham.bioshock.minigame.worlds.FirstWorld;
 import bham.bioshock.minigame.worlds.World;
+
+import java.util.*;
 
 public class Platformer extends Objective {
 
@@ -23,8 +22,8 @@ public class Platformer extends Objective {
   private float maxFreeze = 3f;
   private float maxBoost = 3f;
   private UUID winner;
-  private Position goalPosition;
-  private Flag goal;
+  private Goal goal;
+  private Platform goalPlatform;
 
   public Platformer(World world) {
     generateGoalPosition(world);
@@ -85,26 +84,28 @@ public class Platformer extends Objective {
 
   @Override
   public String instructions() {
-    return "";
+    return "You have 3 minutes to find the goal! \n " +
+            "The first astronaut to reach it wins!";
   }
 
-  public Position getGoalPosition() {
-    return goalPosition;
+
+  public Platform getGoalPlatform() {
+    return goalPlatform;
   }
 
   private void generateGoalPosition(World world) {
     /* generate a feasable position for the end goal */
     ArrayList<Platform> platforms = world.getPlatforms();
-    Position highestPlatform = platforms.get(0).getPos();
+    Platform highestPlatform = platforms.get(0);
     for (int i = 0; i < platforms.size(); i++) {
-      Platform platform = world.getPlatforms().get(i);
-      if (platform.getY() > highestPlatform.y) {
-        highestPlatform = platform.getPos();
+      Platform platform = platforms.get(i);
+      if (platform.getY() > highestPlatform.getY()) {
+        highestPlatform = platform;
       }
     }
     /* set the goal to the highest platform */
-    goalPosition = highestPlatform;
-    goal = new Flag(world, highestPlatform.x, highestPlatform.y);
+    goalPlatform = highestPlatform;
+    goal = new Goal(world, highestPlatform.getX(), highestPlatform.getY(), true, EntityType.GOAL);
   }
 
 
@@ -139,6 +140,15 @@ public class Platformer extends Objective {
 
   public float getSpeedBoost(UUID playerId) {
     return speedBoost.get(playerId);
+  }
+
+  public ArrayList<Platform> getPathToGoal() {
+    //return ((FirstWorld) getWorld()).getPlatformPath(goalPlatform);
+    ArrayList<Platform> path = ((FirstWorld) world).getPlatformPath(goalPlatform);
+        /*for(int i=0; i<path.size();i++) {
+            System.out.println(path.get(i).getPlanetPos().toString());
+        }*/
+    return path;
   }
 
 }

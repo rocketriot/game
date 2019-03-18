@@ -82,6 +82,11 @@ public class MinigameHandler {
         }
         break;
     }
+    o = new Platformer(w);
+    for (UUID id : store.getCpuPlayers()) {
+      aiLoop.registerHandler(new PlatformerAi(id, store, handler));
+    }
+    //testing
     
     aiLoop.start();
     if(planetId != null) {

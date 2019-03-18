@@ -1,19 +1,5 @@
 package bham.bioshock.minigame.models;
 
-import static java.util.stream.Collectors.toList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Animation;
-import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.math.Intersector.MinimumTranslationVector;
-import com.badlogic.gdx.scenes.scene2d.Group;
 import bham.bioshock.client.controllers.SoundController;
 import bham.bioshock.common.Direction;
 import bham.bioshock.common.Position;
@@ -26,6 +12,21 @@ import bham.bioshock.minigame.physics.SpeedVector;
 import bham.bioshock.minigame.physics.Step;
 import bham.bioshock.minigame.utils.RotatableText;
 import bham.bioshock.minigame.worlds.World;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Intersector.MinimumTranslationVector;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+
+import static java.util.stream.Collectors.toList;
 
 public class Astronaut extends Entity {
 
@@ -50,6 +51,7 @@ public class Astronaut extends Entity {
   private float dieTime;
   private Direction shotDirection;
   private transient Optional<Entity> item = Optional.empty();
+  private Platform currentPlatform;
 
 
   public Astronaut(World w, float x, float y, UUID id) {
@@ -350,6 +352,7 @@ public class Astronaut extends Entity {
 
         if (legs.collideWith(e.collisionBoundary, vlegs)) {
           // Standing on the platform
+          setOnPlatform((Platform) e);
           step.setOnGround(true);
         }
         return false;
@@ -412,6 +415,14 @@ public class Astronaut extends Entity {
     haveGun = false;
     setState(State.REMOVING);
     this.respawn = pos;
+  }
+
+
+  private void setOnPlatform(Platform platform) {
+    currentPlatform = platform;
+  }
+  public boolean isOnPlatform(Platform platform) {
+    return currentPlatform == platform;
   }
 
 }
