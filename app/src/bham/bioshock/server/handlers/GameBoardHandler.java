@@ -1,5 +1,7 @@
 package bham.bioshock.server.handlers;
 
+import bham.bioshock.client.Route;
+import bham.bioshock.common.models.Planet;
 import java.io.Serializable;
 import java.util.ArrayList;
 import bham.bioshock.common.models.Coordinates;
@@ -84,11 +86,29 @@ public class GameBoardHandler {
       new Thread(() -> {
         try {
           Thread.sleep(waitTime);
+          startMinigame(gameBoard, currentPlayer);
           endTurn(movingPlayer.getId());
         } catch (InterruptedException e) {
           e.printStackTrace();
         }
       }).start();
+    }
+  }
+
+  private void startMinigame(GameBoard gameBoard, Player currentPlayer) {
+    Planet planet;
+    if ((planet = gameBoard.getAdjacentPlanet(currentPlayer.getCoordinates(), currentPlayer)) != null) {
+      //TODO Handle minigame start
+      boolean minigameRunning = true;
+      while (minigameRunning) {
+        try {
+          Thread.sleep(500);
+          //TODO Handle minigame end
+          minigameRunning = false;
+        } catch (InterruptedException e) {
+          e.printStackTrace();
+        }
+      }
     }
   }
 
