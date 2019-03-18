@@ -65,7 +65,7 @@ public class BoardAi extends Thread {
     arguments.add(player);
 
     Action action = new Action(Command.MOVE_PLAYER_ON_BOARD, arguments);
-    gameBoardHandler.movePlayer(action);
+    gameBoardHandler.movePlayer(action, player.getId());
   }
 
   /** Generate all possible moves that a CPU could take */

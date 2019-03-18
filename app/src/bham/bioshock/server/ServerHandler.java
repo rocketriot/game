@@ -157,7 +157,7 @@ public class ServerHandler {
         gameBoardHandler.getGameBoard(action, null);
         break;
       case MOVE_PLAYER_ON_BOARD:
-        gameBoardHandler.movePlayer(action);
+        gameBoardHandler.movePlayer(action, clientId);
         break;
       case MINIGAME_START:
         minigameHandler.startMinigame(action);

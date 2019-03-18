@@ -1,5 +1,8 @@
 package bham.bioshock.server.handlers;
 
+import bham.bioshock.common.consts.GridPoint;
+import bham.bioshock.common.consts.GridPoint.Type;
+import bham.bioshock.common.pathfinding.AStarPathfinding;
 import java.io.Serializable;
 import java.util.ArrayList;
 import bham.bioshock.common.models.Coordinates;
@@ -60,35 +63,41 @@ public class GameBoardHandler {
   }
 
   /** Handles a player moving on their turn */
-  public void movePlayer(Action action) {
-    // Get game board and player from arguments
+  public void movePlayer(Action action, UUID playerID) {
+    // Get the goal coordinates of the move
     ArrayList<Serializable> arguments = action.getArguments();
-    GameBoard gameBoard = (GameBoard) arguments.get(0);
-    Player movingPlayer = (Player) arguments.get(1);
+    Coordinates goalCoords = (Coordinates) arguments.get(0);
 
-    // Update the store
-    store.setGameBoard(gameBoard);
-    Player currentPlayer = store.getPlayer(movingPlayer.getId());
-    currentPlayer.setCoordinates(movingPlayer.getCoordinates());
-    currentPlayer.setFuel(movingPlayer.getFuel());
+    Player currentPlayer = store.getPlayer(playerID);
+    Coordinates startCoords = currentPlayer.getCoordinates();
 
-    // Send out new game board and moving player to players
-    ArrayList<Serializable> response = new ArrayList<>();
-    response.add(gameBoard);
-    response.add(movingPlayer);
-    
-    handler.sendToAll(new Action(Command.MOVE_PLAYER_ON_BOARD, response));
+    // Initialize pathfinder
+    GameBoard gameBoard = store.getGameBoard();
+    GridPoint[][] grid = gameBoard.getGrid();
+    int gridSize = store.getGameBoard().GRID_SIZE;
+    AStarPathfinding pathFinder =
+        new AStarPathfinding(
+            grid, startCoords, gridSize, gridSize, store.getPlayers());
 
-    if (movingPlayer.isCpu()) {
-      int waitTime = calculateMoveTime(currentPlayer.getBoardMove());
-      new Thread(() -> {
-        try {
-          Thread.sleep(waitTime);
-          endTurn(movingPlayer.getId());
-        } catch (InterruptedException e) {
-          e.printStackTrace();
-        }
-      }).start();
+    ArrayList<Coordinates> path = pathFinder.pathfind(goalCoords);
+    float pathCost = (path.size() - 1) * 10;
+
+    GridPoint.Type goalType = gameBoard.getGridPoint(goalCoords).getType();
+    if (pathCost <= currentPlayer.getFuel() && (goalType.equals(Type.EMPTY) || goalType.equals(Type.FUEL))) {
+
+      handler.sendToAll(new Action(Command.MOVE_PLAYER_ON_BOARD, response));
+
+      if (currentPlayer.isCpu()) {
+        int waitTime = calculateMoveTime(currentPlayer.getBoardMove());
+        new Thread(() -> {
+          try {
+            Thread.sleep(waitTime);
+            endTurn(currentPlayer.getId());
+          } catch (InterruptedException e) {
+            e.printStackTrace();
+          }
+        }).start();
+      }
     }
   }
 
