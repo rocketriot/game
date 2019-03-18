@@ -138,7 +138,14 @@ public class Astronaut extends Entity {
     }
     legs.update(pos, getRotation());
     animationTime += delta;
-    removePlatform();
+
+    checkIfOnGround();
+  }
+
+  private void checkIfOnGround() {
+    if(getPlanetPos().fromCenter <= 5) {
+      removePlatform();
+    }
   }
 
   public Move getMove() {
@@ -327,6 +334,14 @@ public class Astronaut extends Entity {
           objective.get().captured(this);
         }
         break;
+      case PLATFORM:
+        // Check collision with legs
+        if (legs.collideWith(e.collisionBoundary, null)) {
+          // Standing on the platform
+          //System.out.println("STANDING ON PLATFORM: "+e.toString());
+          setOnPlatform((Platform) e);
+        }
+        break;
       default:
         break;
     }
@@ -359,7 +374,6 @@ public class Astronaut extends Entity {
 
         if (legs.collideWith(e.collisionBoundary, vlegs)) {
           // Standing on the platform
-          setOnPlatform((Platform) e);
           step.setOnGround(true);
         }
         return false;
@@ -433,6 +447,16 @@ public class Astronaut extends Entity {
   }
   public Optional<Entity> getOnPlatform() {
     return currentPlatform;
+  }
+  public boolean isOnPlatform(Platform platform) {
+    // Check collision with legs
+    if (legs.collideWith(platform.collisionBoundary, null)) {
+      return true;
+    }
+    return false;
+  }
+  public boolean isOnGround() {
+    return (getPlanetPos().fromCenter <= 2);
   }
 
 }

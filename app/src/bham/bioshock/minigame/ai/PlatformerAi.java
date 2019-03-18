@@ -15,6 +15,8 @@ import java.util.UUID;
 public class PlatformerAi extends MinigameAI {
     private Platform goalPlatform;
     private ArrayList<Platform> pathToGoal;
+    private int currentPlatformIndex = 0;
+
 
     public PlatformerAi(UUID id, Store store, ServerHandler handler) {
         super(id, store, handler);
@@ -25,6 +27,7 @@ public class PlatformerAi extends MinigameAI {
         if (goalPlatform == null) {
             goalPlatform = ((Platformer) localStore.getObjective()).getGoalPlatform();
             pathToGoal = ((Platformer) localStore.getObjective()).getPathToGoal();
+            //pathToGoal.forEach(platform -> System.out.print(" "+platform.toString()));
         }
         moveTowardsGoal(delta);
 
@@ -54,27 +57,40 @@ public class PlatformerAi extends MinigameAI {
         we need an ai to move as if a player would, by jumping up to platforms
          */
         PlanetPosition pp = astronaut.get().getPlanetPos();
+        //System.out.println(astronaut.get().getId() + " finding platform "+currentPlatformIndex);
 
         //need to check which platform the astronaut is on (it may have fallen off), then set the goal to the next one in path
-        int index;
+        //Optional<Entity> astronautOn = astronaut.get().getOnPlatform();
+
+        Platform currentPlatform = pathToGoal.get(currentPlatformIndex);
         Optional<Entity> astronautOn = astronaut.get().getOnPlatform();
-
         if(astronautOn.isPresent()) {
-            index = pathToGoal.indexOf(astronautOn.get()) + 1;
-            System.out.println("ASTRONAUT IS ON: "+astronautOn.get().toString());
+            //System.out.println(astronaut.get().getId()+" IS ON: "+astronautOn.get().toString());
+            if(astronautOn.get().getId().equals(currentPlatform.getId())) {
+                currentPlatformIndex++;
+            }
         }
         else {
-            index = 0;
+            //System.out.println(astronaut.get().getId()+" IS ON THE GROUND");
+            currentPlatformIndex = 0;
         }
+        /*if(astronaut.get().isOnPlatform(pathToGoal.get(currentPlatformIndex))) {
+            System.out.println("ASTRONAUT IS ON: "+currentPlatform.toString());
+            currentPlatformIndex++;
+        }
+        else if(astronaut.get().isOnGround()){
+
+            currentPlatformIndex = 0;
+        }*/
 
 
-        if(index > pathToGoal.size()) {
+        if(currentPlatformIndex == pathToGoal.size()) {
             System.out.print("REACHED THE GOAL PLATFORM");
+            return;
         }
-        else {
-            Platform localGoal = pathToGoal.get(index);
-            moveToPlatform(delta, localGoal);
-        }
+
+        moveToPlatform(delta, pathToGoal.get(currentPlatformIndex));
+
 
 
 
@@ -84,25 +100,29 @@ public class PlatformerAi extends MinigameAI {
         PlanetPosition currentPos = astronaut.get().getPlanetPos();
         PlanetPosition platformPos = platform.getPlanetPos();
 
+
+
         double angleDelta = platformPos.angle - currentPos.angle;
         double angle = (angleDelta + 180) % 360 - 180;
 
-        for(int i=0; i<2; i++) {
-            if(angle < 0) {
+        double toLeft = ((platform.getLeftEdge().angle - platformPos.angle) + 180) % 360 - 180;
+        double toRight = ((platform.getRightEdge().angle - platformPos.angle) + 180) % 360 - 180;
+
+        double distanceDelta = platformPos.fromCenter - currentPos.fromCenter;
+
+        //System.out.println("angle detlta "+angleDelta+" distance delta: "+distanceDelta);
+
+
+        for(int i=0; i<3; i++) {
+            if(angle < toRight) {
                 astronaut.moveLeft();
-            } else {
+            } else if(angle > toLeft){
                 astronaut.moveRight();
             }
         }
 
-        /*if((currentPos.fromCenter - platformPos.fromCenter )<0.1) {
-            System.out.println("ON THE PLATFORM");
-        }
-        /*
-        if(astronaut.get().isOnPlatform(platform))
-         */
-        //astronaut.get().isOnPlatform(platform);
         astronaut.jump();
+
     }
 
 }
