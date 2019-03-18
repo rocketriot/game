@@ -29,8 +29,8 @@ public class ServerHandler {
   public ServerHandler(Store store, Server server) {
     this.server = server;
     joinHandler = new JoinScreenHandler(store, this);
-    gameBoardHandler = new GameBoardHandler(store, this);
     minigameHandler = new MinigameHandler(store, this);
+    gameBoardHandler = new GameBoardHandler(store, this, minigameHandler);
   }
 
   /**
