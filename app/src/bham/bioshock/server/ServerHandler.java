@@ -29,17 +29,8 @@ public class ServerHandler {
   public ServerHandler(Store store, Server server) {
     this.server = server;
     joinHandler = new JoinScreenHandler(store, this);
-    gameBoardHandler = new GameBoardHandler(store, this);
     minigameHandler = new MinigameHandler(store, this);
-  }
-
-  /**
-   * Get the minigame handler
-   *
-   * @return the minigame handler
-   */
-  public MinigameHandler getMinigameHandler() {
-    return this.minigameHandler;
+    gameBoardHandler = new GameBoardHandler(store, this, minigameHandler);
   }
 
   /**

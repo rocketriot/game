@@ -1,8 +1,6 @@
 package bham.bioshock.server.handlers;
 
-import bham.bioshock.client.Route;
 import bham.bioshock.common.models.Planet;
-import bham.bioshock.communication.server.ServerService;
 import java.io.Serializable;
 import java.util.ArrayList;
 import bham.bioshock.common.models.Coordinates;
@@ -21,10 +19,13 @@ public class GameBoardHandler {
 
   Store store;
   ServerHandler handler;
+  MinigameHandler minigameHandler;
 
-  public GameBoardHandler(Store store, ServerHandler handler) {
+  public GameBoardHandler(Store store, ServerHandler handler,
+      MinigameHandler minigameHandler) {
     this.store = store;
     this.handler = handler;
+    this.minigameHandler = minigameHandler;
   }
   
   private void generateGrid(GameBoard board, ArrayList<Player> players) {
@@ -87,8 +88,12 @@ public class GameBoardHandler {
       new Thread(() -> {
         try {
           Thread.sleep(waitTime);
-          startMinigame(gameBoard, currentPlayer);
-          endTurn(movingPlayer.getId());
+          Planet planet;
+          if ((planet = gameBoard.getAdjacentPlanet(currentPlayer.getCoordinates(), currentPlayer)) != null) {
+            startMinigame(gameBoard, currentPlayer, planet, minigameHandler);
+          } else {
+            endTurn(movingPlayer.getId());
+          }
         } catch (InterruptedException e) {
           e.printStackTrace();
         }
@@ -96,24 +101,11 @@ public class GameBoardHandler {
     }
   }
 
-  private void startMinigame(GameBoard gameBoard, Player currentPlayer) {
-    Planet planet;
-    if ((planet = gameBoard.getAdjacentPlanet(currentPlayer.getCoordinates(), currentPlayer)) != null) {
-      //TODO Handle minigame start
-      ArrayList<Serializable> arg = new ArrayList<>();
-      arg.add(planet.getId());
-      handler.getMinigameHandler().startMinigame(new Action(Command.MINIGAME_START, arg));
-      boolean minigameRunning = true;
-      while (minigameRunning) {
-        try {
-          Thread.sleep(500);
-          //TODO Handle minigame end
-          //minigameRunning = false;
-        } catch (InterruptedException e) {
-          e.printStackTrace();
-        }
-      }
-    }
+  private void startMinigame(GameBoard gameBoard, Player currentPlayer,
+      Planet planet, MinigameHandler minigameHandler) {
+    ArrayList<Serializable> arg = new ArrayList<>();
+    arg.add(planet.getId());
+    minigameHandler.startMinigame(new Action(Command.MINIGAME_START, arg));
   }
 
   private int calculateMoveTime(ArrayList<Move> boardMove) {

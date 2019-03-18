@@ -13,8 +13,6 @@ import bham.bioshock.communication.Command;
 import bham.bioshock.server.handlers.GameBoardHandler;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Random;
 
 public class BoardAi extends Thread {
 
