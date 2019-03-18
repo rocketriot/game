@@ -9,6 +9,7 @@ import bham.bioshock.common.models.Player.Move;
 import bham.bioshock.common.models.store.Store;
 import bham.bioshock.communication.Action;
 import bham.bioshock.communication.Command;
+import bham.bioshock.communication.messages.MovePlayerOnBoardMessage;
 import bham.bioshock.communication.server.BoardAi;
 import bham.bioshock.server.ServerHandler;
 
@@ -73,11 +74,7 @@ public class GameBoardHandler {
     currentPlayer.setFuel(movingPlayer.getFuel());
 
     // Send out new game board and moving player to players
-    ArrayList<Serializable> response = new ArrayList<>();
-    response.add(gameBoard);
-    response.add(movingPlayer);
-    
-    handler.sendToAll(new Action(Command.MOVE_PLAYER_ON_BOARD, response));
+    handler.sendToAll(new MovePlayerOnBoardMessage(movingPlayer));
 
     if (movingPlayer.isCpu()) {
       int waitTime = calculateMoveTime(currentPlayer.getBoardMove());

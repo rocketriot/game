@@ -3,6 +3,7 @@ package bham.bioshock.server;
 import bham.bioshock.common.models.store.Store;
 import bham.bioshock.communication.Action;
 import bham.bioshock.communication.Command;
+import bham.bioshock.communication.messages.Message;
 import bham.bioshock.communication.server.ServerService;
 import bham.bioshock.server.handlers.GameBoardHandler;
 import bham.bioshock.server.handlers.JoinScreenHandler;
@@ -65,6 +66,16 @@ public class ServerHandler {
       s.send(action);
     }
   }
+  
+  /**
+  * Sends the action to all clients except the one specified
+  * 
+  * @param clientId
+  * @param action
+  */
+ public void sendToAll(Message m) {
+   sendToAll(Action.of(m));
+ }
 
   /**
    * Sends the action to all clients except the one specified
