@@ -47,20 +47,19 @@ public class Player extends Sendable {
   /** The maximum amount of fuel a player hold at one time */
   public static final float MAX_FUEL = 100f;
 
-  public Player() {
-    this.id = UUID.randomUUID();
-    this.textureID = 0;
-  }
-
-  public Player(String username) {
-    this();
-    this.username = username;
-  }
-
-  public Player(String username, boolean isCpu) {
-    this();
+  public Player(UUID id, String username, Boolean isCpu) {
+    this.id = id;
     this.username = username;
     this.isCpu = isCpu;
+    this.textureID = 0;
+  }
+  
+  public Player(String username, boolean isCpu) {
+    this(UUID.randomUUID(), username, isCpu);
+  }
+  
+  public Player(String username) {
+    this(username, false);
   }
 
   public UUID getId() {

@@ -1,12 +1,12 @@
 package bham.bioshock.minigame.physics;
 
+import java.io.Serializable;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import bham.bioshock.common.Position;
-import bham.bioshock.communication.Sendable;
 
-public class SpeedVector extends Sendable {
+public class SpeedVector implements Serializable {
   
   private static final long serialVersionUID = -149485768919020676L;
   
@@ -107,6 +107,10 @@ public class SpeedVector extends Sendable {
     shapeRenderer.setColor(Color.RED);
     shapeRenderer.line(pos.x, pos.y, (float) (pos.x+dx), (float) (pos.y+dy));
     shapeRenderer.end();
+  }
+
+  public SpeedVector copy() {
+    return new SpeedVector(dx, dy);
   }
 
 }
