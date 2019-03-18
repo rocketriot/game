@@ -1,5 +1,6 @@
 package bham.bioshock.client.controllers;
 
+import bham.bioshock.communication.messages.EndMinigameMessage;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.UUID;
@@ -103,18 +104,15 @@ public class MinigameController extends Controller {
     clientService.send(new Action(Command.MINIGAME_END));
   }
 
-  public void end(ArrayList<Serializable> arguments){
-    // end the minigame and send players back to the board
-    UUID playerId = (UUID) arguments.get(0);
-    UUID planetId = (UUID) arguments.get(1);
-    int points = (int) arguments.get(2);
-    
+  public void end(EndMinigameMessage data){
     // Only if there's a winner
-    if(playerId != null) {
-      Player p = store.getPlayer(playerId);
-      p.addPoints(points);
-      UUID[] planetOwner = new UUID[] { playerId, planetId };
-      router.call(Route.SET_PLANET_OWNER, planetOwner);      
+    if(data.winnerID != null) {
+      Player p = store.getPlayer(data.winnerID);
+      p.addPoints(data.points);
+      if (data.initiatorWon) {
+        UUID[] planetOwner = new UUID[]{data.winnerID, data.planetID};
+        router.call(Route.SET_PLANET_OWNER, planetOwner);
+      }
     }
     router.call(Route.FADE_OUT, "minigame");
     router.call(Route.GAME_BOARD_SHOW);

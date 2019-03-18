@@ -1,5 +1,6 @@
 package bham.bioshock.server.handlers;
 
+import bham.bioshock.communication.messages.EndMinigameMessage;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Random;
@@ -152,14 +153,20 @@ public class MinigameHandler {
    * @param gameBoardHandler 
    */
   public void endMinigame(UUID winnerId, GameBoardHandler gameBoardHandler, UUID playerId) {
-    ArrayList<Serializable> args = new ArrayList<>();
-    args.add(winnerId);
-    args.add(planetId);
-    args.add(100);
+    boolean capturedPlanet = false;
+    int points = 100;
+    if (winnerId != null) {
+      store.getPlayer(winnerId).addPoints(100);
+      if (winnerId.equals(playerId)) {
+        capturedPlanet = true;
+      }
+    }
+
+    EndMinigameMessage msg = new EndMinigameMessage(playerId, winnerId, planetId, capturedPlanet, points);
     planetId = null;
 
     aiLoop.finish();
-    handler.sendToAll(new Action(Command.MINIGAME_END, args));
+    handler.sendToAll(Action.of(msg));
     gameBoardHandler.endTurn(playerId);
   }
 }

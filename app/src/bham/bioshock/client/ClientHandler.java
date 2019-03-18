@@ -70,7 +70,7 @@ public class ClientHandler implements IClientHandler {
             break;
           }
           case MINIGAME_END: {
-            router.call(Route.MINIGAME_END, action.getArguments());
+            router.call(Route.MINIGAME_END, action.getMessage());
             break;
           }
           case MINIGAME_BULLET: {
