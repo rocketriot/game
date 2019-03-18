@@ -4,6 +4,7 @@ import bham.bioshock.communication.Action;
 import bham.bioshock.communication.common.ActionHandler;
 import bham.bioshock.communication.common.Receiver;
 import bham.bioshock.communication.common.Sender;
+import bham.bioshock.communication.messages.Message;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -94,6 +95,15 @@ public class ClientService extends Thread implements IClientService, ActionHandl
       return;
     }
     sender.send(action);
+  }
+  
+  /**
+   * Send the message to the server
+   *
+   * @param action to be sent
+   */
+  public void send(Message message) {
+    send(Action.of(message));
   }
 
   /**
