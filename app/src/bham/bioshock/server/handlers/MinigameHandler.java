@@ -84,9 +84,9 @@ public class MinigameHandler {
     }
     
     aiLoop.start();
-    if(planetId != null) {
+   if(planetId != null) {
       setupMinigameEnd();
-    }
+   }
 
     ArrayList<Serializable> arguments = new ArrayList<>();
     arguments.add((Serializable) w);
@@ -121,6 +121,7 @@ public class MinigameHandler {
         try {
           while (!isInterrupted()) {
             long delta = (System.currentTimeMillis() - time);
+            time = System.currentTimeMillis();
             clock.update((int) delta);
             Thread.sleep(1000);
           }
