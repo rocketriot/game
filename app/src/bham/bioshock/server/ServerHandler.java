@@ -90,6 +90,16 @@ public class ServerHandler {
       }
     }
   }
+  
+  /**
+   * Sends the message to all clients except the one specified
+   * 
+   * @param clientId
+   * @param action
+   */
+  public void sendToAllExcept(Message message, UUID id) {
+    sendToAllExcept(Action.of(message), id);
+  }
 
   /**
    * Sends the action to the specific client
@@ -99,6 +109,16 @@ public class ServerHandler {
    */
   public void sendTo(UUID clientId, Action action) {
     connected.get(clientId).send(action);
+  }
+  
+  /**
+   * Sends the message to the specific client
+   * 
+   * @param clientId
+   * @param action
+   */
+  public void sendTo(UUID clientId, Message message) {
+    connected.get(clientId).send(Action.of(message));
   }
 
 
