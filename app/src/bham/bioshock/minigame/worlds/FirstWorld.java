@@ -99,12 +99,13 @@ public class FirstWorld extends World {
    */
   public ArrayList<Platform> getPlatformPath(Platform platform) {
     ArrayList<Platform> path = new ArrayList<>();
-    Platform currentParent = platform;
-    while (currentParent.equals(null)) {
-      path.add(currentParent);
-      currentParent = platform.getParent();
+
+    while (!((platform == null))) {
+      path.add(platform);
+      platform = platform.getParent();
     }
     Collections.reverse(path);
     return path;
   }
+
 }
