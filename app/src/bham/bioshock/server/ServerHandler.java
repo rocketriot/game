@@ -160,7 +160,7 @@ public class ServerHandler {
         gameBoardHandler.movePlayer(action);
         break;
       case MINIGAME_START:
-        minigameHandler.startMinigame(action);
+        minigameHandler.startMinigame(action, clientId, gameBoardHandler);
         break;
       case MINIGAME_PLAYER_MOVE:
         minigameHandler.playerMove(action, clientId);
@@ -173,7 +173,7 @@ public class ServerHandler {
         break;
       case MINIGAME_DIRECT_START:
         server.stopDiscovery();
-        joinHandler.minigameDirectStart(action, gameBoardHandler, minigameHandler);
+        joinHandler.minigameDirectStart(action, clientId, gameBoardHandler, minigameHandler);
         break;
       default:
         logger.error("Received unhandled command: " + action.getCommand().toString());
