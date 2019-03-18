@@ -10,6 +10,7 @@ import bham.bioshock.common.models.store.Store;
 import bham.bioshock.common.pathfinding.AStarPathfinding;
 import bham.bioshock.communication.Action;
 import bham.bioshock.communication.Command;
+import bham.bioshock.communication.messages.MovePlayerOnBoardMessage;
 import bham.bioshock.server.handlers.GameBoardHandler;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -40,7 +41,6 @@ public class BoardAi extends Thread {
     ArrayList<MoveVal> possibleMoves = generatePossibleMoves(store);
 
     // Picks the best move from the list
-    //TODO Make this random?
     MoveVal bestMove = null;
     for (MoveVal mv: possibleMoves) {
       if (bestMove == null) {
@@ -49,29 +49,13 @@ public class BoardAi extends Thread {
         bestMove = mv;
       }
     }
+
     if (bestMove == null) {
       possibleMoves = generatePossibleMoves(store);
     }
 
-    // Generate a boardMove for the chosen move
-    ArrayList<Coordinates> movePath = bestMove.getPath();
-    player.createBoardMove(movePath);
-
-
-    // Set player Cooordinates to final coordinate in the list
-    player.setCoordinates(player.getBoardMove().get(player.getBoardMove().size()-1).getCoordinates());
-
-    // Update fuel
-    float pathCost = (movePath.size() - 1) * 10;
-    player.decreaseFuel(pathCost);
-
-    // Setup action arguments
-    ArrayList<Serializable> arguments = new ArrayList<>();
-    arguments.add(gameBoard);
-    arguments.add(player);
-
-    Action action = new Action(Command.MOVE_PLAYER_ON_BOARD, arguments);
-    gameBoardHandler.movePlayer(action);
+    MovePlayerOnBoardMessage msg = new MovePlayerOnBoardMessage(bestMove.getMoveCoords(), player.getId());
+    gameBoardHandler.movePlayer(Action.of(msg), player.getId());
   }
 
   /**

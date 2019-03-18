@@ -50,7 +50,7 @@ public class ClientHandler implements IClientHandler {
           }
           case MOVE_PLAYER_ON_BOARD: {
             MovePlayerOnBoardMessage m = (MovePlayerOnBoardMessage) action.getMessage();
-            router.call(Route.MOVE_RECEIVED, m.getCoordinates());
+            router.call(Route.MOVE_RECEIVED, m);
             break;
           }
           case UPDATE_TURN: {
