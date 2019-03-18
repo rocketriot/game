@@ -1,5 +1,6 @@
 package bham.bioshock.minigame.ai;
 
+import bham.bioshock.common.Position;
 import bham.bioshock.common.models.store.Store;
 import bham.bioshock.minigame.PlanetPosition;
 import bham.bioshock.minigame.models.Astronaut;
@@ -10,6 +11,7 @@ import bham.bioshock.server.ServerHandler;
 
 import java.util.ArrayList;
 import java.util.Optional;
+import java.util.Random;
 import java.util.UUID;
 
 public class PlatformerAi extends MinigameAI {
@@ -65,13 +67,13 @@ public class PlatformerAi extends MinigameAI {
         Platform currentPlatform = pathToGoal.get(currentPlatformIndex);
         Optional<Entity> astronautOn = astronaut.get().getOnPlatform();
         if(astronautOn.isPresent()) {
-            //System.out.println(astronaut.get().getId()+" IS ON: "+astronautOn.get().toString());
+            System.out.println(astronaut.get().toString()+" IS ON: "+astronautOn.get().toString()+ "NEXT: "+currentPlatformIndex+1);
             if(astronautOn.get().getId().equals(currentPlatform.getId())) {
                 currentPlatformIndex++;
             }
         }
         else {
-            //System.out.println(astronaut.get().getId()+" IS ON THE GROUND");
+            System.out.println(astronaut.get().toString()+" IS ON THE GROUND");
             currentPlatformIndex = 0;
         }
         /*if(astronaut.get().isOnPlatform(pathToGoal.get(currentPlatformIndex))) {
@@ -89,10 +91,13 @@ public class PlatformerAi extends MinigameAI {
             return;
         }
 
-        moveToPlatform(delta, pathToGoal.get(currentPlatformIndex));
-
-
-
+        Random rand = new Random();
+        if (rand.nextInt(10) < 8) {
+            moveToPlatform(delta, pathToGoal.get(currentPlatformIndex));
+        }
+        else {
+            moveToPlatform(delta, nearbyPlatform(astronaut.get().getPos()));
+        }
 
     }
 
@@ -123,6 +128,18 @@ public class PlatformerAi extends MinigameAI {
 
         astronaut.jump();
 
+    }
+
+    private Platform nearbyPlatform(Position currentPosition) {
+        ArrayList<Platform> all = localStore.getWorld().getPlatforms();
+        Platform nearest = null;
+        float distance = 99999999;
+        for(int i = 1; i<all.size(); i++) {
+            if (all.get(i).getPos().sqDistanceFrom(currentPosition) < distance) {
+                nearest = all.get(i);
+            }
+        }
+        return nearest;
     }
 
 }

@@ -143,7 +143,8 @@ public class Astronaut extends Entity {
   }
 
   private void checkIfOnGround() {
-    if(getPlanetPos().fromCenter <= 5) {
+    //System.out.println((world.fromGroundTo(legs.getX(),legs.getY())));
+    if((world.fromGroundTo(legs.getX(),legs.getY())) <= 15) {
       removePlatform();
     }
   }
@@ -440,9 +441,11 @@ public class Astronaut extends Entity {
 
 
   private void setOnPlatform(Platform platform) {
+    //System.out.println(getId().toString() + "is on " + platform.toString() );
     currentPlatform = Optional.of(platform);
   }
   private void removePlatform() {
+    //System.out.println(getId().toString() + "is on the ground");
     currentPlatform = Optional.empty();
   }
   public Optional<Entity> getOnPlatform() {
@@ -459,4 +462,7 @@ public class Astronaut extends Entity {
     return (getPlanetPos().fromCenter <= 2);
   }
 
+  public String toString() {
+    return name.getText();
+  }
 }

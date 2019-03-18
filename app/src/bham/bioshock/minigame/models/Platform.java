@@ -96,13 +96,13 @@ public class Platform extends StaticEntity {
    * @return the planet position of the left edge of the platform
    */
   public PlanetPosition getLeftEdge() {
-    return world.convert(new Position(getX()-(width/2), getY()));
+    return world.convert(new Position(getX()-(width/2f), getY()));
   }
   /**
    * Get the planet position of the right edge of the platform
    * @return the planet position of the right edge of the platform
    */
   public PlanetPosition getRightEdge() {
-    return world.convert(new Position(getX()+(width/2), getY()));
+    return world.convert(new Position(getX()+(width/2f), getY()));
   }
 }
