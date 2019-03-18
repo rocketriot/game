@@ -54,6 +54,7 @@ public class Action implements Serializable, Comparable<Action> {
   
   public Action(Command _command, Message m) {
     created = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC);
+    this.command = _command;
     this.message = m;
   }
 
