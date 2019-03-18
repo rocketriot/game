@@ -118,7 +118,6 @@ public class MinigameController extends Controller {
     }
     router.call(Route.FADE_OUT, "minigame");
     router.call(Route.GAME_BOARD_SHOW);
-    router.call(Route.END_TURN);
     store.resetMinigameStore();
   }
 }

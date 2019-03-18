@@ -41,7 +41,7 @@ public class MinigameHandler {
   /*
    * Create and seed the world, and send start game command to all clients
    */
-  public void startMinigame(Action action) {
+  public void startMinigame(Action action, UUID playerId, GameBoardHandler gameBoardHandler) {
     // Create a world for the minigame
     World w = new RandomWorld();
     if(action.getArguments().size() != 0) {
@@ -85,7 +85,7 @@ public class MinigameHandler {
     
     aiLoop.start();
    if(planetId != null) {
-      setupMinigameEnd();
+      setupMinigameEnd(gameBoardHandler, playerId);
    }
 
     ArrayList<Serializable> arguments = new ArrayList<>();
@@ -97,11 +97,11 @@ public class MinigameHandler {
   /**
    * Starts a clock ending the minigame
    */
-  private void setupMinigameEnd() {
+  private void setupMinigameEnd(GameBoardHandler gameBoardHandler, UUID playerId) {
     clock = new Clock();
     long t = System.currentTimeMillis();
 
-    clock.at(180f, new Clock.TimeListener() {
+    clock.at(10f, new Clock.TimeListener() {
       @Override
       public void handle(Clock.TimeUpdateEvent event) {
         if(minigameTimer != null) {
@@ -109,7 +109,7 @@ public class MinigameHandler {
         }
         MinigameStore localStore = store.getMinigameStore();
         Objective o = localStore.getObjective();
-        endMinigame(o.getWinner());          
+        endMinigame(o.getWinner(), gameBoardHandler, playerId);          
       }
     });
     
@@ -149,15 +149,17 @@ public class MinigameHandler {
 
   /**
    * Method to end the minigame and send the players back to the main board
+   * @param gameBoardHandler 
    */
-  public void endMinigame(UUID playerId) {
+  public void endMinigame(UUID winnerId, GameBoardHandler gameBoardHandler, UUID playerId) {
     ArrayList<Serializable> args = new ArrayList<>();
-    args.add(playerId);
+    args.add(winnerId);
     args.add(planetId);
     args.add(100);
     planetId = null;
 
     aiLoop.finish();
     handler.sendToAll(new Action(Command.MINIGAME_END, args));
+    gameBoardHandler.endTurn(playerId);
   }
 }

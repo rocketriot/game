@@ -93,7 +93,7 @@ public class JoinScreenHandler {
     handler.sendToAll(new Action(Command.START_GAME));
   }
 
-  public void minigameDirectStart(Action action, GameBoardHandler gameBoardHandler,
+  public void minigameDirectStart(Action action, UUID playerId, GameBoardHandler gameBoardHandler,
       MinigameHandler minigameHandler) {
     ArrayList<Player> cpuPlayers = createCpuPlayers();
     // Send the board and the players
@@ -106,7 +106,7 @@ public class JoinScreenHandler {
       e.printStackTrace();
     }
 
-    minigameHandler.startMinigame(new Action(Command.MINIGAME_START));
+    minigameHandler.startMinigame(new Action(Command.MINIGAME_START), playerId, gameBoardHandler);
   }
 
   public void moveRocket(Action action, UUID player) {
