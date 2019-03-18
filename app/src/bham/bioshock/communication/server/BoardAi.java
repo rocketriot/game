@@ -51,9 +51,11 @@ public class BoardAi extends Thread {
         bestMove = mv;
       }
     }
+
     // Generate a boardMove for the chosen move
     ArrayList<Coordinates> movePath = bestMove.getPath();
     player.createBoardMove(movePath);
+
 
     // Set player Cooordinates to final coordinate in the list
     player.setCoordinates(player.getBoardMove().get(player.getBoardMove().size()-1).getCoordinates());
@@ -84,12 +86,9 @@ public class BoardAi extends Thread {
         gameBoard.GRID_SIZE, gameBoard.GRID_SIZE, store.getPlayers());
     ArrayList<MoveVal> possibleMoves = new ArrayList();
 
-    boolean isAdjecentPlanet;
-
     // Loop through all points available on the grid
     for (int x = 0; x < gameBoard.GRID_SIZE; x++) {
       for (int y = 0; y < gameBoard.GRID_SIZE; y++) {
-        isAdjecentPlanet = false;
         GridPoint gridPoint = grid[x][y];
         GridPoint.Type type = gridPoint.getType();
 
@@ -106,25 +105,19 @@ public class BoardAi extends Thread {
         Player p;
         Coordinates moveCoords = new Coordinates(x, y);
 
-        // Skips points that arn't next to planets or if the cpu player already owns the planet
-        if (!gameBoard.isNextToThePlanet(moveCoords)) {
-          continue;
-        } else if ((p = gameBoard.getAdjacentPlanet(moveCoords).getPlayerCaptured()) != null) {
-          if (p.equals(player)) {
-            continue;
-          } else {
-            isAdjecentPlanet = true;
-          }
-        }
-
         // Attempt to generate path to the point
         ArrayList<Coordinates> path = pathFinder.pathfind(moveCoords);
         float pathCost = (path.size() - 1) * 10;
 
+        // Skip points if no path is available
+        if (path.size() == 0) {
+          continue;
+        }
+
         // If it's possible to travel to that point, generate MoveVal object
         if (path.size() > 0 && player.getFuel() >= pathCost) {
           MoveVal moveVal = new MoveVal(moveCoords, path, pathCost);
-          setReward(moveVal, player, isAdjecentPlanet, gameBoard, grid);
+          setReward(moveVal, player, gameBoard, grid);
           possibleMoves.add(moveVal);
         }
       }
@@ -136,11 +129,9 @@ public class BoardAi extends Thread {
    * Calculates and sets the reward for a grid move for the ai
    * @param moveVal
    * @param player
-   * @param isAdjecentPlanet
    * @param gameBoard
    */
-  private void setReward(MoveVal moveVal, Player player, boolean isAdjecentPlanet,
-      GameBoard gameBoard, GridPoint[][] grid) {
+  private void setReward(MoveVal moveVal, Player player, GameBoard gameBoard, GridPoint[][] grid) {
     // Initiate the reward to be the fuel cost of the move / 10
     float reward = -moveVal.getPathCost() / 10f;
 
@@ -148,9 +139,10 @@ public class BoardAi extends Thread {
     ArrayList<Planet> planetChecklist = new ArrayList<>();
 
     // Add 100 points if finishing next to a capturable planet
-    if (isAdjecentPlanet) {
+    Planet planet;
+    if ((planet = gameBoard.getAdjacentPlanet(moveVal.getMoveCoords(), player)) != null) {
       reward += 100;
-      moveVal.setCapturablePlanet(gameBoard.getAdjacentPlanet(moveVal.getMoveCoords()));
+      moveVal.setCapturablePlanet(planet);
     }
 
     // Add two to the reward for each fuel box in the path
@@ -165,7 +157,7 @@ public class BoardAi extends Thread {
       for (int y = 0; y < gameBoard.GRID_SIZE; y++) {
         GridPoint gridPoint = grid[x][y];
         if (gridPoint.getType().equals(Type.PLANET) && !planetChecklist.contains(gridPoint.getValue())) {
-          Planet planet = (Planet) gridPoint.getValue();
+          planet = (Planet) gridPoint.getValue();
           if (planet.getPlayerCaptured() == null || !planet.getPlayerCaptured().equals(player)) {
             reward += 50f / moveVal.getMoveCoords().calcDistance(planet.getCoordinates());
             planetChecklist.add(planet);
