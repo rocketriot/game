@@ -85,7 +85,7 @@ public class GameBoardHandler {
       handler.sendToAll(new Action(Command.MOVE_PLAYER_ON_BOARD, response));
 
       if (currentPlayer.isCpu()) {
-        int waitTime = calculateMoveTime(currentPlayer.getBoardMove());
+        int waitTime = calculateMoveTime(currentPlayer, path);
         new Thread(() -> {
           try {
             Thread.sleep(waitTime);
@@ -105,10 +105,12 @@ public class GameBoardHandler {
     minigameHandler.startMinigame(new Action(Command.MINIGAME_START, arg), currentPlayer.getId(), this);
   }
 
-  private int calculateMoveTime(ArrayList<Move> boardMove) {
+  private int calculateMoveTime(Player player,
+      ArrayList<Coordinates> path) {
+
     // Players move 3 tiles per second + 500 to prevent race condition
-    if (boardMove != null)
-      return (boardMove.size() * 1000)/3 + 500;
+    if (path != null)
+      return (path.size() * 1000)/3 + 500;
     else
       return 0;
   }
