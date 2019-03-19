@@ -67,7 +67,7 @@ public class PlatformerAi extends MinigameAI {
         Platform currentPlatform = pathToGoal.get(currentPlatformIndex);
         Optional<Entity> astronautOn = astronaut.get().getOnPlatform();
         if(astronautOn.isPresent()) {
-            System.out.println(astronaut.get().toString()+" IS ON: "+astronautOn.get().toString()+ "NEXT: "+currentPlatformIndex+1);
+            System.out.println(astronaut.get().toString()+" IS ON: "+astronautOn.get().toString()+ "NEXT: "+(currentPlatformIndex+1));
             if(astronautOn.get().getId().equals(currentPlatform.getId())) {
                 currentPlatformIndex++;
             }
@@ -92,11 +92,11 @@ public class PlatformerAi extends MinigameAI {
         }
 
         Random rand = new Random();
-        if (rand.nextInt(10) < 8) {
+        if (rand.nextInt(100) < 95) {
             moveToPlatform(delta, pathToGoal.get(currentPlatformIndex));
         }
         else {
-            moveToPlatform(delta, nearbyPlatform(astronaut.get().getPos()));
+            moveToPlatform(delta, nearbyPlatform(currentPlatform));
         }
 
     }
@@ -115,13 +115,13 @@ public class PlatformerAi extends MinigameAI {
 
         double distanceDelta = platformPos.fromCenter - currentPos.fromCenter;
 
-        //System.out.println("angle detlta "+angleDelta+" distance delta: "+distanceDelta);
+        //System.out.println("angle center: "+platformPos.angle+ " | angle left "+toLeft+" | angle right:: "+toRight);
 
 
         for(int i=0; i<3; i++) {
-            if(angle < toRight) {
+            if(angle < toLeft) {
                 astronaut.moveLeft();
-            } else if(angle > toLeft){
+            } else if(angle > toRight){
                 astronaut.moveRight();
             }
         }
@@ -130,12 +130,13 @@ public class PlatformerAi extends MinigameAI {
 
     }
 
-    private Platform nearbyPlatform(Position currentPosition) {
+    private Platform nearbyPlatform(Platform currentPlatform) {
+        Position currentPosition = astronaut.get().getPos();
         ArrayList<Platform> all = localStore.getWorld().getPlatforms();
         Platform nearest = null;
         float distance = 99999999;
         for(int i = 1; i<all.size(); i++) {
-            if (all.get(i).getPos().sqDistanceFrom(currentPosition) < distance) {
+            if (!(all.get(i).getId().equals(currentPlatform.getId())) && (all.get(i).getPos().sqDistanceFrom(currentPosition) < distance)) {
                 nearest = all.get(i);
             }
         }
