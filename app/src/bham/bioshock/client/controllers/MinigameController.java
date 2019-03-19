@@ -96,11 +96,11 @@ public class MinigameController extends Controller {
 
   public void end(EndMinigameMessage data){
     // Only if there's a winner
-    if(data.winnerID != null) {
-      Player p = store.getPlayer(data.winnerID);
+    if(data.winnerId != null) {
+      Player p = store.getPlayer(data.winnerId);
       p.addPoints(data.points);
-      if (data.initiatorWon) {
-        UUID[] planetOwner = new UUID[]{data.winnerID, data.planetID};
+      if (data.isCaptured) {
+        UUID[] planetOwner = new UUID[]{data.winnerId, data.planetId};
         router.call(Route.SET_PLANET_OWNER, planetOwner);
       }
     }

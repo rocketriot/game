@@ -1,6 +1,5 @@
 package bham.bioshock.server.handlers;
 
-import bham.bioshock.communication.messages.EndMinigameMessage;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Random;
@@ -11,6 +10,7 @@ import bham.bioshock.common.models.store.MinigameStore;
 import bham.bioshock.common.models.store.Store;
 import bham.bioshock.communication.Action;
 import bham.bioshock.communication.Command;
+import bham.bioshock.communication.messages.EndMinigameMessage;
 import bham.bioshock.minigame.Clock;
 import bham.bioshock.minigame.ai.KillEveryoneAI;
 import bham.bioshock.minigame.ai.PlatformerAi;

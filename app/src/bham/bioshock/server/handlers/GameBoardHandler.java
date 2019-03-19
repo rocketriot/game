@@ -14,6 +14,7 @@ import bham.bioshock.common.models.store.Store;
 import bham.bioshock.communication.Action;
 import bham.bioshock.communication.Command;
 import bham.bioshock.communication.messages.GameBoardMessage;
+import bham.bioshock.communication.messages.MovePlayerOnBoardMessage;
 import bham.bioshock.communication.server.BoardAi;
 import bham.bioshock.server.ServerHandler;
 
@@ -61,7 +62,7 @@ public class GameBoardHandler {
   public void movePlayer(Action action, UUID playerID) {
     // Get the goal coordinates of the move
     MovePlayerOnBoardMessage data = (MovePlayerOnBoardMessage) action.getMessage();
-    Coordinates goalCoords = data.getCoordinates();
+    Coordinates goalCoords = data.coordinates;
 
     Player currentPlayer = store.getPlayer(playerID);
     Coordinates startCoords = currentPlayer.getCoordinates();

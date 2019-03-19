@@ -93,8 +93,8 @@ public class GameBoardController extends Controller {
     GridPoint[][] grid = gameBoard.getGrid();
 
     // Get data from the message
-    Coordinates goalCoords = data.getCoordinates();
-    Player movingPlayer = store.getPlayer(data.getId());
+    Coordinates goalCoords = data.coordinates;
+    Player movingPlayer = store.getPlayer(data.id);
 
     // Initialize path finding
     int gridSize = store.getGameBoard().GRID_SIZE;
