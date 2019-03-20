@@ -10,6 +10,7 @@ import bham.bioshock.communication.Action;
 import bham.bioshock.communication.messages.EndMinigameMessage;
 import bham.bioshock.communication.messages.MinigameStartMessage;
 import bham.bioshock.communication.messages.RequestMinigameStartMessage;
+import bham.bioshock.communication.messages.UpdateObjectiveMessage;
 import bham.bioshock.minigame.Clock;
 import bham.bioshock.minigame.ai.KillEveryoneAI;
 import bham.bioshock.minigame.ai.PlatformerAi;
@@ -54,7 +55,8 @@ public class MinigameHandler {
 
     Random rand = new Random();
 
-    switch(rand.nextInt(100)%4) {
+//    switch(rand.nextInt(100)%4) {
+    switch(1) {
       case 1:
         o = new CaptureTheFlag(w);
         for (UUID id : store.getCpuPlayers()) {
@@ -84,9 +86,7 @@ public class MinigameHandler {
     }
     
     aiLoop.start();
-   if(planetId != null) {
-      setupMinigameEnd(gameBoardHandler, playerId);
-   }
+    setupMinigameEnd(gameBoardHandler, playerId);
 
     handler.sendToAll(new MinigameStartMessage(w, o));
   }
@@ -101,6 +101,7 @@ public class MinigameHandler {
     clock.at(60f, new Clock.TimeListener() {
       @Override
       public void handle(Clock.TimeUpdateEvent event) {
+        if(planetId == null) return;
         if(minigameTimer != null) {
           minigameTimer.interrupt();
         }
@@ -120,6 +121,9 @@ public class MinigameHandler {
             long delta = (System.currentTimeMillis() - time);
             time = System.currentTimeMillis();
             clock.update((int) delta);
+            
+            updateObjectiveState();
+            
             Thread.sleep(1000);
           }
         } catch (InterruptedException e) {
@@ -130,10 +134,22 @@ public class MinigameHandler {
     minigameTimer.start();
   }
 
+  protected void updateObjectiveState() {
+    MinigameStore localStore = store.getMinigameStore();
+    if(localStore == null) return;
+    Objective objective = localStore.getObjective();
+    if(objective == null) return;
+    handler.sendToAllExcept(new UpdateObjectiveMessage(objective), store.getMainPlayer().getId());
+  }
+
   /**
    * Sync player movement and position
    */
   public void playerMove(Action action, UUID playerId) {
+    handler.sendToAllExcept(action, playerId);
+  }
+  
+  public void playerStep(Action action, UUID playerId) {
     handler.sendToAllExcept(action, playerId);
   }
 

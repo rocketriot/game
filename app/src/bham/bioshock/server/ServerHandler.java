@@ -30,7 +30,7 @@ public class ServerHandler {
   private MinigameHandler minigameHandler;
   private DevServer devServer;
   
-  private final boolean DEBUG_SERVER = true;
+  private final boolean DEBUG_SERVER = false;
   
   
   public ServerHandler(Store store, Server server) {
@@ -208,6 +208,9 @@ public class ServerHandler {
         break;
       case MINIGAME_PLAYER_MOVE:
         minigameHandler.playerMove(action, clientId);
+        break;
+      case MINIGAME_PLAYER_STEP:
+        minigameHandler.playerStep(action, clientId);
         break;
       case MINIGAME_BULLET:
         minigameHandler.bulletShot(action, clientId);

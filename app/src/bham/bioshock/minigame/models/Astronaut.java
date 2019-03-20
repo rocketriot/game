@@ -48,7 +48,6 @@ public class Astronaut extends Entity {
   private int colour;
   private float dieTime;
   private Direction shotDirection;
-  private transient Optional<Entity> item = Optional.empty();
 
 
   public Astronaut(World w, float x, float y, UUID id, int colour) {
@@ -116,13 +115,6 @@ public class Astronaut extends Entity {
   public void setGun(Boolean b) {
     this.haveGun = b;
   }
-  
-  public void setItem(Entity e) {
-    this.item = Optional.of(e);
-  }
-  public void removeItem() {
-    this.item = Optional.empty();
-  }
 
   public void update(float delta) {
     if (!loaded)
@@ -167,12 +159,11 @@ public class Astronaut extends Entity {
       if (dieFront && texture.dyingFront.isAnimationFinished(dieTime)
           || texture.dyingBack.isAnimationFinished(dieTime)) {
         setRotation(0);
-        stepsGenerator.updateFromServer(new SpeedVector(), respawn, new Move());
+        stepsGenerator.updateFromServer(new SpeedVector(), respawn);
         setState(State.LOADED);
       }
       
     } else {
-      drawItem(batch);
       drawHealth(batch);
       super.draw(batch);
     }
@@ -181,16 +172,6 @@ public class Astronaut extends Entity {
   @Override
   public void afterDraw(SpriteBatch batch) {
     drawName(batch);
-  }
-  
-  private void drawItem(SpriteBatch batch) {
-    if(!item.isPresent()) return;
-    PlanetPosition pp = world.convert(pos);
-    pp.fromCenter += height + 60;
-    Position p = world.convert(pp);
-    Entity e = item.get();
-    e.getPos().x = p.x;
-    e.getPos().y = p.y;
   }
   
   private void drawHealth(SpriteBatch batch) {
@@ -388,11 +369,14 @@ public class Astronaut extends Entity {
  
   }
 
-  public void updateFromServer(SpeedVector speed, Position pos, Move move, Boolean haveGun) {
+  public void updateFromServer(SpeedVector speed, Position pos, Boolean haveGun) {
     this.haveGun = haveGun;
+    stepsGenerator.updateFromServer(speed, pos);
+  }
+  
+  public void updateMove(Move move) {
     this.move = move;
     this.moveChange();
-    stepsGenerator.updateFromServer(speed, pos, move);
   }
 
   public void killAndRespawn(Position pos) {
@@ -409,7 +393,6 @@ public class Astronaut extends Entity {
       }
     }
     
-    item = Optional.empty();
     haveGun = false;
     setState(State.REMOVING);
     this.respawn = pos;

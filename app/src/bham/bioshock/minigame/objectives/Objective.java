@@ -10,6 +10,7 @@ import bham.bioshock.minigame.models.Gun;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Map.Entry;
 import java.util.Random;
 import java.util.UUID;
 
@@ -17,7 +18,7 @@ import java.util.UUID;
  * Objective abstract class.
  */
 
-public abstract class Objective implements Serializable {
+public abstract class Objective implements Serializable, Cloneable {
 
   private static final long serialVersionUID = 7485771472370553399L;
   private static int INITIAL_HEALTH = 4;
@@ -25,8 +26,8 @@ public abstract class Objective implements Serializable {
   protected transient World world;
   protected transient Router router;
   protected transient MinigameStore localStore;
+  private transient Position[] respawnPositions;
   protected HashMap<UUID, Integer> health = new HashMap<>();
-  private Position[] respawnPositions;
 
   public abstract UUID getWinner();
 
@@ -48,6 +49,29 @@ public abstract class Objective implements Serializable {
   
   public int getHealth(UUID id) {
     return health.get(id);
+  }
+  
+  public void update(Objective o) {
+    if(o.health != null) {
+      this.health = o.health;      
+    }
+  }
+  
+  public HashMap<UUID, Integer> getHealthCopy() {
+    health = new HashMap<>();
+    for(Entry<UUID, Integer> entry : health.entrySet())
+      health.put(entry.getKey(), entry.getValue());
+    return health;
+  }
+  
+  @Override
+  public Objective clone() {
+    try {
+      return (Objective) super.clone();
+    } catch (CloneNotSupportedException e) {
+      e.printStackTrace();
+    }
+    return null;
   }
 
   /**

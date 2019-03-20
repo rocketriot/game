@@ -162,10 +162,10 @@ public class Renderer {
     hud.getStage().draw();
     minigameStore.getEntities().removeIf(e -> e.isRemoved());
     minigameStore.getStaticEntities().removeIf(e -> e.isRemoved());
-    if(time > 0.5f) {
-      time -= 0.5f;
+    if(time > 1f) {
+      time -= 1f;
+      router.call(Route.MINIGAME_STEP);
     }
-    router.call(Route.MINIGAME_MOVE);
   }
 
   public void drawBackground() {

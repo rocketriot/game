@@ -1,11 +1,7 @@
 package bham.bioshock.client;
 
-import java.util.ArrayList;
-import java.util.UUID;
 import com.badlogic.gdx.Gdx;
 import com.google.inject.Inject;
-import bham.bioshock.common.models.GameBoard;
-import bham.bioshock.common.models.Player;
 import bham.bioshock.communication.Action;
 import bham.bioshock.communication.client.IClientHandler;
 import bham.bioshock.communication.messages.AddPlayerMessage;
@@ -13,8 +9,10 @@ import bham.bioshock.communication.messages.DisconnectPlayerMessage;
 import bham.bioshock.communication.messages.GameBoardMessage;
 import bham.bioshock.communication.messages.JoinScreenMoveMessage;
 import bham.bioshock.communication.messages.MinigamePlayerMoveMessage;
+import bham.bioshock.communication.messages.MinigamePlayerStepMessage;
 import bham.bioshock.communication.messages.MinigameStartMessage;
 import bham.bioshock.communication.messages.MovePlayerOnBoardMessage;
+import bham.bioshock.communication.messages.UpdateObjectiveMessage;
 
 public class ClientHandler implements IClientHandler {
   
@@ -64,9 +62,14 @@ public class ClientHandler implements IClientHandler {
             router.call(Route.START_MINIGAME, data);
             break;
           }
+          case MINIGAME_PLAYER_STEP: {
+            MinigamePlayerStepMessage data = (MinigamePlayerStepMessage) action.getMessage();
+            router.call(Route.MINIGAME_PLAYER_UPDATE, data);
+            break;
+          }
           case MINIGAME_PLAYER_MOVE: {
             MinigamePlayerMoveMessage data = (MinigamePlayerMoveMessage) action.getMessage();
-            router.call(Route.MINIGAME_PLAYER_UPDATE, data);
+            router.call(Route.MINIGAME_PLAYER_UPDATE_MOVE, data);
             break;
           }
           case MINIGAME_END: {
@@ -80,6 +83,11 @@ public class ClientHandler implements IClientHandler {
           case JOIN_SCREEN_MOVE: {
             JoinScreenMoveMessage data = (JoinScreenMoveMessage) action.getMessage();
             router.call(Route.JOIN_SCREEN_UPDATE, data);
+            break;
+          }
+          case MINIGAME_UPDATE_OBJECTIVE: {
+            UpdateObjectiveMessage data = (UpdateObjectiveMessage) action.getMessage();
+            router.call(Route.MINIGAME_OBJECTIVE_UPDATE, data);
             break;
           }
           default: {

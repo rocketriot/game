@@ -15,8 +15,10 @@ import bham.bioshock.common.models.store.Store;
 import bham.bioshock.communication.client.ClientService;
 import bham.bioshock.communication.messages.BulletShotMessage;
 import bham.bioshock.communication.messages.MinigamePlayerMoveMessage;
+import bham.bioshock.communication.messages.MinigamePlayerStepMessage;
 import bham.bioshock.communication.messages.MinigameStartMessage;
 import bham.bioshock.communication.messages.RequestMinigameStartMessage;
+import bham.bioshock.communication.messages.UpdateObjectiveMessage;
 import bham.bioshock.minigame.models.Bullet;
 import bham.bioshock.minigame.objectives.Objective;
 import bham.bioshock.minigame.worlds.World;
@@ -46,11 +48,19 @@ public class MinigameController extends Controller {
     clientService.send(new MinigamePlayerMoveMessage(localStore.getMainPlayer()));
   }
   
-  public void updatePlayer(MinigamePlayerMoveMessage data) {
-    localStore.updatePlayer(data.created, data.playerId, data.speed, data.position, data.move, data.haveGun);
+  public void playerStep() {
+    clientService.send(new MinigamePlayerStepMessage(localStore.getMainPlayer()));
   }
   
-  public void bulletShot(Bullet bullet) {   
+  public void updatePlayerStep(MinigamePlayerStepMessage data) {
+    localStore.updatePlayerStep(data.created, data.playerId, data.speed, data.position, data.haveGun);
+  }
+  
+  public void updatePlayerMove(MinigamePlayerMoveMessage data) {
+    localStore.updatePlayerMove(data.playerId, data.move);
+  }
+  
+  public void bulletShot(Bullet bullet) {
     clientService.send(new BulletShotMessage(bullet));
   }
   
@@ -61,6 +71,13 @@ public class MinigameController extends Controller {
     b.setSpeedVector(data.speedVector);
     b.load();
     localStore.addEntity(b);
+  }
+  
+  public void updateObjective(UpdateObjectiveMessage data) {
+    Objective o = localStore.getObjective();
+    if(o != null) {
+      o.update(data.objective);
+    }
   }
   
   
