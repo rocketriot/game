@@ -29,7 +29,9 @@ public class PlatformerAi extends MinigameAI {
         if (goalPlatform == null) {
             goalPlatform = ((Platformer) localStore.getObjective()).getGoalPlatform();
             pathToGoal = ((Platformer) localStore.getObjective()).getPathToGoal();
-            //pathToGoal.forEach(platform -> System.out.print(" "+platform.toString()));
+
+            System.out.println("PATH TO GOAL: ");
+            pathToGoal.forEach(platform -> System.out.print(" "+platform.toString()));
         }
         moveTowardsGoal(delta);
 
@@ -117,7 +119,6 @@ public class PlatformerAi extends MinigameAI {
 
         //System.out.println("angle center: "+platformPos.angle+ " | angle left "+toLeft+" | angle right:: "+toRight);
 
-
         for(int i=0; i<3; i++) {
             if(angle < toLeft) {
                 astronaut.moveLeft();
@@ -134,7 +135,7 @@ public class PlatformerAi extends MinigameAI {
         Position currentPosition = astronaut.get().getPos();
         ArrayList<Platform> all = localStore.getWorld().getPlatforms();
         Platform nearest = null;
-        float distance = 99999999;
+        float distance = 99999999f;
         for(int i = 1; i<all.size(); i++) {
             if (!(all.get(i).getId().equals(currentPlatform.getId())) && (all.get(i).getPos().sqDistanceFrom(currentPosition) < distance)) {
                 nearest = all.get(i);

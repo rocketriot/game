@@ -1,5 +1,6 @@
 package bham.bioshock.minigame.objectives;
 
+import bham.bioshock.client.Route;
 import bham.bioshock.client.Router;
 import bham.bioshock.common.Position;
 import bham.bioshock.common.models.store.MinigameStore;
@@ -55,9 +56,10 @@ public class Platformer extends Objective {
   public void gotShot(Astronaut player, Astronaut shooter) {
     super.gotShot(player, shooter);
     /* when the player is shot, they should freeze for a certain amount of time */
-    if (!checkIfFrozen(player.getId())) {
+    /*if (!checkIfFrozen(player.getId())) {
       setFrozen(player.getId(), true);
-    }
+    }*/
+    killAndRespawnPlayer(player, getRandomRespawn());
   }
   
   @Override
@@ -84,6 +86,7 @@ public class Platformer extends Objective {
     a.setItem(goal);
 
     //make a method that ends the game
+    router.call(Route.SERVER_MINIGAME_END);
     return;
   }
 
