@@ -51,6 +51,7 @@ public class Renderer {
   private Router router;
   private static boolean DEBUG_MODE = false;
   private MinigameStore minigameStore;
+
   private MinigameHud hud;
   private World world;
   private float time;
@@ -178,6 +179,12 @@ public class Renderer {
 
   public void resize(int width, int height) {
     stage.getViewport().update(width, height, true);
+  }
+
+  public void dispose() {
+    hud.dispose();
+    background.getTexture().dispose();
+    Flag.dispose();
   }
 }
 

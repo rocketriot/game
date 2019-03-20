@@ -50,4 +50,8 @@ public class Flag extends Entity {
   public void removeOwner() {
     this.owner = null;
   }
+
+  public static void dispose() {
+    texture.getTexture().dispose();
+  }
 }

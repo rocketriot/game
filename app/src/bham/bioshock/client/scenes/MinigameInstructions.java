@@ -125,6 +125,15 @@ public class MinigameInstructions {
       showPrompt2 =true;
     batch.end();
   }
+
+  public void dispose() {
+    try {
+      font.dispose();
+      timerFont.dispose();
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+  }
 }
 
 

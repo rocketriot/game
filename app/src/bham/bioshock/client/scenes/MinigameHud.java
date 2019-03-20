@@ -127,6 +127,7 @@ public class MinigameHud implements Disposable {
     @Override
     public void dispose() {
         stage.dispose();
+        startText.dispose();
     }
 
 
