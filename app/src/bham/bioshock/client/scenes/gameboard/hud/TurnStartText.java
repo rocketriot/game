@@ -37,7 +37,7 @@ public class TurnStartText {
       if (duration <= 0) {
         showTurnPrompt = false;
       } else {
-        font = fontGenerator.generate(fontSize, new Color(1, 1, 1, duration/2));
+        font.setColor(1, 1, 1, duration/2);
       }
 
       batch.begin();
@@ -45,7 +45,6 @@ public class TurnStartText {
       int y = Config.GAME_WORLD_HEIGHT / 2;
       font.draw(batch, "Your Turn", x, y);
       batch.end();
-
     }
   }
 
@@ -58,9 +57,5 @@ public class TurnStartText {
     } else if (!store.isMainPlayersTurn() && wasMainPlayerTurn) {
       wasMainPlayerTurn = false;
     }
-  }
-
-  public void dispose() {
-    font.dispose();
   }
 }
