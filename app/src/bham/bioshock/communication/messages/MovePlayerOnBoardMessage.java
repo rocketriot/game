@@ -14,6 +14,6 @@ public class MovePlayerOnBoardMessage extends Message {
   public MovePlayerOnBoardMessage(Coordinates coordinates, UUID playerId) {
     super(Command.MOVE_PLAYER_ON_BOARD);
     this.id = playerId;
-    this.coordinates = coordinates;
+    this.coordinates = coordinates.copy();
   }
 }

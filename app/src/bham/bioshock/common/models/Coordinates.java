@@ -62,4 +62,8 @@ public class Coordinates implements Serializable {
   public String toString() {
     return "X: " + x + " , Y: " + y;
   }
+
+  public Coordinates copy() {
+    return new Coordinates(x, y);
+  }
 }

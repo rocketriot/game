@@ -79,10 +79,11 @@ public class StepsGenerator {
   }
   
   
-  public void updateFromServer(SpeedVector speed, Position pos) {
+  public void updateFromServer(SpeedVector speed, Position pos, Move move) {
     synchronized(steps) {
       steps.clear();
       entity.setStep(new Step(pos, speed));
+      currentMove = move;
       lastStep = null;
     }
   }

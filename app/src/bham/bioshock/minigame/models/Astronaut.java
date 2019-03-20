@@ -1,6 +1,7 @@
 package bham.bioshock.minigame.models;
 
 import static java.util.stream.Collectors.toList;
+import java.io.Serializable;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -13,12 +14,10 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Intersector.MinimumTranslationVector;
-import com.badlogic.gdx.scenes.scene2d.Group;
 import bham.bioshock.client.Assets;
 import bham.bioshock.client.controllers.SoundController;
 import bham.bioshock.common.Direction;
 import bham.bioshock.common.Position;
-import bham.bioshock.communication.Sendable;
 import bham.bioshock.minigame.PlanetPosition;
 import bham.bioshock.minigame.PlayerTexture;
 import bham.bioshock.minigame.objectives.Objective;
@@ -30,7 +29,8 @@ import bham.bioshock.minigame.worlds.World;
 
 public class Astronaut extends Entity {
 
-  private static final long serialVersionUID = -5131439342109870021L;
+  private static final long serialVersionUID = 3467047831018591965L;
+  
   private static AstronautTextures[] textures;
   private static TextureRegion[] hearts = new TextureRegion[5];
   
@@ -93,7 +93,7 @@ public class Astronaut extends Entity {
 
   public void moveChange() {
     if (move.movingLeft) {
-      dir = PlayerTexture.LEFT;
+      dir = PlayerTexture.LEFT; 
       stepsGenerator.moveLeft();
     } else if (move.movingRight) {
       dir = PlayerTexture.RIGHT;
@@ -167,7 +167,7 @@ public class Astronaut extends Entity {
       if (dieFront && texture.dyingFront.isAnimationFinished(dieTime)
           || texture.dyingBack.isAnimationFinished(dieTime)) {
         setRotation(0);
-        stepsGenerator.updateFromServer(new SpeedVector(), respawn);
+        stepsGenerator.updateFromServer(new SpeedVector(), respawn, new Move());
         setState(State.LOADED);
       }
       
@@ -392,7 +392,7 @@ public class Astronaut extends Entity {
     this.haveGun = haveGun;
     this.move = move;
     this.moveChange();
-    stepsGenerator.updateFromServer(speed, pos);
+    stepsGenerator.updateFromServer(speed, pos, move);
   }
 
   public void killAndRespawn(Position pos) {
@@ -415,12 +415,24 @@ public class Astronaut extends Entity {
     this.respawn = pos;
   }
   
-  public static class Move extends Sendable {
+  public static class Move implements Serializable {
 
     private static final long serialVersionUID = 3668803304780843571L;
     public boolean jumping = false;
     public boolean movingLeft = false;
     public boolean movingRight = false;
+    
+    public Move copy() {
+      Move m = new Move();
+      m.jumping = this.jumping;
+      m.movingLeft = this.movingLeft;
+      m.movingRight = this.movingRight;
+      return m;
+    }
+    
+    public String toString() {
+      return "j: " + jumping + ", l: " + movingLeft + ", r: "+ movingRight;
+    }
   }
   
   private static class AstronautTextures {

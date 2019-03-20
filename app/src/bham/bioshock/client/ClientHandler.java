@@ -9,7 +9,11 @@ import bham.bioshock.common.models.Player;
 import bham.bioshock.communication.Action;
 import bham.bioshock.communication.client.IClientHandler;
 import bham.bioshock.communication.messages.AddPlayerMessage;
+import bham.bioshock.communication.messages.DisconnectPlayerMessage;
 import bham.bioshock.communication.messages.GameBoardMessage;
+import bham.bioshock.communication.messages.JoinScreenMoveMessage;
+import bham.bioshock.communication.messages.MinigamePlayerMoveMessage;
+import bham.bioshock.communication.messages.MinigameStartMessage;
 import bham.bioshock.communication.messages.MovePlayerOnBoardMessage;
 
 public class ClientHandler implements IClientHandler {
@@ -31,8 +35,8 @@ public class ClientHandler implements IClientHandler {
             break;
           }
           case REMOVE_PLAYER: {
-            UUID id = (UUID) action.getArgument(0);
-            router.call(Route.REMOVE_PLAYER, id);
+            DisconnectPlayerMessage data = (DisconnectPlayerMessage) action.getMessage();
+            router.call(Route.REMOVE_PLAYER, data.playerId);
             break;
           }
           case START_GAME: {
@@ -56,11 +60,13 @@ public class ClientHandler implements IClientHandler {
             break;
           }
           case MINIGAME_START: {
-            router.call(Route.START_MINIGAME, action.getArguments());
+            MinigameStartMessage data = (MinigameStartMessage) action.getMessage();
+            router.call(Route.START_MINIGAME, data);
             break;
           }
           case MINIGAME_PLAYER_MOVE: {
-            router.call(Route.MINIGAME_PLAYER_UPDATE, action);
+            MinigamePlayerMoveMessage data = (MinigamePlayerMoveMessage) action.getMessage();
+            router.call(Route.MINIGAME_PLAYER_UPDATE, data);
             break;
           }
           case MINIGAME_END: {
@@ -68,15 +74,12 @@ public class ClientHandler implements IClientHandler {
             break;
           }
           case MINIGAME_BULLET: {
-            router.call(Route.MINIGAME_BULLET, action.getArguments());
+            router.call(Route.MINIGAME_BULLET, action.getMessage());
             break;
           }
           case JOIN_SCREEN_MOVE: {
-            router.call(Route.JOIN_SCREEN_UPDATE, action.getArguments());
-            break;
-          }
-          case SET_PLANET_OWNER: {
-            router.call(Route.SET_PLANET_OWNER, action.getArgument(0));
+            JoinScreenMoveMessage data = (JoinScreenMoveMessage) action.getMessage();
+            router.call(Route.JOIN_SCREEN_UPDATE, data);
             break;
           }
           default: {

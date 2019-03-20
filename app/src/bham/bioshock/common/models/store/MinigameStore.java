@@ -33,14 +33,17 @@ public class MinigameStore {
   public void updatePlayer(long time, UUID playerId, SpeedVector speed, Position pos, Move move,
       Boolean haveGun) {
     Long previous = lastMessage.get(playerId);
-    if(previous == null) {
+    if(previous == null || previous < time) {
       lastMessage.put(playerId, time);
-    } else if(previous < time) {
       Astronaut p = getPlayer(playerId);
       p.updateFromServer(speed, pos, move, haveGun);      
     }
   }
 
+  public HashMap<UUID, Long> getLastMessages() {
+    return lastMessage;
+  }
+  
   // Create world from the seeder
   public void seed(Store store, World world, Objective o) {
     this.currentWorld = world;

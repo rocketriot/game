@@ -1,7 +1,5 @@
 package bham.bioshock.server.handlers;
 
-import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Random;
 import java.util.UUID;
 import org.apache.logging.log4j.LogManager;
@@ -9,8 +7,9 @@ import org.apache.logging.log4j.Logger;
 import bham.bioshock.common.models.store.MinigameStore;
 import bham.bioshock.common.models.store.Store;
 import bham.bioshock.communication.Action;
-import bham.bioshock.communication.Command;
 import bham.bioshock.communication.messages.EndMinigameMessage;
+import bham.bioshock.communication.messages.MinigameStartMessage;
+import bham.bioshock.communication.messages.RequestMinigameStartMessage;
 import bham.bioshock.minigame.Clock;
 import bham.bioshock.minigame.ai.KillEveryoneAI;
 import bham.bioshock.minigame.ai.PlatformerAi;
@@ -42,13 +41,13 @@ public class MinigameHandler {
   /*
    * Create and seed the world, and send start game command to all clients
    */
-  public void startMinigame(Action action, UUID playerId, GameBoardHandler gameBoardHandler) {
+  public void startMinigame(RequestMinigameStartMessage data, UUID playerId, GameBoardHandler gameBoardHandler) {
     // Create a world for the minigame
     World w = new RandomWorld();
-    if(action.getArguments().size() != 0) {
-      planetId = (UUID) action.getArgument(0);      
-    } else {
+    if(data.planetId == null) {
       logger.error("Starting minigame without a planet ID (That's OK. for tests)!");
+    } else {
+      planetId = data.planetId;
     }
     Objective o;
     aiLoop = new MinigameAILoop();
@@ -89,10 +88,7 @@ public class MinigameHandler {
       setupMinigameEnd(gameBoardHandler, playerId);
    }
 
-    ArrayList<Serializable> arguments = new ArrayList<>();
-    arguments.add((Serializable) w);
-    arguments.add((Serializable) o);
-    handler.sendToAll(new Action(Command.MINIGAME_START, arguments));
+    handler.sendToAll(new MinigameStartMessage(w, o));
   }
   
   /**

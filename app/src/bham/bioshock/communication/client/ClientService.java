@@ -104,7 +104,7 @@ public class ClientService extends Thread implements IClientService, ActionHandl
    * @param action to be sent
    */
   public void send(Message message) {
-    send(Action.of(message));
+    send(new Action(message.command, message));
   }
   
   /**

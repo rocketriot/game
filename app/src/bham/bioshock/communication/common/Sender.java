@@ -10,8 +10,9 @@ import bham.bioshock.communication.Action;
 
 public class Sender extends Thread {
   private static final Logger logger = LogManager.getLogger(Sender.class);
-
+  
   private ObjectOutputStream client;
+  private long counter = 0;
   private BlockingQueue<Action> queue = new LinkedBlockingQueue<>();
 
   /**
@@ -31,6 +32,24 @@ public class Sender extends Thread {
   public void send(Action action) {
     queue.add(action);
   }
+  
+
+  public long getCounter() {
+    return counter;
+  }
+  
+  public void resetCounter() {
+    counter = 0;
+  }
+  
+  /**
+   * Returns the size of the queue of messages waiting to be sent
+   * 
+   * @return size
+   */
+  public int getQueueSize() {
+    return queue.size();
+  }
 
   /**
    * Reads messages from the queue and sends them to the client
@@ -39,6 +58,7 @@ public class Sender extends Thread {
     try {
       while (!isInterrupted()) {
         Action action = queue.take();
+        counter++;
         try {
           client.writeObject(action);
         } catch (IOException e) {

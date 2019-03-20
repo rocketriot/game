@@ -1,13 +1,12 @@
 package bham.bioshock.common.models;
 
 import bham.bioshock.common.Direction;
-import bham.bioshock.communication.Sendable;
-
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.UUID;
 
 /** Stores the data of a player on the game board */
-public class Player extends Sendable {
+public class Player implements Serializable {
 
   private static final long serialVersionUID = 5775730008817100527L;
 
@@ -159,7 +158,7 @@ public class Player extends Sendable {
     }
   }
 
-  public class Move extends Sendable {
+  public class Move implements Serializable {
     private Direction direction;
     private Coordinates coordinates;
 
