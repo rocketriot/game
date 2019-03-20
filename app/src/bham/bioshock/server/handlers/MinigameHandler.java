@@ -7,10 +7,10 @@ import org.apache.logging.log4j.Logger;
 import bham.bioshock.common.models.store.MinigameStore;
 import bham.bioshock.common.models.store.Store;
 import bham.bioshock.communication.Action;
-import bham.bioshock.communication.messages.EndMinigameMessage;
-import bham.bioshock.communication.messages.MinigameStartMessage;
-import bham.bioshock.communication.messages.RequestMinigameStartMessage;
-import bham.bioshock.communication.messages.UpdateObjectiveMessage;
+import bham.bioshock.communication.messages.minigame.EndMinigameMessage;
+import bham.bioshock.communication.messages.minigame.MinigameStartMessage;
+import bham.bioshock.communication.messages.minigame.RequestMinigameStartMessage;
+import bham.bioshock.communication.messages.objectives.UpdateObjectiveMessage;
 import bham.bioshock.minigame.Clock;
 import bham.bioshock.minigame.ai.KillEveryoneAI;
 import bham.bioshock.minigame.ai.PlatformerAi;
@@ -24,9 +24,9 @@ import bham.bioshock.server.ServerHandler;
 import bham.bioshock.server.ai.MinigameAILoop;
 
 public class MinigameHandler {
-  
+
   private static final Logger logger = LogManager.getLogger(MinigameHandler.class);
-  
+
   Store store;
   ServerHandler handler;
   MinigameAILoop aiLoop;
@@ -42,10 +42,11 @@ public class MinigameHandler {
   /*
    * Create and seed the world, and send start game command to all clients
    */
-  public void startMinigame(RequestMinigameStartMessage data, UUID playerId, GameBoardHandler gameBoardHandler) {
+  public void startMinigame(RequestMinigameStartMessage data, UUID playerId,
+      GameBoardHandler gameBoardHandler) {
     // Create a world for the minigame
     World w = new RandomWorld();
-    if(data.planetId == null) {
+    if (data.planetId == null) {
       logger.error("Starting minigame without a planet ID (That's OK. for tests)!");
     } else {
       planetId = data.planetId;
@@ -55,12 +56,12 @@ public class MinigameHandler {
 
     Random rand = new Random();
 
-//    switch(rand.nextInt(100)%4) {
-    switch(1) {
+    // switch(rand.nextInt(100)%4) {
+    switch (1) {
       case 1:
         o = new CaptureTheFlag(w);
         for (UUID id : store.getCpuPlayers()) {
-          //NOTE CHANGE TO CAPTURE the flag
+          // NOTE CHANGE TO CAPTURE the flag
           aiLoop.registerHandler(new KillEveryoneAI(id, store, handler));
         }
         break;
@@ -79,18 +80,17 @@ public class MinigameHandler {
       default:
         o = new CaptureTheFlag(w);
         for (UUID id : store.getCpuPlayers()) {
-          //NOTE CHANGE TO CAPTURE the flag
+          // NOTE CHANGE TO CAPTURE the flag
           aiLoop.registerHandler(new KillEveryoneAI(id, store, handler));
         }
         break;
     }
-    
+
     aiLoop.start();
     setupMinigameEnd(gameBoardHandler, playerId);
-
     handler.sendToAll(new MinigameStartMessage(w, o));
   }
-  
+
   /**
    * Starts a clock ending the minigame
    */
@@ -101,16 +101,17 @@ public class MinigameHandler {
     clock.at(60f, new Clock.TimeListener() {
       @Override
       public void handle(Clock.TimeUpdateEvent event) {
-        if(planetId == null) return;
-        if(minigameTimer != null) {
+        if (planetId == null)
+          return;
+        if (minigameTimer != null) {
           minigameTimer.interrupt();
         }
         MinigameStore localStore = store.getMinigameStore();
         Objective o = localStore.getObjective();
-        endMinigame(o.getWinner(), gameBoardHandler, playerId);          
+        endMinigame(o.getWinner(), gameBoardHandler, playerId);
       }
     });
-    
+
     minigameTimer = new Thread() {
       private long time;
 
@@ -121,9 +122,7 @@ public class MinigameHandler {
             long delta = (System.currentTimeMillis() - time);
             time = System.currentTimeMillis();
             clock.update((int) delta);
-            
-            updateObjectiveState();
-            
+            injectHandlerToObjective();
             Thread.sleep(1000);
           }
         } catch (InterruptedException e) {
@@ -134,13 +133,31 @@ public class MinigameHandler {
     minigameTimer.start();
   }
 
-  protected void updateObjectiveState() {
+  private void injectHandlerToObjective() {
     MinigameStore localStore = store.getMinigameStore();
-    if(localStore == null) return;
+    if (localStore == null)
+      return;
     Objective objective = localStore.getObjective();
-    if(objective == null) return;
-    handler.sendToAll(new UpdateObjectiveMessage(objective));
+    if (objective == null)
+      return;
+    objective.setServer(handler);
   }
+
+  // protected void updateObjectiveState() {
+  // MinigameStore localStore = store.getMinigameStore();
+  // if(localStore == null) return;
+  // Objective objective = localStore.getObjective();
+  // if(objective == null) return;
+
+  // UpdateObjectiveMessage message = new UpdateObjectiveMessage(objective);
+
+  // objective.updateHealth(message.health);
+  // if(objective instanceof CaptureTheFlag) {
+  // ((CaptureTheFlag) objective).updateFlagOwner(message.flagOwner);
+  // }
+
+  // handler.sendToAllExcept(message, store.getMainPlayer().getId());
+  // }
 
   /**
    * Sync player movement and position
@@ -148,7 +165,7 @@ public class MinigameHandler {
   public void playerMove(Action action, UUID playerId) {
     handler.sendToAllExcept(action, playerId);
   }
-  
+
   public void playerStep(Action action, UUID playerId) {
     handler.sendToAllExcept(action, playerId);
   }
@@ -162,7 +179,8 @@ public class MinigameHandler {
 
   /**
    * Method to end the minigame and send the players back to the main board
-   * @param gameBoardHandler 
+   * 
+   * @param gameBoardHandler
    */
   public void endMinigame(UUID winnerId, GameBoardHandler gameBoardHandler, UUID playerId) {
     boolean capturedPlanet = false;
@@ -173,7 +191,8 @@ public class MinigameHandler {
       }
     }
 
-    EndMinigameMessage msg = new EndMinigameMessage(playerId, winnerId, planetId, capturedPlanet, points);
+    EndMinigameMessage msg =
+        new EndMinigameMessage(playerId, winnerId, planetId, capturedPlanet, points);
     planetId = null;
 
     aiLoop.finish();

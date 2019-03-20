@@ -9,8 +9,8 @@ import bham.bioshock.common.models.*;
 import bham.bioshock.common.models.store.Store;
 import bham.bioshock.common.pathfinding.AStarPathfinding;
 import bham.bioshock.communication.client.IClientService;
-import bham.bioshock.communication.messages.EndTurnMessage;
-import bham.bioshock.communication.messages.MovePlayerOnBoardMessage;
+import bham.bioshock.communication.messages.boardgame.EndTurnMessage;
+import bham.bioshock.communication.messages.boardgame.MovePlayerOnBoardMessage;
 import com.google.inject.Inject;
 
 import java.util.ArrayList;

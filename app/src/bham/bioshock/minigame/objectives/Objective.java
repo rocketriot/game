@@ -3,8 +3,12 @@ package bham.bioshock.minigame.objectives;
 import bham.bioshock.client.Router;
 import bham.bioshock.common.Position;
 import bham.bioshock.common.models.store.MinigameStore;
-import bham.bioshock.communication.messages.UpdateObjectiveMessage.HealthMessage;
+import bham.bioshock.communication.messages.Message;
+import bham.bioshock.communication.messages.objectives.KillAndRespawnMessage;
+import bham.bioshock.communication.messages.objectives.SubstractHealthMessage;
+import bham.bioshock.communication.messages.objectives.UpdateObjectiveMessage.HealthMessage;
 import bham.bioshock.minigame.worlds.World;
+import bham.bioshock.server.ServerHandler;
 import bham.bioshock.minigame.models.Astronaut;
 import bham.bioshock.minigame.models.Entity.State;
 import bham.bioshock.minigame.models.Gun;
@@ -21,7 +25,7 @@ import java.util.UUID;
  * Objective abstract class.
  */
 
-public abstract class Objective implements Serializable, Cloneable {
+public abstract class Objective implements Serializable {
 
   private static final long serialVersionUID = 7485771472370553399L;
   private static int INITIAL_HEALTH = 4;
@@ -30,6 +34,7 @@ public abstract class Objective implements Serializable, Cloneable {
   protected transient Router router;
   protected transient MinigameStore localStore;
   private transient Position[] respawnPositions;
+  private transient ServerHandler serverHandler;
   protected HashMap<UUID, Integer> health = new HashMap<>();
 
   public abstract UUID getWinner();
@@ -45,6 +50,11 @@ public abstract class Objective implements Serializable, Cloneable {
     });
   }
 
+  public void setServer(ServerHandler serverHandler) {
+    if(this.serverHandler == null) {
+      this.serverHandler = serverHandler;      
+    }
+  }
 
   public Collection<Astronaut> getPlayers() {
     return localStore.getPlayers();
@@ -59,23 +69,28 @@ public abstract class Objective implements Serializable, Cloneable {
   }
   
   public void updateHealth(ArrayList<HealthMessage> health2) {
-    for(HealthMessage h : health2) {
-        health.put(h.id, h.value);
-        updatePlayerHealth(h.id, h.value);
-    }
+//    synchronized(health) {
+//      for(HealthMessage h : health2) {
+//        health.put(h.id, h.value);
+//        updatePlayerHealth(h.id, h.value);
+//      }
+//    }
   }
 
   protected abstract void updatePlayerHealth(UUID key, Integer value);
 
   /**
-   * Called everytime a player is shot
+   * Called every time a player is shot. Handled only by the host
    * 
    * @param player: the player who got shot
    * @param killer: the player who shot
    */
   public void gotShot(Astronaut player, Astronaut killer) {
     if(player.is(State.REMOVING)) return;
+    if(serverHandler == null) return;
     health.computeIfPresent(player.getId(), (k, v) -> v - 1);
+    System.out.println(player.getId());
+    serverHandler.sendToAllExcept(new SubstractHealthMessage(player.getId(), killer.getId()), localStore.getMainPlayer().getId());
   }
   
   public boolean isDead(UUID playerId) {
@@ -100,9 +115,23 @@ public abstract class Objective implements Serializable, Cloneable {
       gun.load();
       localStore.addEntity(gun);
     }
-    health.put(player.getId(), INITIAL_HEALTH);
+    synchronized(health) {
+      health.put(player.getId(), INITIAL_HEALTH);
+    }
+  }
+  
+  public void handle(Message m) {
+    if(m instanceof SubstractHealthMessage) {
+      this.handle((SubstractHealthMessage) m);
+    } else if (m instanceof KillAndRespawnMessage) {
+      this.handle((KillAndRespawnMessage) m);
+    }
   }
 
+  public void handle(SubstractHealthMessage m) {
+    
+  }
+  
   /**
    * Seeds the minigame store with the additional entities required to each objective
    * 

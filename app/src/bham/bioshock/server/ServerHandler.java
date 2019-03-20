@@ -4,7 +4,7 @@ import bham.bioshock.common.models.store.Store;
 import bham.bioshock.communication.Action;
 import bham.bioshock.communication.Command;
 import bham.bioshock.communication.messages.Message;
-import bham.bioshock.communication.messages.RequestMinigameStartMessage;
+import bham.bioshock.communication.messages.minigame.RequestMinigameStartMessage;
 import bham.bioshock.communication.server.ServerService;
 import bham.bioshock.server.handlers.GameBoardHandler;
 import bham.bioshock.server.handlers.JoinScreenHandler;
@@ -132,7 +132,6 @@ public class ServerHandler {
   public void sendTo(UUID clientId, Message message) {
     connected.get(clientId).send(Action.of(message));
   }
-
 
   /**
    * Register new player

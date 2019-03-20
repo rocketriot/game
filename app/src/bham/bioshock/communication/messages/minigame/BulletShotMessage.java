@@ -1,8 +1,9 @@
-package bham.bioshock.communication.messages;
+package bham.bioshock.communication.messages.minigame;
 
 import java.util.UUID;
 import bham.bioshock.common.Position;
 import bham.bioshock.communication.Command;
+import bham.bioshock.communication.messages.Message;
 import bham.bioshock.minigame.models.Bullet;
 import bham.bioshock.minigame.physics.SpeedVector;
 

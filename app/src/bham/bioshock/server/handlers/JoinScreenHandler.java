@@ -6,11 +6,11 @@ import bham.bioshock.common.models.Player;
 import bham.bioshock.common.models.store.Store;
 import bham.bioshock.communication.Action;
 import bham.bioshock.communication.Command;
-import bham.bioshock.communication.messages.AddPlayerMessage;
-import bham.bioshock.communication.messages.DisconnectPlayerMessage;
-import bham.bioshock.communication.messages.RegisterMessage;
-import bham.bioshock.communication.messages.RequestMinigameStartMessage;
-import bham.bioshock.communication.messages.StartGameMessage;
+import bham.bioshock.communication.messages.boardgame.StartGameMessage;
+import bham.bioshock.communication.messages.joinscreen.AddPlayerMessage;
+import bham.bioshock.communication.messages.joinscreen.DisconnectPlayerMessage;
+import bham.bioshock.communication.messages.joinscreen.RegisterMessage;
+import bham.bioshock.communication.messages.minigame.RequestMinigameStartMessage;
 import bham.bioshock.communication.server.ServerService;
 import bham.bioshock.server.ServerHandler;
 

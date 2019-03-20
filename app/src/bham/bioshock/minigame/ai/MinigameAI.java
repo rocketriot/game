@@ -3,8 +3,8 @@ package bham.bioshock.minigame.ai;
 import java.util.UUID;
 import bham.bioshock.common.models.store.MinigameStore;
 import bham.bioshock.common.models.store.Store;
-import bham.bioshock.communication.messages.MinigamePlayerMoveMessage;
-import bham.bioshock.communication.messages.MinigamePlayerStepMessage;
+import bham.bioshock.communication.messages.minigame.MinigamePlayerMoveMessage;
+import bham.bioshock.communication.messages.minigame.MinigamePlayerStepMessage;
 import bham.bioshock.minigame.models.Astronaut.Move;
 import bham.bioshock.server.ServerHandler;
 

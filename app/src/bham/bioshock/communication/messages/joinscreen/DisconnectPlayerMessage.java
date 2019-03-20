@@ -1,7 +1,8 @@
-package bham.bioshock.communication.messages;
+package bham.bioshock.communication.messages.joinscreen;
 
 import java.util.UUID;
 import bham.bioshock.communication.Command;
+import bham.bioshock.communication.messages.Message;
 
 public class DisconnectPlayerMessage extends Message {
 

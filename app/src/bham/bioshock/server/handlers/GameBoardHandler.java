@@ -11,9 +11,9 @@ import bham.bioshock.common.models.Player;
 import bham.bioshock.common.models.store.Store;
 import bham.bioshock.communication.Action;
 import bham.bioshock.communication.Command;
-import bham.bioshock.communication.messages.GameBoardMessage;
-import bham.bioshock.communication.messages.MovePlayerOnBoardMessage;
-import bham.bioshock.communication.messages.RequestMinigameStartMessage;
+import bham.bioshock.communication.messages.boardgame.GameBoardMessage;
+import bham.bioshock.communication.messages.boardgame.MovePlayerOnBoardMessage;
+import bham.bioshock.communication.messages.minigame.RequestMinigameStartMessage;
 import bham.bioshock.communication.server.BoardAi;
 import bham.bioshock.server.ServerHandler;
 

@@ -18,10 +18,10 @@ import bham.bioshock.common.models.store.Store;
 import bham.bioshock.communication.client.ClientService;
 import bham.bioshock.communication.client.CommunicationClient;
 import bham.bioshock.communication.client.ReconnectionThread;
-import bham.bioshock.communication.messages.AddPlayerMessage.JoiningPlayer;
-import bham.bioshock.communication.messages.JoinScreenMoveMessage;
-import bham.bioshock.communication.messages.RegisterMessage;
-import bham.bioshock.communication.messages.StartGameMessage;
+import bham.bioshock.communication.messages.boardgame.StartGameMessage;
+import bham.bioshock.communication.messages.joinscreen.JoinScreenMoveMessage;
+import bham.bioshock.communication.messages.joinscreen.RegisterMessage;
+import bham.bioshock.communication.messages.joinscreen.AddPlayerMessage.JoiningPlayer;
 
 public class JoinScreenController extends Controller {
 

@@ -51,7 +51,6 @@ public class CaptureTheFlag extends Objective {
   public void captured(Astronaut a) {
     if(a.is(State.REMOVING)) return;
     this.flagOwner = a.getId();
-    flag.setOwner(a);
   }
 
   @Override
@@ -61,17 +60,14 @@ public class CaptureTheFlag extends Objective {
 
     return instructions;
   }
-//  
-//  public void update(MinigameStore store, CaptureTheFlag captureTheFlag) {
-//    super.update(captureTheFlag);
-//    System.out.println("Update! Flag owner:" + this.flagOwner);
-//    this.health = captureTheFlag.health;
-//    this.flagOwner = captureTheFlag.flagOwner;
-//    this.flagPosition = captureTheFlag.flagPosition;
-//    Astronaut owner = store.getPlayer(flagOwner);
-//    flag.setOwner(owner);
-//  }
 
+  public void updateFlagOwner(UUID ownerId) {
+    this.flagOwner = ownerId;
+    Astronaut owner = localStore.getPlayer(flagOwner);
+    flag.setOwner(owner);
+    flagPosition = flag.getPos();
+  }
+  
   @Override
   protected void updatePlayerHealth(UUID playerId, Integer value) {
     if (isDead(playerId)) {
@@ -86,5 +82,9 @@ public class CaptureTheFlag extends Objective {
         flagOwner = null;
       }
     }
+  }
+
+  public UUID getFlagOwner() {
+    return flagOwner;
   }
 }

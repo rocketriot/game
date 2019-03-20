@@ -14,9 +14,7 @@ import bham.bioshock.minigame.worlds.World;
 public class KillThemAll extends Objective {
   private static final long serialVersionUID = 5035692465754355325L;
 
-  private HashMap<UUID, Float> health = new HashMap<>();
   private HashMap<UUID, Integer> kills = new HashMap<>();
-  private float initialHealth = 100.0f;
 
   @Override
   public UUID getWinner() {
@@ -29,7 +27,6 @@ public class KillThemAll extends Objective {
   public void init(World world, Router router, MinigameStore store) {
     super.init(world, router, store);
     store.getPlayers().forEach(player -> {
-      health.put(player.getId(), initialHealth);
       kills.put(player.getId(), 0);
     });
   }

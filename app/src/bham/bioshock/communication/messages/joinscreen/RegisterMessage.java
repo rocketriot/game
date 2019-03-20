@@ -1,7 +1,8 @@
-package bham.bioshock.communication.messages;
+package bham.bioshock.communication.messages.joinscreen;
 
 import bham.bioshock.common.models.Player;
 import bham.bioshock.communication.Command;
+import bham.bioshock.communication.messages.Message;
 
 public class RegisterMessage extends Message {
 

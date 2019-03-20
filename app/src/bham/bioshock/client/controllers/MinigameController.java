@@ -1,7 +1,5 @@
 package bham.bioshock.client.controllers;
 
-import bham.bioshock.communication.messages.EndMinigameMessage;
-import bham.bioshock.communication.messages.MinigameEndMessage;
 import java.util.UUID;
 import com.google.inject.Inject;
 import bham.bioshock.client.BoardGame;
@@ -13,13 +11,16 @@ import bham.bioshock.common.models.Player;
 import bham.bioshock.common.models.store.MinigameStore;
 import bham.bioshock.common.models.store.Store;
 import bham.bioshock.communication.client.ClientService;
-import bham.bioshock.communication.messages.BulletShotMessage;
-import bham.bioshock.communication.messages.MinigamePlayerMoveMessage;
-import bham.bioshock.communication.messages.MinigamePlayerStepMessage;
-import bham.bioshock.communication.messages.MinigameStartMessage;
-import bham.bioshock.communication.messages.RequestMinigameStartMessage;
-import bham.bioshock.communication.messages.UpdateObjectiveMessage;
+import bham.bioshock.communication.messages.minigame.BulletShotMessage;
+import bham.bioshock.communication.messages.minigame.EndMinigameMessage;
+import bham.bioshock.communication.messages.minigame.MinigameEndMessage;
+import bham.bioshock.communication.messages.minigame.MinigamePlayerMoveMessage;
+import bham.bioshock.communication.messages.minigame.MinigamePlayerStepMessage;
+import bham.bioshock.communication.messages.minigame.MinigameStartMessage;
+import bham.bioshock.communication.messages.minigame.RequestMinigameStartMessage;
+import bham.bioshock.communication.messages.objectives.UpdateObjectiveMessage;
 import bham.bioshock.minigame.models.Bullet;
+import bham.bioshock.minigame.objectives.CaptureTheFlag;
 import bham.bioshock.minigame.objectives.Objective;
 import bham.bioshock.minigame.worlds.World;
 
@@ -81,6 +82,9 @@ public class MinigameController extends Controller {
     Objective o = localStore.getObjective();
     if(o == null) return;
     o.updateHealth(data.health);
+    if(o instanceof CaptureTheFlag) {
+      ((CaptureTheFlag) o).updateFlagOwner(data.flagOwner);
+    }
   }
   
   

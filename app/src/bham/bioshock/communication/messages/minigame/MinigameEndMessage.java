@@ -1,6 +1,7 @@
-package bham.bioshock.communication.messages;
+package bham.bioshock.communication.messages.minigame;
 
 import bham.bioshock.communication.Command;
+import bham.bioshock.communication.messages.Message;
 
 public class MinigameEndMessage extends Message {
 

@@ -4,15 +4,15 @@ import com.badlogic.gdx.Gdx;
 import com.google.inject.Inject;
 import bham.bioshock.communication.Action;
 import bham.bioshock.communication.client.IClientHandler;
-import bham.bioshock.communication.messages.AddPlayerMessage;
-import bham.bioshock.communication.messages.DisconnectPlayerMessage;
-import bham.bioshock.communication.messages.GameBoardMessage;
-import bham.bioshock.communication.messages.JoinScreenMoveMessage;
-import bham.bioshock.communication.messages.MinigamePlayerMoveMessage;
-import bham.bioshock.communication.messages.MinigamePlayerStepMessage;
-import bham.bioshock.communication.messages.MinigameStartMessage;
-import bham.bioshock.communication.messages.MovePlayerOnBoardMessage;
-import bham.bioshock.communication.messages.UpdateObjectiveMessage;
+import bham.bioshock.communication.messages.boardgame.GameBoardMessage;
+import bham.bioshock.communication.messages.boardgame.MovePlayerOnBoardMessage;
+import bham.bioshock.communication.messages.joinscreen.AddPlayerMessage;
+import bham.bioshock.communication.messages.joinscreen.DisconnectPlayerMessage;
+import bham.bioshock.communication.messages.joinscreen.JoinScreenMoveMessage;
+import bham.bioshock.communication.messages.minigame.MinigamePlayerMoveMessage;
+import bham.bioshock.communication.messages.minigame.MinigamePlayerStepMessage;
+import bham.bioshock.communication.messages.minigame.MinigameStartMessage;
+import bham.bioshock.communication.messages.objectives.UpdateObjectiveMessage;
 
 public class ClientHandler implements IClientHandler {
   
