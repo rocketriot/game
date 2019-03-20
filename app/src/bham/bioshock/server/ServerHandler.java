@@ -30,7 +30,7 @@ public class ServerHandler {
   private MinigameHandler minigameHandler;
   private DevServer devServer;
   
-  private final boolean DEBUG_SERVER = true;
+  private final boolean DEBUG_SERVER = false;
   
   
   public ServerHandler(Store store, Server server) {

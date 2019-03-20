@@ -68,4 +68,12 @@ public class KillThemAll extends Objective {
     kills.computeIfPresent(p.getId(), (k, v) -> (v + 1));
   }
 
+  @Override
+  protected void updatePlayerHealth(UUID playerId, Integer value) {
+    if (isDead(playerId)) {
+      killAndRespawnPlayer(localStore.getPlayer(playerId), getRandomRespawn());
+      router.call(Route.MINIGAME_MOVE);
+    }
+  }
+
 }

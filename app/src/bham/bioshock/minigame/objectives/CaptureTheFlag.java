@@ -41,24 +41,9 @@ public class CaptureTheFlag extends Objective {
   }
 
   @Override
-  public void gotShot(Astronaut player, Astronaut killer) {
-    super.gotShot(player, killer);
-    if (isDead(player.getId())) {
-      flag.removeOwner();
-      flagPosition = (Position) player.getPos();
-      killAndRespawnPlayer(player, getRandomRespawn());
-
-      if (flagOwner != null && flagOwner.equals(player.getId())) {
-        flag.getPos().x = flagPosition.x;
-        flag.getPos().y = flagPosition.y;
-        flagOwner = null;
-      }
-    }
-  }
-
-  @Override
   public void seed(MinigameStore store) {
     flag = new Flag(world, flagPosition.x, flagPosition.y);
+    flag.load();
     store.addEntity(flag);
   }
 
@@ -76,22 +61,30 @@ public class CaptureTheFlag extends Objective {
 
     return instructions;
   }
-  
-  public void update(MinigameStore store, CaptureTheFlag captureTheFlag) {
-    super.update(captureTheFlag);
-    this.health = captureTheFlag.health;
-    this.flagOwner = captureTheFlag.flagOwner;
-    this.flagPosition = captureTheFlag.flagPosition;
-    Astronaut owner = store.getPlayer(flagOwner);
-    flag.setOwner(owner);
-  }
-  
+//  
+//  public void update(MinigameStore store, CaptureTheFlag captureTheFlag) {
+//    super.update(captureTheFlag);
+//    System.out.println("Update! Flag owner:" + this.flagOwner);
+//    this.health = captureTheFlag.health;
+//    this.flagOwner = captureTheFlag.flagOwner;
+//    this.flagPosition = captureTheFlag.flagPosition;
+//    Astronaut owner = store.getPlayer(flagOwner);
+//    flag.setOwner(owner);
+//  }
+
   @Override
-  public CaptureTheFlag clone() {
-    CaptureTheFlag o = (CaptureTheFlag) super.clone();
-//    o.health = this.getHealthCopy();
-    o.flagPosition = flagPosition.copy();
-    o.flagOwner = flagOwner;
-    return o;
+  protected void updatePlayerHealth(UUID playerId, Integer value) {
+    if (isDead(playerId)) {
+      flag.removeOwner();
+      Astronaut player = localStore.getPlayer(playerId);
+      flagPosition = (Position) player.getPos();
+      killAndRespawnPlayer(player, getRandomRespawn());
+
+      if (flagOwner != null && flagOwner.equals(player.getId())) {
+        flag.getPos().x = flagPosition.x;
+        flag.getPos().y = flagPosition.y;
+        flagOwner = null;
+      }
+    }
   }
 }

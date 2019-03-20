@@ -139,7 +139,7 @@ public class MinigameHandler {
     if(localStore == null) return;
     Objective objective = localStore.getObjective();
     if(objective == null) return;
-    handler.sendToAllExcept(new UpdateObjectiveMessage(objective), store.getMainPlayer().getId());
+    handler.sendToAll(new UpdateObjectiveMessage(objective));
   }
 
   /**

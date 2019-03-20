@@ -80,7 +80,7 @@ public class MinigameController extends Controller {
     if(localStore == null) return;
     Objective o = localStore.getObjective();
     if(o == null) return;
-    o.update(data.objective);
+    o.updateHealth(data.health);
   }
   
   

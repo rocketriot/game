@@ -3,15 +3,18 @@ package bham.bioshock.minigame.objectives;
 import bham.bioshock.client.Router;
 import bham.bioshock.common.Position;
 import bham.bioshock.common.models.store.MinigameStore;
+import bham.bioshock.communication.messages.UpdateObjectiveMessage.HealthMessage;
 import bham.bioshock.minigame.worlds.World;
 import bham.bioshock.minigame.models.Astronaut;
 import bham.bioshock.minigame.models.Entity.State;
 import bham.bioshock.minigame.models.Gun;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.Random;
+import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -51,28 +54,18 @@ public abstract class Objective implements Serializable, Cloneable {
     return health.get(id);
   }
   
-  public void update(Objective o) {
-    if(o.health != null) {
-      this.health = o.health;      
-    }
+  public Set<Entry<UUID, Integer>> getHealthCopy() {
+    return health.entrySet();
   }
   
-  public HashMap<UUID, Integer> getHealthCopy() {
-    health = new HashMap<>();
-    for(Entry<UUID, Integer> entry : health.entrySet())
-      health.put(entry.getKey(), entry.getValue());
-    return health;
-  }
-  
-  @Override
-  public Objective clone() {
-    try {
-      return (Objective) super.clone();
-    } catch (CloneNotSupportedException e) {
-      e.printStackTrace();
+  public void updateHealth(ArrayList<HealthMessage> health2) {
+    for(HealthMessage h : health2) {
+        health.put(h.id, h.value);
+        updatePlayerHealth(h.id, h.value);
     }
-    return null;
   }
+
+  protected abstract void updatePlayerHealth(UUID key, Integer value);
 
   /**
    * Called everytime a player is shot

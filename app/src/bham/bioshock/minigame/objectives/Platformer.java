@@ -141,4 +141,8 @@ public class Platformer extends Objective {
     return speedBoost.get(playerId);
   }
 
+  @Override
+  protected void updatePlayerHealth(UUID key, Integer value) {
+  }
+
 }
