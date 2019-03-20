@@ -8,7 +8,6 @@ import bham.bioshock.common.consts.GridPoint;
 import bham.bioshock.common.models.*;
 import bham.bioshock.common.models.store.Store;
 import bham.bioshock.common.pathfinding.AStarPathfinding;
-import bham.bioshock.communication.Action;
 import bham.bioshock.communication.client.IClientService;
 import bham.bioshock.communication.messages.EndTurnMessage;
 import bham.bioshock.communication.messages.MovePlayerOnBoardMessage;
@@ -41,7 +40,7 @@ public class GameBoardController extends Controller {
   }
 
   public void savePlayers(ArrayList<Player> players) {
-    store.setPlayers(players);
+    store.savePlayers(players);
   }
   
   public void setOwner(UUID[] planetOwner) {
@@ -49,6 +48,14 @@ public class GameBoardController extends Controller {
     UUID planetId = planetOwner[1];
     
     store.setPlanetOwner(playerId, planetId);
+  }
+  
+  public void updateCoordinates(Coordinates[] coordinates) {
+    ArrayList<Player> players = store.getPlayers();
+    
+    for(int i=0; i<coordinates.length; i++) {
+      players.get(i).setCoordinates(coordinates[i]);
+    }
   }
 
   public void move(Coordinates destination) {

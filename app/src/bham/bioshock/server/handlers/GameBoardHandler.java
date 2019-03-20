@@ -54,7 +54,7 @@ public class GameBoardHandler {
     GameBoard gameBoard = new GameBoard(); 
     generateGrid(gameBoard, players);
 
-    handler.sendToAll(new GameBoardMessage(gameBoard, players));
+    handler.sendToAll(new GameBoardMessage(gameBoard, players, additionalPlayers));
   }
 
   /** Handles a player moving on their turn */

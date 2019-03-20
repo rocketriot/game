@@ -75,9 +75,12 @@ public class Store {
     return players.stream().filter(p -> p.getId().equals(id)).findAny().orElse(null);
   }
 
-  public void setPlayers(ArrayList<Player> ps) {
-    this.players.clear();
-    players = ps;
+  public void savePlayers(ArrayList<Player> ps) {
+    for(Player p : ps) {
+      if(!players.contains(p)) {
+        players.add(p);
+      }
+    }
   }
 
   public void addPlayer(Player player) {
@@ -189,8 +192,7 @@ public class Store {
   
   public Boolean isReconnecting() {
     return reconnecting;
-  }
-  
+  } 
   
 
 }

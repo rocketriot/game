@@ -53,10 +53,12 @@ public class MinigameController extends Controller {
   }
   
   public void updatePlayerStep(MinigamePlayerStepMessage data) {
+    if(localStore == null) return;
     localStore.updatePlayerStep(data.created, data.playerId, data.speed, data.position, data.haveGun);
   }
   
   public void updatePlayerMove(MinigamePlayerMoveMessage data) {
+    if(localStore == null) return;
     localStore.updatePlayerMove(data.playerId, data.move);
   }
   
@@ -75,10 +77,10 @@ public class MinigameController extends Controller {
   }
   
   public void updateObjective(UpdateObjectiveMessage data) {
+    if(localStore == null) return;
     Objective o = localStore.getObjective();
-    if(o != null) {
-      o.update(data.objective);
-    }
+    if(o == null) return;
+    o.update(data.objective);
   }
   
   

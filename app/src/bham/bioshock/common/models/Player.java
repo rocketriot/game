@@ -157,6 +157,19 @@ public class Player implements Serializable {
       }
     }
   }
+  
+  @Override
+  public boolean equals(Object o) { 
+      // If the object is compared with itself then return true   
+      if (o == this) { 
+          return true; 
+      }
+      if (!(o instanceof Player)) { 
+          return false; 
+      } 
+      Player p = (Player) o; 
+      return this.id.equals(p.getId());
+  } 
 
   public class Move implements Serializable {
     private Direction direction;
