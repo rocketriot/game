@@ -33,18 +33,18 @@ public class TurnStartText {
   public void render() {
     checkTurnChange();
     if (store.isMainPlayersTurn() && showTurnPrompt) {
+      duration -= Gdx.graphics.getDeltaTime();
+      if (duration <= 0) {
+        showTurnPrompt = false;
+      } else {
+        font.setColor(1, 1, 1, duration/2);
+      }
+
       batch.begin();
       int x = Config.GAME_WORLD_WIDTH / 2 - 200;
       int y = Config.GAME_WORLD_HEIGHT / 2;
       font.draw(batch, "Your Turn", x, y);
       batch.end();
-
-      duration -= Gdx.graphics.getDeltaTime();
-      if (duration <= 0) {
-        showTurnPrompt = false;
-      } else {
-        font = fontGenerator.generate(fontSize, new Color(1, 1, 1, duration/2));
-      }
     }
   }
 
