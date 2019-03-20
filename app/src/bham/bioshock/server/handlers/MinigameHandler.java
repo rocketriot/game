@@ -168,7 +168,6 @@ public class MinigameHandler {
     boolean capturedPlanet = false;
     int points = 100;
     if (winnerId != null) {
-      store.getPlayer(winnerId).addPoints(100);
       if (winnerId.equals(playerId)) {
         capturedPlanet = true;
       }
