@@ -7,6 +7,10 @@ import bham.bioshock.common.models.store.Store;
 import bham.bioshock.communication.Action;
 import bham.bioshock.communication.Command;
 import bham.bioshock.communication.messages.AddPlayerMessage;
+import bham.bioshock.communication.messages.DisconnectPlayerMessage;
+import bham.bioshock.communication.messages.RegisterMessage;
+import bham.bioshock.communication.messages.RequestMinigameStartMessage;
+import bham.bioshock.communication.messages.StartGameMessage;
 import bham.bioshock.communication.server.ServerService;
 import bham.bioshock.server.ServerHandler;
 
@@ -31,7 +35,8 @@ public class JoinScreenHandler {
       service.send(new Action(Command.SERVER_FULL));
       return;
     }
-    Player player = (Player) action.getArgument(0);
+    RegisterMessage data = (RegisterMessage) action.getMessage();
+    Player player = data.player;
     handler.registerClient(player.getId(), service);
     addPlayer(player);
   }
@@ -56,7 +61,7 @@ public class JoinScreenHandler {
   }
 
   public void disconnectPlayer(UUID clientId) {
-    handler.sendToAll(new Action(Command.REMOVE_PLAYER, clientId));
+    handler.sendToAll(new DisconnectPlayerMessage(clientId));
   }
 
   private ArrayList<Player> createCpuPlayers() {
@@ -84,17 +89,17 @@ public class JoinScreenHandler {
   public void startGame(Action action, GameBoardHandler gameBoardHandler) {
     ArrayList<Player> cpuPlayers = createCpuPlayers();
     // Send the board and the players
-    gameBoardHandler.getGameBoard(action, cpuPlayers);
+    gameBoardHandler.getGameBoard(cpuPlayers);
 
     // Tell the clients to start the game
-    handler.sendToAll(new Action(Command.START_GAME));
+    handler.sendToAll(new StartGameMessage());
   }
 
   public void minigameDirectStart(Action action, UUID playerId, GameBoardHandler gameBoardHandler,
       MinigameHandler minigameHandler) {
     ArrayList<Player> cpuPlayers = createCpuPlayers();
     // Send the board and the players
-    gameBoardHandler.getGameBoard(action, cpuPlayers);
+    gameBoardHandler.getGameBoard(cpuPlayers);
 
     // Wait for the board
     try {
@@ -102,8 +107,8 @@ public class JoinScreenHandler {
     } catch (InterruptedException e) {
       e.printStackTrace();
     }
-
-    minigameHandler.startMinigame(new Action(Command.MINIGAME_START), playerId, gameBoardHandler);
+ 
+    minigameHandler.startMinigame(new RequestMinigameStartMessage(null), playerId, gameBoardHandler);
   }
 
   public void moveRocket(Action action, UUID player) {

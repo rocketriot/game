@@ -1,0 +1,107 @@
+<html>
+
+<head>
+  <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.18.0/axios.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+    integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+</head>
+
+<body>
+  <div id="app" class="container pt-3">
+    <h3 v-if="connecting && connecting.length > 0">Connecting:</h3>
+    <div v-for="c in connecting">
+      {{ c }}
+    </div>
+
+    <h3>Connected:</h3>
+    <div>
+      <table class="table">
+        <thead>
+          <tr>
+            <td>Username</td>
+            <td>Planets Captured</td>
+            <td>Texture ID</td>
+            <td>Points</td>
+            <td>Board Move</td>
+            <td>M/s</td>
+            <td>Queue</td>
+          </tr>    
+        </thead>
+        <tbody>
+          <tr v-for="c in connected" :key="c.player.username" >
+            <td>{{ c.player.username }}</td>
+            <td>{{ c.player.planetsCaptured }}</td>
+            <td>{{ c.player.textureID }}</td>
+            <td>{{ c.player.points }}</td>
+            <td>{{ c.player.boardMove }}</td>
+            <td>{{ c.num }}</td>
+            <td>{{ c.queueSize }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div v-if="minigame">
+      <h4>Minigame</h4>
+      <h5>Entities: <span class="badge badge-secondary">{{ minigame.entities }}</span></h5>
+      <h5>Static Entities: <span class="badge badge-secondary">{{ minigame.staticEntities }}</span></h5>
+      <div>
+        Last messages:
+        <div v-for="(time, username) in minigame.lastMessages" :key="username" >
+          {{ username }} : {{ time | normalize }}
+        </div>
+      </div>
+      <div>
+        Queue Size:
+      </div>
+    </div>
+
+  </div>
+
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+    integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+    crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+    integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+    crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+    integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+    crossorigin="anonymous"></script>
+  <script>
+
+    new Vue({
+      el: '#app',
+      data: () => ({
+        connecting: [],
+        connected: [],
+        minigame: null,
+      }),
+      filters: {
+        normalize(t) {
+          return moment(t * 1000).format('H:mm:ss');
+        },
+      },
+      methods: {
+        getData() {
+          axios.get('http://localhost:8000')
+            .then(({ data }) => {
+              this.connected = data.connected;
+              this.connecting = data.connecting;
+              this.minigame = data.minigame;
+              console.debug(data);
+            })
+        },
+      },
+      created() {
+        setInterval(() => {
+          this.getData();
+        }, 1000)
+        this.getData();
+      }
+    })
+  </script>
+</body>
+
+</html>

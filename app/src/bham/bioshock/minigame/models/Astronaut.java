@@ -1,6 +1,7 @@
 package bham.bioshock.minigame.models;
 
 import static java.util.stream.Collectors.toList;
+import java.io.Serializable;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -13,12 +14,10 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Intersector.MinimumTranslationVector;
-import com.badlogic.gdx.scenes.scene2d.Group;
 import bham.bioshock.client.Assets;
 import bham.bioshock.client.controllers.SoundController;
 import bham.bioshock.common.Direction;
 import bham.bioshock.common.Position;
-import bham.bioshock.communication.Sendable;
 import bham.bioshock.minigame.PlanetPosition;
 import bham.bioshock.minigame.PlayerTexture;
 import bham.bioshock.minigame.objectives.Objective;
@@ -30,7 +29,8 @@ import bham.bioshock.minigame.worlds.World;
 
 public class Astronaut extends Entity {
 
-  private static final long serialVersionUID = -5131439342109870021L;
+  private static final long serialVersionUID = 3467047831018591965L;
+  
   private static AstronautTextures[] textures;
   private static TextureRegion[] hearts = new TextureRegion[5];
   
@@ -48,7 +48,6 @@ public class Astronaut extends Entity {
   private int colour;
   private float dieTime;
   private Direction shotDirection;
-  private transient Optional<Entity> item = Optional.empty();
 
 
   public Astronaut(World w, float x, float y, UUID id, int colour) {
@@ -93,7 +92,7 @@ public class Astronaut extends Entity {
 
   public void moveChange() {
     if (move.movingLeft) {
-      dir = PlayerTexture.LEFT;
+      dir = PlayerTexture.LEFT; 
       stepsGenerator.moveLeft();
     } else if (move.movingRight) {
       dir = PlayerTexture.RIGHT;
@@ -115,13 +114,6 @@ public class Astronaut extends Entity {
 
   public void setGun(Boolean b) {
     this.haveGun = b;
-  }
-  
-  public void setItem(Entity e) {
-    this.item = Optional.of(e);
-  }
-  public void removeItem() {
-    this.item = Optional.empty();
   }
 
   public void update(float delta) {
@@ -172,7 +164,6 @@ public class Astronaut extends Entity {
       }
       
     } else {
-      drawItem(batch);
       drawHealth(batch);
       super.draw(batch);
     }
@@ -181,16 +172,6 @@ public class Astronaut extends Entity {
   @Override
   public void afterDraw(SpriteBatch batch) {
     drawName(batch);
-  }
-  
-  private void drawItem(SpriteBatch batch) {
-    if(!item.isPresent()) return;
-    PlanetPosition pp = world.convert(pos);
-    pp.fromCenter += height + 60;
-    Position p = world.convert(pp);
-    Entity e = item.get();
-    e.getPos().x = p.x;
-    e.getPos().y = p.y;
   }
   
   private void drawHealth(SpriteBatch batch) {
@@ -388,11 +369,14 @@ public class Astronaut extends Entity {
  
   }
 
-  public void updateFromServer(SpeedVector speed, Position pos, Move move, Boolean haveGun) {
+  public void updateFromServer(SpeedVector speed, Position pos, Boolean haveGun) {
     this.haveGun = haveGun;
+    stepsGenerator.updateFromServer(speed, pos);
+  }
+  
+  public void updateMove(Move move) {
     this.move = move;
     this.moveChange();
-    stepsGenerator.updateFromServer(speed, pos);
   }
 
   public void killAndRespawn(Position pos) {
@@ -409,18 +393,29 @@ public class Astronaut extends Entity {
       }
     }
     
-    item = Optional.empty();
     haveGun = false;
     setState(State.REMOVING);
     this.respawn = pos;
   }
   
-  public static class Move extends Sendable {
+  public static class Move implements Serializable {
 
     private static final long serialVersionUID = 3668803304780843571L;
     public boolean jumping = false;
     public boolean movingLeft = false;
     public boolean movingRight = false;
+    
+    public Move copy() {
+      Move m = new Move();
+      m.jumping = this.jumping;
+      m.movingLeft = this.movingLeft;
+      m.movingRight = this.movingRight;
+      return m;
+    }
+    
+    public String toString() {
+      return "j: " + jumping + ", l: " + movingLeft + ", r: "+ movingRight;
+    }
   }
   
   private static class AstronautTextures {

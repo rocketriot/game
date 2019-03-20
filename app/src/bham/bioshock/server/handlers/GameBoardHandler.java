@@ -4,16 +4,16 @@ import bham.bioshock.common.consts.GridPoint;
 import bham.bioshock.common.consts.GridPoint.Type;
 import bham.bioshock.common.models.Planet;
 import bham.bioshock.common.pathfinding.AStarPathfinding;
-import java.io.Serializable;
 import java.util.ArrayList;
 import bham.bioshock.common.models.Coordinates;
 import bham.bioshock.common.models.GameBoard;
 import bham.bioshock.common.models.Player;
-import bham.bioshock.common.models.Player.Move;
 import bham.bioshock.common.models.store.Store;
 import bham.bioshock.communication.Action;
 import bham.bioshock.communication.Command;
 import bham.bioshock.communication.messages.GameBoardMessage;
+import bham.bioshock.communication.messages.MovePlayerOnBoardMessage;
+import bham.bioshock.communication.messages.RequestMinigameStartMessage;
 import bham.bioshock.communication.server.BoardAi;
 import bham.bioshock.server.ServerHandler;
 
@@ -44,7 +44,7 @@ public class GameBoardHandler {
   }
 
   /** Adds a player to the server and sends the player to all the clients */
-  public void getGameBoard(Action action, ArrayList<Player> additionalPlayers) {
+  public void getGameBoard(ArrayList<Player> additionalPlayers) {
     ArrayList<Player> players = store.getPlayers();
     if(additionalPlayers != null) {
       players.addAll(additionalPlayers);
@@ -61,12 +61,12 @@ public class GameBoardHandler {
   public void movePlayer(Action action, UUID playerID) {
     // Get the goal coordinates of the move
     MovePlayerOnBoardMessage data = (MovePlayerOnBoardMessage) action.getMessage();
-    Coordinates goalCoords = data.getCoordinates();
+    Coordinates goalCoords = data.coordinates;
 
     Player currentPlayer = store.getPlayer(playerID);
     Coordinates startCoords = currentPlayer.getCoordinates();
 
-    // Initialize pathfinder
+    // Initialise pathfinder
     GameBoard gameBoard = store.getGameBoard();
     GridPoint[][] grid = gameBoard.getGrid();
     int gridSize = store.getGameBoard().GRID_SIZE;
@@ -81,8 +81,7 @@ public class GameBoardHandler {
     if (pathCost <= currentPlayer.getFuel() && (goalType.equals(Type.EMPTY) || goalType
         .equals(Type.FUEL))) {
 
-      MovePlayerOnBoardMessage response = new MovePlayerOnBoardMessage(goalCoords, playerID);
-      handler.sendToAll(new Action(Command.MOVE_PLAYER_ON_BOARD, response));
+      handler.sendToAll(new MovePlayerOnBoardMessage(goalCoords, playerID));
 
       if (currentPlayer.isCpu()) {
         int waitTime = calculateMoveTime(currentPlayer, path);
@@ -106,9 +105,7 @@ public class GameBoardHandler {
 
   private void startMinigame(GameBoard gameBoard, Player currentPlayer,
       Planet planet, MinigameHandler minigameHandler) {
-    ArrayList<Serializable> arg = new ArrayList<>();
-    arg.add(planet.getId());
-    minigameHandler.startMinigame(new Action(Command.MINIGAME_START, arg), currentPlayer.getId(), this);
+    minigameHandler.startMinigame(new RequestMinigameStartMessage(planet.getId()), currentPlayer.getId(), this);
   }
 
   private int calculateMoveTime(Player player,

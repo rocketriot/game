@@ -4,6 +4,7 @@ import bham.bioshock.communication.Command;
 import java.util.UUID;
 
 public class EndMinigameMessage extends Message {
+  private static final long serialVersionUID = 5711324556429837592L;
 
   public final UUID playerID;
   public final UUID winnerID;

@@ -1,16 +1,18 @@
 package bham.bioshock.client;
 
-import java.util.ArrayList;
-import java.util.UUID;
 import com.badlogic.gdx.Gdx;
 import com.google.inject.Inject;
-import bham.bioshock.common.models.GameBoard;
-import bham.bioshock.common.models.Player;
 import bham.bioshock.communication.Action;
 import bham.bioshock.communication.client.IClientHandler;
 import bham.bioshock.communication.messages.AddPlayerMessage;
+import bham.bioshock.communication.messages.DisconnectPlayerMessage;
 import bham.bioshock.communication.messages.GameBoardMessage;
+import bham.bioshock.communication.messages.JoinScreenMoveMessage;
+import bham.bioshock.communication.messages.MinigamePlayerMoveMessage;
+import bham.bioshock.communication.messages.MinigamePlayerStepMessage;
+import bham.bioshock.communication.messages.MinigameStartMessage;
 import bham.bioshock.communication.messages.MovePlayerOnBoardMessage;
+import bham.bioshock.communication.messages.UpdateObjectiveMessage;
 
 public class ClientHandler implements IClientHandler {
   
@@ -31,8 +33,8 @@ public class ClientHandler implements IClientHandler {
             break;
           }
           case REMOVE_PLAYER: {
-            UUID id = (UUID) action.getArgument(0);
-            router.call(Route.REMOVE_PLAYER, id);
+            DisconnectPlayerMessage data = (DisconnectPlayerMessage) action.getMessage();
+            router.call(Route.REMOVE_PLAYER, data.playerId);
             break;
           }
           case START_GAME: {
@@ -41,11 +43,9 @@ public class ClientHandler implements IClientHandler {
           }
           case GET_GAME_BOARD: {
             GameBoardMessage data = (GameBoardMessage) action.getMessage();
-            GameBoard gameBoard = data.getGameBoard();
-            ArrayList<Player> players = data.getPlayers();
             
-            router.call(Route.GAME_BOARD_SAVE, gameBoard);
-            router.call(Route.PLAYERS_SAVE, players);     
+            router.call(Route.GAME_BOARD_SAVE, data.gameBoard);
+            router.call(Route.PLAYERS_SAVE, data.players);     
             break;
           }
           case MOVE_PLAYER_ON_BOARD: {
@@ -58,11 +58,18 @@ public class ClientHandler implements IClientHandler {
             break;
           }
           case MINIGAME_START: {
-            router.call(Route.START_MINIGAME, action.getArguments());
+            MinigameStartMessage data = (MinigameStartMessage) action.getMessage();
+            router.call(Route.START_MINIGAME, data);
+            break;
+          }
+          case MINIGAME_PLAYER_STEP: {
+            MinigamePlayerStepMessage data = (MinigamePlayerStepMessage) action.getMessage();
+            router.call(Route.MINIGAME_PLAYER_UPDATE, data);
             break;
           }
           case MINIGAME_PLAYER_MOVE: {
-            router.call(Route.MINIGAME_PLAYER_UPDATE, action);
+            MinigamePlayerMoveMessage data = (MinigamePlayerMoveMessage) action.getMessage();
+            router.call(Route.MINIGAME_PLAYER_UPDATE_MOVE, data);
             break;
           }
           case MINIGAME_END: {
@@ -70,15 +77,17 @@ public class ClientHandler implements IClientHandler {
             break;
           }
           case MINIGAME_BULLET: {
-            router.call(Route.MINIGAME_BULLET, action.getArguments());
+            router.call(Route.MINIGAME_BULLET, action.getMessage());
             break;
           }
           case JOIN_SCREEN_MOVE: {
-            router.call(Route.JOIN_SCREEN_UPDATE, action.getArguments());
+            JoinScreenMoveMessage data = (JoinScreenMoveMessage) action.getMessage();
+            router.call(Route.JOIN_SCREEN_UPDATE, data);
             break;
           }
-          case SET_PLANET_OWNER: {
-            router.call(Route.SET_PLANET_OWNER, action.getArgument(0));
+          case MINIGAME_UPDATE_OBJECTIVE: {
+            UpdateObjectiveMessage data = (UpdateObjectiveMessage) action.getMessage();
+            router.call(Route.MINIGAME_OBJECTIVE_UPDATE, data);
             break;
           }
           default: {

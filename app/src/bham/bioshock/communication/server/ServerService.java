@@ -57,6 +57,18 @@ public class ServerService extends Thread implements ActionHandler {
   public Optional<UUID> Id() {
     return id;
   }
+  
+  public long getSenderCounter() {
+    return sender.getCounter();
+  }
+  
+  public void resetSenderCounter() {
+    sender.resetCounter();
+  }
+  
+  public int getSenderQueueSize() {
+    return sender.getQueueSize();
+  }
 
   public void run() {
     // start supporting threads

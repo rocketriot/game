@@ -63,12 +63,6 @@ public class StepsGenerator {
       this.reset();
     }
   }
-  
-  public void moveChanged(Move move) {
-    currentMove.movingLeft = move.movingLeft;
-    currentMove.movingRight = move.movingRight;
-    currentMove.jumping = move.jumping;
-  }
 
   public void moveStop() {
     if(currentMove.movingLeft || currentMove.movingRight) {

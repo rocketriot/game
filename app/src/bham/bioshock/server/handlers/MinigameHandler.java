@@ -1,8 +1,5 @@
 package bham.bioshock.server.handlers;
 
-import bham.bioshock.communication.messages.EndMinigameMessage;
-import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Random;
 import java.util.UUID;
 import org.apache.logging.log4j.LogManager;
@@ -10,7 +7,10 @@ import org.apache.logging.log4j.Logger;
 import bham.bioshock.common.models.store.MinigameStore;
 import bham.bioshock.common.models.store.Store;
 import bham.bioshock.communication.Action;
-import bham.bioshock.communication.Command;
+import bham.bioshock.communication.messages.EndMinigameMessage;
+import bham.bioshock.communication.messages.MinigameStartMessage;
+import bham.bioshock.communication.messages.RequestMinigameStartMessage;
+import bham.bioshock.communication.messages.UpdateObjectiveMessage;
 import bham.bioshock.minigame.Clock;
 import bham.bioshock.minigame.ai.KillEveryoneAI;
 import bham.bioshock.minigame.ai.PlatformerAi;
@@ -42,20 +42,21 @@ public class MinigameHandler {
   /*
    * Create and seed the world, and send start game command to all clients
    */
-  public void startMinigame(Action action, UUID playerId, GameBoardHandler gameBoardHandler) {
+  public void startMinigame(RequestMinigameStartMessage data, UUID playerId, GameBoardHandler gameBoardHandler) {
     // Create a world for the minigame
     World w = new RandomWorld();
-    if(action.getArguments().size() != 0) {
-      planetId = (UUID) action.getArgument(0);      
-    } else {
+    if(data.planetId == null) {
       logger.error("Starting minigame without a planet ID (That's OK. for tests)!");
+    } else {
+      planetId = data.planetId;
     }
     Objective o;
     aiLoop = new MinigameAILoop();
 
     Random rand = new Random();
 
-    switch(rand.nextInt(100)%4) {
+//    switch(rand.nextInt(100)%4) {
+    switch(1) {
       case 1:
         o = new CaptureTheFlag(w);
         for (UUID id : store.getCpuPlayers()) {
@@ -85,14 +86,9 @@ public class MinigameHandler {
     }
     
     aiLoop.start();
-   if(planetId != null) {
-      setupMinigameEnd(gameBoardHandler, playerId);
-   }
+    setupMinigameEnd(gameBoardHandler, playerId);
 
-    ArrayList<Serializable> arguments = new ArrayList<>();
-    arguments.add((Serializable) w);
-    arguments.add((Serializable) o);
-    handler.sendToAll(new Action(Command.MINIGAME_START, arguments));
+    handler.sendToAll(new MinigameStartMessage(w, o));
   }
   
   /**
@@ -105,6 +101,7 @@ public class MinigameHandler {
     clock.at(60f, new Clock.TimeListener() {
       @Override
       public void handle(Clock.TimeUpdateEvent event) {
+        if(planetId == null) return;
         if(minigameTimer != null) {
           minigameTimer.interrupt();
         }
@@ -124,6 +121,9 @@ public class MinigameHandler {
             long delta = (System.currentTimeMillis() - time);
             time = System.currentTimeMillis();
             clock.update((int) delta);
+            
+            updateObjectiveState();
+            
             Thread.sleep(1000);
           }
         } catch (InterruptedException e) {
@@ -134,10 +134,22 @@ public class MinigameHandler {
     minigameTimer.start();
   }
 
+  protected void updateObjectiveState() {
+    MinigameStore localStore = store.getMinigameStore();
+    if(localStore == null) return;
+    Objective objective = localStore.getObjective();
+    if(objective == null) return;
+    handler.sendToAllExcept(new UpdateObjectiveMessage(objective), store.getMainPlayer().getId());
+  }
+
   /**
    * Sync player movement and position
    */
   public void playerMove(Action action, UUID playerId) {
+    handler.sendToAllExcept(action, playerId);
+  }
+  
+  public void playerStep(Action action, UUID playerId) {
     handler.sendToAllExcept(action, playerId);
   }
 

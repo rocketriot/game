@@ -46,6 +46,7 @@ public class InputListener extends InputAdapter {
       mainPlayer.jump(true);
     }
     mainPlayer.moveChange();
+    System.out.println("down: " + mainPlayer.getMove());
     router.call(Route.MINIGAME_MOVE);
 
     return false;
@@ -66,6 +67,7 @@ public class InputListener extends InputAdapter {
       mainPlayer.moveRight(false);
     }
     mainPlayer.moveChange();
+    System.out.println("up: " + mainPlayer.getMove());
     router.call(Route.MINIGAME_MOVE);
 
     return false;

@@ -1,36 +1,40 @@
 package bham.bioshock.minigame.ai;
 
 import bham.bioshock.minigame.models.Astronaut;
+import bham.bioshock.minigame.models.Astronaut.Move;
 
 public class CpuAstronaut {
 
   Astronaut astronaut;
+  Move move;
   
   public CpuAstronaut(Astronaut a) {
     this.astronaut = a;
+    move = new Move();
   }
   
   public void moveLeft() {
-    astronaut.moveLeft(true);
-    astronaut.moveRight(false);
+    move.movingLeft = true;
+    move.movingRight = false;
   }
   
   public void moveRight() {
-    astronaut.moveRight(true);
-    astronaut.moveLeft(false);
+    move.movingLeft = false;
+    move.movingRight = true;
   }
   
   public void jump() {
-    astronaut.jump(true);
-  }
-
-  public void moveChange() {
-    astronaut.moveChange();
-    astronaut.jump(false);
+    move.jumping = true;
   }
   
   public Astronaut get() {
     return astronaut;
+  }
+  
+  public Move endMove() {
+    Move oldMove = move;
+    move = new Move();
+    return oldMove;
   }
   
 }

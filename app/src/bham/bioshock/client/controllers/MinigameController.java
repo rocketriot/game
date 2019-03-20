@@ -1,8 +1,7 @@
 package bham.bioshock.client.controllers;
 
 import bham.bioshock.communication.messages.EndMinigameMessage;
-import java.io.Serializable;
-import java.util.ArrayList;
+import bham.bioshock.communication.messages.MinigameEndMessage;
 import java.util.UUID;
 import com.google.inject.Inject;
 import bham.bioshock.client.BoardGame;
@@ -13,15 +12,15 @@ import bham.bioshock.common.Position;
 import bham.bioshock.common.models.Player;
 import bham.bioshock.common.models.store.MinigameStore;
 import bham.bioshock.common.models.store.Store;
-import bham.bioshock.communication.Action;
-import bham.bioshock.communication.Command;
 import bham.bioshock.communication.client.ClientService;
 import bham.bioshock.communication.messages.BulletShotMessage;
 import bham.bioshock.communication.messages.MinigamePlayerMoveMessage;
-import bham.bioshock.minigame.models.Astronaut.Move;
+import bham.bioshock.communication.messages.MinigamePlayerStepMessage;
+import bham.bioshock.communication.messages.MinigameStartMessage;
+import bham.bioshock.communication.messages.RequestMinigameStartMessage;
+import bham.bioshock.communication.messages.UpdateObjectiveMessage;
 import bham.bioshock.minigame.models.Bullet;
 import bham.bioshock.minigame.objectives.Objective;
-import bham.bioshock.minigame.physics.SpeedVector;
 import bham.bioshock.minigame.worlds.World;
 
 public class MinigameController extends Controller {
@@ -38,28 +37,30 @@ public class MinigameController extends Controller {
 
 
   public void sendStart(UUID planetId) {
-    clientService.send(new Action(Command.MINIGAME_START, planetId));
+    clientService.send(new RequestMinigameStartMessage(planetId));
   }
   
   public void directStart() {
-    clientService.send(new Action(Command.MINIGAME_DIRECT_START));
+    clientService.send(new RequestMinigameStartMessage(null));
   }
   
   public void playerMove() {
     clientService.send(new MinigamePlayerMoveMessage(localStore.getMainPlayer()));
   }
   
-  public void updatePlayer(Action action) {
-    UUID playerId = (UUID) action.getArgument(0);
-    SpeedVector speed = (SpeedVector) action.getArgument(1);
-    Position pos = (Position) action.getArgument(2);
-    Move move = (Move) action.getArgument(3);
-    Boolean haveGun = (Boolean) action.getArgument(4);
-
-    localStore.updatePlayer(action.whenCreated(), playerId, speed, pos, move, haveGun);
+  public void playerStep() {
+    clientService.send(new MinigamePlayerStepMessage(localStore.getMainPlayer()));
   }
   
-  public void bulletShot(Bullet bullet) {   
+  public void updatePlayerStep(MinigamePlayerStepMessage data) {
+    localStore.updatePlayerStep(data.created, data.playerId, data.speed, data.position, data.haveGun);
+  }
+  
+  public void updatePlayerMove(MinigamePlayerMoveMessage data) {
+    localStore.updatePlayerMove(data.playerId, data.move);
+  }
+  
+  public void bulletShot(Bullet bullet) {
     clientService.send(new BulletShotMessage(bullet));
   }
   
@@ -72,16 +73,23 @@ public class MinigameController extends Controller {
     localStore.addEntity(b);
   }
   
+  public void updateObjective(UpdateObjectiveMessage data) {
+    Objective o = localStore.getObjective();
+    if(o != null) {
+      o.update(data.objective);
+    }
+  }
   
-  public void show(ArrayList<Serializable> arr) {
-    World w = (World) arr.get(0);
-    Objective o = (Objective) arr.get(1);
-    MinigameStore localStore = new MinigameStore();
+  
+  public void show(MinigameStartMessage data) {
+    World world = data.world;
+    Objective objective = data.objective;
+    MinigameStore localStore = new MinigameStore();    
     
     // Initialise objective 
-    localStore.seed(store, w, o);
-    o.init(w, router, localStore);
-    o.seed(localStore);
+    localStore.seed(store, world, objective);
+    objective.init(world, router, localStore);
+    objective.seed(localStore);
 
     store.setMinigameStore(localStore);
     router.call(Route.FADE_OUT, "boardGame");
@@ -91,16 +99,16 @@ public class MinigameController extends Controller {
   }
 
   public void sendEnd(){
-    clientService.send(new Action(Command.MINIGAME_END));
+    clientService.send(new MinigameEndMessage());
   }
 
   public void end(EndMinigameMessage data){
     // Only if there's a winner
-    if(data.winnerID != null) {
-      Player p = store.getPlayer(data.winnerID);
+    if(data.winnerId != null) {
+      Player p = store.getPlayer(data.winnerId);
       p.addPoints(data.points);
-      if (data.initiatorWon) {
-        UUID[] planetOwner = new UUID[]{data.winnerID, data.planetID};
+      if (data.isCaptured) {
+        UUID[] planetOwner = new UUID[]{data.winnerId, data.planetId};
         router.call(Route.SET_PLANET_OWNER, planetOwner);
       }
     }

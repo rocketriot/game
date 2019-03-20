@@ -9,12 +9,11 @@ import bham.bioshock.common.models.*;
 import bham.bioshock.common.models.store.Store;
 import bham.bioshock.common.pathfinding.AStarPathfinding;
 import bham.bioshock.communication.Action;
-import bham.bioshock.communication.Command;
 import bham.bioshock.communication.client.IClientService;
+import bham.bioshock.communication.messages.EndTurnMessage;
 import bham.bioshock.communication.messages.MovePlayerOnBoardMessage;
 import com.google.inject.Inject;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.UUID;
@@ -71,15 +70,12 @@ public class GameBoardController extends Controller {
     if (mainPlayer.getFuel() < pathCost || pathCost == -10) return;
 
     // Send move request to the server
-    MovePlayerOnBoardMessage msg = new MovePlayerOnBoardMessage(destination, mainPlayer.getId());
-    clientService.send(Action.of(msg));
+    clientService.send(new MovePlayerOnBoardMessage(destination, mainPlayer.getId()));
   }
 
   /** Ends the players turn */
-  public void endTurn() {
-    ArrayList<Serializable> arguments = new ArrayList<>();
-    arguments.add(store.getMainPlayer().getId());
-    clientService.send(new Action(Command.END_TURN, arguments));
+  public void endTurn() {    
+    clientService.send(new EndTurnMessage());
   }
 
   /** Handles server message to end turn */
@@ -93,8 +89,8 @@ public class GameBoardController extends Controller {
     GridPoint[][] grid = gameBoard.getGrid();
 
     // Get data from the message
-    Coordinates goalCoords = data.getCoordinates();
-    Player movingPlayer = store.getPlayer(data.getId());
+    Coordinates goalCoords = data.coordinates;
+    Player movingPlayer = store.getPlayer(data.id);
 
     // Initialize path finding
     int gridSize = store.getGameBoard().GRID_SIZE;

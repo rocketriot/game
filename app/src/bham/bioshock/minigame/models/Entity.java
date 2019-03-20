@@ -2,7 +2,6 @@ package bham.bioshock.minigame.models;
 
 import bham.bioshock.common.Position;
 import bham.bioshock.minigame.PlanetPosition;
-import bham.bioshock.minigame.models.Entity.State;
 import bham.bioshock.minigame.objectives.Objective;
 import bham.bioshock.minigame.physics.*;
 import bham.bioshock.minigame.worlds.World;
@@ -20,7 +19,7 @@ import com.badlogic.gdx.math.Intersector.MinimumTranslationVector;
 
 public abstract class Entity implements Serializable {
 
-  private static final long serialVersionUID = 7916524444980988734L;
+  private static final long serialVersionUID = -8104423419633831645L;
 
   /** ID of the entity */
   protected UUID id;

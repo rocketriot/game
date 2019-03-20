@@ -4,10 +4,12 @@ import bham.bioshock.common.models.store.Store;
 import bham.bioshock.communication.Action;
 import bham.bioshock.communication.Command;
 import bham.bioshock.communication.messages.Message;
+import bham.bioshock.communication.messages.RequestMinigameStartMessage;
 import bham.bioshock.communication.server.ServerService;
 import bham.bioshock.server.handlers.GameBoardHandler;
 import bham.bioshock.server.handlers.JoinScreenHandler;
 import bham.bioshock.server.handlers.MinigameHandler;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Optional;
 import java.util.UUID;
@@ -26,14 +28,24 @@ public class ServerHandler {
   private JoinScreenHandler joinHandler;
   private GameBoardHandler gameBoardHandler;
   private MinigameHandler minigameHandler;
-
+  private DevServer devServer;
+  
+  private final boolean DEBUG_SERVER = false;
+  
+  
   public ServerHandler(Store store, Server server) {
     this.server = server;
     joinHandler = new JoinScreenHandler(store, this);
     minigameHandler = new MinigameHandler(store, this);
     gameBoardHandler = new GameBoardHandler(store, this, minigameHandler);
+    if(DEBUG_SERVER) {
+      try {
+        devServer = new DevServer();
+        devServer.addServices(store, connecting, connected);
+      } catch(IOException e) {}
+    }
   }
-
+  
   /**
    * Used by ConnectionMaker to register new service
    * 
@@ -150,6 +162,9 @@ public class ServerHandler {
     }
   }
   
+  /**
+   * Stop all running subservices
+   */
   public void stopAll() {
     for (ServerService s : connected.values()) {
       s.abort();
@@ -188,16 +203,20 @@ public class ServerHandler {
         gameBoardHandler.movePlayer(action, clientId);
         break;
       case MINIGAME_START:
-        minigameHandler.startMinigame(action, clientId, gameBoardHandler);
+        RequestMinigameStartMessage data = (RequestMinigameStartMessage) action.getMessage();
+        minigameHandler.startMinigame(data, clientId, gameBoardHandler);
         break;
       case MINIGAME_PLAYER_MOVE:
         minigameHandler.playerMove(action, clientId);
+        break;
+      case MINIGAME_PLAYER_STEP:
+        minigameHandler.playerStep(action, clientId);
         break;
       case MINIGAME_BULLET:
         minigameHandler.bulletShot(action, clientId);
         break;
       case END_TURN:
-        gameBoardHandler.endTurn((UUID) action.getArgument(0));
+        gameBoardHandler.endTurn(clientId);
         break;
       case MINIGAME_DIRECT_START:
         server.stopDiscovery();

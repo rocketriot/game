@@ -3,6 +3,7 @@ package bham.bioshock.minigame;
 import java.util.ArrayList;
 
 import bham.bioshock.client.Assets;
+import bham.bioshock.client.Route;
 import bham.bioshock.client.Router;
 import bham.bioshock.common.consts.Config;
 import bham.bioshock.common.models.store.MinigameStore;
@@ -52,7 +53,8 @@ public class Renderer {
   private MinigameStore minigameStore;
   private MinigameHud hud;
   private World world;
-
+  private float time;
+  
   private Texture worldTexture;
   
   public Renderer(Store store, Router router) {
@@ -124,6 +126,7 @@ public class Renderer {
   }
 
   public void render(float delta) {
+    time += delta;
     batch.setProjectionMatrix(cam.combined);
     textBatch.setProjectionMatrix(cam.combined);
     shapeRenderer.setProjectionMatrix(cam.combined);
@@ -159,6 +162,10 @@ public class Renderer {
     hud.getStage().draw();
     minigameStore.getEntities().removeIf(e -> e.isRemoved());
     minigameStore.getStaticEntities().removeIf(e -> e.isRemoved());
+    if(time > 1f) {
+      time -= 1f;
+      router.call(Route.MINIGAME_STEP);
+    }
   }
 
   public void drawBackground() {

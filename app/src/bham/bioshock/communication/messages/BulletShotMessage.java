@@ -17,8 +17,8 @@ public class BulletShotMessage extends Message {
   public BulletShotMessage(Bullet bullet) {
     super(Command.MINIGAME_BULLET);
     this.bulletId = bullet.getId();
-    this.speedVector = bullet.getSpeedVector();
-    this.position = bullet.getPos();
+    this.speedVector = bullet.getSpeedVector().copy();
+    this.position = bullet.getPos().copy();
   }
 
 }
