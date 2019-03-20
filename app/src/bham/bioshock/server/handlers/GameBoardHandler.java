@@ -9,10 +9,11 @@ import bham.bioshock.common.models.Coordinates;
 import bham.bioshock.common.models.GameBoard;
 import bham.bioshock.common.models.Player;
 import bham.bioshock.common.models.store.Store;
-import bham.bioshock.communication.Action;
 import bham.bioshock.communication.Command;
+import bham.bioshock.communication.messages.Message;
 import bham.bioshock.communication.messages.boardgame.GameBoardMessage;
 import bham.bioshock.communication.messages.boardgame.MovePlayerOnBoardMessage;
+import bham.bioshock.communication.messages.boardgame.UpdateTurnMessage;
 import bham.bioshock.communication.messages.minigame.RequestMinigameStartMessage;
 import bham.bioshock.communication.server.BoardAi;
 import bham.bioshock.server.ServerHandler;
@@ -58,9 +59,9 @@ public class GameBoardHandler {
   }
 
   /** Handles a player moving on their turn */
-  public void movePlayer(Action action, UUID playerID) {
+  public void movePlayer(Message message, UUID playerID) {
     // Get the goal coordinates of the move
-    MovePlayerOnBoardMessage data = (MovePlayerOnBoardMessage) action.getMessage();
+    MovePlayerOnBoardMessage data = (MovePlayerOnBoardMessage) message;
     Coordinates goalCoords = data.coordinates;
 
     Player currentPlayer = store.getPlayer(playerID);
@@ -119,7 +120,7 @@ public class GameBoardHandler {
   }
 
   public void endTurn(UUID id) {
-    handler.sendToAll(new Action(Command.UPDATE_TURN));
+    handler.sendToAll(new UpdateTurnMessage());
     // Handle if the next player is a CPU
     new Thread(() -> {
       try {

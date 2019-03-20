@@ -6,7 +6,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import bham.bioshock.common.models.store.MinigameStore;
 import bham.bioshock.common.models.store.Store;
-import bham.bioshock.communication.Action;
+import bham.bioshock.communication.messages.Message;
 import bham.bioshock.communication.messages.minigame.EndMinigameMessage;
 import bham.bioshock.communication.messages.minigame.MinigameStartMessage;
 import bham.bioshock.communication.messages.minigame.RequestMinigameStartMessage;
@@ -162,19 +162,19 @@ public class MinigameHandler {
   /**
    * Sync player movement and position
    */
-  public void playerMove(Action action, UUID playerId) {
-    handler.sendToAllExcept(action, playerId);
+  public void playerMove(Message message, UUID playerId) {
+    handler.sendToAllExcept(message, playerId);
   }
 
-  public void playerStep(Action action, UUID playerId) {
-    handler.sendToAllExcept(action, playerId);
+  public void playerStep(Message message, UUID playerId) {
+    handler.sendToAllExcept(message, playerId);
   }
 
   /**
    * Create new bullet
    */
-  public void bulletShot(Action action, UUID playerId) {
-    handler.sendToAllExcept(action, playerId);
+  public void bulletShot(Message message, UUID playerId) {
+    handler.sendToAllExcept(message, playerId);
   }
 
   /**
@@ -196,7 +196,7 @@ public class MinigameHandler {
     planetId = null;
 
     aiLoop.finish();
-    handler.sendToAll(Action.of(msg));
+    handler.sendToAll(msg);
     gameBoardHandler.endTurn(playerId);
   }
 }

@@ -4,12 +4,12 @@ import java.util.ArrayList;
 import java.util.UUID;
 import bham.bioshock.common.models.Player;
 import bham.bioshock.common.models.store.Store;
-import bham.bioshock.communication.Action;
-import bham.bioshock.communication.Command;
+import bham.bioshock.communication.messages.Message;
 import bham.bioshock.communication.messages.boardgame.StartGameMessage;
 import bham.bioshock.communication.messages.joinscreen.AddPlayerMessage;
 import bham.bioshock.communication.messages.joinscreen.DisconnectPlayerMessage;
 import bham.bioshock.communication.messages.joinscreen.RegisterMessage;
+import bham.bioshock.communication.messages.joinscreen.ServerFullMessage;
 import bham.bioshock.communication.messages.minigame.RequestMinigameStartMessage;
 import bham.bioshock.communication.server.ServerService;
 import bham.bioshock.server.ServerHandler;
@@ -30,12 +30,12 @@ public class JoinScreenHandler {
    * @param action
    * @param service
    */
-  public void registerPlayer(Action action, ServerService service) {
+  public void registerPlayer(Message message, ServerService service) {
     if (store.getPlayers().size() >= 4) {
-      service.send(new Action(Command.SERVER_FULL));
+      service.send(new ServerFullMessage());
       return;
     }
-    RegisterMessage data = (RegisterMessage) action.getMessage();
+    RegisterMessage data = (RegisterMessage) message;
     Player player = data.player;
     handler.registerClient(player.getId(), service);
     addPlayer(player);
@@ -86,7 +86,7 @@ public class JoinScreenHandler {
   }
 
   /** Creates CPU players and starts the game */
-  public void startGame(Action action, GameBoardHandler gameBoardHandler) {
+  public void startGame(GameBoardHandler gameBoardHandler) {
     ArrayList<Player> cpuPlayers = createCpuPlayers();
     // Send the board and the players
     gameBoardHandler.getGameBoard(cpuPlayers);
@@ -95,7 +95,7 @@ public class JoinScreenHandler {
     handler.sendToAll(new StartGameMessage());
   }
 
-  public void minigameDirectStart(Action action, UUID playerId, GameBoardHandler gameBoardHandler,
+  public void minigameDirectStart(UUID playerId, GameBoardHandler gameBoardHandler,
       MinigameHandler minigameHandler) {
     ArrayList<Player> cpuPlayers = createCpuPlayers();
     // Send the board and the players
@@ -111,8 +111,8 @@ public class JoinScreenHandler {
     minigameHandler.startMinigame(new RequestMinigameStartMessage(null), playerId, gameBoardHandler);
   }
 
-  public void moveRocket(Action action, UUID player) {
-    handler.sendToAllExcept(action, player);
+  public void moveRocket(Message message, UUID player) {
+    handler.sendToAllExcept(message, player);
   }
 
 }

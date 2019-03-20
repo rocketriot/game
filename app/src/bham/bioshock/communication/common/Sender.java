@@ -6,14 +6,14 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import bham.bioshock.communication.Action;
+import bham.bioshock.communication.messages.Message;
 
 public class Sender extends Thread {
   private static final Logger logger = LogManager.getLogger(Sender.class);
   
   private ObjectOutputStream client;
   private long counter = 0;
-  private BlockingQueue<Action> queue = new LinkedBlockingQueue<>();
+  private BlockingQueue<Message> queue = new LinkedBlockingQueue<>();
 
   /**
    * Constructs a new sender with valid output stream
@@ -27,10 +27,10 @@ public class Sender extends Thread {
   /**
    * Add action to the queue for outgoing messages
    *
-   * @param action
+   * @param message
    */
-  public void send(Action action) {
-    queue.add(action);
+  public void send(Message message) {
+    queue.add(message);
   }
   
 
@@ -57,10 +57,10 @@ public class Sender extends Thread {
   public void run() {
     try {
       while (!isInterrupted()) {
-        Action action = queue.take();
+        Message message = queue.take();
         counter++;
         try {
-          client.writeObject(action);
+          client.writeObject(message);
         } catch (IOException e) {
           logger.error("Message can't be sent! " + e.getMessage());
         }
