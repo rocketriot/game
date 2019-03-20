@@ -40,8 +40,10 @@ abstract public class MinigameAI {
 
   public void afterUpdate() {
     Move move = astronaut.endMove();
+    if(move != null) {
+      handler.sendToAll(new MinigamePlayerMoveMessage(astronaut, move));
+    }
 
-    handler.sendToAll(new MinigamePlayerMoveMessage(astronaut, move));
     // Send to all except the host
     handler.sendToAll(new MinigamePlayerStepMessage(astronaut.get()));
   }

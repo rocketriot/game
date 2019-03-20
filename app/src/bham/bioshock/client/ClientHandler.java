@@ -44,8 +44,9 @@ public class ClientHandler implements IClientHandler {
           case GET_GAME_BOARD: {
             GameBoardMessage data = (GameBoardMessage) action.getMessage();
             
+            router.call(Route.PLAYERS_SAVE, data.cpuPlayers);  
+            router.call(Route.COORDINATES_SAVE, data.coordinates);  
             router.call(Route.GAME_BOARD_SAVE, data.gameBoard);
-            router.call(Route.PLAYERS_SAVE, data.players);     
             break;
           }
           case MOVE_PLAYER_ON_BOARD: {

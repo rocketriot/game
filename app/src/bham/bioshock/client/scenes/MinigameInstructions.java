@@ -90,7 +90,7 @@ public class MinigameInstructions {
    */
   private void checkIfDisplayed() {
     if (!displayed && store.getMinigameStore().isStarted()) {
-      duration = 3f;
+      duration = 5f;
       displayed = true;
       showPrompt = true;
     }

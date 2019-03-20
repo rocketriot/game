@@ -240,7 +240,7 @@ public class StepsGenerator {
           sleep(DELAY);
         }
       } catch (InterruptedException e) {
-        logger.debug("Steps generator interrupted");
+        logger.trace("Steps generator interrupted");
       }
     }
   }
