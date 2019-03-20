@@ -4,7 +4,8 @@ import bham.bioshock.client.Router;
 import bham.bioshock.common.Position;
 import bham.bioshock.common.models.store.MinigameStore;
 import bham.bioshock.minigame.models.*;
-import bham.bioshock.minigame.worlds.FirstWorld;
+
+import bham.bioshock.minigame.worlds.RandomWorld;
 import bham.bioshock.minigame.worlds.World;
 
 import java.util.*;
@@ -145,7 +146,7 @@ public class Platformer extends Objective {
 
   public ArrayList<Platform> getPathToGoal() {
     //return ((FirstWorld) getWorld()).getPlatformPath(goalPlatform);
-    ArrayList<Platform> path = ((FirstWorld) world).getPlatformPath(goalPlatform);
+    ArrayList<Platform> path = ((RandomWorld) world).getPlatformPath(goalPlatform);
         /*for(int i=0; i<path.size();i++) {
             System.out.println(path.get(i).getPlanetPos().toString());
         }*/
