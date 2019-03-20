@@ -70,6 +70,7 @@ public class MinigameController extends Controller {
     Bullet b = new Bullet(localStore.getWorld(), p.x, p.y,localStore.getMainPlayer());
     b.setSpeedVector(data.speedVector);
     b.load();
+    b.setCollisionHandler(localStore.getCollisionHandler());
     localStore.addEntity(b);
   }
   

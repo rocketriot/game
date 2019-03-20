@@ -10,6 +10,7 @@ import bham.bioshock.common.models.Player;
 import bham.bioshock.minigame.models.*;
 import bham.bioshock.minigame.models.Astronaut.Move;
 import bham.bioshock.minigame.objectives.Objective;
+import bham.bioshock.minigame.physics.CollisionHandler;
 import bham.bioshock.minigame.physics.SpeedVector;
 import bham.bioshock.minigame.worlds.World;
 
@@ -23,6 +24,7 @@ public class MinigameStore {
   private ArrayList<Entity> staticEntities = new ArrayList<>();
 
   private Skin skin;
+  private CollisionHandler collisionHandler;
   private Objective objective;
   private boolean started;
 
@@ -136,6 +138,14 @@ public class MinigameStore {
 
   public boolean isStarted(){
     return this.started;
+  }
+
+  public void setCollisionHandler(CollisionHandler collisionHandler) {
+    this.collisionHandler = collisionHandler;
+  }
+  
+  public CollisionHandler getCollisionHandler() {
+    return collisionHandler;
   }
 
 }
