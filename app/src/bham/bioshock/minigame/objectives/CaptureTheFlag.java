@@ -79,7 +79,7 @@ public class CaptureTheFlag extends Objective {
   
   public void update(MinigameStore store, CaptureTheFlag captureTheFlag) {
     super.update(captureTheFlag);
-    this.health = this.getHealthCopy();
+    this.health = captureTheFlag.health;
     this.flagOwner = captureTheFlag.flagOwner;
     this.flagPosition = captureTheFlag.flagPosition;
     Astronaut owner = store.getPlayer(flagOwner);

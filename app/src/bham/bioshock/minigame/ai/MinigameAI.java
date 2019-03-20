@@ -4,6 +4,7 @@ import java.util.UUID;
 import bham.bioshock.common.models.store.MinigameStore;
 import bham.bioshock.common.models.store.Store;
 import bham.bioshock.communication.messages.MinigamePlayerMoveMessage;
+import bham.bioshock.communication.messages.MinigamePlayerStepMessage;
 import bham.bioshock.minigame.models.Astronaut.Move;
 import bham.bioshock.server.ServerHandler;
 
@@ -39,7 +40,9 @@ abstract public class MinigameAI {
 
   public void afterUpdate() {
     Move move = astronaut.endMove();
-    // Send to all except the host
+
     handler.sendToAll(new MinigamePlayerMoveMessage(astronaut, move));
+    // Send to all except the host
+    handler.sendToAll(new MinigamePlayerStepMessage(astronaut.get()));
   }
 }

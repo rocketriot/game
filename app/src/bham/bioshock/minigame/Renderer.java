@@ -78,7 +78,8 @@ public class Renderer {
     backgroundBatch = new SpriteBatch();
 
     CollisionHandler collisionHandler = new CollisionHandler(minigameStore);
-
+    minigameStore.setCollisionHandler(collisionHandler);
+    
     setupUI();
     loadSprites(collisionHandler);
 
