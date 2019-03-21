@@ -1,20 +1,6 @@
 package bham.bioshock.minigame.models;
 
 
-import static java.util.stream.Collectors.toList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Animation;
-import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.math.Intersector.MinimumTranslationVector;
-import com.badlogic.gdx.scenes.scene2d.Group;
 import bham.bioshock.client.Assets;
 import bham.bioshock.client.controllers.SoundController;
 import bham.bioshock.common.Direction;
@@ -38,6 +24,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Intersector.MinimumTranslationVector;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -66,6 +53,8 @@ public class Astronaut extends Entity {
   private Direction shotDirection;
   private transient Optional<Entity> item = Optional.empty();
   private transient Optional<Entity> currentPlatform = Optional.empty();
+
+  public boolean debug = true;
 
 
   public Astronaut(World w, float x, float y, UUID id, int colour) {
@@ -155,6 +144,12 @@ public class Astronaut extends Entity {
     animationTime += delta;
 
     checkIfOnGround();
+
+    //testing distances
+    if(debug) {
+      //broadcastDistanceToPlatform();
+    }
+
   }
 
   private void checkIfOnGround() {
@@ -486,6 +481,24 @@ public class Astronaut extends Entity {
   }
 
 
+  //TESTING
+  public void broadcastDistanceToPlatform() {
+    Position currentPosition = getPos();
+    ArrayList<Platform> path = world.getPathToGoal();
+    Platform first = path.get(0);
+
+    //float sqDist = currentPosition.sqDistanceFrom(nearest.getPos());
+
+    //double angleDelta = first.getPlanetPos().angle - currentPosition.angle;
+    //double angle = (angleDelta + 180) % 360 - 180;
+    //double distanceDiff = first.getPlanetPos().fromCenter - currentPosition.fromCenter;
+
+    double angleTo = world.getAngleTo(first.getX(), first.getY());
+
+    //System.out.println("angle to first Platform: " + angleTo);
+    System.out.println("square distance to first platform " + currentPosition.sqDistanceFrom(first.getPos()));
+
+  }
   public String toString() {
     return name.getText();
   }

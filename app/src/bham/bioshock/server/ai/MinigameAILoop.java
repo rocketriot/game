@@ -1,9 +1,10 @@
 package bham.bioshock.server.ai;
 
-import java.util.ArrayList;
+import bham.bioshock.minigame.ai.MinigameAI;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import bham.bioshock.minigame.ai.MinigameAI;
+
+import java.util.ArrayList;
 
 public class MinigameAILoop extends Thread {
 
@@ -42,7 +43,7 @@ public class MinigameAILoop extends Thread {
 
   public void registerHandler(MinigameAI ais) {
     synchronized(aiHandlers) {
-      aiHandlers.add(ais);      
+      aiHandlers.add(ais);
     }
   }
 

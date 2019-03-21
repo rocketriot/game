@@ -1,15 +1,16 @@
 package bham.bioshock.minigame.worlds;
 
-import java.io.Serializable;
-import bham.bioshock.minigame.PlanetPosition;
-import java.util.ArrayList;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import bham.bioshock.common.Position;
+import bham.bioshock.minigame.PlanetPosition;
 import bham.bioshock.minigame.models.Gun;
 import bham.bioshock.minigame.models.Platform;
 import bham.bioshock.minigame.models.Rocket;
 import bham.bioshock.minigame.physics.Vector;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+
+import java.io.Serializable;
+import java.util.ArrayList;
 
 /**
  * The type World.
@@ -18,7 +19,8 @@ abstract public class World implements Serializable {
 
   private static final long serialVersionUID = 4046769956963960819L;
   protected int textureOffset = 530;
-  
+  private ArrayList<Platform> pathToGoal;
+
   /**
    * Draws planet texture on the screen
    * 
@@ -162,4 +164,10 @@ abstract public class World implements Serializable {
 
   public abstract void afterDraw(SpriteBatch batch);
 
+    public void setPathToGoal(ArrayList<Platform> path) {
+      this.pathToGoal = path;
+    }
+    public ArrayList<Platform> getPathToGoal() {
+      return pathToGoal;
+    }
 }

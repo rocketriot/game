@@ -5,7 +5,6 @@ import bham.bioshock.client.Router;
 import bham.bioshock.common.Position;
 import bham.bioshock.common.models.store.MinigameStore;
 import bham.bioshock.minigame.models.*;
-
 import bham.bioshock.minigame.worlds.RandomWorld;
 import bham.bioshock.minigame.worlds.World;
 
@@ -153,7 +152,13 @@ public class Platformer extends Objective {
         /*for(int i=0; i<path.size();i++) {
             System.out.println(path.get(i).getPlanetPos().toString());
         }*/
+
+    world.setPathToGoal(path);
+
     return path;
   }
+
+
+
 
 }

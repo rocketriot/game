@@ -1,26 +1,23 @@
 package bham.bioshock.server.handlers;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Random;
-import java.util.UUID;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import bham.bioshock.common.models.store.MinigameStore;
 import bham.bioshock.common.models.store.Store;
 import bham.bioshock.communication.Action;
 import bham.bioshock.communication.Command;
 import bham.bioshock.minigame.Clock;
-import bham.bioshock.minigame.ai.KillEveryoneAI;
 import bham.bioshock.minigame.ai.PlatformerAi;
-import bham.bioshock.minigame.objectives.CaptureTheFlag;
-import bham.bioshock.minigame.objectives.KillThemAll;
 import bham.bioshock.minigame.objectives.Objective;
 import bham.bioshock.minigame.objectives.Platformer;
 import bham.bioshock.minigame.worlds.RandomWorld;
 import bham.bioshock.minigame.worlds.World;
 import bham.bioshock.server.ServerHandler;
 import bham.bioshock.server.ai.MinigameAILoop;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.UUID;
 
 public class MinigameHandler {
   
@@ -52,6 +49,7 @@ public class MinigameHandler {
     Objective o;
     aiLoop = new MinigameAILoop();
 
+    /*
     Random rand = new Random();
 
     switch(rand.nextInt(100)%4) {
@@ -81,14 +79,15 @@ public class MinigameHandler {
           aiLoop.registerHandler(new KillEveryoneAI(id, store, handler));
         }
         break;
-    }
+    }*/
+
     o = new Platformer(w);
     for (UUID id : store.getCpuPlayers()) {
       aiLoop.registerHandler(new PlatformerAi(id, store, handler));
     }
-    //testing
     
     aiLoop.start();
+
    if(planetId != null) {
       setupMinigameEnd(gameBoardHandler, playerId);
    }
