@@ -164,10 +164,4 @@ abstract public class World implements Serializable {
 
   public abstract void afterDraw(SpriteBatch batch);
 
-    public void setPathToGoal(ArrayList<Platform> path) {
-      this.pathToGoal = path;
-    }
-    public ArrayList<Platform> getPathToGoal() {
-      return pathToGoal;
-    }
 }

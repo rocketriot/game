@@ -145,7 +145,7 @@ public class Astronaut extends Entity {
 
     checkIfOnGround();
 
-    //testing distances
+    //TESTING PURPOSES ONLY
     if(debug) {
       //broadcastDistanceToPlatform();
     }
@@ -481,21 +481,11 @@ public class Astronaut extends Entity {
   }
 
 
-  //TESTING
+  //TESTING PURPOSES ONLY
   public void broadcastDistanceToPlatform() {
     Position currentPosition = getPos();
     ArrayList<Platform> path = world.getPathToGoal();
     Platform first = path.get(0);
-
-    //float sqDist = currentPosition.sqDistanceFrom(nearest.getPos());
-
-    //double angleDelta = first.getPlanetPos().angle - currentPosition.angle;
-    //double angle = (angleDelta + 180) % 360 - 180;
-    //double distanceDiff = first.getPlanetPos().fromCenter - currentPosition.fromCenter;
-
-    double angleTo = world.getAngleTo(first.getX(), first.getY());
-
-    //System.out.println("angle to first Platform: " + angleTo);
     System.out.println("square distance to first platform " + currentPosition.sqDistanceFrom(first.getPos()));
 
   }

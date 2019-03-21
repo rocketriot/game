@@ -147,14 +147,7 @@ public class Platformer extends Objective {
   }
 
   public ArrayList<Platform> getPathToGoal() {
-    //return ((FirstWorld) getWorld()).getPlatformPath(goalPlatform);
     ArrayList<Platform> path = ((RandomWorld) world).getPlatformPath(goalPlatform);
-        /*for(int i=0; i<path.size();i++) {
-            System.out.println(path.get(i).getPlanetPos().toString());
-        }*/
-
-    world.setPathToGoal(path);
-
     return path;
   }
 
