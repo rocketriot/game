@@ -85,10 +85,8 @@ public class Platformer extends Objective {
   public void captured(Astronaut a) {
     if(a.is(Entity.State.REMOVING)) return;
     this.winner = Optional.of(a.getId());
-    a.setItem(goal);
 
-    //make a method that ends the game
-    router.call(Route.SERVER_MINIGAME_END);
+    // make a method that ends the game
     return;
   }
 

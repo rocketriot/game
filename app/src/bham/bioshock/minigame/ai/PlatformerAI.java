@@ -58,7 +58,7 @@ public class PlatformerAI extends MinigameAI {
 
         }
         else {
-            astronaut.get().debug = false;
+
             if(statesStack.isEmpty()) {
                 statesStack.add(new FindNextPlatform());
             }

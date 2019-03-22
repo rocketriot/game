@@ -3,6 +3,7 @@ package bham.bioshock.client.scenes.minigame;
 import bham.bioshock.client.FontGenerator;
 import bham.bioshock.common.consts.Config;
 import bham.bioshock.common.models.store.Store;
+import java.text.DecimalFormat;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -65,42 +66,6 @@ public class MinigameInstructions {
       duration = 5f;
       displayed = true;
       showPrompt = true;
-    }
-  }
-
-  /**
-   * Displays timer for the minigame.
-   */
-  private void displayTimer() {
-    int xTimer = Config.GAME_WORLD_WIDTH / 2 - 100;
-    int yTimer = Config.GAME_WORLD_HEIGHT - 100;
-
-    timer += Gdx.graphics.getDeltaTime();
-    float displayedTime = 60 - timer;
-
-
-    DecimalFormat df = new DecimalFormat("##");
-
-    String displayedSeconds = df.format(displayedTime);
-
-    if(displayedSeconds.length() <2)
-      displayedSeconds = "0" + displayedSeconds;
-
-
-    batch.begin();
-    timerFont.draw(batch, "00:" + displayedSeconds, xTimer, yTimer);
-
-    if(displayedTime <=10)
-      showPrompt2 =true;
-    batch.end();
-  }
-
-  public void dispose() {
-    try {
-      font.dispose();
-      timerFont.dispose();
-    } catch (Exception e) {
-      e.printStackTrace();
     }
   }
 }
