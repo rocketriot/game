@@ -4,7 +4,6 @@ import bham.bioshock.client.FontGenerator;
 import bham.bioshock.common.consts.Config;
 import bham.bioshock.common.models.store.Store;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 

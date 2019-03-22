@@ -49,6 +49,16 @@ public class Coordinates extends Sendable {
     return (new Coordinates(this.x - toSub.getX(), this.y - toSub.getY()));
   }
 
+  /**
+   * Calculates the distance between this coordinate and another
+   * @param point the coordinate being compared to this object
+   * @return the distance between the point and this object
+   */
+  public float calcDistance(Coordinates point) {
+    Coordinates diff = this.difference(point);
+    return (Math.abs(diff.x) + Math.abs(diff.y));
+  }
+
   public String toString() {
     return "X: " + x + " , Y: " + y;
   }

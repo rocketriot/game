@@ -1,18 +1,18 @@
 package bham.bioshock.minigame.worlds;
 
-import bham.bioshock.minigame.PlanetPosition;
 import bham.bioshock.minigame.seeders.PlatformSeeder;
 import java.util.ArrayList;
 import java.util.Random;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import bham.bioshock.common.Position;
 import bham.bioshock.minigame.models.Gun;
 import bham.bioshock.minigame.models.Platform;
 import bham.bioshock.minigame.models.Rocket;
 import java.util.Collections;
 
-public class FirstWorld extends World {
+public class RandomWorld extends World {
 
   private static final long serialVersionUID = -5432716795106522826L;
 
@@ -24,9 +24,11 @@ public class FirstWorld extends World {
   ArrayList<Gun> guns = new ArrayList<>();
   ArrayList<Platform> platforms = new ArrayList<>();
   Position gravityCenter = new Position(0, 0);
-  Texture texture;
+  int textureNum;
+  transient Texture texture;
+  transient Texture frontTexture;
 
-  public FirstWorld() {
+  public RandomWorld() {
     playerPositions[0] = new Position(-2300, 0);
     playerPositions[1] = new Position(0, -2000);
     playerPositions[2] = new Position(2000, 0);
@@ -41,6 +43,9 @@ public class FirstWorld extends World {
     PlatformSeeder seeder = new PlatformSeeder(this);
     seeder.seed();
     platforms = seeder.getPlatforms();
+    
+    Random r = new Random();
+    textureNum = (r.nextInt(100) % 4)+1;
   }
 
   @Override
@@ -83,13 +88,14 @@ public class FirstWorld extends World {
     if (texture != null) {
       return texture;
     }
-    Random r = new Random();
-    int id = r.nextInt(100) % 2;
-    Texture t = new Texture(Gdx.files.internal("app/assets/minigame/planet" + (id + 1) + ".png"));
-    ;
-    texture = t;
-    return t;
+    texture = new Texture(Gdx.files.internal("app/assets/minigame/planets/" + textureNum + ".png"));
+    if(textureNum == 4) {
+      textureOffset = 770;
+      frontTexture = new Texture(Gdx.files.internal("app/assets/minigame/planets/4_front.png"));
+    }
+    return texture;
   }
+
 
   /**
    * Method to get the platform path to a platform inclusive
@@ -106,5 +112,15 @@ public class FirstWorld extends World {
     }
     Collections.reverse(path);
     return path;
+  }
+
+  @Override
+  public void afterDraw(SpriteBatch batch) {
+    if(textureNum == 4) {      
+      batch.begin();
+      float radius = (float) getPlanetRadius()+textureOffset;
+      batch.draw(frontTexture, -radius, -radius, radius*2, radius*2);
+      batch.end();      
+    }
   }
 }

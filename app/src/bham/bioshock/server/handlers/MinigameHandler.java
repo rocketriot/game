@@ -17,7 +17,7 @@ import bham.bioshock.minigame.objectives.CaptureTheFlag;
 import bham.bioshock.minigame.objectives.KillThemAll;
 import bham.bioshock.minigame.objectives.Objective;
 import bham.bioshock.minigame.objectives.Platformer;
-import bham.bioshock.minigame.worlds.FirstWorld;
+import bham.bioshock.minigame.worlds.RandomWorld;
 import bham.bioshock.minigame.worlds.World;
 import bham.bioshock.server.ServerHandler;
 import bham.bioshock.server.ai.MinigameAILoop;
@@ -41,9 +41,9 @@ public class MinigameHandler {
   /*
    * Create and seed the world, and send start game command to all clients
    */
-  public void startMinigame(Action action) {
+  public void startMinigame(Action action, UUID playerId, GameBoardHandler gameBoardHandler) {
     // Create a world for the minigame
-    World w = new FirstWorld();
+    World w = new RandomWorld();
     if(action.getArguments().size() != 0) {
       planetId = (UUID) action.getArgument(0);      
     } else {
@@ -84,9 +84,9 @@ public class MinigameHandler {
     }
     
     aiLoop.start();
-    if(planetId != null) {
-      setupMinigameEnd();
-    }
+   if(planetId != null) {
+      setupMinigameEnd(gameBoardHandler, playerId);
+   }
 
     ArrayList<Serializable> arguments = new ArrayList<>();
     arguments.add((Serializable) w);
@@ -97,11 +97,11 @@ public class MinigameHandler {
   /**
    * Starts a clock ending the minigame
    */
-  private void setupMinigameEnd() {
+  private void setupMinigameEnd(GameBoardHandler gameBoardHandler, UUID playerId) {
     clock = new Clock();
     long t = System.currentTimeMillis();
 
-    clock.at(180f, new Clock.TimeListener() {
+    clock.at(60f, new Clock.TimeListener() {
       @Override
       public void handle(Clock.TimeUpdateEvent event) {
         if(minigameTimer != null) {
@@ -109,7 +109,7 @@ public class MinigameHandler {
         }
         MinigameStore localStore = store.getMinigameStore();
         Objective o = localStore.getObjective();
-        endMinigame(o.getWinner());          
+        endMinigame(o.getWinner(), gameBoardHandler, playerId);          
       }
     });
     
@@ -121,6 +121,7 @@ public class MinigameHandler {
         try {
           while (!isInterrupted()) {
             long delta = (System.currentTimeMillis() - time);
+            time = System.currentTimeMillis();
             clock.update((int) delta);
             Thread.sleep(1000);
           }
@@ -148,15 +149,17 @@ public class MinigameHandler {
 
   /**
    * Method to end the minigame and send the players back to the main board
+   * @param gameBoardHandler 
    */
-  public void endMinigame(UUID playerId) {
+  public void endMinigame(UUID winnerId, GameBoardHandler gameBoardHandler, UUID playerId) {
     ArrayList<Serializable> args = new ArrayList<>();
-    args.add(playerId);
+    args.add(winnerId);
     args.add(planetId);
     args.add(100);
     planetId = null;
 
     aiLoop.finish();
     handler.sendToAll(new Action(Command.MINIGAME_END, args));
+    gameBoardHandler.endTurn(playerId);
   }
 }

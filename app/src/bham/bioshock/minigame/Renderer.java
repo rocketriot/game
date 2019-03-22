@@ -146,12 +146,13 @@ public class Renderer implements InputProcessor {
       entities.forEach(e -> e.drawDebug(shapeRenderer));
     }
 
-    drawPlanet();
     batch.begin();
+    world.draw(batch);
     entities.forEach(e -> e.draw(batch));
     batch.end();
     entities.forEach(e -> e.afterDraw(textBatch));
     entities.forEach(e -> e.update(delta));
+    world.afterDraw(batch);
     
     // Draw the ui
     this.batch.setProjectionMatrix(hud.getStage().getCamera().combined);
@@ -160,13 +161,6 @@ public class Renderer implements InputProcessor {
     hud.getStage().draw();
     minigameStore.getEntities().removeIf(e -> e.isRemoved());
     minigameStore.getStaticEntities().removeIf(e -> e.isRemoved());
-  }
-
-  public void drawPlanet() {
-    batch.begin();
-    float radius = (float) world.getPlanetRadius()+530;
-    batch.draw(worldTexture, -radius, -radius, radius*2, radius*2);
-    batch.end();
   }
 
   public void drawBackground() {
