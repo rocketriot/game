@@ -1,6 +1,7 @@
 package bham.bioshock.minigame.worlds;
 
 import bham.bioshock.minigame.seeders.PlatformSeeder;
+import bham.bioshock.minigame.seeders.WeaponSeeder;
 import java.util.ArrayList;
 import java.util.Random;
 import com.badlogic.gdx.Gdx;
@@ -21,8 +22,10 @@ public class RandomWorld extends World {
   double GRAVITY = 1500;
   Position[] playerPositions = new Position[4];
   ArrayList<Rocket> rockets = new ArrayList<>();
-  ArrayList<Gun> guns = new ArrayList<>();
-  ArrayList<Platform> platforms = new ArrayList<>();
+  transient WeaponSeeder wSeeder;
+  ArrayList<Gun> guns;
+  transient PlatformSeeder pSeeder;
+  ArrayList<Platform> platforms;
   Position gravityCenter = new Position(0, 0);
   int textureNum;
   transient Texture texture;
@@ -34,16 +37,14 @@ public class RandomWorld extends World {
     playerPositions[2] = new Position(2000, 0);
     playerPositions[3] = new Position(0, 2000);
 
-    guns.add(new Gun(this, -2070, -100));
-    guns.add(new Gun(this, 2070, -100));
-    guns.add(new Gun(this, 2070, 3000));
-    guns.add(new Gun(this, -2070, -3100));
-    guns.add(new Gun(this, 0, -3000));
+    pSeeder = new PlatformSeeder(this);
+    wSeeder = new WeaponSeeder(this);
+    spawnPlatforms();
+    spawnGuns();
 
-    PlatformSeeder seeder = new PlatformSeeder(this);
-    seeder.seed();
-    platforms = seeder.getPlatforms();
-    
+    platforms = pSeeder.getPlatforms();
+    guns = wSeeder.getGuns();
+
     Random r = new Random();
     textureNum = (r.nextInt(100) % 4)+1;
   }
@@ -74,10 +75,19 @@ public class RandomWorld extends World {
   }
 
   @Override
+  public void spawnGuns(){
+    wSeeder.seed();
+  }
+
+  @Override
   public ArrayList<Gun> getGuns() {
     return guns;
   }
 
+  @Override
+  public void spawnPlatforms() {
+    pSeeder.seed();
+  }
 
   public ArrayList<Platform> getPlatforms() {
     return platforms;
@@ -95,7 +105,6 @@ public class RandomWorld extends World {
     }
     return texture;
   }
-
 
   /**
    * Method to get the platform path to a platform inclusive
