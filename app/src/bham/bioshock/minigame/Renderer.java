@@ -32,7 +32,7 @@ import bham.bioshock.client.scenes.minigame.MinigameHud;
 import bham.bioshock.minigame.models.*;
 import bham.bioshock.minigame.physics.CollisionHandler;
 
-public class Renderer implements InputProcessor {
+public class Renderer {
   private Astronaut mainPlayer;
 
   ShapeRenderer shapeRenderer;
@@ -83,10 +83,8 @@ public class Renderer implements InputProcessor {
 
     // Setup the input processing
     InputMultiplexer multiplexer = new InputMultiplexer();
-    multiplexer.addProcessor(this);
     multiplexer.addProcessor(stage);
-    multiplexer.addProcessor(hud.getStage());
-    multiplexer.addProcessor(new InputListener(minigameStore, router, collisionHandler));
+    multiplexer.addProcessor(new InputListener(minigameStore, router, collisionHandler, hud));
     Gdx.input.setInputProcessor(multiplexer);
   }
 
@@ -172,47 +170,5 @@ public class Renderer implements InputProcessor {
 
   public void resize(int width, int height) {
     stage.getViewport().update(width, height, true);
-  }
-
-  @Override
-  public boolean keyDown(int keycode) {
-    return false;
-  }
-
-  @Override
-  public boolean keyUp(int keycode) {
-    return false;
-  }
-
-  @Override
-  public boolean keyTyped(char character) {
-    return false;
-  }
-
-  @Override
-  public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-    hud.touchDown(screenX, screenY, pointer, button);
-
-    return false;
-  }
-
-  @Override
-  public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-    return false;
-  }
-
-  @Override
-  public boolean touchDragged(int screenX, int screenY, int pointer) {
-    return false;
-  }
-
-  @Override
-  public boolean mouseMoved(int screenX, int screenY) {
-    return false;
-  }
-
-  @Override
-  public boolean scrolled(int amount) {
-    return false;
   }
 }

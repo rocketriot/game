@@ -2,9 +2,12 @@ package bham.bioshock.minigame;
 
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputAdapter;
+import com.badlogic.gdx.math.Vector3;
+
 import bham.bioshock.client.Route;
 import bham.bioshock.client.Router;
 import bham.bioshock.client.controllers.SoundController;
+import bham.bioshock.client.scenes.minigame.MinigameHud;
 import bham.bioshock.common.Position;
 import bham.bioshock.common.models.store.MinigameStore;
 import bham.bioshock.minigame.models.*;
@@ -20,13 +23,15 @@ public class InputListener extends InputAdapter {
   private World world;
   private Router router;
   private CollisionHandler collisionHandler;
+  private MinigameHud hud;
 
-  public InputListener(MinigameStore minigameStore, Router router, CollisionHandler collisionHandler) {
+  public InputListener(MinigameStore minigameStore, Router router, CollisionHandler collisionHandler, MinigameHud hud) {
     this.world = minigameStore.getWorld();
     this.mainPlayer = minigameStore.getMainPlayer();
     this.localStore = minigameStore;
     this.router = router;
     this.collisionHandler = collisionHandler;
+    this.hud = hud;
   }
 
   @Override
@@ -47,6 +52,13 @@ public class InputListener extends InputAdapter {
     }
     mainPlayer.moveChange();
     router.call(Route.MINIGAME_MOVE);
+
+    return false;
+  }
+
+  @Override
+  public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+    hud.touchDown(screenX, screenY, pointer, button);
 
     return false;
   }
