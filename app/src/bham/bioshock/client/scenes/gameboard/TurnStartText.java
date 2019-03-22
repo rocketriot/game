@@ -1,4 +1,4 @@
-package bham.bioshock.client.scenes.gameboard.hud;
+package bham.bioshock.client.scenes.gameboard;
 
 import bham.bioshock.client.FontGenerator;
 import bham.bioshock.common.consts.Config;

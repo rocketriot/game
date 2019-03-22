@@ -14,6 +14,7 @@ import bham.bioshock.minigame.worlds.World;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -25,6 +26,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import bham.bioshock.client.scenes.minigame.MinigameHud;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -83,9 +85,8 @@ public class Renderer {
 
     // Setup the input processing
     InputMultiplexer multiplexer = new InputMultiplexer();
-    multiplexer.addProcessor(hud.getStage());
     multiplexer.addProcessor(stage);
-    multiplexer.addProcessor(new InputListener(minigameStore, router, minigameStore.getCollisionHandler()));
+    multiplexer.addProcessor(new InputListener(minigameStore, router, minigameStore.getCollisionHandler(), hud));
     Gdx.input.setInputProcessor(multiplexer);
   }
 
@@ -152,9 +153,9 @@ public class Renderer {
     world.afterDraw(batch);
     
     // Draw the ui
-    this.batch.setProjectionMatrix(hud.stage.getCamera().combined);
+    this.batch.setProjectionMatrix(hud.getStage().getCamera().combined);
     hud.getStage().act(delta);
-    hud.updateHud();
+    hud.update();
     hud.getStage().draw();
     minigameStore.getEntities().removeIf(e -> e.isRemoved());
     minigameStore.getStaticEntities().removeIf(e -> e.isRemoved());
@@ -186,7 +187,3 @@ public class Renderer {
     hud.dispose();
   }
 }
-
-
-
-
