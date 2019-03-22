@@ -106,8 +106,8 @@ public class MinigameController extends Controller {
    */
   public void bulletCreate(BulletShotMessage data) {
     Position p = data.position;
-    
-    Bullet b = new Bullet(localStore.getWorld(), p.x, p.y,localStore.getMainPlayer());
+    if(localStore == null || localStore.getMainPlayer() == null) return;
+    Bullet b = new Bullet(localStore.getWorld(), p.x, p.y, localStore.getMainPlayer());
     b.setSpeedVector(data.speedVector);
     b.load();
     b.setCollisionHandler(localStore.getCollisionHandler());
