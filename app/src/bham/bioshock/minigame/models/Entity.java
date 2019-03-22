@@ -2,14 +2,9 @@ package bham.bioshock.minigame.models;
 
 import bham.bioshock.common.Position;
 import bham.bioshock.minigame.PlanetPosition;
-import bham.bioshock.minigame.models.Entity.State;
 import bham.bioshock.minigame.objectives.Objective;
 import bham.bioshock.minigame.physics.*;
 import bham.bioshock.minigame.worlds.World;
-import java.io.Serializable;
-import java.util.Optional;
-import java.util.UUID;
-import java.util.stream.Stream;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -17,6 +12,11 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Intersector.MinimumTranslationVector;
+
+import java.io.Serializable;
+import java.util.Optional;
+import java.util.UUID;
+import java.util.stream.Stream;
 
 public abstract class Entity implements Serializable {
 
@@ -271,6 +271,13 @@ public abstract class Entity implements Serializable {
     CREATED, LOADED, REMOVED, REMOVING,
   }
 
+  public StepsGenerator getStepsGenerator() {
+    return stepsGenerator;
+  }
+
+  public boolean loaded() {
+    return loaded;
+  }
 }
 
 

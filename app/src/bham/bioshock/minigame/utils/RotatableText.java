@@ -52,6 +52,9 @@ public class RotatableText {
     batch.end();
     batch.setTransformMatrix(originalMatrix);
   }
-  
-  
+
+
+  public String getText() {
+    return text;
+  }
 }
