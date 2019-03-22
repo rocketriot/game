@@ -4,10 +4,7 @@ import bham.bioshock.common.Position;
 import bham.bioshock.minigame.PlanetPosition;
 import bham.bioshock.minigame.models.Platform;
 import bham.bioshock.minigame.worlds.World;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.Random;
 
 /** The Map Seeder. */
@@ -212,7 +209,6 @@ public class PlatformSeeder {
       difference = (float) generator.nextInt((max - min) + 1) + min;
       angle = platformAngle + difference;
     }
-
     return angle;
   }
 
