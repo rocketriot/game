@@ -24,7 +24,6 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Intersector.MinimumTranslationVector;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -145,10 +144,6 @@ public class Astronaut extends Entity {
 
     checkIfOnGround();
 
-    //TESTING PURPOSES ONLY
-    if(debug) {
-      //broadcastDistanceToPlatform();
-    }
 
   }
 
@@ -481,14 +476,7 @@ public class Astronaut extends Entity {
   }
 
 
-  //TESTING PURPOSES ONLY
-  public void broadcastDistanceToPlatform() {
-    Position currentPosition = getPos();
-    ArrayList<Platform> path = world.getPathToGoal();
-    Platform first = path.get(0);
-    System.out.println("square distance to first platform " + currentPosition.sqDistanceFrom(first.getPos()));
 
-  }
   public String toString() {
     return name.getText();
   }
