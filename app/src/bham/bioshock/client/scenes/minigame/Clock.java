@@ -21,7 +21,7 @@ public class Clock extends HudElement {
   private SimpleDateFormat timeFormat;
 
   /** The length of the minigame */
-  private float seconds = 180;
+  private float seconds = 60;
 
   Clock(Stage stage, SpriteBatch batch, Skin skin, Store store, Router router) {
     super(stage, batch, skin, store, router);
