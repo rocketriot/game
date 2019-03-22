@@ -48,10 +48,10 @@ public class Clock extends HudElement {
 
     batch.begin();
 
-    if (seconds <= 10 && (int) seconds % 2 == 1) {
-      font.draw(batch, time, x, y);
-    } else {
+    if (seconds <= 10 && (int) seconds % 2 == 0) {
       fontRed.draw(batch, time, x, y);
+    } else {
+      font.draw(batch, time, x, y);
     }
 
     batch.end();
