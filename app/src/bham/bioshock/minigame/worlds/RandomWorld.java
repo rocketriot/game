@@ -1,5 +1,6 @@
 package bham.bioshock.minigame.worlds;
 
+
 import bham.bioshock.minigame.seeders.PlatformSeeder;
 import bham.bioshock.minigame.seeders.WeaponSeeder;
 import java.util.ArrayList;
@@ -11,7 +12,14 @@ import bham.bioshock.common.Position;
 import bham.bioshock.minigame.models.Gun;
 import bham.bioshock.minigame.models.Platform;
 import bham.bioshock.minigame.models.Rocket;
+import bham.bioshock.minigame.seeders.PlatformSeeder;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Random;
 
 public class RandomWorld extends World {
 
@@ -114,14 +122,15 @@ public class RandomWorld extends World {
    */
   public ArrayList<Platform> getPlatformPath(Platform platform) {
     ArrayList<Platform> path = new ArrayList<>();
-    Platform currentParent = platform;
-    while (currentParent.equals(null)) {
-      path.add(currentParent);
-      currentParent = platform.getParent();
+
+    while (platform != null) {
+      path.add(platform);
+      platform = platform.getParent();
     }
     Collections.reverse(path);
     return path;
   }
+
 
   @Override
   public void afterDraw(SpriteBatch batch) {
@@ -132,4 +141,5 @@ public class RandomWorld extends World {
       batch.end();      
     }
   }
+
 }
