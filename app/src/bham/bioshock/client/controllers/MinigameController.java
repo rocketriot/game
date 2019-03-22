@@ -1,9 +1,5 @@
 package bham.bioshock.client.controllers;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.UUID;
-import com.google.inject.Inject;
 import bham.bioshock.client.BoardGame;
 import bham.bioshock.client.Route;
 import bham.bioshock.client.Router;
@@ -20,6 +16,11 @@ import bham.bioshock.minigame.models.Bullet;
 import bham.bioshock.minigame.objectives.Objective;
 import bham.bioshock.minigame.physics.SpeedVector;
 import bham.bioshock.minigame.worlds.World;
+import com.google.inject.Inject;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.UUID;
 
 public class MinigameController extends Controller {
 

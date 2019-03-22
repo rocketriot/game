@@ -4,6 +4,7 @@ import bham.bioshock.common.Position;
 import bham.bioshock.minigame.PlanetPosition;
 import bham.bioshock.minigame.models.Platform;
 import bham.bioshock.minigame.worlds.World;
+
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -15,6 +16,9 @@ public class PlatformSeeder {
 
   /** List of all the platforms in the world */
   private ArrayList<Platform> platforms = new ArrayList<>();
+
+  private int WIDTH_LOWERBOUND = 150;
+  private int WIDTH_UPPERBOUND = 200;
 
   /**
    * Instantiates a new Map seeder.
@@ -38,6 +42,15 @@ public class PlatformSeeder {
     generatePlatforms(180, 270, "High");
     // generate for top left quarter
     generatePlatforms(270, 360, "High");
+    /*
+    // generate for top right quarter
+    generatePlatforms(0, 90, "High");
+    // generate for bottom right quarter
+    generatePlatforms(90, 180, "High");
+    // generate for bottom left quarter
+    generatePlatforms(180, 270, "High");
+    // generate for top left quarter
+    generatePlatforms(270, 360, "High");*/
   }
 
   /**
