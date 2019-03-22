@@ -2,7 +2,6 @@ package bham.bioshock.minigame;
 
 import bham.bioshock.client.Assets;
 import bham.bioshock.client.Router;
-import bham.bioshock.client.scenes.MinigameHud;
 import bham.bioshock.common.consts.Config;
 import bham.bioshock.common.models.store.MinigameStore;
 import bham.bioshock.common.models.store.Store;
@@ -12,7 +11,6 @@ import bham.bioshock.minigame.physics.CollisionHandler;
 import bham.bioshock.minigame.worlds.World;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
-import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
