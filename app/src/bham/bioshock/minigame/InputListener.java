@@ -85,10 +85,9 @@ public class InputListener extends InputAdapter {
       pp.angle -= world.angleRatio(pp.fromCenter) * 80;
       speed.apply(world.getAngleTo(pos.x, pos.y)-90 , Bullet.launchSpeed);
     }
-        
+
     Position bulletPos = world.convert(pp);
     Bullet b = new Bullet(world, bulletPos.x, bulletPos.y, mainPlayer);
-    
     // Apply bullet speed
     b.setSpeedVector(speed);
 

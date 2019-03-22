@@ -258,7 +258,7 @@ public class Astronaut extends Entity {
   }
 
   @Override
-  public boolean canColideWith(Entity e) {
+  public boolean canCollideWith(Entity e) {
     switch (e.type) {
       case ASTRONAUT:
       case BULLET:

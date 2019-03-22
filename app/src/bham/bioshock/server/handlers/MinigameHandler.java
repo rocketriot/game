@@ -11,7 +11,7 @@ import bham.bioshock.communication.messages.minigame.EndMinigameMessage;
 import bham.bioshock.communication.messages.minigame.MinigameStartMessage;
 import bham.bioshock.communication.messages.minigame.RequestMinigameStartMessage;
 import bham.bioshock.minigame.Clock;
-import bham.bioshock.minigame.ai.KillEveryoneAI;
+import bham.bioshock.minigame.ai.KillThemAllAI;
 import bham.bioshock.minigame.ai.PlatformerAi;
 import bham.bioshock.minigame.objectives.CaptureTheFlag;
 import bham.bioshock.minigame.objectives.KillThemAll;
@@ -55,14 +55,7 @@ public class MinigameHandler {
 
     Random rand = new Random();
 
-   switch(rand.nextInt(100)%4) {
-      case 1:
-        o = new CaptureTheFlag(w);
-        for (UUID id : store.getCpuPlayers()) {
-          // NOTE CHANGE TO CAPTURE the flag
-          aiLoop.registerHandler(new KillEveryoneAI(id, store, handler));
-        }
-        break;
+   switch(rand.nextInt(100)%3) {
       case 2:
         o = new Platformer(w);
         for (UUID id : store.getCpuPlayers()) {
@@ -72,19 +65,20 @@ public class MinigameHandler {
       case 3:
         o = new KillThemAll();
         for (UUID id : store.getCpuPlayers()) {
-          aiLoop.registerHandler(new KillEveryoneAI(id, store, handler));
+          aiLoop.registerHandler(new KillThemAllAI(id, store, handler));
         }
         break;
       default:
         o = new CaptureTheFlag(w);
         for (UUID id : store.getCpuPlayers()) {
           // NOTE CHANGE TO CAPTURE the flag
-          aiLoop.registerHandler(new KillEveryoneAI(id, store, handler));
+          aiLoop.registerHandler(new KillThemAllAI(id, store, handler));
         }
         break;
     }
 
     aiLoop.start();
+    
     setupMinigameEnd(gameBoardHandler, playerId);
     handler.sendToAll(new MinigameStartMessage(w, o));
   }
