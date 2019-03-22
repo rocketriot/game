@@ -16,6 +16,7 @@ public abstract class StaticEntity extends Entity {
   public void setPosition(float x, float y) {
     this.pos.x = x;
     this.pos.y = y;
+    this.collisionBoundary.update(this.pos, getRotation());
   }
 
 }

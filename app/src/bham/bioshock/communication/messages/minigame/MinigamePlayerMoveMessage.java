@@ -1,8 +1,9 @@
-package bham.bioshock.communication.messages;
+package bham.bioshock.communication.messages.minigame;
 
 import java.util.UUID;
 
 import bham.bioshock.communication.Command;
+import bham.bioshock.communication.messages.Message;
 import bham.bioshock.minigame.ai.CpuAstronaut;
 import bham.bioshock.minigame.models.Astronaut;
 import bham.bioshock.minigame.models.Astronaut.Move;

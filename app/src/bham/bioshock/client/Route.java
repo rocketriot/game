@@ -43,11 +43,11 @@ public enum Route {
   MINIGAME_STEP               (MinigameController.class,      "playerStep"),
   MINIGAME_PLAYER_UPDATE      (MinigameController.class,      "updatePlayerStep"),
   MINIGAME_PLAYER_UPDATE_MOVE (MinigameController.class,      "updatePlayerMove"),
-  SERVER_MINIGAME_END         (MinigameController.class,      "sendEnd"),
   MINIGAME_END                (MinigameController.class,      "end"),
   MINIGAME_BULLET             (MinigameController.class,      "bulletCreate"),
   MINIGAME_BULLET_SEND        (MinigameController.class,      "bulletShot"),
-  MINIGAME_OBJECTIVE_UPDATE   (MinigameController.class,      "updateObjective"),
+  OBJECTIVE_UPDATE            (MinigameController.class,      "updateObjective"),
+  SEND_OBJECTIVE_UPDATE       (MinigameController.class,      "sendObjectiveUpdate"),
 
   START_MUSIC                 (SoundController.class,         "startMusic"),
   FADE_OUT                    (SoundController.class,         "fadeOut"),

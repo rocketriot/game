@@ -8,15 +8,12 @@ import bham.bioshock.client.Router;
 import bham.bioshock.common.consts.Config;
 import bham.bioshock.common.models.store.MinigameStore;
 import bham.bioshock.common.models.store.Store;
-import bham.bioshock.minigame.models.Bullet;
-import bham.bioshock.minigame.models.Entity;
-import bham.bioshock.minigame.models.Gun;
-import bham.bioshock.minigame.models.Rocket;
 import bham.bioshock.minigame.objectives.Objective;
 import bham.bioshock.minigame.worlds.World;
 import java.util.Collection;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
+import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -54,25 +51,23 @@ public class Renderer {
 
   private MinigameHud hud;
   private World world;
+  private AssetManager manager;
   private float time;
   
-  private Texture worldTexture;
-  
-  public Renderer(Store store, Router router) {
+  public Renderer(Store store, Router router, AssetManager manager) {
     this.store = store;
     this.minigameStore = store.getMinigameStore();
     this.router = router;
-
+    this.manager = manager;
+  }
+  
+  public void show() {
     mainPlayer = minigameStore.getMainPlayer();
-
     shapeRenderer = new ShapeRenderer();
-
     world = minigameStore.getWorld();
-    worldTexture = world.getTexture();
 
     cam = new OrthographicCamera();
     camRotation = 0;
-    cam.update();
 
     batch = new SpriteBatch();
     textBatch = new SpriteBatch();
@@ -81,31 +76,30 @@ public class Renderer {
     CollisionHandler collisionHandler = new CollisionHandler(minigameStore);
     minigameStore.setCollisionHandler(collisionHandler);
     
-    setupUI();
-    loadSprites(collisionHandler);
+    Skin skin = new Skin(Gdx.files.internal(Assets.skin));
+    hud = new MinigameHud(batch, skin, GAME_WORLD_WIDTH, GAME_WORLD_HEIGHT, store, router);
+
+    loadSprites();
 
     // Setup the input processing
     InputMultiplexer multiplexer = new InputMultiplexer();
     multiplexer.addProcessor(hud.getStage());
     multiplexer.addProcessor(stage);
-    multiplexer.addProcessor(new InputListener(minigameStore, router, collisionHandler));
+    multiplexer.addProcessor(new InputListener(minigameStore, router, minigameStore.getCollisionHandler()));
     Gdx.input.setInputProcessor(multiplexer);
   }
 
-  private void setupUI() {
-    Skin skin = new Skin(Gdx.files.internal(Assets.skin));
-    hud = new MinigameHud(batch, skin, GAME_WORLD_WIDTH, GAME_WORLD_HEIGHT, store, router);
-  }
-
-
-  public void loadSprites(CollisionHandler collisionHandler) {
+  public void loadSprites() {
+    CollisionHandler collisionHandler = minigameStore.getCollisionHandler();
     viewport = new FitViewport(GAME_WORLD_WIDTH, GAME_WORLD_HEIGHT, cam);
-    Astronaut.loadTextures();
-    Rocket.loadTextures();
-    Gun.loadTextures();
-    Bullet.loadTextures();
-    Flag.loadTextures();
     stage = new Stage(viewport);
+    
+    Astronaut.createTextures(manager);
+    Rocket.createTextures(manager);
+    Gun.createTextures(manager);
+    Bullet.createTextures(manager);
+    Flag.createTextures(manager);
+    Platform.createTextures(manager);
 
     background = new Sprite(new Texture(Gdx.files.internal("app/assets/backgrounds/game.png")));
 
@@ -178,13 +172,18 @@ public class Renderer {
   }
 
   public void resize(int width, int height) {
-    stage.getViewport().update(width, height, true);
+    if(stage != null) {
+      stage.getViewport().update(width, height, true);      
+    }
   }
 
   public void dispose() {
-    hud.dispose();
+    batch.dispose();
+    backgroundBatch.dispose();
+    textBatch.dispose();
     background.getTexture().dispose();
-    Flag.dispose();
+    world.dispose();
+    hud.dispose();
   }
 }
 

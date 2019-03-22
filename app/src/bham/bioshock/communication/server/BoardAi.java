@@ -8,9 +8,8 @@ import bham.bioshock.common.models.Planet;
 import bham.bioshock.common.models.Player;
 import bham.bioshock.common.models.store.Store;
 import bham.bioshock.common.pathfinding.AStarPathfinding;
-import bham.bioshock.communication.Action;
 import bham.bioshock.communication.Command;
-import bham.bioshock.communication.messages.MovePlayerOnBoardMessage;
+import bham.bioshock.communication.messages.boardgame.MovePlayerOnBoardMessage;
 import bham.bioshock.server.handlers.GameBoardHandler;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -55,7 +54,7 @@ public class BoardAi extends Thread {
     }
 
     MovePlayerOnBoardMessage msg = new MovePlayerOnBoardMessage(bestMove.getMoveCoords(), player.getId());
-    gameBoardHandler.movePlayer(Action.of(msg), player.getId());
+    gameBoardHandler.movePlayer(msg, player.getId());
   }
 
   /**

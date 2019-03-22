@@ -3,9 +3,8 @@ package bham.bioshock.minigame.models;
 import static java.util.stream.Collectors.toList;
 import java.io.Serializable;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
-import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
@@ -143,30 +142,18 @@ public class Astronaut extends Entity {
   @Override
   public void draw(SpriteBatch batch) {
     if (is(State.REMOVING)) {
-      TextureRegion anim;
-      if(dieFront) {
-        anim = texture.dyingFront.getKeyFrame(dieTime, false);        
-      } else {
-        anim = texture.dyingBack.getKeyFrame(dieTime, false);
-      }
-
-      Sprite sprite = getSprite();
-      sprite.setRegion(anim);
-      sprite.setPosition(getX() - (sprite.getWidth() / 2), getY());
-      sprite.setRotation((float) getRotation());
-      sprite.draw(batch);
-      
-      if (dieFront && texture.dyingFront.isAnimationFinished(dieTime)
+      if ((dieFront && texture.dyingFront.isAnimationFinished(dieTime))
           || texture.dyingBack.isAnimationFinished(dieTime)) {
-        setRotation(0);
+        
         stepsGenerator.updateFromServer(new SpeedVector(), respawn);
         setState(State.LOADED);
+        
       }
       
     } else {
       drawHealth(batch);
-      super.draw(batch);
     }
+    super.draw(batch);
   }
 
   @Override
@@ -222,8 +209,14 @@ public class Astronaut extends Entity {
   /**
    * Player textures
    **/
-
   public TextureRegion getTexture() {
+    // If removing show dying animation
+    if (is(State.REMOVING)) {
+      if(dieFront) {
+        return texture.dyingFront.getKeyFrame(dieTime, false);        
+      }
+      return texture.dyingBack.getKeyFrame(dieTime, false);  
+    }
     TextureRegion region = getTexture(haveGun);
     if (region == null)
       return null;
@@ -249,8 +242,8 @@ public class Astronaut extends Entity {
   }
 
 
-  private static TextureRegion[][] splittedTexture(String path, int fnum) {
-    Texture t = new Texture(Gdx.files.internal(path));
+  private static TextureRegion[][] splittedTexture(AssetManager manager, String path, int fnum) {
+    Texture t = manager.get(path, Texture.class);
     return TextureRegion.split(t, t.getWidth() / fnum, t.getHeight());
   }
 
@@ -265,7 +258,7 @@ public class Astronaut extends Entity {
   }
 
   @Override
-  public boolean canColideWith(Entity e) {
+  public boolean canCollideWith(Entity e) {
     switch (e.type) {
       case ASTRONAUT:
       case BULLET:
@@ -296,7 +289,8 @@ public class Astronaut extends Entity {
         e.setState(State.REMOVING);
         break;
       case FLAG:
-        if(objective.isPresent()) {
+        Flag flag = (Flag) e;
+        if(objective.isPresent() && !flag.haveOwner()) {
           objective.get().captured(this);
         }
         break;
@@ -340,35 +334,6 @@ public class Astronaut extends Entity {
     }
   }
 
-
-  public static void loadTextures() {
-    String[] colours = new String[] { "blue", "green", "orange", "red" };
-    textures = new AstronautTextures[colours.length];
-    
-    for(int i=0; i<colours.length; i++) {
-      AstronautTextures t = new AstronautTextures();
-      TextureRegion[][] walkSheet = splittedTexture(Assets.astroBase + colours[i] + Assets.astroWalk, 11);
-      TextureRegion[][] walkGunSheet = splittedTexture(Assets.astroBase + colours[i] + Assets.astroGun, 11);
-      TextureRegion[][] dieFront = splittedTexture(Assets.astroBase + colours[i] + Assets.astroFFall, 10);
-      TextureRegion[][] dieBack = splittedTexture(Assets.astroBase + colours[i] + Assets.astroFall, 12);
-      
-      t.frontTexture = walkSheet[0][0];
-      t.frontGunTexture = walkGunSheet[0][0];
-
-      t.walkAnimation = textureToAnimation(walkSheet, 11, 1, 0.1f);
-      t.walkGunAnimation = textureToAnimation(walkGunSheet, 11, 1, 0.1f);
-      t.dyingFront = textureToAnimation(dieFront, 10, 0, 0.05f);
-      t.dyingBack = textureToAnimation(dieBack, 12, 0, 0.05f);
-      textures[i] = t;
-    }
-    
-    TextureRegion[][] h = splittedTexture("app/assets/minigame/hearts.png", 5);
-    for(int i=0; i<h[0].length; i++) {
-      hearts[i] = h[0][i];
-    }
- 
-  }
-
   public void updateFromServer(SpeedVector speed, Position pos, Boolean haveGun) {
     this.haveGun = haveGun;
     stepsGenerator.updateFromServer(speed, pos);
@@ -379,10 +344,18 @@ public class Astronaut extends Entity {
     this.moveChange();
   }
 
+  /**
+   * Start dying animation and set state to REMOVING
+   * 
+   * @param pos new respawn position
+   */
   public void killAndRespawn(Position pos) {
     if(is(State.REMOVING)) return;
+    setState(State.REMOVING);
     dieTime = 0;
     dieFront = true;
+    
+    // Get direction of the shot
     if(shotDirection != null && shotDirection == Direction.LEFT) {
       if(dir == PlayerTexture.LEFT) {
         dieFront = false;
@@ -394,8 +367,47 @@ public class Astronaut extends Entity {
     }
     
     haveGun = false;
-    setState(State.REMOVING);
     this.respawn = pos;
+  }
+  
+  public static void loadTextures(AssetManager manager) {
+    String[] colours = new String[] { "orange", "red", "green", "blue" };
+
+    for(int i=0; i<colours.length; i++) {
+      manager.load(Assets.astroBase + colours[i] + Assets.astroWalk, Texture.class);
+      manager.load(Assets.astroBase + colours[i] + Assets.astroGun, Texture.class);
+      manager.load(Assets.astroBase + colours[i] + Assets.astroFFall, Texture.class);
+      manager.load(Assets.astroBase + colours[i] + Assets.astroFall, Texture.class);
+    }
+    manager.load("app/assets/minigame/hearts.png", Texture.class);
+  }
+  
+  public static void createTextures(AssetManager manager) {
+    String[] colours = new String[] { "orange", "red", "green", "blue" };
+    textures = new AstronautTextures[colours.length];
+    
+    for(int i=0; i<colours.length; i++) {
+      AstronautTextures t = new AstronautTextures();
+      TextureRegion[][] walkSheet = splittedTexture(manager, Assets.astroBase + colours[i] + Assets.astroWalk, 11);
+      TextureRegion[][] walkGunSheet = splittedTexture(manager, Assets.astroBase + colours[i] + Assets.astroGun, 11);
+      TextureRegion[][] dieFront = splittedTexture(manager, Assets.astroBase + colours[i] + Assets.astroFFall, 10);
+      TextureRegion[][] dieBack = splittedTexture(manager, Assets.astroBase + colours[i] + Assets.astroFall, 12);
+      
+      t.frontTexture = walkSheet[0][0];
+      t.frontGunTexture = walkGunSheet[0][0];
+
+      t.walkAnimation = textureToAnimation(walkSheet, 11, 1, 0.1f);
+      t.walkGunAnimation = textureToAnimation(walkGunSheet, 11, 1, 0.1f);
+      t.dyingFront = textureToAnimation(dieFront, 10, 0, 0.05f);
+      t.dyingBack = textureToAnimation(dieBack, 12, 0, 0.05f);
+      textures[i] = t;
+    }
+    
+    TextureRegion[][] h = splittedTexture(manager, "app/assets/minigame/hearts.png", 5);
+    for(int i=0; i<h[0].length; i++) {
+      hearts[i] = h[0][i];
+    }
+ 
   }
   
   public static class Move implements Serializable {

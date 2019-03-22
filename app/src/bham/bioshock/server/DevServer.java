@@ -22,7 +22,7 @@ public class DevServer extends NanoHTTPD {
   public DevServer() throws IOException {
     super(8000);
     start(NanoHTTPD.SOCKET_READ_TIMEOUT, false);
-    System.out.println("\nRunning! Point your browsers to http://localhost:8080/ \n");
+    System.out.println("\nDev server running on: http://localhost:8080/ \n");
   }
 
   @Override

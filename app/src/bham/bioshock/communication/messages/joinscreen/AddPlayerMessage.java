@@ -1,10 +1,11 @@
-package bham.bioshock.communication.messages;
+package bham.bioshock.communication.messages.joinscreen;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.UUID;
 import bham.bioshock.common.models.Player;
 import bham.bioshock.communication.Command;
+import bham.bioshock.communication.messages.Message;
 
 public class AddPlayerMessage extends Message {
   

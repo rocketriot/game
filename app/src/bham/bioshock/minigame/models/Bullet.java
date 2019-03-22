@@ -3,6 +3,7 @@ package bham.bioshock.minigame.models;
 import bham.bioshock.minigame.physics.Step;
 import bham.bioshock.minigame.worlds.World;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -13,11 +14,12 @@ public class Bullet extends Entity {
 
   private static final long serialVersionUID = -7192308795772982285L;
   
+  public static final int launchSpeed = 1100;
   private static TextureRegion texture;
+  private static Animation<TextureRegion> splash;
+  private static int FRAMES = 5;
+  
   public boolean isFired = false;
-  public static final int launchSpeed = 1000;
-  static Animation<TextureRegion> splash;
-  static int FRAMES = 5;
   private float animationTime = 0;
   private Astronaut shooter;
 
@@ -79,11 +81,11 @@ public class Bullet extends Entity {
 
     return region;
   }
+  
+  public static void createTextures(AssetManager manager) {
+    texture = new TextureRegion(manager.get("app/assets/minigame/bullet.png", Texture.class));
 
-  public static void loadTextures() {
-    texture = new TextureRegion(new Texture(Gdx.files.internal("app/assets/minigame/bullet.png")));
-
-    Texture t = new Texture(Gdx.files.internal("app/assets/minigame/bullet_animation.png"));
+    Texture t = manager.get("app/assets/minigame/bullet_animation.png", Texture.class);
     TextureRegion[][] list = TextureRegion.split(t, t.getWidth() / FRAMES, t.getHeight());
 
     TextureRegion[] frames = new TextureRegion[FRAMES];
@@ -94,11 +96,16 @@ public class Bullet extends Entity {
     splash = new Animation<TextureRegion>(0.03f, frames);
   }
 
+  public static void loadTextures(AssetManager manager) {
+    manager.load("app/assets/minigame/bullet.png", Texture.class);
+    manager.load("app/assets/minigame/bullet_animation.png", Texture.class);
+  }
+
   public Astronaut getShooter(){return this.shooter;}
 
   /** Collisions **/
   @Override
-  public boolean canColideWith(Entity e) {
+  public boolean canCollideWith(Entity e) {
     switch(e.type) {
       case ASTRONAUT:
       case BULLET:

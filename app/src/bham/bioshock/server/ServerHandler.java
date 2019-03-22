@@ -1,10 +1,9 @@
 package bham.bioshock.server;
 
 import bham.bioshock.common.models.store.Store;
-import bham.bioshock.communication.Action;
 import bham.bioshock.communication.Command;
 import bham.bioshock.communication.messages.Message;
-import bham.bioshock.communication.messages.RequestMinigameStartMessage;
+import bham.bioshock.communication.messages.minigame.RequestMinigameStartMessage;
 import bham.bioshock.communication.server.ServerService;
 import bham.bioshock.server.handlers.GameBoardHandler;
 import bham.bioshock.server.handlers.JoinScreenHandler;
@@ -30,7 +29,7 @@ public class ServerHandler {
   private MinigameHandler minigameHandler;
   private DevServer devServer;
   
-  private final boolean DEBUG_SERVER = true;
+  private final boolean DEBUG_SERVER = false;
   
   
   public ServerHandler(Store store, Server server) {
@@ -68,41 +67,17 @@ public class ServerHandler {
   }
 
   /**
-   * Sends the action to all clients except the one specified
+   * Sends the message to all clients except the one specified
    * 
    * @param clientId
    * @param action
    */
-  public void sendToAll(Action action) {
+  public void sendToAll(Message message) {
     for (ServerService s : connected.values()) {
-      s.send(action);
+      s.send(message);
     }
   }
-  
-  /**
-  * Sends the action to all clients except the one specified
-  * 
-  * @param clientId
-  * @param action
-  */
- public void sendToAll(Message m) {
-   sendToAll(Action.of(m));
- }
 
-  /**
-   * Sends the action to all clients except the one specified
-   * 
-   * @param clientId
-   * @param action
-   */
-  public void sendToAllExcept(Action action, UUID id) {
-    for (ServerService s : connected.values()) {
-      if (!s.Id().get().equals(id)) {
-        s.send(action);
-      }
-    }
-  }
-  
   /**
    * Sends the message to all clients except the one specified
    * 
@@ -110,19 +85,13 @@ public class ServerHandler {
    * @param action
    */
   public void sendToAllExcept(Message message, UUID id) {
-    sendToAllExcept(Action.of(message), id);
+    for (ServerService s : connected.values()) {
+      if (!s.Id().get().equals(id)) {
+        s.send(message);
+      }
+    }
   }
 
-  /**
-   * Sends the action to the specific client
-   * 
-   * @param clientId
-   * @param action
-   */
-  public void sendTo(UUID clientId, Action action) {
-    connected.get(clientId).send(action);
-  }
-  
   /**
    * Sends the message to the specific client
    * 
@@ -130,9 +99,8 @@ public class ServerHandler {
    * @param action
    */
   public void sendTo(UUID clientId, Message message) {
-    connected.get(clientId).send(Action.of(message));
+    connected.get(clientId).send(message);
   }
-
 
   /**
    * Register new player
@@ -140,9 +108,9 @@ public class ServerHandler {
    * @param action
    * @param service
    */
-  private void registerPlayer(Action action, ServerService service) {
-    if (action.getCommand().equals(Command.REGISTER)) {
-      joinHandler.registerPlayer(action, service);
+  private void registerPlayer(Message message, ServerService service) {
+    if (message.command.equals(Command.REGISTER)) {
+      joinHandler.registerPlayer(message, service);
     } else {
       logger.fatal("Invalid command sequence. Player must be registered first!");
     }
@@ -180,50 +148,53 @@ public class ServerHandler {
    * @param action
    * @param service
    */
-  public void handleRequest(Action action, ServerService service) {
-    logger.trace("Server received: " + action);
+  public void handleRequest(Message message, ServerService service) {
+    logger.trace("Server received: " + message);
 
     // If the service doesn't have assigned Id register it
     if (!service.Id().isPresent()) {
-      registerPlayer(action, service);
+      registerPlayer(message, service);
       return;
     }
 
     UUID clientId = service.Id().get();
 
-    switch (action.getCommand()) {
+    switch (message.command) {
       case JOIN_SCREEN_MOVE:
-        joinHandler.moveRocket(action, clientId);
+        joinHandler.moveRocket(message, clientId);
         break;
       case START_GAME:
         server.stopDiscovery();
-        joinHandler.startGame(action, gameBoardHandler);
+        joinHandler.startGame(gameBoardHandler);
         break;
       case MOVE_PLAYER_ON_BOARD:
-        gameBoardHandler.movePlayer(action, clientId);
-        break;
-      case MINIGAME_START:
-        RequestMinigameStartMessage data = (RequestMinigameStartMessage) action.getMessage();
-        minigameHandler.startMinigame(data, clientId, gameBoardHandler);
-        break;
-      case MINIGAME_PLAYER_MOVE:
-        minigameHandler.playerMove(action, clientId);
-        break;
-      case MINIGAME_PLAYER_STEP:
-        minigameHandler.playerStep(action, clientId);
-        break;
-      case MINIGAME_BULLET:
-        minigameHandler.bulletShot(action, clientId);
+        gameBoardHandler.movePlayer(message, clientId);
         break;
       case END_TURN:
         gameBoardHandler.endTurn(clientId);
         break;
+      case MINIGAME_START:
+        RequestMinigameStartMessage data = (RequestMinigameStartMessage) message;
+        minigameHandler.startMinigame(data, clientId, gameBoardHandler);
+        break;
+      case MINIGAME_PLAYER_MOVE:
+        minigameHandler.playerMove(message, clientId);
+        break;
+      case MINIGAME_PLAYER_STEP:
+        minigameHandler.playerStep(message, clientId);
+        break;
+      case MINIGAME_BULLET:
+        minigameHandler.bulletShot(message, clientId);
+        break;
+      case MINIGAME_OBJECTIVE:
+        minigameHandler.updateObjective(message);
+        break;
       case MINIGAME_DIRECT_START:
         server.stopDiscovery();
-        joinHandler.minigameDirectStart(action, clientId, gameBoardHandler, minigameHandler);
+        joinHandler.minigameDirectStart(clientId, gameBoardHandler, minigameHandler);
         break;
       default:
-        logger.error("Received unhandled command: " + action.getCommand().toString());
+        logger.error("Received unhandled command: " + message.command.toString());
         break;
     }
   }
