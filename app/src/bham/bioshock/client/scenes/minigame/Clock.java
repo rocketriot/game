@@ -10,6 +10,7 @@ import java.text.SimpleDateFormat;
 import java.util.GregorianCalendar;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -18,6 +19,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 public class Clock extends HudElement {
   private FontGenerator fontGenerator;
   private BitmapFont font;
+  private BitmapFont fontRed;
   private SimpleDateFormat timeFormat;
 
   /** The length of the minigame */
@@ -30,6 +32,7 @@ public class Clock extends HudElement {
   protected void setup() {
     fontGenerator = new FontGenerator();
     font = fontGenerator.generate(72);
+    fontRed = fontGenerator.generate(72, new Color(0xFF3C48FF));
 
     timeFormat = new SimpleDateFormat("mm:ss");
   }
@@ -39,15 +42,18 @@ public class Clock extends HudElement {
 
     GregorianCalendar calendar = new GregorianCalendar(0, 0, 0, 0, 0, (int) seconds);
     String time = timeFormat.format(calendar.getTime());
-    
+
     int x = Config.GAME_WORLD_WIDTH / 2 - 90;
     int y = Config.GAME_WORLD_HEIGHT - 50;
-    
-    batch.begin();
-    font.draw(batch, time, x, y);
-    batch.end();
 
-    // if (initialMinute == 0 && displayedTime <= 10)
-    //   showPrompt2 = true;
+    batch.begin();
+
+    if (seconds <= 10 && (int) seconds % 2 == 1) {
+      font.draw(batch, time, x, y);
+    } else {
+      fontRed.draw(batch, time, x, y);
+    }
+
+    batch.end();
   }
 }
