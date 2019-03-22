@@ -1,10 +1,6 @@
 package bham.bioshock.minigame.objectives;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.UUID;
+import bham.bioshock.client.Route;
 import bham.bioshock.client.Router;
 import bham.bioshock.common.Position;
 import bham.bioshock.common.models.store.MinigameStore;
@@ -13,7 +9,11 @@ import bham.bioshock.communication.messages.objectives.UpdateHealthMessage;
 import bham.bioshock.minigame.models.Astronaut;
 import bham.bioshock.minigame.models.Flag;
 import bham.bioshock.minigame.models.Platform;
+import bham.bioshock.minigame.models.*;
+import bham.bioshock.minigame.worlds.RandomWorld;
 import bham.bioshock.minigame.worlds.World;
+
+import java.util.*;
 
 public class Platformer extends Objective {
 
@@ -24,9 +24,9 @@ public class Platformer extends Objective {
   private HashMap<UUID, Float> speedBoost = new HashMap<>();
   private float maxFreeze = 3f;
   private float maxBoost = 3f;
-  private UUID winner;
-  private Position goalPosition;
-  private Flag goal;
+  private transient Optional<UUID> winner = Optional.empty();
+  private Goal goal;
+  private Platform goalPlatform;
 
   public Platformer(World world) {
     generateGoalPosition(world);
@@ -35,9 +35,10 @@ public class Platformer extends Objective {
   @Override
   public UUID getWinner() {
     // if the winner is set, return the winner, if not, return the closest player
-    if (winner != null) {
-      return winner;
-    } else {
+    if (winner.isPresent()) {
+      return winner.get();
+    }
+    else {
       Position goalPos = goal.getPos();
       float best = 99999999f;
       Astronaut bestP = null;
@@ -71,6 +72,7 @@ public class Platformer extends Objective {
        frozenFor.put(player.getId(), 0f);
        speedBoost.put(player.getId(), 1f);
      });
+     winner = Optional.empty();
   }
 
 
@@ -81,31 +83,39 @@ public class Platformer extends Objective {
 
   @Override
   public void captured(Astronaut a) {
+    if(a.is(Entity.State.REMOVING)) return;
+    this.winner = Optional.of(a.getId());
+    a.setItem(goal);
+
+    //make a method that ends the game
+    router.call(Route.SERVER_MINIGAME_END);
     return;
   }
 
   @Override
   public String instructions() {
-    return "";
+    return "You have 3 minutes to find the goal! \n " +
+            "The first astronaut to reach it wins!";
   }
 
-  public Position getGoalPosition() {
-    return goalPosition;
+
+  public Platform getGoalPlatform() {
+    return goalPlatform;
   }
 
   private void generateGoalPosition(World world) {
     /* generate a feasable position for the end goal */
     ArrayList<Platform> platforms = world.getPlatforms();
-    Position highestPlatform = platforms.get(0).getPos();
+    Platform highestPlatform = platforms.get(0);
     for (int i = 0; i < platforms.size(); i++) {
-      Platform platform = world.getPlatforms().get(i);
-      if (platform.getY() > highestPlatform.y) {
-        highestPlatform = platform.getPos();
+      Platform platform = platforms.get(i);
+      if (platform.getY() > highestPlatform.getY()) {
+        highestPlatform = platform;
       }
     }
     /* set the goal to the highest platform */
-    goalPosition = highestPlatform;
-    goal = new Flag(world, highestPlatform.x, highestPlatform.y);
+    goalPlatform = highestPlatform;
+    goal = new Goal(world, highestPlatform.getX(), highestPlatform.getY(), true, EntityType.GOAL);
   }
 
 
@@ -128,9 +138,6 @@ public class Platformer extends Objective {
     }
   }
 
-  public void reachedGoal(Astronaut winner) {
-    this.winner = winner.getId();
-  }
 
   public void boostSpeed(UUID playerId, float boost) {
     if (speedBoost.get(playerId) == null || !(speedBoost.get(playerId) >= boost)) {
@@ -141,5 +148,13 @@ public class Platformer extends Objective {
   public float getSpeedBoost(UUID playerId) {
     return speedBoost.get(playerId);
   }
+
+  public ArrayList<Platform> getPathToGoal() {
+    ArrayList<Platform> path = ((RandomWorld) world).getPlatformPath(goalPlatform);
+    return path;
+  }
+
+
+
 
 }

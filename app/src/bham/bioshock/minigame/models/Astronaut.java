@@ -25,6 +25,21 @@ import bham.bioshock.minigame.physics.SpeedVector;
 import bham.bioshock.minigame.physics.Step;
 import bham.bioshock.minigame.utils.RotatableText;
 import bham.bioshock.minigame.worlds.World;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Intersector.MinimumTranslationVector;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+
+import static java.util.stream.Collectors.toList;
 
 public class Astronaut extends Entity {
 
@@ -47,7 +62,7 @@ public class Astronaut extends Entity {
   private int colour;
   private float dieTime;
   private Direction shotDirection;
-
+  private transient Optional<Entity> currentPlatform = Optional.empty();
 
   public Astronaut(World w, float x, float y, UUID id, int colour) {
     super(w, x, y, EntityType.ASTRONAUT);
@@ -127,6 +142,17 @@ public class Astronaut extends Entity {
     }
     legs.update(pos, getRotation());
     animationTime += delta;
+
+    checkIfOnGround();
+
+
+  }
+
+  private void checkIfOnGround() {
+    //System.out.println((world.fromGroundTo(legs.getX(),legs.getY())));
+    if((world.fromGroundTo(legs.getX(),legs.getY())) <= 15) {
+      removePlatform();
+    }
   }
 
   public Move getMove() {
@@ -265,6 +291,7 @@ public class Astronaut extends Entity {
       case GUN:
       case PLATFORM:
       case FLAG:
+      case GOAL:
         return true;
       default:
         return false;
@@ -292,6 +319,19 @@ public class Astronaut extends Entity {
         Flag flag = (Flag) e;
         if(objective.isPresent() && !flag.haveOwner()) {
           objective.get().captured(this);
+        }
+        break;
+      case GOAL:
+        if(objective.isPresent()) {
+          objective.get().captured(this);
+        }
+        break;
+      case PLATFORM:
+        // Check collision with legs
+        if (legs.collideWith(e.collisionBoundary, null)) {
+          // Standing on the platform
+          //System.out.println("STANDING ON PLATFORM: "+e.toString());
+          setOnPlatform((Platform) e);
         }
         break;
       default:
@@ -439,4 +479,22 @@ public class Astronaut extends Entity {
     TextureRegion frontGunTexture;
   }
 
+
+  private void setOnPlatform(Platform platform) {
+    //System.out.println(getId().toString() + "is on " + platform.toString() );
+    currentPlatform = Optional.of(platform);
+  }
+  private void removePlatform() {
+    //System.out.println(getId().toString() + "is on the ground");
+    currentPlatform = Optional.empty();
+  }
+  public Optional<Entity> getOnPlatform() {
+    return currentPlatform;
+  }
+
+
+
+  public String toString() {
+    return name.getText();
+  }
 }

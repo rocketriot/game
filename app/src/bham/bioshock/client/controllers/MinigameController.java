@@ -24,6 +24,11 @@ import bham.bioshock.communication.messages.minigame.RequestMinigameStartMessage
 import bham.bioshock.minigame.models.Bullet;
 import bham.bioshock.minigame.objectives.Objective;
 import bham.bioshock.minigame.worlds.World;
+import com.google.inject.Inject;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.UUID;
 
 public class MinigameController extends Controller {
 

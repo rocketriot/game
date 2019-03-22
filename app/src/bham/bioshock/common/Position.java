@@ -68,7 +68,10 @@ public class Position implements Serializable {
     public PlanetPosition ppos() {
       return pp;
     }
-    
   }
 
+  @Override
+  public String toString() {
+    return "x: " + x + " y: " + y;
+  }
 }
