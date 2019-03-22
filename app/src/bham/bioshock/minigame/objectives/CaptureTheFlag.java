@@ -26,7 +26,7 @@ public class CaptureTheFlag extends Objective {
   public CaptureTheFlag(World world) {
     Random r = new Random();
     float angle = (r.nextInt(1000) % 360);
-    float distance = (float) (world.getPlanetRadius() + r.nextInt(10));
+    float distance = (float) (world.getPlanetRadius() + r.nextInt(500));
     flagPosition = world.convert(new PlanetPosition(angle, distance));
   }
 
