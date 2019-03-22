@@ -12,7 +12,7 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import java.util.ArrayList;
 
 public class DrawPlayer extends DrawEntity {
-  Sprite movingSprite = new Sprite();
+  Sprite movingSprite;
   float movingSpriteX = -1;
   float movingSpriteY = -1;
   ParticleEffect rocketTrail;
@@ -73,6 +73,8 @@ public class DrawPlayer extends DrawEntity {
     int nextMoveX = nextMove.getCoordinates().getX();
     int nextMoveY = nextMove.getCoordinates().getY();
 
+    boolean posUpdated = false;
+    
     switch (nextMove.getDirection()) {
       case UP:
         movingSprite.setRotation(0);
@@ -84,13 +86,7 @@ public class DrawPlayer extends DrawEntity {
 
         // Has the sprite reach the next coordinate in the board move
         if (movingSprite.getY() >= nextMoveY * PPS) {
-          if (!checkSameDirection(nextMove.getDirection(), boardMove)) {
-            movingSprite.setX(nextMoveX * PPS);
-            movingSprite.setY(nextMoveY * PPS);
-          }
-          movingSprite.draw(batch);
-
-          return true;
+          posUpdated = true;
         }
 
         break;
@@ -104,13 +100,7 @@ public class DrawPlayer extends DrawEntity {
         setRocketTrailAngle(180);
 
         if (movingSprite.getY() <= nextMoveY * PPS) {
-          if (!checkSameDirection(nextMove.getDirection(), boardMove)) {
-            movingSprite.setX(nextMoveX * PPS);
-            movingSprite.setY(nextMoveY * PPS);
-          }
-          movingSprite.draw(batch);
-
-          return true;
+          posUpdated = true;
         }
 
         break;
@@ -124,13 +114,7 @@ public class DrawPlayer extends DrawEntity {
         setRocketTrailAngle(270);
 
         if (movingSprite.getX() >= nextMoveX * PPS) {
-          if (!checkSameDirection(nextMove.getDirection(), boardMove)) {
-            movingSprite.setX(nextMoveX * PPS);
-            movingSprite.setY(nextMoveY * PPS);
-          }
-          movingSprite.draw(batch);
-
-          return true;
+          posUpdated = true;
         }
 
         break;
@@ -144,13 +128,7 @@ public class DrawPlayer extends DrawEntity {
         setRocketTrailAngle(90);
 
         if (movingSprite.getX() <= nextMoveX * PPS) {
-          if (!checkSameDirection(nextMove.getDirection(), boardMove)) {
-            movingSprite.setX(nextMoveX * PPS);
-            movingSprite.setY(nextMoveY * PPS);
-          }
-          movingSprite.draw(batch);
-
-          return true;
+          posUpdated = true;
         }
 
         break;
@@ -161,23 +139,20 @@ public class DrawPlayer extends DrawEntity {
 
     rocketTrail.setPosition(rocketTrailX * PPS, rocketTrailY * PPS);
     rocketTrail.draw(batch, Gdx.graphics.getDeltaTime());
-
-    movingSprite.setX(movingSpriteX * PPS);
-    movingSprite.setY(movingSpriteY * PPS);
-    movingSprite.draw(batch);
-
-    return false;
-  }
-
-  private boolean checkSameDirection(Direction direction, ArrayList<Player.Move> boardMove) {
-    if (boardMove.size() > 1) {
-      Player.Move nextMove = boardMove.get(0);
-      Direction nextDirection = nextMove.getDirection();
-      if (nextDirection.equals(direction))
-        return true;
+    
+    if(posUpdated) {
+      movingSprite.setX(nextMoveX * PPS);
+      movingSprite.setY(nextMoveY * PPS);
+    } else {
+      movingSprite.setX(movingSpriteX * PPS);
+      movingSprite.setY(movingSpriteY * PPS);
     }
-    return false;
+    movingSprite.draw(batch);      
+    
+
+    return posUpdated;
   }
+
 
   private void setRocketTrailAngle(float angle) {
     // Align particle effect angle with world
@@ -197,7 +172,9 @@ public class DrawPlayer extends DrawEntity {
   public void resize(int PPS) {
     sprites.forEach(sprite -> sprite.setSize(PPS, PPS));
     outlinedSprites.forEach(sprite -> sprite.setSize(PPS, PPS));
-    movingSprite.setSize(PPS, PPS);
+    if(movingSprite != null) {
+      movingSprite.setSize(PPS, PPS);      
+    }
   }
 
   public void dispose() {

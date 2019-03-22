@@ -336,7 +336,7 @@ public class Astronaut extends Entity {
 
 
   public static void loadTextures() {
-    String[] colours = new String[] { "blue", "green", "orange", "red" };
+    String[] colours = new String[] { "orange", "red", "green", "blue" };
     textures = new AstronautTextures[colours.length];
     
     for(int i=0; i<colours.length; i++) {
