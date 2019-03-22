@@ -5,7 +5,7 @@ import bham.bioshock.common.models.store.Store;
 import bham.bioshock.communication.Action;
 import bham.bioshock.communication.Command;
 import bham.bioshock.minigame.Clock;
-import bham.bioshock.minigame.ai.KillEveryoneAI;
+import bham.bioshock.minigame.ai.KillThemAllAI;
 import bham.bioshock.minigame.ai.PlatformerAI;
 import bham.bioshock.minigame.objectives.CaptureTheFlag;
 import bham.bioshock.minigame.objectives.KillThemAll;
@@ -24,9 +24,9 @@ import java.util.Random;
 import java.util.UUID;
 
 public class MinigameHandler {
-  
+
   private static final Logger logger = LogManager.getLogger(MinigameHandler.class);
-  
+
   Store store;
   ServerHandler handler;
   MinigameAILoop aiLoop;
@@ -46,7 +46,7 @@ public class MinigameHandler {
     // Create a world for the minigame
     World w = new RandomWorld();
     if(action.getArguments().size() != 0) {
-      planetId = (UUID) action.getArgument(0);      
+      planetId = (UUID) action.getArgument(0);
     } else {
       logger.error("Starting minigame without a planet ID (That's OK. for tests)!");
     }
@@ -61,7 +61,7 @@ public class MinigameHandler {
         o = new CaptureTheFlag(w);
         for (UUID id : store.getCpuPlayers()) {
           //NOTE CHANGE TO CAPTURE the flag
-          aiLoop.registerHandler(new KillEveryoneAI(id, store, handler));
+          aiLoop.registerHandler(new KillThemAllAI(id, store, handler));
         }
         break;
       case 2:
@@ -73,30 +73,30 @@ public class MinigameHandler {
       case 3:
         o = new KillThemAll();
         for (UUID id : store.getCpuPlayers()) {
-          aiLoop.registerHandler(new KillEveryoneAI(id, store, handler));
+          aiLoop.registerHandler(new KillThemAllAI(id, store, handler));
         }
         break;
       default:
         o = new CaptureTheFlag(w);
         for (UUID id : store.getCpuPlayers()) {
           //NOTE CHANGE TO CAPTURE the flag
-          aiLoop.registerHandler(new KillEveryoneAI(id, store, handler));
+          aiLoop.registerHandler(new KillThemAllAI(id, store, handler));
         }
         break;
     }
-    
+
     aiLoop.start();
 
    if(planetId != null) {
       setupMinigameEnd(gameBoardHandler, playerId);
-   }
+    }
 
     ArrayList<Serializable> arguments = new ArrayList<>();
     arguments.add((Serializable) w);
     arguments.add((Serializable) o);
     handler.sendToAll(new Action(Command.MINIGAME_START, arguments));
   }
-  
+
   /**
    * Starts a clock ending the minigame
    */
@@ -112,10 +112,10 @@ public class MinigameHandler {
         }
         MinigameStore localStore = store.getMinigameStore();
         Objective o = localStore.getObjective();
-        endMinigame(o.getWinner(), gameBoardHandler, playerId);          
+        endMinigame(o.getWinner(), gameBoardHandler, playerId);
       }
     });
-    
+
     minigameTimer = new Thread() {
       private long time;
 
@@ -152,10 +152,10 @@ public class MinigameHandler {
 
   /**
    * Method to end the minigame and send the players back to the main board
-   * @param gameBoardHandler 
+   * @param gameBoardHandler
    */
   public void endMinigame(UUID winnerId, GameBoardHandler gameBoardHandler, UUID playerId) {
-    ArrayList<Serializable> args = new ArrayList<>();
+  ArrayList<Serializable> args = new ArrayList<>();
     args.add(winnerId);
     args.add(planetId);
     args.add(100);

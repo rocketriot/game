@@ -62,8 +62,18 @@ public class TestingWorld extends World {
   }
 
   @Override
+  public void spawnGuns() {
+
+  }
+
+  @Override
   public ArrayList<Gun> getGuns() {
     return guns;
+  }
+
+  @Override
+  public void spawnPlatforms() {
+
   }
 
 

@@ -222,7 +222,6 @@ public class PlatformSeeder {
       difference = (float) generator.nextInt((max - min) + 1) + min;
       angle = platformAngle + difference;
     }
-
     return angle;
   }
 

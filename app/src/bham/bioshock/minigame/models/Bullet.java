@@ -98,7 +98,7 @@ public class Bullet extends Entity {
 
   /** Collisions **/
   @Override
-  public boolean canColideWith(Entity e) {
+  public boolean canCollideWith(Entity e) {
     switch(e.type) {
       case ASTRONAUT:
       case BULLET:

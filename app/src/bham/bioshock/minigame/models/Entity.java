@@ -226,12 +226,10 @@ public abstract class Entity implements Serializable {
     return false;
   }
 
-  public void handleCollision(Entity e) {};
+  public void handleCollision(Entity e) {}
 
-  public boolean canColideWith(Entity e) {
-    return false;
-  }
-
+  public boolean canCollideWith(Entity e) { return false; }
+  
   public CollisionBoundary collisionBoundary() {
     return collisionBoundary;
   }

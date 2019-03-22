@@ -141,11 +141,21 @@ abstract public class World implements Serializable {
   abstract public ArrayList<Rocket> getRockets();
 
   /**
+   * Spawns guns.
+   */
+  abstract public void spawnGuns();
+
+  /**
    * Gets guns.
    *
    * @return the guns
    */
   abstract public ArrayList<Gun> getGuns();
+
+  /**
+   * Spawns platforms
+   */
+  abstract public void spawnPlatforms();
 
   /**
    * Gets platforms.
