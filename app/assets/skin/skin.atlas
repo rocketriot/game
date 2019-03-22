@@ -30,48 +30,73 @@ size: 1024,1024
 format: RGBA8888
 filter: Linear,Linear
 repeat: none
+font-18-bold
+  rotate: false
+  xy: 1, 1
+  size: 512, 512
+  orig: 512, 512
+  offset: 0, 0
+  index: -1
+
+skin4.png
+size: 1024,1024
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+font-22-bold
+  rotate: false
+  xy: 1, 1
+  size: 512, 512
+  orig: 512, 512
+  offset: 0, 0
+  index: -1
+
+skin5.png
+size: 1024,1024
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+font-26-bold
+  rotate: false
+  xy: 1, 1
+  size: 512, 512
+  orig: 512, 512
+  offset: 0, 0
+  index: -1
+
+skin6.png
+size: 1024,1024
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
 button
   rotate: false
-  xy: 145, 266
+  xy: 1, 1
   size: 46, 42
   split: 10, 10, 10, 10
-  pad: 14, 14, 14, 14
+  pad: 22, 22, 20, 20
   orig: 46, 42
   offset: 0, 0
   index: -1
 button-over
   rotate: false
-  xy: 515, 634
+  xy: 145, 188
   size: 46, 42
   split: 10, 10, 10, 10
-  pad: 14, 14, 14, 14
+  pad: 22, 22, 20, 20
   orig: 46, 42
   offset: 0, 0
   index: -1
 button-pressed
   rotate: false
-  xy: 659, 780
+  xy: 223, 266
   size: 46, 42
   split: 10, 10, 10, 10
-  pad: 14, 14, 14, 14
+  pad: 22, 22, 20, 20
   orig: 46, 42
   offset: 0, 0
   index: -1
-checkbox
-  rotate: false
-  xy: 193, 270
-  size: 38, 38
-  orig: 38, 38
-  offset: 0, 0
-  index: -1
-checkbox-selected
-  rotate: false
-  xy: 515, 594
-  size: 38, 38
-  orig: 38, 38
-  offset: 0, 0
-  index: -1
-font-18-bold
+font-30-bold
   rotate: false
   xy: 1, 310
   size: 512, 512
@@ -101,48 +126,61 @@ font-pressed-export
   index: -1
 popup
   rotate: false
-  xy: 145, 222
-  size: 42, 42
-  split: 10, 10, 10, 10
-  pad: 20, 20, 20, 20
-  orig: 42, 42
-  offset: 0, 0
-  index: -1
-slider-after
-  rotate: false
-  xy: 659, 764
-  size: 2, 14
-  orig: 2, 14
-  offset: 0, 0
-  index: -1
-slider-background
-  rotate: false
-  xy: 119, 138
-  size: 8, 24
-  split: 0, 0, 0, 0
-  orig: 8, 24
-  offset: 0, 0
-  index: -1
-slider-before
-  rotate: false
-  xy: 707, 808
-  size: 2, 14
-  orig: 2, 14
-  offset: 0, 0
-  index: -1
-slider-knob
-  rotate: false
-  xy: 563, 662
-  size: 8, 14
-  orig: 8, 14
+  xy: 659, 752
+  size: 70, 70
+  split: 9, 10, 10, 10
+  pad: 34, 34, 34, 34
+  orig: 70, 70
   offset: 0, 0
   index: -1
 textfield
   rotate: false
-  xy: 1, 1
+  xy: 515, 556
   size: 46, 42
   split: 8, 8, 10, 10
-  pad: 20, 20, 20, 20
+  pad: 22, 22, 20, 20
   orig: 46, 42
+  offset: 0, 0
+  index: -1
+checkbox
+  rotate: false
+  xy: 515, 600
+  size: 76, 76
+  orig: 76, 76
+  offset: 0, 0
+  index: -1
+checkbox-selected
+  rotate: false
+  xy: 145, 232
+  size: 76, 76
+  orig: 76, 76
+  offset: 0, 0
+  index: -1
+slider-after
+  rotate: false
+  xy: 659, 722
+  size: 4, 28
+  orig: 4, 28
+  offset: 0, 0
+  index: -1
+slider-background
+  rotate: false
+  xy: 119, 114
+  size: 16, 48
+  orig: 16, 48
+  offset: 0, 0
+  index: -1
+slider-before
+  rotate: false
+  xy: 731, 794
+  size: 4, 28
+  orig: 4, 28
+  offset: 0, 0
+  index: -1
+slider-knob
+  rotate: false
+  xy: 593, 648
+  size: 16, 28
+  orig: 16, 28
   offset: 0, 0
   index: -1
