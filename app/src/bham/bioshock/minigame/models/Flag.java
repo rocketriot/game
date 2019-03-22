@@ -3,7 +3,7 @@ package bham.bioshock.minigame.models;
 import bham.bioshock.common.Position;
 import bham.bioshock.minigame.PlanetPosition;
 import bham.bioshock.minigame.worlds.World;
-import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
@@ -23,12 +23,7 @@ public class Flag extends StaticEntity {
   public TextureRegion getTexture() {
     return texture;
   }
-
-  public static void loadTextures() {
-    texture = new TextureRegion(new Texture(Gdx.files.internal("app/assets/minigame/flag.png")));
-  }
   
-//  
   @Override
   public void update(float delta) {
     if(owner != null) {
@@ -51,5 +46,13 @@ public class Flag extends StaticEntity {
   
   public boolean haveOwner() {
     return owner != null;
+  }
+  
+  public static void loadTextures(AssetManager manager) {
+    manager.load("app/assets/minigame/flag.png", Texture.class);
+  }
+  
+  public static void createTextures(AssetManager manager) {
+    texture = new TextureRegion(manager.get("app/assets/minigame/flag.png", Texture.class));
   }
 }
