@@ -12,7 +12,7 @@ import java.util.Optional;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.stream.Stream;
 
-public class StepsGenerator implements Cloneable {
+public class StepsGenerator {
   
   private static final Logger logger = LogManager.getLogger(StepsGenerator.class);
 

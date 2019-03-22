@@ -17,9 +17,9 @@ import java.util.Optional;
 import java.util.Random;
 import java.util.UUID;
 
-public class PlatformerAi extends MinigameAI {
+public class PlatformerAI extends MinigameAI {
 
-    private static final Logger logger = LogManager.getLogger(PlatformerAi.class);
+    private static final Logger logger = LogManager.getLogger(PlatformerAI.class);
 
 
     private ArrayList<CPUState> statesStack = new ArrayList<>();
@@ -37,7 +37,7 @@ public class PlatformerAi extends MinigameAI {
     private StepsGenerator testStepsGenerator;
 
 
-    public PlatformerAi(UUID id, Store store, ServerHandler handler) {
+    public PlatformerAI(UUID id, Store store, ServerHandler handler) {
         super(id, store, handler);
 
     }
@@ -76,7 +76,7 @@ public class PlatformerAi extends MinigameAI {
 
         @Override
         void execute() {
-            System.out.println("ASTRO "+astronaut.get().toString() + " current index: "+currentPlatformIndex);
+            logger.trace("ASTRO "+astronaut.get().toString() + " current index: "+currentPlatformIndex);
             Random rand = new Random();
             if (rand.nextInt(100) < 95) {
                 nextPlatform = pathToGoal.get(currentPlatformIndex);
@@ -246,17 +246,17 @@ public class PlatformerAi extends MinigameAI {
 
     abstract public class CPUState {
 
-        private final String state_name;
+        private final String stateName;
 
         CPUState(String name) {
-            this.state_name = name;
+            this.stateName = name;
         }
 
         abstract void execute();
         abstract void updateStack();
 
         public void broadcast() {
-            logger.trace("State: "+state_name);
+            logger.trace("State: "+ stateName);
         }
 
     }

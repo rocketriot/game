@@ -19,7 +19,6 @@ abstract public class World implements Serializable {
 
   private static final long serialVersionUID = 4046769956963960819L;
   protected int textureOffset = 530;
-  private ArrayList<Platform> pathToGoal;
 
   /**
    * Draws planet texture on the screen

@@ -1,16 +1,17 @@
 package bham.bioshock.minigame.worlds;
 
-import bham.bioshock.minigame.seeders.PlatformSeeder;
-import java.util.ArrayList;
-import java.util.Random;
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import bham.bioshock.common.Position;
 import bham.bioshock.minigame.models.Gun;
 import bham.bioshock.minigame.models.Platform;
 import bham.bioshock.minigame.models.Rocket;
+import bham.bioshock.minigame.seeders.PlatformSeeder;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Random;
 
 public class RandomWorld extends World {
 
@@ -106,7 +107,7 @@ public class RandomWorld extends World {
   public ArrayList<Platform> getPlatformPath(Platform platform) {
     ArrayList<Platform> path = new ArrayList<>();
 
-    while (!((platform == null))) {
+    while (platform != null) {
       path.add(platform);
       platform = platform.getParent();
     }
