@@ -10,7 +10,6 @@ import bham.bioshock.communication.messages.Message;
 import bham.bioshock.communication.messages.minigame.EndMinigameMessage;
 import bham.bioshock.communication.messages.minigame.MinigameStartMessage;
 import bham.bioshock.communication.messages.minigame.RequestMinigameStartMessage;
-import bham.bioshock.communication.messages.objectives.UpdateObjectiveMessage;
 import bham.bioshock.minigame.Clock;
 import bham.bioshock.minigame.ai.KillEveryoneAI;
 import bham.bioshock.minigame.ai.PlatformerAi;
@@ -56,8 +55,7 @@ public class MinigameHandler {
 
     Random rand = new Random();
 
-    // switch(rand.nextInt(100)%4) {
-    switch (1) {
+   switch(rand.nextInt(100)%4) {
       case 1:
         o = new CaptureTheFlag(w);
         for (UUID id : store.getCpuPlayers()) {
@@ -96,7 +94,6 @@ public class MinigameHandler {
    */
   private void setupMinigameEnd(GameBoardHandler gameBoardHandler, UUID playerId) {
     clock = new Clock();
-    long t = System.currentTimeMillis();
 
     clock.at(60f, new Clock.TimeListener() {
       @Override
@@ -122,7 +119,6 @@ public class MinigameHandler {
             long delta = (System.currentTimeMillis() - time);
             time = System.currentTimeMillis();
             clock.update((int) delta);
-            injectHandlerToObjective();
             Thread.sleep(1000);
           }
         } catch (InterruptedException e) {
@@ -132,32 +128,6 @@ public class MinigameHandler {
     };
     minigameTimer.start();
   }
-
-  private void injectHandlerToObjective() {
-    MinigameStore localStore = store.getMinigameStore();
-    if (localStore == null)
-      return;
-    Objective objective = localStore.getObjective();
-    if (objective == null)
-      return;
-    objective.setServer(handler);
-  }
-
-  // protected void updateObjectiveState() {
-  // MinigameStore localStore = store.getMinigameStore();
-  // if(localStore == null) return;
-  // Objective objective = localStore.getObjective();
-  // if(objective == null) return;
-
-  // UpdateObjectiveMessage message = new UpdateObjectiveMessage(objective);
-
-  // objective.updateHealth(message.health);
-  // if(objective instanceof CaptureTheFlag) {
-  // ((CaptureTheFlag) objective).updateFlagOwner(message.flagOwner);
-  // }
-
-  // handler.sendToAllExcept(message, store.getMainPlayer().getId());
-  // }
 
   /**
    * Sync player movement and position
@@ -198,5 +168,9 @@ public class MinigameHandler {
     aiLoop.finish();
     handler.sendToAll(msg);
     gameBoardHandler.endTurn(playerId);
+  }
+
+  public void updateObjective(Message message) {
+    handler.sendToAll(message);
   }
 }

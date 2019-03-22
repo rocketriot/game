@@ -33,6 +33,8 @@ public class Store {
   private int turn = 0;
   /** If the game is reconnecting with the server */
   private boolean reconnecting = false;
+  /** If the player is the host */
+  private boolean isHost = false;
 
   /** Minigame World */
   private MinigameStore minigameStore;
@@ -192,7 +194,15 @@ public class Store {
   
   public Boolean isReconnecting() {
     return reconnecting;
-  } 
+  }
+
+  public void setHost(boolean value) {
+    isHost = value;
+  }
+  
+  public boolean isHost() {
+    return isHost;
+  }
   
 
 }

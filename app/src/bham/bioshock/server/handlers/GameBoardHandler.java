@@ -104,8 +104,7 @@ public class GameBoardHandler {
     }
   }
 
-  private void startMinigame(GameBoard gameBoard, Player currentPlayer,
-      Planet planet, MinigameHandler minigameHandler) {
+  private void startMinigame(GameBoard gameBoard, Player currentPlayer, Planet planet, MinigameHandler minigameHandler) {
     minigameHandler.startMinigame(new RequestMinigameStartMessage(planet.getId()), currentPlayer.getId(), this);
   }
 

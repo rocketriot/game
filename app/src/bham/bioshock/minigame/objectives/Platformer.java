@@ -8,6 +8,8 @@ import java.util.UUID;
 import bham.bioshock.client.Router;
 import bham.bioshock.common.Position;
 import bham.bioshock.common.models.store.MinigameStore;
+import bham.bioshock.common.models.store.Store;
+import bham.bioshock.communication.messages.objectives.UpdateHealthMessage;
 import bham.bioshock.minigame.models.Astronaut;
 import bham.bioshock.minigame.models.Flag;
 import bham.bioshock.minigame.models.Platform;
@@ -39,7 +41,7 @@ public class Platformer extends Objective {
       Position goalPos = goal.getPos();
       float best = 99999999f;
       Astronaut bestP = null;
-      Iterator<Astronaut> it = getPlayers().iterator();
+      Iterator<Astronaut> it = localStore.getPlayers().iterator();
       while (it.hasNext()) {
         Astronaut player = (Astronaut) it.next();
         Position playerPos = player.getPos();
@@ -54,16 +56,15 @@ public class Platformer extends Objective {
   }
 
   @Override
-  public void gotShot(Astronaut player, Astronaut shooter) {
-    super.gotShot(player, shooter);
+  public void handle(UpdateHealthMessage m) {
     /* when the player is shot, they should freeze for a certain amount of time */
-    if (!checkIfFrozen(player.getId())) {
-      setFrozen(player.getId(), true);
+    if (!checkIfFrozen(m.playerId)) {
+      setFrozen(m.playerId, true);
     }
   }
   
   @Override
-  public void init(World world, Router router, MinigameStore store) {
+  public void init(World world, Router router, Store store) {
     super.init(world, router, store);
      store.getPlayers().forEach(player -> {
        frozen.put(player.getId(), false);
@@ -139,10 +140,6 @@ public class Platformer extends Objective {
 
   public float getSpeedBoost(UUID playerId) {
     return speedBoost.get(playerId);
-  }
-
-  @Override
-  protected void updatePlayerHealth(UUID key, Integer value) {
   }
 
 }

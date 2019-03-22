@@ -14,7 +14,6 @@ import bham.bioshock.communication.messages.joinscreen.JoinScreenMoveMessage;
 import bham.bioshock.communication.messages.minigame.MinigamePlayerMoveMessage;
 import bham.bioshock.communication.messages.minigame.MinigamePlayerStepMessage;
 import bham.bioshock.communication.messages.minigame.MinigameStartMessage;
-import bham.bioshock.communication.messages.objectives.UpdateObjectiveMessage;
 
 public class ClientHandler implements IClientHandler {
   
@@ -89,9 +88,8 @@ public class ClientHandler implements IClientHandler {
             router.call(Route.JOIN_SCREEN_UPDATE, data);
             break;
           }
-          case MINIGAME_UPDATE_OBJECTIVE: {
-            UpdateObjectiveMessage data = (UpdateObjectiveMessage) message;
-            router.call(Route.MINIGAME_OBJECTIVE_UPDATE, data);
+          case MINIGAME_OBJECTIVE: {
+            router.call(Route.OBJECTIVE_UPDATE, message);
             break;
           }
           default: {

@@ -4,9 +4,10 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.UUID;
-import bham.bioshock.client.Route;
 import bham.bioshock.client.Router;
 import bham.bioshock.common.models.store.MinigameStore;
+import bham.bioshock.common.models.store.Store;
+import bham.bioshock.communication.messages.objectives.KillAndRespawnMessage;
 import bham.bioshock.minigame.models.Astronaut;
 import bham.bioshock.minigame.worlds.World;
 
@@ -24,22 +25,17 @@ public class KillThemAll extends Objective {
   }
 
   @Override
-  public void init(World world, Router router, MinigameStore store) {
+  public void init(World world, Router router, Store store) {
     super.init(world, router, store);
     store.getPlayers().forEach(player -> {
       kills.put(player.getId(), 0);
     });
   }
-
-  @Override
-  public void gotShot(Astronaut player, Astronaut killer) {
-    super.gotShot(player, killer);
-    if (isDead(player.getId())) {
-      if(!player.getId().equals(killer.getId())) {
-        addKill(killer);        
-      }
-      killAndRespawnPlayer(player, getRandomRespawn());
-      router.call(Route.MINIGAME_MOVE);
+  
+  public void handle(KillAndRespawnMessage m) {
+    super.handle(m);
+    if(!m.playerId.equals(m.shooterId)) {
+      addKill(m.shooterId);
     }
   }
 
@@ -61,16 +57,12 @@ public class KillThemAll extends Objective {
     return instructions;
   }
 
-  private void addKill(Astronaut p) {
-    kills.computeIfPresent(p.getId(), (k, v) -> (v + 1));
+  /**
+   * Update killer stats
+   * 
+   * @param astronautId
+   */
+  private void addKill(UUID astronautId) {
+    kills.computeIfPresent(astronautId, (k, v) -> (v + 1));
   }
-
-  @Override
-  protected void updatePlayerHealth(UUID playerId, Integer value) {
-    if (isDead(playerId)) {
-      killAndRespawnPlayer(localStore.getPlayer(playerId), getRandomRespawn());
-      router.call(Route.MINIGAME_MOVE);
-    }
-  }
-
 }

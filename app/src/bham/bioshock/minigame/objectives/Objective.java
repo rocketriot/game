@@ -1,118 +1,146 @@
 package bham.bioshock.minigame.objectives;
 
+import bham.bioshock.client.Route;
 import bham.bioshock.client.Router;
 import bham.bioshock.common.Position;
 import bham.bioshock.common.models.store.MinigameStore;
+import bham.bioshock.common.models.store.Store;
 import bham.bioshock.communication.messages.Message;
+import bham.bioshock.communication.messages.objectives.FlagOwnerUpdateMessage;
 import bham.bioshock.communication.messages.objectives.KillAndRespawnMessage;
-import bham.bioshock.communication.messages.objectives.SubstractHealthMessage;
-import bham.bioshock.communication.messages.objectives.UpdateObjectiveMessage.HealthMessage;
+import bham.bioshock.communication.messages.objectives.UpdateHealthMessage;
 import bham.bioshock.minigame.worlds.World;
-import bham.bioshock.server.ServerHandler;
 import bham.bioshock.minigame.models.Astronaut;
 import bham.bioshock.minigame.models.Entity.State;
 import bham.bioshock.minigame.models.Gun;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.Map.Entry;
 import java.util.Random;
-import java.util.Set;
 import java.util.UUID;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * Objective abstract class.
  */
-
 public abstract class Objective implements Serializable {
 
+  private static final Logger logger = LogManager.getLogger(Objective.class);
   private static final long serialVersionUID = 7485771472370553399L;
   private static int INITIAL_HEALTH = 4;
   
+  protected transient Store store;
   protected transient World world;
   protected transient Router router;
   protected transient MinigameStore localStore;
   private transient Position[] respawnPositions;
-  private transient ServerHandler serverHandler;
+  
+  protected transient HashMap<UUID, Long> lastRespawn;
   protected HashMap<UUID, Integer> health = new HashMap<>();
 
   public abstract UUID getWinner();
 
-  public void init(World world, Router router, MinigameStore store) {
+  public void init(World world, Router router, Store store) {
     this.world = world;
     this.router = router;
-    this.localStore = store;
+    this.store = store;
+    this.localStore = store.getMinigameStore();
     this.respawnPositions = world.getPlayerPositions();
+    this.lastRespawn = new HashMap<>();
     
     store.getPlayers().forEach(player -> {
       health.put(player.getId(), INITIAL_HEALTH);
     });
   }
-
-  public void setServer(ServerHandler serverHandler) {
-    if(this.serverHandler == null) {
-      this.serverHandler = serverHandler;      
-    }
-  }
-
-  public Collection<Astronaut> getPlayers() {
-    return localStore.getPlayers();
-  }
   
+  /**
+   * Get player health
+   * 
+   * @param id
+   * @return 0-4 health of a player
+   */
   public int getHealth(UUID id) {
     return health.get(id);
   }
   
-  public Set<Entry<UUID, Integer>> getHealthCopy() {
-    return health.entrySet();
-  }
-  
-  public void updateHealth(ArrayList<HealthMessage> health2) {
-//    synchronized(health) {
-//      for(HealthMessage h : health2) {
-//        health.put(h.id, h.value);
-//        updatePlayerHealth(h.id, h.value);
-//      }
-//    }
-  }
-
-  protected abstract void updatePlayerHealth(UUID key, Integer value);
-
   /**
    * Called every time a player is shot. Handled only by the host
    * 
    * @param player: the player who got shot
    * @param killer: the player who shot
    */
-  public void gotShot(Astronaut player, Astronaut killer) {
+  public final void gotShot(Astronaut player, Astronaut killer) {
     if(player.is(State.REMOVING)) return;
-    if(serverHandler == null) return;
-    health.computeIfPresent(player.getId(), (k, v) -> v - 1);
-    System.out.println(player.getId());
-    serverHandler.sendToAllExcept(new SubstractHealthMessage(player.getId(), killer.getId()), localStore.getMainPlayer().getId());
+    if(!store.isHost()) return;
+    
+    Integer h;
+    synchronized(health) {
+      h = health.get(player.getId());
+    }
+    if(h == null || h > 1) {
+      // Decrease health request
+      router.call(Route.SEND_OBJECTIVE_UPDATE, new UpdateHealthMessage(player.getId(), killer.getId()));
+    } else {      
+      // Send kill and update request
+      router.call(Route.SEND_OBJECTIVE_UPDATE, new KillAndRespawnMessage(player.getId(), killer.getId(), getRandomRespawn()));
+    }
   }
   
-  public boolean isDead(UUID playerId) {
-    Integer h = health.get(playerId);
-    return h != null && h <= 0;
+  
+  /**
+   * Default handler for SubstractHealthMessage - just decrease health
+   * check with last respawn time to avoid decreasing health after respawn
+   * 
+   * @param m
+   */
+  public void handle(UpdateHealthMessage m) { 
+    if(lastRespawn.get(m.playerId) == null || lastRespawn.get(m.playerId) < m.created) {
+      synchronized(health) {
+        health.computeIfPresent(m.playerId, (k, v) -> v - 1);
+      }
+    }
   }
   
+  /**
+   * Default handler for KillAndRespawnMessage - kill player and respawn in the new position
+   * save respawn position to ignore all bullets created before that moment
+   *
+   * @param m
+   */
+  public void handle(KillAndRespawnMessage m) {
+    lastRespawn.put(m.playerId, m.created);
+    killAndRespawnPlayer(m.playerId, m.position);
+  }
+  
+  /**
+   * Generates random respawn position based on the 4 initial positions
+   * 
+   * @return respawn position
+   */
   protected Position getRandomRespawn() {
     Random r = new Random();
     int i = Math.abs(r.nextInt()%4);
     return respawnPositions[i];
   }
 
-  
-  protected void killAndRespawnPlayer(Astronaut player, Position randomRespawn) {
+  /**
+   * Handles player kill and respawn in provided position
+   * 
+   * @param playerId
+   * @param randomRespawn
+   */
+  protected void killAndRespawnPlayer(UUID playerId, Position randomRespawn) {
+    Astronaut player = localStore.getPlayer(playerId);
     boolean hadGun = player.haveGun();
+    Position oldPosition = player.getPos().copy();
+    
     if(player.is(State.REMOVING)) return;
     player.killAndRespawn(randomRespawn);
 
     if (hadGun) {
-      Gun gun = new Gun(world, player.getX(), player.getY());
+      Gun gun = new Gun(world, oldPosition.x, oldPosition.y);
       gun.load();
+      gun.setCollisionHandler(localStore.getCollisionHandler());
       localStore.addEntity(gun);
     }
     synchronized(health) {
@@ -120,16 +148,31 @@ public abstract class Objective implements Serializable {
     }
   }
   
-  public void handle(Message m) {
-    if(m instanceof SubstractHealthMessage) {
-      this.handle((SubstractHealthMessage) m);
+  /**
+   * Handle different update messages
+   * 
+   * @param m
+   */
+  public void handleMessage(Message m) {
+    if(m instanceof UpdateHealthMessage) {
+      this.handle((UpdateHealthMessage) m);
     } else if (m instanceof KillAndRespawnMessage) {
       this.handle((KillAndRespawnMessage) m);
+    } else if(m instanceof FlagOwnerUpdateMessage) {
+      this.handle((FlagOwnerUpdateMessage) m); 
     }
   }
-
-  public void handle(SubstractHealthMessage m) {
-    
+  
+  /**
+   * Unhandled messages
+   * 
+   * @param m
+   */
+  public void handle(Message m) {
+    logger.debug("Ignored message: " + m.getClass().getSimpleName());
+  }
+  public void handle(FlagOwnerUpdateMessage m) {
+    logger.debug("Ignored message: " + m.getClass().getSimpleName());
   }
   
   /**

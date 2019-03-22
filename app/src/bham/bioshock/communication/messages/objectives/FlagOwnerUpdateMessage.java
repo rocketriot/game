@@ -6,18 +6,15 @@ import java.util.UUID;
 import bham.bioshock.communication.Command;
 import bham.bioshock.communication.messages.Message;
 
-public class SubstractHealthMessage extends Message {
+public class FlagOwnerUpdateMessage extends Message {
 
-  private static final long serialVersionUID = 6806469893148962075L;
-  
-  public final UUID playerId;
-  public final UUID shooterId;
+  private static final long serialVersionUID = 161193236939940483L;
   public final long created;
+  public final UUID flagOwner;
   
-  public SubstractHealthMessage(UUID playerId, UUID shooterId) {
+  public FlagOwnerUpdateMessage(UUID flagOwner) {
     super(Command.MINIGAME_OBJECTIVE);
-    this.playerId = playerId;
-    this.shooterId = shooterId;
+    this.flagOwner = flagOwner;
     this.created = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC);
   }
 

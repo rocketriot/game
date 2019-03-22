@@ -3,7 +3,6 @@ package bham.bioshock.minigame.models;
 import static java.util.stream.Collectors.toList;
 import java.io.Serializable;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
@@ -143,30 +142,18 @@ public class Astronaut extends Entity {
   @Override
   public void draw(SpriteBatch batch) {
     if (is(State.REMOVING)) {
-      TextureRegion anim;
-      if(dieFront) {
-        anim = texture.dyingFront.getKeyFrame(dieTime, false);        
-      } else {
-        anim = texture.dyingBack.getKeyFrame(dieTime, false);
-      }
-
-      Sprite sprite = getSprite();
-      sprite.setRegion(anim);
-      sprite.setPosition(getX() - (sprite.getWidth() / 2), getY());
-      sprite.setRotation((float) getRotation());
-      sprite.draw(batch);
-      
-      if (dieFront && texture.dyingFront.isAnimationFinished(dieTime)
+      if ((dieFront && texture.dyingFront.isAnimationFinished(dieTime))
           || texture.dyingBack.isAnimationFinished(dieTime)) {
-        setRotation(0);
+        
         stepsGenerator.updateFromServer(new SpeedVector(), respawn);
         setState(State.LOADED);
+        
       }
       
     } else {
       drawHealth(batch);
-      super.draw(batch);
     }
+    super.draw(batch);
   }
 
   @Override
@@ -222,8 +209,14 @@ public class Astronaut extends Entity {
   /**
    * Player textures
    **/
-
   public TextureRegion getTexture() {
+    // If removing show dying animation
+    if (is(State.REMOVING)) {
+      if(dieFront) {
+        return texture.dyingFront.getKeyFrame(dieTime, false);        
+      }
+      return texture.dyingBack.getKeyFrame(dieTime, false);  
+    }
     TextureRegion region = getTexture(haveGun);
     if (region == null)
       return null;
@@ -296,7 +289,8 @@ public class Astronaut extends Entity {
         e.setState(State.REMOVING);
         break;
       case FLAG:
-        if(objective.isPresent()) {
+        Flag flag = (Flag) e;
+        if(objective.isPresent() && !flag.haveOwner()) {
           objective.get().captured(this);
         }
         break;
@@ -379,10 +373,18 @@ public class Astronaut extends Entity {
     this.moveChange();
   }
 
+  /**
+   * Start dying animation and set state to REMOVING
+   * 
+   * @param pos new respawn position
+   */
   public void killAndRespawn(Position pos) {
     if(is(State.REMOVING)) return;
+    setState(State.REMOVING);
     dieTime = 0;
     dieFront = true;
+    
+    // Get direction of the shot
     if(shotDirection != null && shotDirection == Direction.LEFT) {
       if(dir == PlayerTexture.LEFT) {
         dieFront = false;
@@ -394,7 +396,6 @@ public class Astronaut extends Entity {
     }
     
     haveGun = false;
-    setState(State.REMOVING);
     this.respawn = pos;
   }
   

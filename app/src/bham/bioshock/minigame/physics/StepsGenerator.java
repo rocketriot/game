@@ -2,6 +2,7 @@ package bham.bioshock.minigame.physics;
 
 import java.util.Optional;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -121,9 +122,8 @@ public class StepsGenerator {
     
     Step s = null;
     try {
-      s = steps.take(); 
+      s = steps.poll(20, TimeUnit.MILLISECONDS); 
     } catch (InterruptedException e) {
-      
     }
     
     fixUnderground(s);
@@ -142,6 +142,7 @@ public class StepsGenerator {
   }
   
   private void fixUnderground(Step step) {
+    if(step == null) return;
     double dist = entity.distanceFromGround(step.position.x, step.position.y);
     if(dist < -10) {
       step.updatePos(step.position.move(world).up((float) -(dist+10)).pos());

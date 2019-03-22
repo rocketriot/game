@@ -170,6 +170,9 @@ public class ServerHandler {
       case MOVE_PLAYER_ON_BOARD:
         gameBoardHandler.movePlayer(message, clientId);
         break;
+      case END_TURN:
+        gameBoardHandler.endTurn(clientId);
+        break;
       case MINIGAME_START:
         RequestMinigameStartMessage data = (RequestMinigameStartMessage) message;
         minigameHandler.startMinigame(data, clientId, gameBoardHandler);
@@ -183,8 +186,8 @@ public class ServerHandler {
       case MINIGAME_BULLET:
         minigameHandler.bulletShot(message, clientId);
         break;
-      case END_TURN:
-        gameBoardHandler.endTurn(clientId);
+      case MINIGAME_OBJECTIVE:
+        minigameHandler.updateObjective(message);
         break;
       case MINIGAME_DIRECT_START:
         server.stopDiscovery();

@@ -70,7 +70,6 @@ public class MinigameHud implements Disposable {
     }
     private void setupStatsContainer() {
         statsContainer = new StatsContainer(store);
-        System.out.println("stats X Pos: "+ statsContainer.getX() + "width: "+statsContainer.getWidth() + " height: "+statsContainer.getHeight()+ "Y POS: "+ statsContainer.getY());
         topTable.add(statsContainer).padRight(PADDING).right().top().expand();
     }
 
