@@ -1,4 +1,4 @@
-package bham.bioshock.client.scenes.gameboard.hud;
+package bham.bioshock.client.scenes;
 
 import bham.bioshock.client.Router;
 import bham.bioshock.common.models.store.Store;

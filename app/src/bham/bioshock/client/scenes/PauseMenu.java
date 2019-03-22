@@ -1,4 +1,4 @@
-package bham.bioshock.client.scenes.gameboard.hud;
+package bham.bioshock.client.scenes;
 
 import bham.bioshock.client.Assets;
 import bham.bioshock.client.Route;
@@ -24,14 +24,13 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 
-public class PauseMenu extends HudElement{
+public class PauseMenu extends HudElement {
   private ShapeRenderer sr;
 
   private boolean isPaused;
 
   private Sprite pauseButton;
   private VerticalGroup menuOptions;
-  private TextButton preferencesLabel;
   private TextButton quitLabel;
 
   PauseMenu(Stage stage, SpriteBatch batch, Skin skin, Store store, Router router) {
@@ -54,18 +53,7 @@ public class PauseMenu extends HudElement{
     menuOptions.setFillParent(true);
     menuOptions.center();
     stage.addActor(menuOptions);
-
-    preferencesLabel = new TextButton("Preferences", skin);
-    preferencesLabel.addListener(
-        new ChangeListener() {
-          @Override
-          public void changed(ChangeEvent event, Actor actor) {
-            router.call(Route.PREFERENCES_WITH_BACK_ROUTE, Route.GAME_BOARD_SHOW);
-          }
-        });
-
-    menuOptions.addActor(preferencesLabel);
-
+    
     quitLabel = new TextButton("Quit Game", skin);
     quitLabel.addListener(
         new ChangeListener() {
