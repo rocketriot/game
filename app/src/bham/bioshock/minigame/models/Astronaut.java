@@ -3,6 +3,7 @@ package bham.bioshock.minigame.models;
 import static java.util.stream.Collectors.toList;
 import java.io.Serializable;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Color;
@@ -25,21 +26,6 @@ import bham.bioshock.minigame.physics.SpeedVector;
 import bham.bioshock.minigame.physics.Step;
 import bham.bioshock.minigame.utils.RotatableText;
 import bham.bioshock.minigame.worlds.World;
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Animation;
-import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.math.Intersector.MinimumTranslationVector;
-
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
-
-import static java.util.stream.Collectors.toList;
 
 public class Astronaut extends Entity {
 
@@ -105,6 +91,7 @@ public class Astronaut extends Entity {
   }
 
   public void moveChange() {
+    if(is(State.REMOVING)) return;
     if (move.movingLeft) {
       dir = PlayerTexture.LEFT; 
       stepsGenerator.moveLeft();
@@ -144,12 +131,9 @@ public class Astronaut extends Entity {
     animationTime += delta;
 
     checkIfOnGround();
-
-
   }
 
   private void checkIfOnGround() {
-    //System.out.println((world.fromGroundTo(legs.getX(),legs.getY())));
     if((world.fromGroundTo(legs.getX(),legs.getY())) <= 15) {
       removePlatform();
     }
@@ -481,18 +465,14 @@ public class Astronaut extends Entity {
 
 
   private void setOnPlatform(Platform platform) {
-    //System.out.println(getId().toString() + "is on " + platform.toString() );
     currentPlatform = Optional.of(platform);
   }
   private void removePlatform() {
-    //System.out.println(getId().toString() + "is on the ground");
     currentPlatform = Optional.empty();
   }
   public Optional<Entity> getOnPlatform() {
     return currentPlatform;
   }
-
-
 
   public String toString() {
     return name.getText();
