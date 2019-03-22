@@ -48,6 +48,7 @@ public class Renderer {
   private Router router;
   private static boolean DEBUG_MODE = false;
   private MinigameStore minigameStore;
+
   private MinigameHud hud;
   private World world;
   private AssetManager manager;
@@ -182,6 +183,7 @@ public class Renderer {
     textBatch.dispose();
     background.getTexture().dispose();
     world.dispose();
+    hud.dispose();
   }
 }
 
