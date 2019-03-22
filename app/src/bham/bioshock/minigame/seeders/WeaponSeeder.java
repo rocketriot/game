@@ -31,6 +31,7 @@ public class WeaponSeeder {
    * @return the array list of guns generated
    */
   public void seed() {
+    guns.clear();
     // spawn gun in top left quarter
     generateWeapon(0, 90);
     // spawn gun in bottom left quarter
