@@ -37,8 +37,7 @@ public class MinigameScreen implements Screen {
     Bullet.loadTextures(manager);
     Flag.loadTextures(manager);
     Platform.loadTextures(manager);
-    
-    System.out.println("Show end");
+
   }
 
 
