@@ -2,7 +2,6 @@ package bham.bioshock.minigame;
 
 import bham.bioshock.client.Assets;
 import bham.bioshock.client.Router;
-import bham.bioshock.client.scenes.MinigameHud;
 import bham.bioshock.common.consts.Config;
 import bham.bioshock.common.models.store.MinigameStore;
 import bham.bioshock.common.models.store.Store;
