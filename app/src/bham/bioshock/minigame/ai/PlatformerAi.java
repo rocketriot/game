@@ -9,6 +9,8 @@ import bham.bioshock.minigame.objectives.Platformer;
 import bham.bioshock.minigame.physics.CollisionHandler;
 import bham.bioshock.minigame.physics.StepsGenerator;
 import bham.bioshock.server.ServerHandler;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.Optional;
@@ -17,7 +19,10 @@ import java.util.UUID;
 
 public class PlatformerAi extends MinigameAI {
 
-    private ArrayList<CPUState> states_stack = new ArrayList<>();
+    private static final Logger logger = LogManager.getLogger(PlatformerAi.class);
+
+
+    private ArrayList<CPUState> statesStack = new ArrayList<>();
     private Platform goalPlatform;
     private ArrayList<Platform> pathToGoal;
 
@@ -43,9 +48,6 @@ public class PlatformerAi extends MinigameAI {
         if (goalPlatform == null) {
             goalPlatform = ((Platformer) localStore.getObjective()).getGoalPlatform();
             pathToGoal = ((Platformer) localStore.getObjective()).getPathToGoal();
-
-            //System.out.println("PATH TO GOAL: ");
-            //pathToGoal.forEach(platform -> System.out.print(" "+platform.toString()));
         }
         if (testStepsGenerator == null) {
             if(astronaut.get().loaded() ){
@@ -57,12 +59,12 @@ public class PlatformerAi extends MinigameAI {
         }
         else {
             astronaut.get().debug = false;
-            if(states_stack.isEmpty()) {
-                states_stack.add(new FindNextPlatform());
+            if(statesStack.isEmpty()) {
+                statesStack.add(new FindNextPlatform());
             }
-            states_stack.get(0).broadcast();
-            states_stack.get(0).execute();
-            states_stack.get(0).updateStack();
+            statesStack.get(0).broadcast();
+            statesStack.get(0).execute();
+            statesStack.get(0).updateStack();
         }
 
     }
@@ -78,8 +80,6 @@ public class PlatformerAi extends MinigameAI {
             Random rand = new Random();
             if (rand.nextInt(100) < 95) {
                 nextPlatform = pathToGoal.get(currentPlatformIndex);
-                //moveToPlatform(delta, pathToGoal.get(currentPlatformIndex));
-                //workOutHowToJump(pathToGoal.get(currentPlatformIndex));
             }
             else {
                 Position currentPosition = astronaut.get().getPos();
@@ -92,15 +92,13 @@ public class PlatformerAi extends MinigameAI {
                     }
                 }
                 nextPlatform = nearest;
-                //System.out.print(astronaut.get().toString() + " TO NEARBY PLATFORM");
-                //moveToPlatform(delta, nearbyPlatform(currentPlatform));
             }
         }
 
         @Override
         void updateStack() {
-            states_stack.remove(this);
-            states_stack.add(new MoveTowardsPlatform());
+            statesStack.remove(this);
+            statesStack.add(new MoveTowardsPlatform());
 
         }
 
@@ -143,7 +141,7 @@ public class PlatformerAi extends MinigameAI {
 
         @Override
         void updateStack() {
-            states_stack.add(0, new DetermineJumpingPosition(direction));
+            statesStack.add(0, new DetermineJumpingPosition(direction));
 
 
         }
@@ -168,8 +166,7 @@ public class PlatformerAi extends MinigameAI {
             else if ( distance > JUMP_MID){
                 //jump without moving
                 astronaut.jump();
-                //states_stack.remove(this);
-                //states_stack.add(new JumpOntoPlatform(direction));
+
             }
             else if(distance > JUMP_MIN){
                 //move a little in the opposite direction
@@ -199,8 +196,8 @@ public class PlatformerAi extends MinigameAI {
 
         @Override
         void updateStack() {
-            states_stack.remove(this);
-            states_stack.add(0, new JumpOntoPlatform(direction));
+            statesStack.remove(this);
+            statesStack.add(0, new JumpOntoPlatform(direction));
         }
 
 
@@ -225,23 +222,21 @@ public class PlatformerAi extends MinigameAI {
             Optional<Entity> astronautOn = astronaut.get().getOnPlatform();
 
             if(astronautOn.isPresent()) {
-                System.out.println(astronaut.get().toString()+" IS ON: "+astronautOn.get().toString()+ "NEXT: "+(currentPlatformIndex+1));
+                logger.trace(astronaut.get().toString()+" IS ON: "+astronautOn.get().toString()+ "NEXT: "+(currentPlatformIndex+1));
                 if(astronautOn.get().getId().equals(nextPlatform.getId())) {
                     currentPlatformIndex++;
-                    //states_stack.remove(this);
-                    //states_stack.clear();
-                    //states_stack.add(new FindNextPlatform());
+                    statesStack.remove(this);
+                    statesStack.add(new FindNextPlatform());
                 }
                 else {
-                    System.out.println("Astronaut is on a platform but not the one it's meant to be on");
+                    logger.trace("Astronaut is on a platform but not the one it's meant to be on");
                 }
             }
             else {
-                //System.out.println(astronaut.get().toString()+" IS ON THE GROUND");
+                logger.trace(astronaut.get().toString()+" IS ON THE GROUND");
                 currentPlatformIndex = 0;
-                //states_stack.remove(this);
-                states_stack.clear();
-                states_stack.add(new FindNextPlatform());
+                statesStack.clear();
+                statesStack.add(new FindNextPlatform());
             }
         }
 
@@ -261,7 +256,7 @@ public class PlatformerAi extends MinigameAI {
         abstract void updateStack();
 
         public void broadcast() {
-            System.out.println("State: "+state_name);
+            logger.trace("State: "+state_name);
         }
 
     }
