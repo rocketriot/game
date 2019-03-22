@@ -73,9 +73,15 @@ public class MainMenuScreen extends ScreenMaster {
     private SpriteDrawable hover;
 
     public BaseClickListener(Image image, String normal, String hover) {
+      Texture normalTexture = new Texture(normal);
+      normalTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+      
+      Texture hoverTexture = new Texture(hover);
+      hoverTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+      
       this.image = image;
-      this.normal = new SpriteDrawable(new Sprite(new Texture(normal)));
-      this.hover = new SpriteDrawable(new Sprite(new Texture(hover)));
+      this.normal = new SpriteDrawable(new Sprite(normalTexture));
+      this.hover = new SpriteDrawable(new Sprite(hoverTexture));
     }
 
     @Override
@@ -84,7 +90,7 @@ public class MainMenuScreen extends ScreenMaster {
     }
 
     @Override
-    public void exit(InputEvent event, float x, float y, int pointer, Actor toActor) {    
+    public void exit(InputEvent event, float x, float y, int pointer, Actor toActor) {
       image.setDrawable(normal);
     }
   }
