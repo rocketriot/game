@@ -45,7 +45,7 @@ public class KillThemAllAI extends MinigameAI {
       goalPos = findNearestPlayer(astronaut.astronaut);
     }
 
-    if (goalPos != null) {
+    if (goalPos == null) {
       return;
     }
 

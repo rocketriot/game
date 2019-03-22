@@ -56,13 +56,13 @@ public class MinigameHandler {
     Random rand = new Random();
 
    switch(rand.nextInt(100)%3) {
-      case 2:
+      case 1:
         o = new Platformer(w);
         for (UUID id : store.getCpuPlayers()) {
           aiLoop.registerHandler(new PlatformerAi(id, store, handler));
         }
         break;
-      case 3:
+      case 2:
         o = new KillThemAll();
         for (UUID id : store.getCpuPlayers()) {
           aiLoop.registerHandler(new KillThemAllAI(id, store, handler));
