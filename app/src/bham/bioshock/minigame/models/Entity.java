@@ -6,6 +6,7 @@ import bham.bioshock.minigame.objectives.Objective;
 import bham.bioshock.minigame.physics.*;
 import bham.bioshock.minigame.worlds.World;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -259,7 +260,9 @@ public abstract class Entity implements Serializable {
 
   public void draw(SpriteBatch batch) {
     Sprite sprite = getSprite();
-    sprite.setRegion(getTexture());
+    TextureRegion texture = getTexture();
+    if(texture == null) return;
+    sprite.setRegion(texture);
     sprite.setPosition(getX() - (sprite.getWidth() / 2), getY());
     sprite.setRotation((float) getRotation());
     sprite.draw(batch);

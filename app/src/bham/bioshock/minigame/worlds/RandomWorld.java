@@ -5,21 +5,12 @@ import bham.bioshock.minigame.seeders.PlatformSeeder;
 import bham.bioshock.minigame.seeders.WeaponSeeder;
 import java.util.ArrayList;
 import java.util.Random;
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import bham.bioshock.common.Position;
 import bham.bioshock.minigame.models.Gun;
 import bham.bioshock.minigame.models.Platform;
 import bham.bioshock.minigame.models.Rocket;
-import bham.bioshock.minigame.seeders.PlatformSeeder;
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Random;
+
 
 public class RandomWorld extends World {
 
@@ -35,10 +26,7 @@ public class RandomWorld extends World {
   transient PlatformSeeder pSeeder;
   ArrayList<Platform> platforms;
   Position gravityCenter = new Position(0, 0);
-  int textureNum;
-  transient Texture texture;
-  transient Texture frontTexture;
-
+  
   public RandomWorld() {
     playerPositions[0] = new Position(-2300, 0);
     playerPositions[1] = new Position(0, -2000);
@@ -54,7 +42,7 @@ public class RandomWorld extends World {
     guns = wSeeder.getGuns();
 
     Random r = new Random();
-    textureNum = (r.nextInt(100) % 4)+1;
+    textureId = (r.nextInt(100) % 4)+1;
   }
 
   @Override
@@ -101,18 +89,6 @@ public class RandomWorld extends World {
     return platforms;
   }
 
-  @Override
-  public Texture getTexture() {
-    if (texture != null) {
-      return texture;
-    }
-    texture = new Texture(Gdx.files.internal("app/assets/minigame/planets/" + textureNum + ".png"));
-    if(textureNum == 4) {
-      textureOffset = 770;
-      frontTexture = new Texture(Gdx.files.internal("app/assets/minigame/planets/4_front.png"));
-    }
-    return texture;
-  }
 
   /**
    * Method to get the platform path to a platform inclusive
@@ -129,17 +105,6 @@ public class RandomWorld extends World {
     }
     Collections.reverse(path);
     return path;
-  }
-
-
-  @Override
-  public void afterDraw(SpriteBatch batch) {
-    if(textureNum == 4) {      
-      batch.begin();
-      float radius = (float) getPlanetRadius()+textureOffset;
-      batch.draw(frontTexture, -radius, -radius, radius*2, radius*2);
-      batch.end();      
-    }
   }
 
 }
