@@ -24,15 +24,14 @@ abstract public class World implements Serializable {
   protected int textureId;
   static Texture texture;
   static Texture frontTexture;
+  
 
 
   /**
    * Draws planet texture on the screen
-   * 
-   * @param batch
    */
   public void draw(SpriteBatch batch) {
-//    if(texture == null) return;
+    if(texture == null) return;
     float radius = (float) getPlanetRadius()+textureOffset;
     batch.draw(texture, -radius, -radius, radius*2, radius*2);
   }
@@ -40,14 +39,14 @@ abstract public class World implements Serializable {
 
   public void afterDraw(SpriteBatch batch) {
     if(textureId == 4) {   
-//      if(frontTexture == null) return;
+      if(frontTexture == null) return;
       batch.begin();
       float radius = (float) getPlanetRadius()+textureOffset;
       batch.draw(frontTexture, -radius, -radius, radius*2, radius*2);
       batch.end();      
     }
   }
-  
+
   /**
    * Gets angle to an x and y coordinate.
    *
@@ -98,8 +97,8 @@ abstract public class World implements Serializable {
   }
 
   /**
-   * Calculate angle ratio - in the distance R from the planet center
-   * Used to calculate angle given the length (X) distance
+   * Calculate angle ratio - in the distance R from the planet center Used to calculate angle given
+   * the length (X) distance
    *
    * @param r the ratio
    * @return ratio between pixels and angle
@@ -182,10 +181,29 @@ abstract public class World implements Serializable {
    */
   abstract public ArrayList<Platform> getPlatforms();
 
+  /**
+   * Method to get the platform path to a platform inclusive
+   *
+   * @param platform the platform you want a path to
+   * @return the path
+   */
+  abstract public ArrayList<Platform> getPlatformPath(Platform platform);
+
+  /**
+   * Get texture Id
+   * 
+   * @return
+   */
   public int getTextureId() {
     return textureId;
   }
 
+  /**
+   * Load textures from the asset manager
+   * 
+   * @param manager
+   * @param id
+   */
   public static void loadTextures(AssetManager manager, int id) {
     manager.load(Assets.planetBase + id + ".png", Texture.class);
     if(id == 4) {
@@ -193,6 +211,12 @@ abstract public class World implements Serializable {
     }
   }
   
+  /**
+   * Create textures using asset manager
+   * 
+   * @param manager
+   * @param id
+   */
   public static void createTextures(AssetManager manager, int id) {
     texture = manager.get(Assets.planetBase + id + ".png", Texture.class);
     if(id == 4) {

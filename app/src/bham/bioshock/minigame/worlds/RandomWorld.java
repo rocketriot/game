@@ -90,12 +90,7 @@ public class RandomWorld extends World {
   }
 
 
-  /**
-   * Method to get the platform path to a platform inclusive
-   *
-   * @param platform the goal platform
-   * @return the path
-   */
+  @Override
   public ArrayList<Platform> getPlatformPath(Platform platform) {
     ArrayList<Platform> path = new ArrayList<>();
 

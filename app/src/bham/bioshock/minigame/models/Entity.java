@@ -6,7 +6,6 @@ import bham.bioshock.minigame.objectives.Objective;
 import bham.bioshock.minigame.physics.*;
 import bham.bioshock.minigame.worlds.World;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;

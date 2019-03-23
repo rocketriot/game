@@ -65,5 +65,10 @@ public class JoinScreenWorld extends World {
   }
 
   @Override
+  public ArrayList<Platform> getPlatformPath(Platform platform) {
+    return null;
+  }
+  
+  @Override
   public void afterDraw(SpriteBatch batch) {}
 }
