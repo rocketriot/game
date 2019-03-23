@@ -57,30 +57,25 @@ public class MinigameHandler {
 
     Random rand = new Random();
 
-//   switch(rand.nextInt(100)%3) {
-//      case 1:
-//        o = new Platformer(w);
-//        for (UUID id : store.getCpuPlayers()) {
-//          aiLoop.registerHandler(new PlatformerAI(id, store, handler));
-//        }
-//        break;
-//      case 2:
-//        o = new KillThemAll();
-//        for (UUID id : store.getCpuPlayers()) {
-//          aiLoop.registerHandler(new KillThemAllAI(id, store, handler));
-//        }
-//        break;
-//      default:
-//        o = new CaptureTheFlag(w);
-//        for (UUID id : store.getCpuPlayers()) {
-//          aiLoop.registerHandler(new CaptureTheFlagAI(id, store, handler));
-//        }
-//        break;
-//    }
-
-    o = new CaptureTheFlag(w);
-    for (UUID id : store.getCpuPlayers()) {
-      aiLoop.registerHandler(new CaptureTheFlagAI(id, store, handler));
+   switch(rand.nextInt(100)%3) {
+      case 1:
+        o = new Platformer(w);
+        for (UUID id : store.getCpuPlayers()) {
+          aiLoop.registerHandler(new PlatformerAI(id, store, handler));
+        }
+        break;
+      case 2:
+        o = new KillThemAll();
+        for (UUID id : store.getCpuPlayers()) {
+          aiLoop.registerHandler(new KillThemAllAI(id, store, handler));
+        }
+        break;
+      default:
+        o = new CaptureTheFlag(w);
+        for (UUID id : store.getCpuPlayers()) {
+          aiLoop.registerHandler(new CaptureTheFlagAI(id, store, handler));
+        }
+        break;
     }
 
     aiLoop.start();
