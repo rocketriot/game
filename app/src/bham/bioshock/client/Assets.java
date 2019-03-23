@@ -13,10 +13,15 @@ public class Assets {
   // Main Menu
   public static final String logo = "app/assets/ui/main-menu/logo.png";
   public static final String hostButton = "app/assets/ui/main-menu/host-game.png";
+  public static final String hostButtonHover = "app/assets/ui/main-menu/host-game-hover.png";
   public static final String joinButton = "app/assets/ui/main-menu/join-game.png";
+  public static final String joinButtonHover = "app/assets/ui/main-menu/join-game-hover.png";
   public static final String preferencesButton = "app/assets/ui/main-menu/preferences.png";
+  public static final String preferencesButtonHover = "app/assets/ui/main-menu/preferences-hover.png";
   public static final String howToPlayButton = "app/assets/ui/main-menu/how-to-play.png";
+  public static final String howToPlayButtonHover = "app/assets/ui/main-menu/how-to-play-hover.png";
   public static final String exitButton = "app/assets/ui/main-menu/exit.png";
+  public static final String exitButtonHover = "app/assets/ui/main-menu/exit-hover.png";
 
   // Game Board assets
   public static final String planetsFolder = "app/assets/entities/planets";
