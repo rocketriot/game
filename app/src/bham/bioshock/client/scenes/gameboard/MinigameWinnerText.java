@@ -35,7 +35,6 @@ public class MinigameWinnerText {
       duration -= Gdx.graphics.getDeltaTime();
       if (duration <= 0) {
         showWinner = false;
-        store.setMinigameWinner(null);
       } else {
         font.setColor(1, 1, 1, duration/2);
       }
@@ -44,13 +43,12 @@ public class MinigameWinnerText {
 
   /** Creates the string to display if someone has just won a minigame and sets showWinner to true */
   private void checkMinigameEnd() {
-    if (!miniGameEnded && store.getMinigameWinner() != null) {
-      duration = 2f;
+    if (store.getMinigameWinner() != null) {
+      duration = 3f;
       winnerString = store.getMinigameWinner() + " won the minigame!";
       showWinner = true;
+      store.setMinigameWinner(null);
       font.setColor(1, 1, 1, 1);
-    } else if (!store.isMainPlayersTurn() && miniGameEnded) {
-      miniGameEnded = false;
     }
   }
 }
