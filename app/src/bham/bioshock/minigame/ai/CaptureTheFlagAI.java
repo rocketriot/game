@@ -55,7 +55,6 @@ public class CaptureTheFlagAI extends MinigameAI {
           for (Platform platform : path){
             if (platform.getPlanetPos().fromCenter > astroPos.fromCenter + 10){
               goalPos = platform.getPlanetPos();
-              goalPos.fromCenter += 15;
               break;
             }
           }

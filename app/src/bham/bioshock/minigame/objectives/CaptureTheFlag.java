@@ -35,9 +35,9 @@ public class CaptureTheFlag extends Objective {
         platforms.add(platform);
       }
     }
-    
+
     PlanetPosition pPos = platforms.get(r.nextInt(platforms.size())).getPlanetPos();
-    pPos.fromCenter += 50;
+    pPos.fromCenter += 25;
     flagPosition = world.convert(pPos);
   }
 
