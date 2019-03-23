@@ -13,8 +13,12 @@ import bham.bioshock.minigame.worlds.World;
 
 
 public class KillThemAll extends Objective {
+
   private static final long serialVersionUID = 5035692465754355325L;
 
+  /**
+   * Maps players to the number of kills they have
+   */
   private HashMap<UUID, Integer> kills = new HashMap<>();
 
   @Override
@@ -31,10 +35,10 @@ public class KillThemAll extends Objective {
       kills.put(player.getId(), 0);
     });
   }
-  
+
   public void handle(KillAndRespawnMessage m) {
     super.handle(m);
-    if(!m.playerId.equals(m.shooterId)) {
+    if (!m.playerId.equals(m.shooterId)) {
       addKill(m.shooterId);
     }
   }
@@ -59,8 +63,6 @@ public class KillThemAll extends Objective {
 
   /**
    * Update killer stats
-   * 
-   * @param astronautId
    */
   private void addKill(UUID astronautId) {
     kills.computeIfPresent(astronautId, (k, v) -> (v + 1));

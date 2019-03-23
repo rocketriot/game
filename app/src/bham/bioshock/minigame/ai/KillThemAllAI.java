@@ -19,6 +19,9 @@ public class KillThemAllAI extends MinigameAI {
 
   private static final Logger logger = LogManager.getLogger(KillThemAllAI.class);
 
+  /**
+   * The world
+   */
   private World world;
 
   /**
@@ -61,7 +64,7 @@ public class KillThemAllAI extends MinigameAI {
     }
 
     if (astronaut.astronaut.haveGun()
-        && Math.abs(normaliseAngle(goalPos.angle) - normaliseAngle(astroPos.angle)) <= 25) {
+        && Math.abs(normaliseAngle(goalPos.angle) - normaliseAngle(astroPos.angle)) <= 20) {
       astronaut.shoot();
     }
   }
