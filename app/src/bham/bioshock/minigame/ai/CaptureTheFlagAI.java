@@ -21,6 +21,9 @@ public class CaptureTheFlagAI extends MinigameAI {
 
   private static final Logger logger = LogManager.getLogger(CaptureTheFlagAI.class);
 
+  /**
+   * The world.
+   */
   private World world;
 
   /**
@@ -52,8 +55,8 @@ public class CaptureTheFlagAI extends MinigameAI {
         Platform closestPlatform = findClosestPlatform(goalPos);
         if (closestPlatform != null) {
           ArrayList<Platform> path = world.getPlatformPath(closestPlatform);
-          for (Platform platform : path){
-            if (platform.getPlanetPos().fromCenter > astroPos.fromCenter + 10){
+          for (Platform platform : path) {
+            if (platform.getPlanetPos().fromCenter > astroPos.fromCenter + 10) {
               goalPos = platform.getPlanetPos();
               break;
             }

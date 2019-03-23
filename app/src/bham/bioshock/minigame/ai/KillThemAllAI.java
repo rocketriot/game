@@ -19,6 +19,9 @@ public class KillThemAllAI extends MinigameAI {
 
   private static final Logger logger = LogManager.getLogger(KillThemAllAI.class);
 
+  /**
+   * The world
+   */
   private World world;
 
   /**
