@@ -8,11 +8,9 @@ import bham.bioshock.common.models.Planet;
 import bham.bioshock.common.models.Player;
 import bham.bioshock.common.models.store.Store;
 import bham.bioshock.common.pathfinding.AStarPathfinding;
-import bham.bioshock.communication.Command;
 import bham.bioshock.communication.messages.boardgame.MovePlayerOnBoardMessage;
 import bham.bioshock.server.handlers.GameBoardHandler;
 import bham.bioshock.server.handlers.MinigameHandler;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.UUID;
 import org.apache.logging.log4j.LogManager;
@@ -43,14 +41,15 @@ public class BoardAi extends Thread {
         Player player = store.getMovingPlayer();
         if(player.isCpu() && (lastMoved == null || !player.getId().equals(lastMoved))) {
           
+          // Make a move
           ArrayList<Coordinates> path = moveCpuPlayer();
           int waitTime = calculateMoveTime(player, path);
-          
           Thread.sleep(waitTime);
         
           GameBoard gameBoard = store.getGameBoard();
           Planet planet = gameBoard.getAdjacentPlanet(player.getCoordinates(), player);
           
+          // Make a decision after a move
           if (planet != null) {
             minigameHandler.startMinigame(player.getId(), planet.getId(), gameBoardHandler, null);
           } else {

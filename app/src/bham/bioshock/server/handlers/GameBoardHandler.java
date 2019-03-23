@@ -93,11 +93,6 @@ public class GameBoardHandler {
     }
   }
 
-//  private void startMinigame(Player currentPlayer, Planet planet, MinigameHandler minigameHandler) {
-//    minigameHandler.startMinigame(new RequestMinigameStartMessage(planet.getId()), currentPlayer.getId(), this);
-//  }
-
-
   public void endTurn() {
     handler.sendToAll(new UpdateTurnMessage());
   }
