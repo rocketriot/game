@@ -46,6 +46,7 @@ public class GridPoint implements Serializable {
     PLANET,
     ASTEROID,
     FUEL,
+    UPGRADE,
     EMPTY
   }
 }

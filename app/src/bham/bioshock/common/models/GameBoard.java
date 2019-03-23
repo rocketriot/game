@@ -119,8 +119,16 @@ public class GameBoard implements Serializable {
       return;
     }
 
+    // Generate an upgrade
+    if (randomFloat <= 0.02) {
+      Upgrade upgrade = new Upgrade(new Coordinates(x, y));
+      grid[x][y] = new GridPoint(GridPoint.Type.UPGRADE, upgrade);
+
+      return;
+    }
+
     // Generate a planet
-    if (randomFloat <= 0.035) {
+    if (randomFloat <= 0.045) {
       // Check if there's enough space to generate the planet
       if (isEnoughSpace(x, y, Planet.WIDTH, Planet.HEIGHT)) {
         // Create a new planet

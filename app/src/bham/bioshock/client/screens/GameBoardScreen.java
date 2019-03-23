@@ -44,6 +44,9 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
   /** Draws fuel on the board */
   private DrawFuel drawFuel;
 
+  /** Draws upgrade on the board */
+  private DrawUpgrade drawUpgrade;
+
   /** Draws asteroids on the board */
   private DrawAsteroid drawAsteroid;
 
@@ -95,6 +98,7 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
     drawPlayer = new DrawPlayer(batch);
     drawPlanet = new DrawPlanet(batch);
     drawFuel = new DrawFuel(batch);
+    drawUpgrade = new DrawUpgrade(batch);
     drawAsteroid = new DrawAsteroid(batch);
 
     pathRenderer =
@@ -224,6 +228,11 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
             drawFuel.draw(fuel, PPS);
             break;
 
+          case UPGRADE:
+            Upgrade upgrade = (Upgrade) grid[x][y].getValue();
+            drawUpgrade.draw(upgrade, PPS);
+            break;
+
           default:
             break;
         }
@@ -286,6 +295,7 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
     drawPlayer.resize(PPS);
     drawPlanet.resize(PPS);
     drawFuel.resize(PPS);
+    drawUpgrade.resize(PPS);
     drawAsteroid.resize(PPS);
 
     background.setSize(PPS * 38.4f, PPS * 21.6f);
