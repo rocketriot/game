@@ -42,7 +42,7 @@ public class CaptureTheFlagAI extends MinigameAI {
     world = localStore.getWorld();
     Astronaut astro = astronaut.get();
     PlanetPosition astroPos = astro.getPlanetPos();
-    PlanetPosition goalPos;
+    PlanetPosition goalPos = null;
 
     if (!astro.haveGun() && !world.getGuns().isEmpty()) {
       goalPos = findNearestGun(astroPos);
@@ -61,7 +61,7 @@ public class CaptureTheFlagAI extends MinigameAI {
         }
       }
     } else {
-      goalPos = new PlanetPosition(astroPos.angle + 10, astroPos.fromCenter);
+      astronaut.moveRight();
     }
 
     if (goalPos == null) {

@@ -31,7 +31,7 @@ public class CaptureTheFlag extends Objective {
     ArrayList<Platform> platforms = new ArrayList<>();
 
     for (Platform platform : allPlatforms){
-      if (platform.getPlanetPos().fromCenter < 2500){
+      if (platform.getPlanetPos().fromCenter < 2400){
         platforms.add(platform);
       }
     }
