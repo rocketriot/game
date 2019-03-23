@@ -12,14 +12,7 @@ import bham.bioshock.common.Position;
 import bham.bioshock.minigame.models.Gun;
 import bham.bioshock.minigame.models.Platform;
 import bham.bioshock.minigame.models.Rocket;
-import bham.bioshock.minigame.seeders.PlatformSeeder;
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Random;
 
 public class RandomWorld extends World {
 

@@ -111,7 +111,7 @@ public class MinigameHandler {
       }
     });
 
-    minigameTimer = new Thread() {
+    minigameTimer = new Thread("MinigameTimer") {
       private long time;
 
       public void run() {

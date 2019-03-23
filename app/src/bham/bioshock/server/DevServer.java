@@ -10,7 +10,7 @@ import com.badlogic.gdx.utils.JsonWriter.OutputType;
 import bham.bioshock.common.models.Player;
 import bham.bioshock.common.models.store.MinigameStore;
 import bham.bioshock.common.models.store.Store;
-import bham.bioshock.communication.server.ServerService;
+import bham.bioshock.communication.interfaces.ServerService;
 import fi.iki.elonen.NanoHTTPD;
 
 public class DevServer extends NanoHTTPD {

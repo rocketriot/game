@@ -4,12 +4,13 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import bham.bioshock.Config;
 import bham.bioshock.common.models.store.Store;
-import bham.bioshock.communication.Config;
 import bham.bioshock.communication.server.CommunicationMaker;
+import bham.bioshock.server.interfaces.StoppableServer;
 
 @Singleton
-public class Server {
+public class Server implements StoppableServer {
   private ServerHandler handler;
   private CommunicationMaker connMaker;
   private ServerSocket serverSocket;
@@ -21,7 +22,7 @@ public class Server {
   }
 
   public Boolean start() {
-    this.handler = new ServerHandler(store, this);
+    this.handler = new ServerHandler(store, this, Config.DEBUG_SERVER);
     try {
       serverSocket = new ServerSocket(Config.PORT);
     } catch (IOException e1) {
@@ -40,7 +41,9 @@ public class Server {
   }
 
   public void stop() {
-    stopDiscovery();
+    if(connMaker != null) {
+      connMaker.disconnect();      
+    }
     if(handler != null) {
       handler.stopAll();      
     }

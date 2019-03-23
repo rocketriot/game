@@ -2,12 +2,14 @@ package bham.bioshock.server;
 
 import bham.bioshock.common.models.store.Store;
 import bham.bioshock.communication.Command;
+import bham.bioshock.communication.interfaces.ServerService;
 import bham.bioshock.communication.messages.Message;
 import bham.bioshock.communication.messages.minigame.RequestMinigameStartMessage;
-import bham.bioshock.communication.server.ServerService;
+import bham.bioshock.communication.server.PlayerService;
 import bham.bioshock.server.handlers.GameBoardHandler;
 import bham.bioshock.server.handlers.JoinScreenHandler;
 import bham.bioshock.server.handlers.MinigameHandler;
+import bham.bioshock.server.interfaces.StoppableServer;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Optional;
@@ -23,26 +25,29 @@ public class ServerHandler {
   private ArrayList<ServerService> connecting = new ArrayList<>();
   private ConcurrentHashMap<UUID, ServerService> connected = new ConcurrentHashMap<>();
 
-  private Server server;
+  private StoppableServer server;
   private JoinScreenHandler joinHandler;
   private GameBoardHandler gameBoardHandler;
   private MinigameHandler minigameHandler;
   private DevServer devServer;
   
-  private final boolean DEBUG_SERVER = false;
   
-  
-  public ServerHandler(Store store, Server server) {
+  public ServerHandler(Store store, StoppableServer server, boolean runDebugServer) {
     this.server = server;
     joinHandler = new JoinScreenHandler(store, this);
     minigameHandler = new MinigameHandler(store, this);
     gameBoardHandler = new GameBoardHandler(store, this, minigameHandler);
-    if(DEBUG_SERVER) {
-      try {
-        devServer = new DevServer();
-        devServer.addServices(store, connecting, connected);
-      } catch(IOException e) {}
+    
+    if(runDebugServer) {
+      startDebugServer(store);
     }
+  }
+  
+  public void startDebugServer(Store store) {
+    try {
+      devServer = new DevServer();
+      devServer.addServices(store, connecting, connected);
+    } catch(IOException e) {}
   }
   
   /**
@@ -50,7 +55,7 @@ public class ServerHandler {
    * 
    * @param service
    */
-  public void register(ServerService service) {
+  public void register(PlayerService service) {
     connecting.add(service);
   }
 
@@ -60,8 +65,8 @@ public class ServerHandler {
    * @param id
    * @param service
    */
-  public void registerClient(UUID id, ServerService service) {
-    service.saveId(id);
+  public void registerClient(UUID id, String username, PlayerService service) {
+    service.saveId(id, username);
     connecting.remove(service);
     connected.put(id, service);
   }
@@ -108,7 +113,7 @@ public class ServerHandler {
    * @param action
    * @param service
    */
-  private void registerPlayer(Message message, ServerService service) {
+  private void registerPlayer(Message message, PlayerService service) {
     if (message.command.equals(Command.REGISTER)) {
       joinHandler.registerPlayer(message, service);
     } else {
@@ -120,7 +125,7 @@ public class ServerHandler {
    * Unregister player, remove the connection and send information to all clients
    * @param serverService
    */
-  public void unregister(ServerService serverService) {
+  public void unregister(PlayerService serverService) {
     Optional<UUID> clientId = serverService.Id();
     if(clientId.isPresent()) {
       connected.remove(clientId.get());
@@ -148,7 +153,7 @@ public class ServerHandler {
    * @param action
    * @param service
    */
-  public void handleRequest(Message message, ServerService service) {
+  public void handleRequest(Message message, PlayerService service) {
     logger.trace("Server received: " + message);
 
     // If the service doesn't have assigned Id register it

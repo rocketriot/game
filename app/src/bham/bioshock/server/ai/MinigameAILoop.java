@@ -17,6 +17,10 @@ public class MinigameAILoop extends Thread {
   /** The loop time */
   private final int LOOP_TIME = 300;
 
+  public MinigameAILoop() {
+    super("MinigameAILoop");
+  }
+
   @Override
   public void run() {
     long currentTime = System.currentTimeMillis();

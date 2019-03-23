@@ -11,7 +11,7 @@ import bham.bioshock.communication.messages.joinscreen.DisconnectPlayerMessage;
 import bham.bioshock.communication.messages.joinscreen.RegisterMessage;
 import bham.bioshock.communication.messages.joinscreen.ServerFullMessage;
 import bham.bioshock.communication.messages.minigame.RequestMinigameStartMessage;
-import bham.bioshock.communication.server.ServerService;
+import bham.bioshock.communication.server.PlayerService;
 import bham.bioshock.server.ServerHandler;
 
 public class JoinScreenHandler {
@@ -30,14 +30,14 @@ public class JoinScreenHandler {
    * @param action
    * @param service
    */
-  public void registerPlayer(Message message, ServerService service) {
+  public void registerPlayer(Message message, PlayerService service) {
     if (store.getPlayers().size() >= 4) {
       service.send(new ServerFullMessage());
       return;
     }
     RegisterMessage data = (RegisterMessage) message;
     Player player = data.player;
-    handler.registerClient(player.getId(), service);
+    handler.registerClient(player.getId(), player.getUsername(), service);
     addPlayer(player);
   }
 

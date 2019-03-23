@@ -19,14 +19,18 @@ public class CommunicationMaker extends Thread {
   private ServerHandler handler;
   private Thread discoveryThread;
   
-  private ServerService createNewConnection(Socket socket, ServerHandler handler)
+  public CommunicationMaker() {
+    super("CommunicationMaker");
+  }
+  
+  private PlayerService createNewConnection(Socket socket, ServerHandler handler)
       throws IOException {
     // Create streams for input and output
     ObjectInputStream fromClient = new ObjectInputStream(socket.getInputStream());
     ObjectOutputStream toClient = new ObjectOutputStream(socket.getOutputStream());
 
     // Service to execute business logic
-    ServerService service = new ServerService(fromClient, toClient, handler);
+    PlayerService service = new PlayerService(fromClient, toClient, handler);
     service.start();
     return service;
   }
@@ -36,7 +40,7 @@ public class CommunicationMaker extends Thread {
    * available interfaces
    */
   private void discoverClients() {
-    discoveryThread = new Thread(new DiscoveryThread());
+    discoveryThread = new Thread(new DiscoveryThread(), "DiscoveryThread");
     discoveryThread.start();
   }
   
@@ -65,7 +69,7 @@ public class CommunicationMaker extends Thread {
         try {
           Socket socket = serverSocket.accept();
           // Create streams and objects for sending messages to and from client
-          ServerService service = createNewConnection(socket, handler);
+          PlayerService service = createNewConnection(socket, handler);
           handler.register(service);
         } catch(SocketTimeoutException e) {}
       }
@@ -81,7 +85,14 @@ public class CommunicationMaker extends Thread {
    * Abort client discovery process
    */
   public void stopDiscovery() {
-    connecting = false; 
+    discoveryThread.interrupt();
+  }
+  
+  /**
+   * Stop the server
+   */
+  public void disconnect() {
+    this.connecting = false;
   }
   
   /**

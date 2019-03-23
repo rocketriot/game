@@ -21,6 +21,7 @@ public class Sender extends Thread {
    * @param toClient client output stream
    */
   public Sender(ObjectOutputStream toClient) {
+    super("Sender");
     this.client = toClient;
   }
 

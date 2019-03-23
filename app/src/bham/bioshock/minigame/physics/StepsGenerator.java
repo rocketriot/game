@@ -11,12 +11,6 @@ import bham.bioshock.minigame.PlanetPosition;
 import bham.bioshock.minigame.models.Astronaut.Move;
 import bham.bioshock.minigame.models.Entity;
 import bham.bioshock.minigame.worlds.World;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import java.util.Optional;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.stream.Stream;
 
 public class StepsGenerator {
   
@@ -181,6 +175,10 @@ public class StepsGenerator {
 
   private class Generator extends Thread {
 
+    public Generator() {
+      super("Generator - " + entity.getClass().getSimpleName());
+    }
+    
     private final int DELAY = 0;
 
     private void applyMovement(double angle, SpeedVector speed) {

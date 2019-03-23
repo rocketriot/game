@@ -20,6 +20,7 @@ public class BoardAi extends Thread {
   private final GameBoardHandler gameBoardHandler;
 
   public BoardAi(Store store, GameBoardHandler gameBoardHandler) {
+    super("BoardAi");
     this.store = store;
     this.gameBoardHandler = gameBoardHandler;
   }

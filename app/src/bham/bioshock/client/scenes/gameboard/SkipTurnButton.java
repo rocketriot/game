@@ -1,9 +1,9 @@
 package bham.bioshock.client.scenes.gameboard;
 
+import bham.bioshock.Config;
 import bham.bioshock.client.Route;
 import bham.bioshock.client.Router;
 import bham.bioshock.client.scenes.HudElement;
-import bham.bioshock.common.consts.Config;
 import bham.bioshock.common.models.store.Store;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Actor;

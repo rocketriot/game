@@ -56,7 +56,9 @@ public abstract class Entity implements Serializable {
     speed = new SpeedVector();
     fromGround = 0;
     world = w;
-    stepsGenerator = new StepsGenerator(w, this);
+    if(!isStatic) {
+      stepsGenerator = new StepsGenerator(w, this);
+    }
   }
 
   public Entity(World w, float x, float y, EntityType type) {
@@ -258,8 +260,10 @@ public abstract class Entity implements Serializable {
 
 
   public void draw(SpriteBatch batch) {
+    TextureRegion texture = getTexture();
+    if(texture == null) return;
     Sprite sprite = getSprite();
-    sprite.setRegion(getTexture());
+    sprite.setRegion(texture);
     sprite.setPosition(getX() - (sprite.getWidth() / 2), getY());
     sprite.setRotation((float) getRotation());
     sprite.draw(batch);

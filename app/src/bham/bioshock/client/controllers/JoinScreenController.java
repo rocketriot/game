@@ -101,9 +101,7 @@ public class JoinScreenController extends Controller {
     ClientService service = commClient.connect();
     service.registerHandler(clientHandler);
     
-    ReconnectionThread reconnect = new ReconnectionThread(commClient, router);
-    reconnect.start();
-    commClient.setReconnectionThread(reconnect);
+    commClient.startReconnectionThread(router);
 
     // Add the player to the server
     service.send(new RegisterMessage(player));

@@ -1,4 +1,4 @@
-package bham.bioshock.communication.common;
+package bham.bioshock.communication.interfaces;
 
 import bham.bioshock.communication.messages.Message;
 

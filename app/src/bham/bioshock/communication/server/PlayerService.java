@@ -1,8 +1,9 @@
 package bham.bioshock.communication.server;
 
-import bham.bioshock.communication.common.MessageHandler;
 import bham.bioshock.communication.common.Receiver;
 import bham.bioshock.communication.common.Sender;
+import bham.bioshock.communication.interfaces.ServerService;
+import bham.bioshock.communication.interfaces.MessageHandler;
 import bham.bioshock.communication.messages.Message;
 import bham.bioshock.server.ServerHandler;
 import java.io.IOException;
@@ -16,8 +17,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 /** Executes the actions received by ServerReceiver. */
-public class ServerService extends Thread implements MessageHandler {
-  private static final Logger logger = LogManager.getLogger(ServerService.class);
+public class PlayerService extends Thread implements MessageHandler, ServerService {
+  private static final Logger logger = LogManager.getLogger(PlayerService.class);
 
   /** Thread sending messages */
   private Sender sender;
@@ -33,9 +34,9 @@ public class ServerService extends Thread implements MessageHandler {
   private ObjectInputStream fromClient;
   private ObjectOutputStream toClient;
 
-  public ServerService(ObjectInputStream fromClient, ObjectOutputStream toClient,
+  public PlayerService(ObjectInputStream fromClient, ObjectOutputStream toClient,
       ServerHandler handler) {
-
+    super("ServerService");
     this.fromClient = fromClient;
     this.toClient = toClient;
     this.sender = new Sender(toClient);
@@ -45,10 +46,13 @@ public class ServerService extends Thread implements MessageHandler {
   }
 
   /** Save related player ID */
-  public void saveId(UUID id) {
+  public void saveId(UUID id, String username) {
+    this.setName("ServerService - " + username);
+    this.sender.setName("Server_Sender - " + username);
+    this.sender.setName("Server_Receiver - " + username);
     this.id = Optional.of(id);
   }
-
+  
   /**
    * Returns related player ID
    * 
@@ -58,18 +62,30 @@ public class ServerService extends Thread implements MessageHandler {
     return id;
   }
   
+  /**
+   * Get number of messages sender sent
+   * @return
+   */
   public long getSenderCounter() {
     return sender.getCounter();
   }
   
+  /**
+   * Reset sender counter
+   */
   public void resetSenderCounter() {
     sender.resetCounter();
   }
   
+  /**
+   * Get sender queue size
+   * @return
+   */
   public int getSenderQueueSize() {
     return sender.getQueueSize();
   }
 
+  @Override
   public void run() {
     // start supporting threads
     receiver.start();
@@ -78,7 +94,7 @@ public class ServerService extends Thread implements MessageHandler {
     try {
       while (!isInterrupted()) {
         // Execute actions from queue
-        execute(queue.take());
+        handler.handleRequest(queue.take(), this);
       }
     } catch (InterruptedException e) {
       receiver.interrupt();
@@ -106,7 +122,7 @@ public class ServerService extends Thread implements MessageHandler {
    */
   @Override
   public void abort() {
-    this.interrupt();
+    this.interrupt();  
   }
 
   /**
@@ -116,16 +132,6 @@ public class ServerService extends Thread implements MessageHandler {
    */
   public void send(Message message) {
     sender.send(message);
-  }
-
-
-  /**
-   * Delegates the execution to the appropriate method
-   * 
-   * @param action to be executed
-   */
-  private void execute(Message message) {
-    handler.handleRequest(message, this);
   }
   
   private void close() {

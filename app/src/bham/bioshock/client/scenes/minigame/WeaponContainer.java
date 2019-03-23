@@ -1,10 +1,10 @@
 package bham.bioshock.client.scenes.minigame;
 
+import bham.bioshock.Config;
 import bham.bioshock.client.Assets;
 import bham.bioshock.client.FontGenerator;
 import bham.bioshock.client.Router;
 import bham.bioshock.client.scenes.HudElement;
-import bham.bioshock.common.consts.Config;
 import bham.bioshock.common.models.store.Store;
 import bham.bioshock.minigame.models.Astronaut;
 
