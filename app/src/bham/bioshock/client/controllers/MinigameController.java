@@ -115,7 +115,10 @@ public class MinigameController extends Controller {
       Player p = store.getPlayer(playerId);
       p.addPoints(points);
       UUID[] planetOwner = new UUID[] { playerId, planetId };
-      router.call(Route.SET_PLANET_OWNER, planetOwner);      
+      router.call(Route.SET_PLANET_OWNER, planetOwner);
+      store.setMinigameWinner(store.getPlayer(playerId).getUsername());
+    } else {
+      store.setMinigameWinner("No one");
     }
     router.call(Route.FADE_OUT, "minigame");
     router.call(Route.GAME_BOARD_SHOW);
