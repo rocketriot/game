@@ -3,6 +3,15 @@ com.badlogic.gdx.graphics.g2d.BitmapFont: {
 	font-18-bold: {
 		file: font-18-bold.fnt
 	}
+	font-22-bold: {
+		file: font-22-bold.fnt
+	}
+	font-26-bold: {
+		file: font-26-bold.fnt
+	}
+	font-30-bold: {
+		file: font-30-bold.fnt
+	}
 }
 com.badlogic.gdx.graphics.Color: {
 	black: {
@@ -34,11 +43,11 @@ com.badlogic.gdx.scenes.scene2d.ui.CheckBox$CheckBoxStyle: {
 }
 com.badlogic.gdx.scenes.scene2d.ui.Label$LabelStyle: {
 	default: {
-		font: font-18-bold
+		font: font-30-bold
 		fontColor: white
 	}
 	window: {
-		font: font-18-bold
+		font: font-30-bold
 		fontColor: black
 	}
 }
@@ -48,6 +57,14 @@ com.badlogic.gdx.scenes.scene2d.ui.ProgressBar$ProgressBarStyle: {
 		knob: slider-knob
 		knobBefore: slider-before
 		knobAfter: slider-after
+	}
+}
+com.badlogic.gdx.scenes.scene2d.ui.ScrollPane$ScrollPaneStyle: {
+	default: {
+		hScroll: slider-background
+		hScrollKnob: slider-knob
+		vScroll: slider-background
+		vScrollKnob: slider-knob
 	}
 }
 com.badlogic.gdx.scenes.scene2d.ui.Slider$SliderStyle: {
@@ -60,7 +77,7 @@ com.badlogic.gdx.scenes.scene2d.ui.Slider$SliderStyle: {
 }
 com.badlogic.gdx.scenes.scene2d.ui.TextButton$TextButtonStyle: {
 	default: {
-		font: font-18-bold
+		font: font-30-bold
 		fontColor: white
 		downFontColor: white
 		up: button
@@ -74,7 +91,7 @@ com.badlogic.gdx.scenes.scene2d.ui.TextButton$TextButtonStyle: {
 }
 com.badlogic.gdx.scenes.scene2d.ui.TextField$TextFieldStyle: {
 	default: {
-		font: font-18-bold
+		font: font-30-bold
 		fontColor: black
 		background: textfield
 	}
