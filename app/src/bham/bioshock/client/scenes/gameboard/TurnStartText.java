@@ -16,18 +16,11 @@ public class TurnStartText {
   private boolean showTurnPrompt;
   private float duration;
   private boolean wasMainPlayerTurn;
-  private FontGenerator fontGenerator;
-  private int fontSize = 72;
 
-  public TurnStartText(SpriteBatch batch, Store store) {
+  public TurnStartText(SpriteBatch batch, Store store, BitmapFont font) {
     this.batch = batch;
     this.store = store;
-    this.setup();
-  }
-
-  private void setup() {
-    fontGenerator = new FontGenerator();
-    font = fontGenerator.generate(fontSize, Color.WHITE);
+    this.font = font;
   }
 
   public void render() {
@@ -51,7 +44,7 @@ public class TurnStartText {
   /** sets showTurnPrompt to true if it has just switch to the main player's turn */
   private void checkTurnChange() {
     if (!wasMainPlayerTurn && store.isMainPlayersTurn()) {
-      duration = 2f;
+      duration = 3f;
       wasMainPlayerTurn = true;
       showTurnPrompt = true;
     } else if (!store.isMainPlayersTurn() && wasMainPlayerTurn) {

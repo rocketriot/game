@@ -35,6 +35,8 @@ public class Store {
   private boolean reconnecting = false;
   /** If the player is the host */
   private boolean isHost = false;
+  /** The username of whoever just won a minigame */
+  private String minigameWinner = null;
 
   /** Minigame World */
   private MinigameStore minigameStore;
@@ -203,6 +205,12 @@ public class Store {
   public boolean isHost() {
     return isHost;
   }
-  
 
+  public String getMinigameWinner() {
+    return minigameWinner;
+  }
+
+  public void setMinigameWinner(String minigameWinner) {
+    this.minigameWinner = minigameWinner;
+  }
 }
