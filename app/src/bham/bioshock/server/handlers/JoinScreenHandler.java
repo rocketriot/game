@@ -1,12 +1,16 @@
 package bham.bioshock.server.handlers;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.UUID;
 import bham.bioshock.common.models.Player;
 import bham.bioshock.common.models.store.Store;
-import bham.bioshock.communication.Action;
-import bham.bioshock.communication.Command;
+import bham.bioshock.communication.messages.Message;
+import bham.bioshock.communication.messages.boardgame.StartGameMessage;
+import bham.bioshock.communication.messages.joinscreen.AddPlayerMessage;
+import bham.bioshock.communication.messages.joinscreen.DisconnectPlayerMessage;
+import bham.bioshock.communication.messages.joinscreen.RegisterMessage;
+import bham.bioshock.communication.messages.joinscreen.ServerFullMessage;
+import bham.bioshock.communication.messages.minigame.RequestMinigameStartMessage;
 import bham.bioshock.communication.server.ServerService;
 import bham.bioshock.server.ServerHandler;
 
@@ -26,12 +30,13 @@ public class JoinScreenHandler {
    * @param action
    * @param service
    */
-  public void registerPlayer(Action action, ServerService service) {
+  public void registerPlayer(Message message, ServerService service) {
     if (store.getPlayers().size() >= 4) {
-      service.send(new Action(Command.SERVER_FULL));
+      service.send(new ServerFullMessage());
       return;
     }
-    Player player = (Player) action.getArgument(0);
+    RegisterMessage data = (RegisterMessage) message;
+    Player player = data.player;
     handler.registerClient(player.getId(), service);
     addPlayer(player);
   }
@@ -47,19 +52,16 @@ public class JoinScreenHandler {
     player.setTextureID(textureId);
 
     // Send all connected clients the new player
-    handler.sendToAllExcept(new Action(Command.ADD_PLAYER, player), player.getId());
-
+    handler.sendToAllExcept(new AddPlayerMessage(player), player.getId());
+    
+    ArrayList<Player> players = store.getPlayers();
+    players.add(player);
     // Send all connected players to the new player
-    ArrayList<Serializable> arguments = new ArrayList<>();
-    for (Player p : store.getPlayers()) {
-      arguments.add(p);
-    }
-    arguments.add(player);
-    handler.sendTo(player.getId(), new Action(Command.ADD_PLAYER, arguments));
+    handler.sendTo(player.getId(), new AddPlayerMessage(players));
   }
 
   public void disconnectPlayer(UUID clientId) {
-    handler.sendToAll(new Action(Command.REMOVE_PLAYER, clientId));
+    handler.sendToAll(new DisconnectPlayerMessage(clientId));
   }
 
   private ArrayList<Player> createCpuPlayers() {
@@ -84,20 +86,20 @@ public class JoinScreenHandler {
   }
 
   /** Creates CPU players and starts the game */
-  public void startGame(Action action, GameBoardHandler gameBoardHandler) {
+  public void startGame(GameBoardHandler gameBoardHandler) {
     ArrayList<Player> cpuPlayers = createCpuPlayers();
     // Send the board and the players
-    gameBoardHandler.getGameBoard(action, cpuPlayers);
+    gameBoardHandler.getGameBoard(cpuPlayers);
 
     // Tell the clients to start the game
-    handler.sendToAll(new Action(Command.START_GAME));
+    handler.sendToAll(new StartGameMessage());
   }
 
-  public void minigameDirectStart(Action action, UUID playerId, GameBoardHandler gameBoardHandler,
+  public void minigameDirectStart(UUID playerId, GameBoardHandler gameBoardHandler,
       MinigameHandler minigameHandler) {
     ArrayList<Player> cpuPlayers = createCpuPlayers();
     // Send the board and the players
-    gameBoardHandler.getGameBoard(action, cpuPlayers);
+    gameBoardHandler.getGameBoard(cpuPlayers);
 
     // Wait for the board
     try {
@@ -105,12 +107,12 @@ public class JoinScreenHandler {
     } catch (InterruptedException e) {
       e.printStackTrace();
     }
-
-    minigameHandler.startMinigame(new Action(Command.MINIGAME_START), playerId, gameBoardHandler);
+ 
+    minigameHandler.startMinigame(new RequestMinigameStartMessage(null), playerId, gameBoardHandler);
   }
 
-  public void moveRocket(Action action, UUID player) {
-    handler.sendToAllExcept(action, player);
+  public void moveRocket(Message message, UUID player) {
+    handler.sendToAllExcept(message, player);
   }
 
 }

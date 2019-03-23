@@ -173,4 +173,11 @@ abstract public class World implements Serializable {
 
   public abstract void afterDraw(SpriteBatch batch);
 
+  public void dispose() {
+    Texture t = getTexture();
+    if(t != null) {
+      t.dispose();
+    }
+  }
+
 }

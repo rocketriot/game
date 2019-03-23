@@ -3,6 +3,7 @@ package bham.bioshock.client.scenes.minigame;
 import bham.bioshock.client.FontGenerator;
 import bham.bioshock.common.consts.Config;
 import bham.bioshock.common.models.store.Store;
+import java.text.DecimalFormat;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -62,7 +63,7 @@ public class MinigameInstructions {
    */
   private void checkIfDisplayed() {
     if (!displayed && store.getMinigameStore().isStarted()) {
-      duration = 3f;
+      duration = 5f;
       displayed = true;
       showPrompt = true;
     }

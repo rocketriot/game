@@ -13,13 +13,15 @@ public class Server {
   private ServerHandler handler;
   private CommunicationMaker connMaker;
   private ServerSocket serverSocket;
+  private Store store;
 
   @Inject
   public Server(Store store) {
-    this.handler = new ServerHandler(store, this);
+    this.store = store;
   }
 
   public Boolean start() {
+    this.handler = new ServerHandler(store, this);
     try {
       serverSocket = new ServerSocket(Config.PORT);
     } catch (IOException e1) {
@@ -39,7 +41,9 @@ public class Server {
 
   public void stop() {
     stopDiscovery();
-    handler.stopAll();
+    if(handler != null) {
+      handler.stopAll();      
+    }
     if (serverSocket != null) {
       try {
         serverSocket.close();

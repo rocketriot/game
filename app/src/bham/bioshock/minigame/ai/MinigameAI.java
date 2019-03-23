@@ -1,13 +1,13 @@
 package bham.bioshock.minigame.ai;
 
-import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.UUID;
 import bham.bioshock.common.models.store.MinigameStore;
 import bham.bioshock.common.models.store.Store;
-import bham.bioshock.communication.Action;
-import bham.bioshock.communication.Command;
+import bham.bioshock.communication.messages.minigame.BulletShotMessage;
+import bham.bioshock.communication.messages.minigame.MinigamePlayerMoveMessage;
+import bham.bioshock.communication.messages.minigame.MinigamePlayerStepMessage;
+import bham.bioshock.minigame.models.Astronaut.Move;
 import bham.bioshock.server.ServerHandler;
 import bham.bioshock.minigame.models.Bullet;
 
@@ -70,32 +70,16 @@ public abstract class MinigameAI {
 
   /** After update. */
   public void afterUpdate() {
-    astronaut.moveChange();
+    Move move = astronaut.endMove();
 
-    ArrayList<Serializable> arguments = new ArrayList<>();
-    arguments.add(id);
-    arguments.add(astronaut.get().getSpeedVector());
-    arguments.add(astronaut.get().getPos());
-    arguments.add(astronaut.get().getMove());
-    arguments.add(astronaut.get().haveGun());
+    // Send to all new move, position and speed vector
+    if(move != null) {
+      handler.sendToAll(new MinigamePlayerMoveMessage(astronaut, move));
+    }
+    handler.sendToAll(new MinigamePlayerStepMessage(astronaut.get()));
 
-    // Send to all except the host
-    handler.sendToAllExcept(
-        new Action(Command.MINIGAME_PLAYER_MOVE, arguments),
-        store.getMainPlayer().getId()
-    );
-
-    Collection<Bullet> bullets = astronaut.getBullets();
-
-    for(Bullet b : bullets) {
-      ArrayList<Serializable> args = new ArrayList<>();
-      args.add(b.getSpeedVector());
-      args.add(b.getPos());
-      b.load();
-
-      handler.sendToAll(
-          new Action(Command.MINIGAME_BULLET, args)
-      );
+    for(Bullet b : astronaut.getBullets()) {
+      handler.sendToAll(new BulletShotMessage(b));
     }
     astronaut.clearBullets();
   }

@@ -4,6 +4,11 @@ import bham.bioshock.client.Route;
 import bham.bioshock.client.Router;
 import bham.bioshock.common.Position;
 import bham.bioshock.common.models.store.MinigameStore;
+import bham.bioshock.common.models.store.Store;
+import bham.bioshock.communication.messages.objectives.UpdateHealthMessage;
+import bham.bioshock.minigame.models.Astronaut;
+import bham.bioshock.minigame.models.Flag;
+import bham.bioshock.minigame.models.Platform;
 import bham.bioshock.minigame.models.*;
 import bham.bioshock.minigame.worlds.RandomWorld;
 import bham.bioshock.minigame.worlds.World;
@@ -37,7 +42,7 @@ public class Platformer extends Objective {
       Position goalPos = goal.getPos();
       float best = 99999999f;
       Astronaut bestP = null;
-      Iterator<Astronaut> it = getPlayers().iterator();
+      Iterator<Astronaut> it = localStore.getPlayers().iterator();
       while (it.hasNext()) {
         Astronaut player = (Astronaut) it.next();
         Position playerPos = player.getPos();
@@ -52,17 +57,15 @@ public class Platformer extends Objective {
   }
 
   @Override
-  public void gotShot(Astronaut player, Astronaut shooter) {
-    super.gotShot(player, shooter);
+  public void handle(UpdateHealthMessage m) {
     /* when the player is shot, they should freeze for a certain amount of time */
-    /*if (!checkIfFrozen(player.getId())) {
-      setFrozen(player.getId(), true);
-    }*/
-    killAndRespawnPlayer(player, getRandomRespawn());
+    if (!checkIfFrozen(m.playerId)) {
+      setFrozen(m.playerId, true);
+    }
   }
   
   @Override
-  public void init(World world, Router router, MinigameStore store) {
+  public void init(World world, Router router, Store store) {
     super.init(world, router, store);
      store.getPlayers().forEach(player -> {
        frozen.put(player.getId(), false);
@@ -82,10 +85,8 @@ public class Platformer extends Objective {
   public void captured(Astronaut a) {
     if(a.is(Entity.State.REMOVING)) return;
     this.winner = Optional.of(a.getId());
-    a.setItem(goal);
 
-    //make a method that ends the game
-    router.call(Route.SERVER_MINIGAME_END);
+    // make a method that ends the game
     return;
   }
 

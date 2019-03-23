@@ -1,20 +1,11 @@
 package bham.bioshock.minigame.models;
 
-
-import bham.bioshock.client.Assets;
-import bham.bioshock.client.controllers.SoundController;
-import bham.bioshock.common.Direction;
-import bham.bioshock.common.Position;
-import bham.bioshock.communication.Sendable;
-import bham.bioshock.minigame.PlanetPosition;
-import bham.bioshock.minigame.PlayerTexture;
-import bham.bioshock.minigame.objectives.Objective;
-import bham.bioshock.minigame.physics.CollisionBoundary;
-import bham.bioshock.minigame.physics.SpeedVector;
-import bham.bioshock.minigame.physics.Step;
-import bham.bioshock.minigame.utils.RotatableText;
-import bham.bioshock.minigame.worlds.World;
-import com.badlogic.gdx.Gdx;
+import static java.util.stream.Collectors.toList;
+import java.io.Serializable;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
@@ -23,16 +14,23 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Intersector.MinimumTranslationVector;
-
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
-
-import static java.util.stream.Collectors.toList;
+import bham.bioshock.client.Assets;
+import bham.bioshock.client.controllers.SoundController;
+import bham.bioshock.common.Direction;
+import bham.bioshock.common.Position;
+import bham.bioshock.minigame.PlanetPosition;
+import bham.bioshock.minigame.PlayerTexture;
+import bham.bioshock.minigame.objectives.Objective;
+import bham.bioshock.minigame.physics.CollisionBoundary;
+import bham.bioshock.minigame.physics.SpeedVector;
+import bham.bioshock.minigame.physics.Step;
+import bham.bioshock.minigame.utils.RotatableText;
+import bham.bioshock.minigame.worlds.World;
 
 public class Astronaut extends Entity {
 
-  private static final long serialVersionUID = -5131439342109870021L;
+  private static final long serialVersionUID = 3467047831018591965L;
+  
   private static AstronautTextures[] textures;
   private static TextureRegion[] hearts = new TextureRegion[5];
   
@@ -50,11 +48,7 @@ public class Astronaut extends Entity {
   private int colour;
   private float dieTime;
   private Direction shotDirection;
-  private transient Optional<Entity> item = Optional.empty();
   private transient Optional<Entity> currentPlatform = Optional.empty();
-
-  public boolean debug = true;
-
 
   public Astronaut(World w, float x, float y, UUID id, int colour) {
     super(w, x, y, EntityType.ASTRONAUT);
@@ -97,8 +91,9 @@ public class Astronaut extends Entity {
   }
 
   public void moveChange() {
+    if(is(State.REMOVING)) return;
     if (move.movingLeft) {
-      dir = PlayerTexture.LEFT;
+      dir = PlayerTexture.LEFT; 
       stepsGenerator.moveLeft();
     } else if (move.movingRight) {
       dir = PlayerTexture.RIGHT;
@@ -121,13 +116,6 @@ public class Astronaut extends Entity {
   public void setGun(Boolean b) {
     this.haveGun = b;
   }
-  
-  public void setItem(Entity e) {
-    this.item = Optional.of(e);
-  }
-  public void removeItem() {
-    this.item = Optional.empty();
-  }
 
   public void update(float delta) {
     if (!loaded)
@@ -143,12 +131,9 @@ public class Astronaut extends Entity {
     animationTime += delta;
 
     checkIfOnGround();
-
-
   }
 
   private void checkIfOnGround() {
-    //System.out.println((world.fromGroundTo(legs.getX(),legs.getY())));
     if((world.fromGroundTo(legs.getX(),legs.getY())) <= 15) {
       removePlatform();
     }
@@ -167,46 +152,23 @@ public class Astronaut extends Entity {
   @Override
   public void draw(SpriteBatch batch) {
     if (is(State.REMOVING)) {
-      TextureRegion anim;
-      if(dieFront) {
-        anim = texture.dyingFront.getKeyFrame(dieTime, false);        
-      } else {
-        anim = texture.dyingBack.getKeyFrame(dieTime, false);
-      }
-
-      Sprite sprite = getSprite();
-      sprite.setRegion(anim);
-      sprite.setPosition(getX() - (sprite.getWidth() / 2), getY());
-      sprite.setRotation((float) getRotation());
-      sprite.draw(batch);
-      
-      if (dieFront && texture.dyingFront.isAnimationFinished(dieTime)
+      if ((dieFront && texture.dyingFront.isAnimationFinished(dieTime))
           || texture.dyingBack.isAnimationFinished(dieTime)) {
-        setRotation(0);
+        
         stepsGenerator.updateFromServer(new SpeedVector(), respawn);
         setState(State.LOADED);
+        
       }
       
     } else {
-      drawItem(batch);
       drawHealth(batch);
-      super.draw(batch);
     }
+    super.draw(batch);
   }
 
   @Override
   public void afterDraw(SpriteBatch batch) {
     drawName(batch);
-  }
-  
-  private void drawItem(SpriteBatch batch) {
-    if(!item.isPresent()) return;
-    PlanetPosition pp = world.convert(pos);
-    pp.fromCenter += height + 60;
-    Position p = world.convert(pp);
-    Entity e = item.get();
-    e.getPos().x = p.x;
-    e.getPos().y = p.y;
   }
   
   private void drawHealth(SpriteBatch batch) {
@@ -257,8 +219,14 @@ public class Astronaut extends Entity {
   /**
    * Player textures
    **/
-
   public TextureRegion getTexture() {
+    // If removing show dying animation
+    if (is(State.REMOVING)) {
+      if(dieFront) {
+        return texture.dyingFront.getKeyFrame(dieTime, false);        
+      }
+      return texture.dyingBack.getKeyFrame(dieTime, false);  
+    }
     TextureRegion region = getTexture(haveGun);
     if (region == null)
       return null;
@@ -284,8 +252,8 @@ public class Astronaut extends Entity {
   }
 
 
-  private static TextureRegion[][] splittedTexture(String path, int fnum) {
-    Texture t = new Texture(Gdx.files.internal(path));
+  private static TextureRegion[][] splittedTexture(AssetManager manager, String path, int fnum) {
+    Texture t = manager.get(path, Texture.class);
     return TextureRegion.split(t, t.getWidth() / fnum, t.getHeight());
   }
 
@@ -332,7 +300,8 @@ public class Astronaut extends Entity {
         e.setState(State.REMOVING);
         break;
       case FLAG:
-        if(objective.isPresent()) {
+        Flag flag = (Flag) e;
+        if(objective.isPresent() && !flag.haveOwner()) {
           objective.get().captured(this);
         }
         break;
@@ -389,17 +358,64 @@ public class Astronaut extends Entity {
     }
   }
 
+  public void updateFromServer(SpeedVector speed, Position pos, Boolean haveGun) {
+    this.haveGun = haveGun;
+    stepsGenerator.updateFromServer(speed, pos);
+  }
+  
+  public void updateMove(Move move) {
+    this.move = move;
+    this.moveChange();
+  }
 
-  public static void loadTextures() {
-    String[] colours = new String[] { "blue", "green", "orange", "red" };
+  /**
+   * Start dying animation and set state to REMOVING
+   * 
+   * @param pos new respawn position
+   */
+  public void killAndRespawn(Position pos) {
+    if(is(State.REMOVING)) return;
+    setState(State.REMOVING);
+    dieTime = 0;
+    dieFront = true;
+    
+    // Get direction of the shot
+    if(shotDirection != null && shotDirection == Direction.LEFT) {
+      if(dir == PlayerTexture.LEFT) {
+        dieFront = false;
+      }
+    } else {
+      if(dir == PlayerTexture.RIGHT) {
+        dieFront = false;
+      }
+    }
+    
+    haveGun = false;
+    this.respawn = pos;
+  }
+  
+  public static void loadTextures(AssetManager manager) {
+    String[] colours = new String[] { "orange", "red", "green", "blue" };
+
+    for(int i=0; i<colours.length; i++) {
+      manager.load(Assets.astroBase + colours[i] + Assets.astroWalk, Texture.class);
+      manager.load(Assets.astroBase + colours[i] + Assets.astroGun, Texture.class);
+      manager.load(Assets.astroBase + colours[i] + Assets.astroFFall, Texture.class);
+      manager.load(Assets.astroBase + colours[i] + Assets.astroFall, Texture.class);
+    }
+    manager.load("app/assets/minigame/hearts.png", Texture.class);
+  }
+  
+  public static void createTextures(AssetManager manager) {
+    String[] colours = new String[] { "orange", "red", "green", "blue" };
     textures = new AstronautTextures[colours.length];
     
     for(int i=0; i<colours.length; i++) {
       AstronautTextures t = new AstronautTextures();
-      TextureRegion[][] walkSheet = splittedTexture(Assets.astroBase + colours[i] + Assets.astroWalk, 11);
-      TextureRegion[][] walkGunSheet = splittedTexture(Assets.astroBase + colours[i] + Assets.astroGun, 11);
-      TextureRegion[][] dieFront = splittedTexture(Assets.astroBase + colours[i] + Assets.astroFFall, 10);
-      TextureRegion[][] dieBack = splittedTexture(Assets.astroBase + colours[i] + Assets.astroFall, 12);
+      TextureRegion[][] walkSheet = splittedTexture(manager, Assets.astroBase + colours[i] + Assets.astroWalk, 11);
+      TextureRegion[][] walkGunSheet = splittedTexture(manager, Assets.astroBase + colours[i] + Assets.astroGun, 11);
+      TextureRegion[][] dieFront = splittedTexture(manager, Assets.astroBase + colours[i] + Assets.astroFFall, 10);
+      TextureRegion[][] dieBack = splittedTexture(manager, Assets.astroBase + colours[i] + Assets.astroFall, 12);
       
       t.frontTexture = walkSheet[0][0];
       t.frontGunTexture = walkGunSheet[0][0];
@@ -411,46 +427,31 @@ public class Astronaut extends Entity {
       textures[i] = t;
     }
     
-    TextureRegion[][] h = splittedTexture("app/assets/minigame/hearts.png", 5);
+    TextureRegion[][] h = splittedTexture(manager, "app/assets/minigame/hearts.png", 5);
     for(int i=0; i<h[0].length; i++) {
       hearts[i] = h[0][i];
     }
  
   }
-
-  public void updateFromServer(SpeedVector speed, Position pos, Move move, Boolean haveGun) {
-    this.haveGun = haveGun;
-    this.move = move;
-    this.moveChange();
-    stepsGenerator.updateFromServer(speed, pos);
-  }
-
-  public void killAndRespawn(Position pos) {
-    if(is(State.REMOVING)) return;
-    dieTime = 0;
-    dieFront = true;
-    if(shotDirection != null && shotDirection == Direction.LEFT) {
-      if(dir == PlayerTexture.LEFT) {
-        dieFront = false;
-      }
-    } else {
-      if(dir == PlayerTexture.RIGHT) {
-        dieFront = false;
-      }
-    }
-    
-    item = Optional.empty();
-    haveGun = false;
-    setState(State.REMOVING);
-    this.respawn = pos;
-  }
   
-  public static class Move extends Sendable {
+  public static class Move implements Serializable {
 
     private static final long serialVersionUID = 3668803304780843571L;
     public boolean jumping = false;
     public boolean movingLeft = false;
     public boolean movingRight = false;
+    
+    public Move copy() {
+      Move m = new Move();
+      m.jumping = this.jumping;
+      m.movingLeft = this.movingLeft;
+      m.movingRight = this.movingRight;
+      return m;
+    }
+    
+    public String toString() {
+      return "j: " + jumping + ", l: " + movingLeft + ", r: "+ movingRight;
+    }
   }
   
   private static class AstronautTextures {
@@ -464,18 +465,14 @@ public class Astronaut extends Entity {
 
 
   private void setOnPlatform(Platform platform) {
-    //System.out.println(getId().toString() + "is on " + platform.toString() );
     currentPlatform = Optional.of(platform);
   }
   private void removePlatform() {
-    //System.out.println(getId().toString() + "is on the ground");
     currentPlatform = Optional.empty();
   }
   public Optional<Entity> getOnPlatform() {
     return currentPlatform;
   }
-
-
 
   public String toString() {
     return name.getText();

@@ -10,6 +10,7 @@ import bham.bioshock.common.models.Player;
 import bham.bioshock.minigame.models.*;
 import bham.bioshock.minigame.models.Astronaut.Move;
 import bham.bioshock.minigame.objectives.Objective;
+import bham.bioshock.minigame.physics.CollisionHandler;
 import bham.bioshock.minigame.physics.SpeedVector;
 import bham.bioshock.minigame.worlds.World;
 
@@ -23,6 +24,7 @@ public class MinigameStore {
   private ArrayList<Entity> staticEntities = new ArrayList<>();
 
   private Skin skin;
+  private CollisionHandler collisionHandler;
   private Objective objective;
   private boolean started;
 
@@ -30,17 +32,25 @@ public class MinigameStore {
     players = new HashMap<>();
   }
 
-  public void updatePlayer(long time, UUID playerId, SpeedVector speed, Position pos, Move move,
+  public void updatePlayerStep(long time, UUID playerId, SpeedVector speed, Position pos,
       Boolean haveGun) {
     Long previous = lastMessage.get(playerId);
-    if(previous == null) {
+    if(previous == null || previous < time) {
       lastMessage.put(playerId, time);
-    } else if(previous < time) {
       Astronaut p = getPlayer(playerId);
-      p.updateFromServer(speed, pos, move, haveGun);      
+      p.updateFromServer(speed, pos, haveGun);      
     }
   }
+  
+  public void updatePlayerMove(UUID playerId, Move move) {
+    Astronaut p = getPlayer(playerId);
+    p.updateMove(move);
+  }
 
+  public HashMap<UUID, Long> getLastMessages() {
+    return lastMessage;
+  }
+  
   // Create world from the seeder
   public void seed(Store store, World world, Objective o) {
     this.currentWorld = world;
@@ -128,6 +138,14 @@ public class MinigameStore {
 
   public boolean isStarted(){
     return this.started;
+  }
+
+  public void setCollisionHandler(CollisionHandler collisionHandler) {
+    this.collisionHandler = collisionHandler;
+  }
+  
+  public CollisionHandler getCollisionHandler() {
+    return collisionHandler;
   }
 
 }

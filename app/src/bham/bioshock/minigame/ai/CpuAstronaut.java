@@ -5,6 +5,7 @@ import java.util.Collection;
 import bham.bioshock.common.Position;
 import bham.bioshock.minigame.PlanetPosition;
 import bham.bioshock.minigame.models.Astronaut;
+import bham.bioshock.minigame.models.Astronaut.Move;
 import bham.bioshock.minigame.models.Bullet;
 import bham.bioshock.minigame.physics.SpeedVector;
 import bham.bioshock.minigame.worlds.World;
@@ -12,31 +13,28 @@ import bham.bioshock.minigame.worlds.World;
 public class CpuAstronaut {
 
   Astronaut astronaut;
+  Move move;
   World world;
   ArrayList<Bullet> bullets = new ArrayList<>();
 
   public CpuAstronaut(Astronaut a, World w) {
     this.astronaut = a;
     this.world = w;
+    move = new Move();
   }
 
   public void moveLeft() {
-    astronaut.moveLeft(true);
-    astronaut.moveRight(false);
+    move.movingLeft = true;
+    move.movingRight = false;
   }
 
   public void moveRight() {
-    astronaut.moveRight(true);
-    astronaut.moveLeft(false);
+    move.movingLeft = false;
+    move.movingRight = true;
   }
 
   public void jump() {
-    astronaut.jump(true);
-  }
-
-  public void moveChange() {
-    astronaut.moveChange();
-    astronaut.jump(false);
+    move.jumping = true;
   }
 
   public Collection<Bullet> getBullets() {
@@ -52,7 +50,7 @@ public class CpuAstronaut {
     PlanetPosition pp = world.convert(pos);
     pp.fromCenter += astronaut.getHeight() / 2;
 
-    SpeedVector speed = (SpeedVector) astronaut.getSpeedVector().clone();
+    SpeedVector speed = astronaut.getSpeedVector().copy();
 
     if (astronaut.getMove().movingRight) {
       pp.angle += world.angleRatio(pp.fromCenter) * 80;
@@ -73,5 +71,11 @@ public class CpuAstronaut {
   public Astronaut get() {
     return astronaut;
   }
-
+  
+  public Move endMove() {
+    Move oldMove = move;
+    move = new Move();
+    return oldMove;
+  }
+  
 }

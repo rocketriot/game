@@ -20,7 +20,7 @@ import java.util.stream.Stream;
 
 public abstract class Entity implements Serializable {
 
-  private static final long serialVersionUID = 7916524444980988734L;
+  private static final long serialVersionUID = -8104423419633831645L;
 
   /** ID of the entity */
   protected UUID id;

@@ -4,7 +4,7 @@ package bham.bioshock.minigame.models;
 import bham.bioshock.common.Position;
 import bham.bioshock.minigame.PlanetPosition;
 import bham.bioshock.minigame.worlds.World;
-import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
@@ -13,7 +13,7 @@ public class Platform extends StaticEntity {
 
   private static final long serialVersionUID = -2823962935775990161L;
 
-  private TextureRegion texture;
+  private static TextureRegion texture;
 
   private Platform parent;
 
@@ -62,11 +62,13 @@ public class Platform extends StaticEntity {
   public TextureRegion getTexture() {
     return texture;
   }
-
-  public void load() {
-    texture =
-        new TextureRegion(new Texture(Gdx.files.internal("app/assets/minigame/platform.png")));
-    super.load();
+  
+  public static void loadTextures(AssetManager manager) {
+    manager.load("app/assets/minigame/platform.png", Texture.class);
+  }
+  
+  public static void createTextures(AssetManager manager) {
+    texture = new TextureRegion(manager.get("app/assets/minigame/platform.png", Texture.class));
   }
 
   /**

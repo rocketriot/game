@@ -32,11 +32,11 @@ public class HowToScreen extends ScreenMaster {
   private void assemble() {
     // create container
     Container<Table> tableContainer = new Container<>();
-    float container_width = screen_width * 0.1f;
-    float container_height = screen_height * 0.9f;
+    float container_width = screenWidth * 0.1f;
+    float container_height = screenHeight * 0.9f;
     tableContainer.setSize(container_width, container_height);
-    tableContainer.setPosition((screen_width - container_width) / 2.0f,
-        (screen_height - container_height) / 2.0f);
+    tableContainer.setPosition((screenWidth - container_width) / 2.0f,
+        (screenHeight - container_height) / 2.0f);
 
     // create table
     textTable = new Table(skin);
@@ -60,11 +60,11 @@ public class HowToScreen extends ScreenMaster {
 
     textTable.add(l1).padBottom(20);
     textTable.row();
-    textTable.add(scrollPane1).width(screen_width * 0.6f);
+    textTable.add(scrollPane1).width(screenWidth * 0.6f);
     textTable.row();
     textTable.add(l2).padBottom(20);
     textTable.row();
-    textTable.add(scrollPane2).width(screen_width * 0.6f);
+    textTable.add(scrollPane2).width(screenWidth * 0.6f);
 
     stage.addActor(textTable);
   }

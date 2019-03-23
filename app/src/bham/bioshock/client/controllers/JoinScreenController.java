@@ -1,27 +1,27 @@
 package bham.bioshock.client.controllers;
 
-import bham.bioshock.client.BoardGame;
-import bham.bioshock.client.ClientHandler;
-import bham.bioshock.client.Route;
-import bham.bioshock.client.Router;
-import bham.bioshock.client.screens.JoinScreen;
-import bham.bioshock.common.Position;
-import bham.bioshock.common.models.Player;
-import bham.bioshock.common.models.store.JoinScreenStore;
-import bham.bioshock.common.models.store.Store;
-import bham.bioshock.communication.Action;
-import bham.bioshock.communication.Command;
-import bham.bioshock.communication.client.ClientService;
-import bham.bioshock.communication.client.CommunicationClient;
-import bham.bioshock.communication.client.ReconnectionThread;
-import com.google.inject.Inject;
-import java.io.Serializable;
 import java.net.ConnectException;
 import java.util.ArrayList;
 import java.util.Optional;
 import java.util.UUID;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import com.google.inject.Inject;
+import bham.bioshock.client.BoardGame;
+import bham.bioshock.client.ClientHandler;
+import bham.bioshock.client.Route;
+import bham.bioshock.client.Router;
+import bham.bioshock.client.screens.JoinScreen;
+import bham.bioshock.common.models.Player;
+import bham.bioshock.common.models.store.JoinScreenStore;
+import bham.bioshock.common.models.store.Store;
+import bham.bioshock.communication.client.ClientService;
+import bham.bioshock.communication.client.CommunicationClient;
+import bham.bioshock.communication.client.ReconnectionThread;
+import bham.bioshock.communication.messages.boardgame.StartGameMessage;
+import bham.bioshock.communication.messages.joinscreen.JoinScreenMoveMessage;
+import bham.bioshock.communication.messages.joinscreen.RegisterMessage;
+import bham.bioshock.communication.messages.joinscreen.AddPlayerMessage.JoiningPlayer;
 
 public class JoinScreenController extends Controller {
 
@@ -79,9 +79,11 @@ public class JoinScreenController extends Controller {
   /**
    * Handle when the server tells us a new player was added to the game
    */
-  public void addPlayer(ArrayList<Player> players) {
-    for (Player player : players) {
-      logger.debug("Player: " + player.getUsername() + " connected");
+  public void addPlayer(ArrayList<JoiningPlayer> players) {
+    for (JoiningPlayer p : players) {
+      logger.debug("Player: " + p.username + " connected");
+      Player player = new Player(p.playerId, p.username, p.isCpu);
+      player.setTextureID(p.textureId);
       store.addPlayer(player);
       if(JoinScreen.class.isInstance(game.getScreen())) {
         ((JoinScreen) game.getScreen()).addPlayer(player);
@@ -104,7 +106,7 @@ public class JoinScreenController extends Controller {
     commClient.setReconnectionThread(reconnect);
 
     // Add the player to the server
-    service.send(new Action(Command.REGISTER, player));
+    service.send(new RegisterMessage(player));
   }
 
   /**
@@ -113,7 +115,7 @@ public class JoinScreenController extends Controller {
   public void start() {
     Optional<ClientService> clientService = commClient.getConnection();
     if(clientService.isPresent()) {
-      clientService.get().send(new Action(Command.START_GAME));
+      clientService.get().send(new StartGameMessage());
       logger.debug("Ready to start! Waiting for the board");      
     } else {
       logger.fatal("ClientService doesn't exists!");
@@ -122,27 +124,18 @@ public class JoinScreenController extends Controller {
 
 
   public void rocketMove(UUID playerId) throws ConnectException {
-
-    ArrayList<Serializable> arguments = new ArrayList<>();
-    arguments.add((Serializable) playerId);
     JoinScreen.RocketAnimation animation = ((JoinScreen) game.getScreen()).getMainPlayerAnimation();
-    arguments.add((Serializable) animation.getPosition());
-    arguments.add((Serializable) (float) animation.getRotation());
 
     Optional<ClientService> clientService = commClient.getConnection();
     if(clientService.isPresent()) {
-      clientService.get().send(new Action(Command.JOIN_SCREEN_MOVE, arguments));      
+      clientService.get().send(new JoinScreenMoveMessage(playerId, animation));  
     } else {
       logger.fatal("ClientService doesn't exists!");
     }
   }
 
-  public void updateRocket(ArrayList<Serializable> arguments) {
-    UUID id = (UUID) arguments.get(0);
-    Position pos = (Position) arguments.get(1);
-    float rotation = (float) arguments.get(2);
-
-    store.getJoinScreenStore().updateRocket(pos, rotation, id);
+  public void updateRocket(JoinScreenMoveMessage data) {
+    store.getJoinScreenStore().updateRocket(data.position, data.rotation, data.playerId);
   }
 
 }

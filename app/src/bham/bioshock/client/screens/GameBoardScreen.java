@@ -566,7 +566,6 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
           router.call(Route.SEND_MINIGAME_START, planetId);
         } else {
           SoundController.playSound("menuSelect");
-          System.out.println("Minigame not started");
           // Ends the turn
           router.call(Route.END_TURN);
         }

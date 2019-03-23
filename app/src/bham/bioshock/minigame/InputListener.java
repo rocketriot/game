@@ -87,9 +87,9 @@ public class InputListener extends InputAdapter {
     Position pos = mainPlayer.getPos();
     PlanetPosition pp = world.convert(pos);
     pp.fromCenter += mainPlayer.getHeight() / 2;
-
-    SpeedVector speed = (SpeedVector) mainPlayer.getSpeedVector().clone();
-
+    
+    SpeedVector speed = mainPlayer.getSpeedVector().copy();
+    
     if (mainPlayer.getMove().movingRight) {
       pp.angle += world.angleRatio(pp.fromCenter) * 80;
       speed.apply(world.getAngleTo(pos.x, pos.y)+90 , Bullet.launchSpeed);
@@ -100,7 +100,6 @@ public class InputListener extends InputAdapter {
 
     Position bulletPos = world.convert(pp);
     Bullet b = new Bullet(world, bulletPos.x, bulletPos.y, mainPlayer);
-
     // Apply bullet speed
     b.setSpeedVector(speed);
 

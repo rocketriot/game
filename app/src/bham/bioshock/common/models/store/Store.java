@@ -33,6 +33,8 @@ public class Store {
   private int turn = 0;
   /** If the game is reconnecting with the server */
   private boolean reconnecting = false;
+  /** If the player is the host */
+  private boolean isHost = false;
   /** The username of whoever just won a minigame */
   private String minigameWinner = null;
 
@@ -77,9 +79,12 @@ public class Store {
     return players.stream().filter(p -> p.getId().equals(id)).findAny().orElse(null);
   }
 
-  public void setPlayers(ArrayList<Player> ps) {
-    this.players.clear();
-    players = ps;
+  public void savePlayers(ArrayList<Player> ps) {
+    for(Player p : ps) {
+      if(!players.contains(p)) {
+        players.add(p);
+      }
+    }
   }
 
   public void addPlayer(Player player) {
@@ -193,6 +198,13 @@ public class Store {
     return reconnecting;
   }
 
+  public void setHost(boolean value) {
+    isHost = value;
+  }
+  
+  public boolean isHost() {
+    return isHost;
+  }
 
   public String getMinigameWinner() {
     return minigameWinner;

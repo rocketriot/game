@@ -1,6 +1,6 @@
 package bham.bioshock.minigame.models;
 
-import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import bham.bioshock.minigame.worlds.World;
@@ -23,11 +23,18 @@ public class Rocket extends Entity {
     collisionWidth = 200;
   }
 
-  public static void loadTextures() {
-    textures.put(1, new Texture(Gdx.files.internal("app/assets/entities/players/1.png")));
-    textures.put(2, new Texture(Gdx.files.internal("app/assets/entities/players/2.png")));
-    textures.put(3, new Texture(Gdx.files.internal("app/assets/entities/players/3.png")));
-    textures.put(4, new Texture(Gdx.files.internal("app/assets/entities/players/4.png")));
+  public static void loadTextures(AssetManager manager) {
+    manager.load("app/assets/entities/players/1.png", Texture.class);
+    manager.load("app/assets/entities/players/2.png", Texture.class);
+    manager.load("app/assets/entities/players/3.png", Texture.class);
+    manager.load("app/assets/entities/players/4.png", Texture.class);
+  }
+  
+  public static void createTextures(AssetManager manager) {
+    textures.put(1, manager.get("app/assets/entities/players/1.png", Texture.class));
+    textures.put(2, manager.get("app/assets/entities/players/2.png", Texture.class));
+    textures.put(3, manager.get("app/assets/entities/players/3.png", Texture.class));
+    textures.put(4, manager.get("app/assets/entities/players/4.png", Texture.class));
   }
 
   public TextureRegion getTexture() {

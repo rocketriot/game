@@ -29,6 +29,7 @@ public class MainMenuController extends Controller {
    */
   public void hostGame(String hostName) {
     if (server.start()) {
+      store.setHost(true);
       router.call(Route.JOIN_SCREEN, hostName);
     } else {
       alert("Server cannot be created.\nCheck if one is not already running");
@@ -38,6 +39,7 @@ public class MainMenuController extends Controller {
   /** Renders main menu */
   public void show() {
     server.stop();
+    store.setHost(false);
     store.reconnecting(false);
     setScreen(new MainMenuScreen(router));
   }
