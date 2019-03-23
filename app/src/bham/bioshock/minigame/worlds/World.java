@@ -22,14 +22,12 @@ abstract public class World implements Serializable {
 
   /**
    * Draws planet texture on the screen
-   * 
-   * @param batch
    */
   public void draw(SpriteBatch batch) {
-    float radius = (float) getPlanetRadius()+textureOffset;
-    batch.draw(getTexture(), -radius, -radius, radius*2, radius*2);
+    float radius = (float) getPlanetRadius() + textureOffset;
+    batch.draw(getTexture(), -radius, -radius, radius * 2, radius * 2);
   }
-  
+
   /**
    * Gets angle to an x and y coordinate.
    *
@@ -80,8 +78,8 @@ abstract public class World implements Serializable {
   }
 
   /**
-   * Calculate angle ratio - in the distance R from the planet center
-   * Used to calculate angle given the length (X) distance
+   * Calculate angle ratio - in the distance R from the planet center Used to calculate angle given
+   * the length (X) distance
    *
    * @param r the ratio
    * @return ratio between pixels and angle
@@ -171,11 +169,19 @@ abstract public class World implements Serializable {
    */
   abstract public Texture getTexture();
 
+  /**
+   * Method to get the platform path to a platform inclusive
+   *
+   * @param platform the platform you want a path to
+   * @return the path
+   */
+  abstract public ArrayList<Platform> getPlatformPath(Platform platform);
+
   public abstract void afterDraw(SpriteBatch batch);
 
   public void dispose() {
     Texture t = getTexture();
-    if(t != null) {
+    if (t != null) {
       t.dispose();
     }
   }

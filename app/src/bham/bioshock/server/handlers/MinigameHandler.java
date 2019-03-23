@@ -1,5 +1,6 @@
 package bham.bioshock.server.handlers;
 
+import bham.bioshock.minigame.ai.CaptureTheFlagAI;
 import java.util.Random;
 import java.util.UUID;
 import org.apache.logging.log4j.LogManager;
@@ -21,13 +22,6 @@ import bham.bioshock.minigame.worlds.RandomWorld;
 import bham.bioshock.minigame.worlds.World;
 import bham.bioshock.server.ServerHandler;
 import bham.bioshock.server.ai.MinigameAILoop;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Random;
-import java.util.UUID;
 
 public class MinigameHandler {
 
@@ -63,26 +57,32 @@ public class MinigameHandler {
 
     Random rand = new Random();
 
-   switch(rand.nextInt(100)%3) {
-      case 1:
-        o = new Platformer(w);
-        for (UUID id : store.getCpuPlayers()) {
-          aiLoop.registerHandler(new PlatformerAI(id, store, handler));
-        }
-        break;
-      case 2:
-        o = new KillThemAll();
-        for (UUID id : store.getCpuPlayers()) {
-          aiLoop.registerHandler(new KillThemAllAI(id, store, handler));
-        }
-        break;
-      default:
-        o = new CaptureTheFlag(w);
-        for (UUID id : store.getCpuPlayers()) {
-          // NOTE CHANGE TO CAPTURE the flag
-          aiLoop.registerHandler(new KillThemAllAI(id, store, handler));
-        }
-        break;
+//   switch(rand.nextInt(100)%3) {
+//      case 1:
+//        o = new Platformer(w);
+//        for (UUID id : store.getCpuPlayers()) {
+//          aiLoop.registerHandler(new PlatformerAI(id, store, handler));
+//        }
+//        break;
+//      case 2:
+//        o = new KillThemAll();
+//        for (UUID id : store.getCpuPlayers()) {
+//          aiLoop.registerHandler(new KillThemAllAI(id, store, handler));
+//        }
+//        break;
+//      default:
+//        o = new CaptureTheFlag(w);
+//        for (UUID id : store.getCpuPlayers()) {
+//          // NOTE CHANGE TO CAPTURE the flag
+//          aiLoop.registerHandler(new CaptureTheFlagAI(id, store, handler));
+//        }
+//        break;
+//    }
+
+    o = new CaptureTheFlag(w);
+    for (UUID id : store.getCpuPlayers()) {
+      // NOTE CHANGE TO CAPTURE the flag
+      aiLoop.registerHandler(new CaptureTheFlagAI(id, store, handler));
     }
 
     aiLoop.start();
