@@ -5,10 +5,7 @@ import bham.bioshock.common.models.store.Store;
 import bham.bioshock.communication.Action;
 import bham.bioshock.communication.Command;
 import bham.bioshock.minigame.Clock;
-import bham.bioshock.minigame.ai.KillThemAllAI;
 import bham.bioshock.minigame.ai.PlatformerAI;
-import bham.bioshock.minigame.objectives.CaptureTheFlag;
-import bham.bioshock.minigame.objectives.KillThemAll;
 import bham.bioshock.minigame.objectives.Objective;
 import bham.bioshock.minigame.objectives.Platformer;
 import bham.bioshock.minigame.worlds.RandomWorld;
@@ -56,7 +53,7 @@ public class MinigameHandler {
 
     Random rand = new Random();
 
-    switch(rand.nextInt(100)%4) {
+   /* switch(rand.nextInt(100)%4) {
       case 1:
         o = new CaptureTheFlag(w);
         for (UUID id : store.getCpuPlayers()) {
@@ -83,6 +80,11 @@ public class MinigameHandler {
           aiLoop.registerHandler(new KillThemAllAI(id, store, handler));
         }
         break;
+    }*/
+
+    o = new Platformer(w);
+    for (UUID id : store.getCpuPlayers()) {
+      aiLoop.registerHandler(new PlatformerAI(id, store, handler));
     }
 
     aiLoop.start();
