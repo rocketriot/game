@@ -27,7 +27,15 @@ public class CaptureTheFlag extends Objective {
 
   public CaptureTheFlag(World world) {
     Random r = new Random();
-    ArrayList<Platform> platforms = world.getPlatforms();
+    ArrayList<Platform> allPlatforms = world.getPlatforms();
+    ArrayList<Platform> platforms = new ArrayList<>();
+
+    for (Platform platform : allPlatforms){
+      if (platform.getPlanetPos().fromCenter < 2500){
+        platforms.add(platform);
+      }
+    }
+    
     PlanetPosition pPos = platforms.get(r.nextInt(platforms.size())).getPlanetPos();
     pPos.fromCenter += 50;
     flagPosition = world.convert(pPos);
