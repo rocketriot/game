@@ -93,14 +93,13 @@ public class BoardAi extends Thread {
       }
     }
 
-    if (bestMove == null) {
-      possibleMoves = generatePossibleMoves(store);
+    if (bestMove != null) {
+      MovePlayerOnBoardMessage msg = new MovePlayerOnBoardMessage(bestMove.getMoveCoords(), player.getId());
+      gameBoardHandler.movePlayer(msg, player.getId());
+      
+      return bestMove.getPath();
     }
-
-    MovePlayerOnBoardMessage msg = new MovePlayerOnBoardMessage(bestMove.getMoveCoords(), player.getId());
-    gameBoardHandler.movePlayer(msg, player.getId());
-    
-    return bestMove.getPath();
+    return new ArrayList<Coordinates>();
   }
 
   /**

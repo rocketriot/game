@@ -64,7 +64,7 @@ public class MinigameHandlerTest {
     
     // Add 1 minute to the clock to stop the minigame
     clock.update(60 * 1000);
-    Thread.sleep(1000);
+    Thread.sleep(2000);
     
     assertTrue(service.getSentMessages().get(1) instanceof EndMinigameMessage);
     
