@@ -33,6 +33,8 @@ public class Store {
   private int turn = 0;
   /** If the game is reconnecting with the server */
   private boolean reconnecting = false;
+  /** The username of whoever just won a minigame */
+  private String minigameWinner = null;
 
   /** Minigame World */
   private MinigameStore minigameStore;
@@ -190,7 +192,13 @@ public class Store {
   public Boolean isReconnecting() {
     return reconnecting;
   }
-  
-  
 
+
+  public String getMinigameWinner() {
+    return minigameWinner;
+  }
+
+  public void setMinigameWinner(String minigameWinner) {
+    this.minigameWinner = minigameWinner;
+  }
 }

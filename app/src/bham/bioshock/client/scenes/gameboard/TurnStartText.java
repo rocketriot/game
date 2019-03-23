@@ -16,18 +16,11 @@ public class TurnStartText {
   private boolean showTurnPrompt;
   private float duration;
   private boolean wasMainPlayerTurn;
-  private FontGenerator fontGenerator;
-  private int fontSize = 72;
 
-  public TurnStartText(SpriteBatch batch, Store store) {
+  public TurnStartText(SpriteBatch batch, Store store, BitmapFont font) {
     this.batch = batch;
     this.store = store;
-    this.setup();
-  }
-
-  private void setup() {
-    fontGenerator = new FontGenerator();
-    font = fontGenerator.generate(fontSize, Color.WHITE);
+    this.font = font;
   }
 
   public void render() {
@@ -43,7 +36,7 @@ public class TurnStartText {
       if (duration <= 0) {
         showTurnPrompt = false;
       } else {
-        font = fontGenerator.generate(fontSize, new Color(1, 1, 1, duration/2));
+        font.setColor(1, 1, 1, duration/2);
       }
     }
   }
