@@ -5,6 +5,7 @@ import bham.bioshock.communication.common.Sender;
 import bham.bioshock.communication.interfaces.ServerService;
 import bham.bioshock.communication.interfaces.MessageHandler;
 import bham.bioshock.communication.messages.Message;
+import bham.bioshock.server.InvalidMessageSequence;
 import bham.bioshock.server.ServerHandler;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -93,8 +94,14 @@ public class PlayerService extends Thread implements MessageHandler, ServerServi
 
     try {
       while (!isInterrupted()) {
-        // Execute actions from queue
-        handler.handleRequest(queue.take(), this);
+        try {
+          
+          // Execute actions from queue
+          handler.handleRequest(queue.take(), this);
+          
+        } catch(InvalidMessageSequence e) {
+          logger.catching(e);
+        }
       }
     } catch (InterruptedException e) {
       receiver.interrupt();
@@ -134,6 +141,9 @@ public class PlayerService extends Thread implements MessageHandler, ServerServi
     sender.send(message);
   }
   
+  /**
+   * Stop the service and underlying threads
+   */
   private void close() {
     try {
       sender.join();

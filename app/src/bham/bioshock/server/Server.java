@@ -6,6 +6,7 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import bham.bioshock.Config;
 import bham.bioshock.common.models.store.Store;
+import bham.bioshock.common.utils.Clock;
 import bham.bioshock.communication.server.CommunicationMaker;
 import bham.bioshock.server.interfaces.StoppableServer;
 
@@ -22,7 +23,8 @@ public class Server implements StoppableServer {
   }
 
   public Boolean start() {
-    this.handler = new ServerHandler(store, this, Config.DEBUG_SERVER);
+    Clock clock = new Clock();
+    this.handler = new ServerHandler(store, this, Config.DEBUG_SERVER, clock);
     try {
       serverSocket = new ServerSocket(Config.PORT);
     } catch (IOException e1) {
@@ -45,7 +47,7 @@ public class Server implements StoppableServer {
       connMaker.disconnect();      
     }
     if(handler != null) {
-      handler.stopAll();      
+      handler.abort();      
     }
     if (serverSocket != null) {
       try {

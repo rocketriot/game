@@ -1,4 +1,4 @@
-package bham.bioshock.testutils;
+package bham.bioshock.testutils.communication;
 
 import bham.bioshock.server.interfaces.StoppableServer;
 

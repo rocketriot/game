@@ -70,7 +70,7 @@ public class CommunicationMaker extends Thread {
           Socket socket = serverSocket.accept();
           // Create streams and objects for sending messages to and from client
           PlayerService service = createNewConnection(socket, handler);
-          handler.register(service);
+          handler.add(service);
         } catch(SocketTimeoutException e) {}
       }
     } catch (IOException e) {

@@ -11,27 +11,71 @@ import bham.bioshock.common.pathfinding.AStarPathfinding;
 import bham.bioshock.communication.Command;
 import bham.bioshock.communication.messages.boardgame.MovePlayerOnBoardMessage;
 import bham.bioshock.server.handlers.GameBoardHandler;
+import bham.bioshock.server.handlers.MinigameHandler;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.UUID;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class BoardAi extends Thread {
 
+  private static final Logger logger = LogManager.getLogger(BoardAi.class);
+      
   private final Store store;
   private final GameBoardHandler gameBoardHandler;
-
-  public BoardAi(Store store, GameBoardHandler gameBoardHandler) {
+  private final MinigameHandler minigameHandler;
+  private UUID lastMoved = null;
+  
+  public BoardAi(Store store, GameBoardHandler gameBoardHandler, MinigameHandler minigameHandler) {
     super("BoardAi");
     this.store = store;
     this.gameBoardHandler = gameBoardHandler;
+    this.minigameHandler = minigameHandler;
   }
 
   @Override
   public void run() {
-    moveCpuPlayer();
+    
+    try {
+      while(!isInterrupted()) {
+          
+        Player player = store.getMovingPlayer();
+        if(player.isCpu() && (lastMoved == null || !player.getId().equals(lastMoved))) {
+          
+          ArrayList<Coordinates> path = moveCpuPlayer();
+          int waitTime = calculateMoveTime(player, path);
+          
+          Thread.sleep(waitTime);
+        
+          GameBoard gameBoard = store.getGameBoard();
+          Planet planet = gameBoard.getAdjacentPlanet(player.getCoordinates(), player);
+          
+          if (planet != null) {
+            minigameHandler.startMinigame(player.getId(), planet.getId(), gameBoardHandler, null);
+          } else {
+            gameBoardHandler.endTurn();
+          }
+          lastMoved = player.getId();
+        }
+        sleep(1000);
+      }
+    } catch(InterruptedException e) {
+      logger.info("Board AI interrupted");
+    }
+  }
+  
+  private int calculateMoveTime(Player player, ArrayList<Coordinates> path) {
+    // Players move 3 tiles per second + 500 to prevent race condition
+    if (path != null)
+      return (path.size() * 1000)/3 + 500;
+    else
+      return 0;
   }
 
-  /** Handle movement if the next player is a CPU */
-  private void moveCpuPlayer() {
+  /** Handle movement if the next player is a CPU 
+   * @return */
+  private ArrayList<Coordinates> moveCpuPlayer() {
     // Get values from store
     GameBoard gameBoard = store.getGameBoard();
     GridPoint[][] grid = gameBoard.getGrid();
@@ -56,6 +100,8 @@ public class BoardAi extends Thread {
 
     MovePlayerOnBoardMessage msg = new MovePlayerOnBoardMessage(bestMove.getMoveCoords(), player.getId());
     gameBoardHandler.movePlayer(msg, player.getId());
+    
+    return bestMove.getPath();
   }
 
   /**

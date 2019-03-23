@@ -126,7 +126,7 @@ public class JoinScreenController extends Controller {
 
     Optional<ClientService> clientService = commClient.getConnection();
     if(clientService.isPresent()) {
-      clientService.get().send(new JoinScreenMoveMessage(playerId, animation));  
+      clientService.get().send(new JoinScreenMoveMessage(playerId, animation.getPos(), animation.getRotation()));  
     } else {
       logger.fatal("ClientService doesn't exists!");
     }

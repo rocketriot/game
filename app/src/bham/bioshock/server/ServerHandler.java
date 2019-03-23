@@ -1,14 +1,16 @@
 package bham.bioshock.server;
 
 import bham.bioshock.common.models.store.Store;
+import bham.bioshock.common.utils.Clock;
 import bham.bioshock.communication.Command;
 import bham.bioshock.communication.interfaces.ServerService;
 import bham.bioshock.communication.messages.Message;
+import bham.bioshock.communication.messages.joinscreen.JoinScreenMoveMessage;
 import bham.bioshock.communication.messages.minigame.RequestMinigameStartMessage;
-import bham.bioshock.communication.server.PlayerService;
 import bham.bioshock.server.handlers.GameBoardHandler;
 import bham.bioshock.server.handlers.JoinScreenHandler;
 import bham.bioshock.server.handlers.MinigameHandler;
+import bham.bioshock.server.interfaces.MultipleConnectionsHandler;
 import bham.bioshock.server.interfaces.StoppableServer;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -18,7 +20,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class ServerHandler {
+public class ServerHandler implements MultipleConnectionsHandler {
 
   private static final Logger logger = LogManager.getLogger(ServerHandler.class);
 
@@ -31,11 +33,10 @@ public class ServerHandler {
   private MinigameHandler minigameHandler;
   private DevServer devServer;
   
-  
-  public ServerHandler(Store store, StoppableServer server, boolean runDebugServer) {
+  public ServerHandler(Store store, StoppableServer server, boolean runDebugServer, Clock clock) {
     this.server = server;
     joinHandler = new JoinScreenHandler(store, this);
-    minigameHandler = new MinigameHandler(store, this);
+    minigameHandler = new MinigameHandler(store, this, clock);
     gameBoardHandler = new GameBoardHandler(store, this, minigameHandler);
     
     if(runDebugServer) {
@@ -43,7 +44,7 @@ public class ServerHandler {
     }
   }
   
-  public void startDebugServer(Store store) {
+  private void startDebugServer(Store store) {
     try {
       devServer = new DevServer();
       devServer.addServices(store, connecting, connected);
@@ -55,7 +56,7 @@ public class ServerHandler {
    * 
    * @param service
    */
-  public void register(PlayerService service) {
+  public void add(ServerService service) {
     connecting.add(service);
   }
 
@@ -65,14 +66,14 @@ public class ServerHandler {
    * @param id
    * @param service
    */
-  public void registerClient(UUID id, String username, PlayerService service) {
+  public void register(UUID id, String username, ServerService service) {
     service.saveId(id, username);
     connecting.remove(service);
     connected.put(id, service);
   }
 
   /**
-   * Sends the message to all clients except the one specified
+   * Sends the message to all clients
    * 
    * @param clientId
    * @param action
@@ -104,7 +105,10 @@ public class ServerHandler {
    * @param action
    */
   public void sendTo(UUID clientId, Message message) {
-    connected.get(clientId).send(message);
+    ServerService service = connected.get(clientId);
+    if(service != null) {
+      connected.get(clientId).send(message);      
+    }
   }
 
   /**
@@ -112,12 +116,19 @@ public class ServerHandler {
    * 
    * @param action
    * @param service
+   * @throws InvalidMessageSequence 
    */
-  private void registerPlayer(Message message, PlayerService service) {
-    if (message.command.equals(Command.REGISTER)) {
+  private void registerPlayer(Message message, ServerService service) throws InvalidMessageSequence {
+    boolean knownService = connecting.contains(service);
+    if (message.command.equals(Command.REGISTER) && knownService) {
+      
+      // Register new connected player
       joinHandler.registerPlayer(message, service);
+    
+    } else if(!knownService) {
+      throw new InvalidMessageSequence("Unknown service, not in the list!");
     } else {
-      logger.fatal("Invalid command sequence. Player must be registered first!");
+      throw new InvalidMessageSequence("Player must be registered first!");
     }
   }
 
@@ -125,7 +136,7 @@ public class ServerHandler {
    * Unregister player, remove the connection and send information to all clients
    * @param serverService
    */
-  public void unregister(PlayerService serverService) {
+  public void unregister(ServerService serverService) {
     Optional<UUID> clientId = serverService.Id();
     if(clientId.isPresent()) {
       connected.remove(clientId.get());
@@ -136,9 +147,9 @@ public class ServerHandler {
   }
   
   /**
-   * Stop all running subservices
+   * Stop all running sub-services
    */
-  public void stopAll() {
+  public void abort() {
     for (ServerService s : connected.values()) {
       s.abort();
     }
@@ -148,25 +159,29 @@ public class ServerHandler {
   }
   
   /**
-   * Handle received action
+   * Handle received message from one of the clients
    * 
    * @param action
    * @param service
+   * @throws InvalidMessageSequence 
    */
-  public void handleRequest(Message message, PlayerService service) {
+  public void handleRequest(Message message, ServerService service) throws InvalidMessageSequence {
     logger.trace("Server received: " + message);
 
     // If the service doesn't have assigned Id register it
     if (!service.Id().isPresent()) {
-      registerPlayer(message, service);
+      registerPlayer(message, service);        
       return;
+    }
+    if(connected.get(service.Id().get()) == null) {
+      throw new InvalidMessageSequence("Unknown service, not in the list!");
     }
 
     UUID clientId = service.Id().get();
 
     switch (message.command) {
       case JOIN_SCREEN_MOVE:
-        joinHandler.moveRocket(message, clientId);
+        joinHandler.moveRocket((JoinScreenMoveMessage) message, clientId);
         break;
       case START_GAME:
         server.stopDiscovery();
@@ -176,11 +191,11 @@ public class ServerHandler {
         gameBoardHandler.movePlayer(message, clientId);
         break;
       case END_TURN:
-        gameBoardHandler.endTurn(clientId);
+        gameBoardHandler.endTurn();
         break;
       case MINIGAME_START:
-        RequestMinigameStartMessage data = (RequestMinigameStartMessage) message;
-        minigameHandler.startMinigame(data, clientId, gameBoardHandler);
+        RequestMinigameStartMessage request = (RequestMinigameStartMessage) message;
+        minigameHandler.startMinigame(clientId, request.planetId, gameBoardHandler, request.objectiveId);
         break;
       case MINIGAME_PLAYER_MOVE:
         minigameHandler.playerMove(message, clientId);

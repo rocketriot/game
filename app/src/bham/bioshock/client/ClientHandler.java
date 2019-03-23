@@ -39,16 +39,15 @@ public class ClientHandler implements MessageHandler {
             router.call(Route.REMOVE_PLAYER, data.playerId);
             break;
           }
-          case START_GAME: {
-            router.call(Route.GAME_BOARD_SHOW);
-            break;
-          }
           case GET_GAME_BOARD: {
             GameBoardMessage data = (GameBoardMessage) message;
             
             router.call(Route.PLAYERS_SAVE, data.cpuPlayers);  
             router.call(Route.COORDINATES_SAVE, data.coordinates);  
             router.call(Route.GAME_BOARD_SAVE, data.gameBoard);
+            if(data.startGame) {
+              router.call(Route.GAME_BOARD_SHOW);              
+            }
             break;
           }
           case MOVE_PLAYER_ON_BOARD: {

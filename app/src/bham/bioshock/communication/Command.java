@@ -6,6 +6,7 @@ public enum Command {
   // Connecting to a server
   COMM_DISCOVER_REQ,
   COMM_DISCOVER_RES,
+  TEST,
 
   // Creating a game
   SERVER_FULL,
