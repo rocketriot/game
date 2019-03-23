@@ -24,7 +24,7 @@ public class CaptureTheFlagAI extends MinigameAI {
   private World world;
 
   /**
-   * Instantiates a new KillThemAllAI.
+   * Instantiates a new CaptureTheFlagAI.
    *
    * @param id the id of the cpu player
    * @param store the store
@@ -48,11 +48,17 @@ public class CaptureTheFlagAI extends MinigameAI {
       goalPos = findNearestGun(astroPos);
     } else if (astro.getId() != ctf.getFlagOwner()) {
       goalPos = world.convert(ctf.getFlagPosition());
-      if (goalPos.fromCenter > 2350) {
-        Platform platform = findClosestPlatform(goalPos);
-        if (platform != null) {
-          ArrayList<Platform> path = world.getPlatformPath(platform);
-          goalPos = path.get(0).getPlanetPos();
+      if (goalPos.fromCenter > 2150) {
+        Platform closestPlatform = findClosestPlatform(goalPos);
+        if (closestPlatform != null) {
+          ArrayList<Platform> path = world.getPlatformPath(closestPlatform);
+          for (Platform platform : path){
+            if (platform.getPlanetPos().fromCenter > astroPos.fromCenter + 10){
+              goalPos = platform.getPlanetPos();
+              goalPos.angle -= 2;
+              break;
+            }
+          }
         }
       }
     } else {
@@ -63,6 +69,11 @@ public class CaptureTheFlagAI extends MinigameAI {
       return;
     }
 
+    if (astronaut.astronaut.haveGun()
+        && goalPos.fromCenter > astroPos.fromCenter) {
+      astronaut.jump();
+    }
+
     if (normaliseAngle(goalPos.angle) < normaliseAngle(astroPos.angle)) {
       astronaut.moveLeft();
     } else {
@@ -70,12 +81,7 @@ public class CaptureTheFlagAI extends MinigameAI {
     }
 
     if (astronaut.astronaut.haveGun()
-        && goalPos.fromCenter > astroPos.fromCenter) {
-      astronaut.jump();
-    }
-
-    if (astronaut.astronaut.haveGun()
-        && Math.abs(normaliseAngle(goalPos.angle) - normaliseAngle(astroPos.angle)) <= 15) {
+        && Math.abs(normaliseAngle(goalPos.angle) - normaliseAngle(astroPos.angle)) <= 20) {
       astronaut.shoot();
     }
 
@@ -120,10 +126,8 @@ public class CaptureTheFlagAI extends MinigameAI {
     platforms.addAll(platformsCopy);
     ArrayList<Platform> consideredPlatforms = new ArrayList<>();
 
-    float lowerFromLimit = position.fromCenter - 50;
-    float upperFromLimit = position.fromCenter + 50;
-    float lowerAngLimit = position.angle - 5;
-    float upperAngLimit = position.angle + 5;
+    float lowerFromLimit = position.fromCenter - 75;
+    float upperFromLimit = position.fromCenter + 75;
 
     // remove all platforms not within the right height
     for (Platform platform : platforms) {
@@ -133,19 +137,18 @@ public class CaptureTheFlagAI extends MinigameAI {
       }
     }
 
-    // remove all platforms not within the right angle
-    for (Platform platform : platforms) {
-      if (platform.getPlanetPos().angle < lowerAngLimit
-          || platform.getPlanetPos().fromCenter > upperAngLimit) {
-        consideredPlatforms.remove(platform);
+    // find closest angle platform
+    Platform nearestPlatform = null;
+    float nearestAngle = Integer.MAX_VALUE;
+    float goalAngle = normaliseAngle(position.angle);
+    for (Platform platform : consideredPlatforms) {
+      float platAng = normaliseAngle(platform.getPlanetPos().angle);
+      if (Math.abs(platAng - goalAngle) < nearestAngle) {
+        nearestAngle = Math.abs(platAng - goalAngle);
+        nearestPlatform = platform;
       }
     }
-
-    if (!consideredPlatforms.isEmpty()) {
-      return consideredPlatforms.get(0);
-    } else {
-      return null;
-    }
+    return nearestPlatform;
   }
 
   /**

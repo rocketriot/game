@@ -73,7 +73,6 @@ public class MinigameHandler {
 //      default:
 //        o = new CaptureTheFlag(w);
 //        for (UUID id : store.getCpuPlayers()) {
-//          // NOTE CHANGE TO CAPTURE the flag
 //          aiLoop.registerHandler(new CaptureTheFlagAI(id, store, handler));
 //        }
 //        break;
@@ -81,7 +80,6 @@ public class MinigameHandler {
 
     o = new CaptureTheFlag(w);
     for (UUID id : store.getCpuPlayers()) {
-      // NOTE CHANGE TO CAPTURE the flag
       aiLoop.registerHandler(new CaptureTheFlagAI(id, store, handler));
     }
 

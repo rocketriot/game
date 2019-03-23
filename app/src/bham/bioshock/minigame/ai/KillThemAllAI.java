@@ -61,7 +61,7 @@ public class KillThemAllAI extends MinigameAI {
     }
 
     if (astronaut.astronaut.haveGun()
-        && Math.abs(normaliseAngle(goalPos.angle) - normaliseAngle(astroPos.angle)) <= 15) {
+        && Math.abs(normaliseAngle(goalPos.angle) - normaliseAngle(astroPos.angle)) <= 20) {
       astronaut.shoot();
     }
   }
