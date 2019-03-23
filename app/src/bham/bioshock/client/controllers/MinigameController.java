@@ -182,7 +182,7 @@ public class MinigameController extends Controller {
       if (data.initiatorWon) {
         UUID[] planetOwner = new UUID[]{data.winnerID, data.planetID};
         router.call(Route.SET_PLANET_OWNER, planetOwner);
-        store.setMinigameWinner(store.getPlayer(playerId).getUsername());
+        store.setMinigameWinner(p.getUsername());
       } else {
         store.setMinigameWinner("No one");
       }
