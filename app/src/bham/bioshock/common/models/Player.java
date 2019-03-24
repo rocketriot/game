@@ -40,11 +40,12 @@ public class Player implements Serializable {
   /** Object containing infomation about a players move */
   private ArrayList<Move> boardMove;
 
+  /** The maximum amount of fuel a player hold at one time */
+  private float maxFuel = 100f;
+
   /** The fuel cost for moving one grid space */
   public static final float FUEL_GRID_COST = 10f;
 
-  /** The maximum amount of fuel a player hold at one time */
-  public static final float MAX_FUEL = 100f;
 
   private ArrayList<Upgrade.Type> upgrades = new ArrayList<>();
 
@@ -95,12 +96,24 @@ public class Player implements Serializable {
     return fuel;
   }
 
+  public float getMaxFuel() {
+    return maxFuel;
+  }
+
+  public void increaseMaxFuel(float increase) {
+    this.maxFuel += increase;
+  }
+
+  public void decreaseMaxFuel(float decrease) {
+    this.maxFuel -= decrease;
+  }
+
   public void setFuel(float fuel) {
     this.fuel = fuel;
   }
 
   public void increaseFuel(float fuel) {
-    this.fuel = Math.min(this.fuel + fuel, MAX_FUEL);
+    this.fuel = Math.min(this.fuel + fuel, maxFuel);
   }
 
   public void decreaseFuel(float fuel) {
