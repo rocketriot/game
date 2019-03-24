@@ -50,6 +50,9 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
   /** Draws asteroids on the board */
   private DrawAsteroid drawAsteroid;
 
+  /** Draws black holes on the board */
+  private DrawBlackHole drawBlackHole;
+
   /** Handles the path rendering */
   private PathRenderer pathRenderer;
 
@@ -100,6 +103,7 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
     drawFuel = new DrawFuel(batch);
     drawUpgrade = new DrawUpgrade(batch);
     drawAsteroid = new DrawAsteroid(batch);
+    drawBlackHole = new DrawBlackHole(batch);
 
     pathRenderer =
         new PathRenderer(camera, store.getGameBoard(), store.getMainPlayer(), store.getPlayers());
@@ -233,6 +237,15 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
 
             break;
 
+          case BLACKHOLE:
+            BlackHole blackHole = (BlackHole) grid[x][y].getValue();
+
+            // Only draw the asteroid from the bottom left coordinate
+            if (blackHole.getCoordinates().isEqual(new Coordinates(x, y)))
+              drawBlackHole.draw(blackHole, PPS);
+
+            break;
+
           case FUEL:
             Fuel fuel = (Fuel) grid[x][y].getValue();
             drawFuel.draw(fuel, PPS);
@@ -307,6 +320,7 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
     drawFuel.resize(PPS);
     drawUpgrade.resize(PPS);
     drawAsteroid.resize(PPS);
+    drawBlackHole.resize(PPS);
 
     background.setSize(PPS * 38.4f, PPS * 21.6f);
   }
@@ -362,8 +376,9 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
     drawPlayer.dispose();
     drawPlanet.dispose();
     drawFuel.dispose();
-    drawAsteroid.dispose();
     drawUpgrade.dispose();
+    drawAsteroid.dispose();
+    drawBlackHole.dispose();
 
     hud.dispose();
     background.getTexture().dispose();
