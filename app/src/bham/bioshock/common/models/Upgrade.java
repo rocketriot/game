@@ -19,6 +19,7 @@ public class Upgrade implements Serializable {
   public static enum Type {
     FUEL_TANK_SIZE,
     ENGINE_EFFICIENCY,
+    FUEL_PER_ROUND,
     BLACKHOLE,
   }
 

@@ -47,6 +47,11 @@ public class Player implements Serializable {
   /** The fuel cost for moving one grid space */
   public static final float FUEL_GRID_COST = 10f;
 
+  /** Points gained per round for each planet owned */
+  public static final int POINTS_PER_PLANET = 100;
+
+  /** Fuel gained per round */
+  public static final float FUEL_PER_ROUND = 30f;
 
   private ArrayList<Upgrade.Type> upgrades = new ArrayList<>();
 
@@ -201,6 +206,15 @@ public class Player implements Serializable {
       } 
       Player p = (Player) o; 
       return this.id.equals(p.getId());
+  }
+
+  /** Handles changes to player when a new round begins */
+  public void newRound() {
+    addPoints(planetsCaptured * POINTS_PER_PLANET);
+    increaseFuel(FUEL_PER_ROUND);
+    if (hasUpgrade(Type.FUEL_PER_ROUND)) {
+      increaseFuel(20f);
+    }
   }
 
   public class Move implements Serializable {
