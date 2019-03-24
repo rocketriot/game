@@ -151,6 +151,7 @@ public class Astronaut extends Entity {
           || texture.dyingBack.isAnimationFinished(dieTime)) {
         
         stepsGenerator.updateFromServer(new SpeedVector(), respawn);
+        setPosition(respawn);
         setState(State.LOADED); 
       }
       
@@ -254,8 +255,9 @@ public class Astronaut extends Entity {
   @Override
   public boolean canCollideWith(Entity e) {
     switch (e.type) {
-      case ASTRONAUT:
       case BULLET:
+        return e.canCollideWith(this);
+      case ASTRONAUT:
       case GUN:
       case PLATFORM:
       case FLAG:
@@ -269,7 +271,7 @@ public class Astronaut extends Entity {
   /** Collisions **/
   @Override
   public void handleCollision(Entity e) {
-    if(e.is(State.REMOVING) || !e.loaded) return;
+    if(e.is(State.REMOVING) || is(State.REMOVING) || !e.loaded) return;
     switch (e.type) {
       case GUN:
         if(!equipment.haveGun) {
@@ -367,8 +369,8 @@ public class Astronaut extends Entity {
    */
   public void killAndRespawn(Position pos) {
     if(is(State.REMOVING)) return;
-    stepsGenerator.moveStop();
     setState(State.REMOVING);
+    stepsGenerator.moveStop();
     dieTime = 0;
     dieFront = true;
     

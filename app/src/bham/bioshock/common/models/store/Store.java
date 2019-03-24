@@ -129,6 +129,7 @@ public class Store {
   }
   
   public UUID getPlanetOwner(UUID planetId) {
+    if(planetId == null) return null;
     Planet planet = gameBoard.getPlanet(planetId);
     Player p = planet.getPlayerCaptured();
     return p == null ? null : p.getId();
