@@ -1,20 +1,15 @@
 package bham.bioshock.minigame.models;
 
-import bham.bioshock.minigame.physics.Step;
 import bham.bioshock.minigame.worlds.World;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.math.Intersector.MinimumTranslationVector;
-
 
 public class Heart extends Entity {
 
   private static final long serialVersionUID = -7192308795772982285L;
 
   private static TextureRegion texture;
-
 
   public Heart(World w, float x, float y) {
     super(w, x, y, EntityType.HEART);
@@ -38,20 +33,22 @@ public class Heart extends Entity {
   }
 
 
-  /** Collisions **/
+  /**
+   * Collisions
+   **/
   @Override
   public boolean canCollideWith(Entity e) {
-    switch(e.type) {
+    switch (e.type) {
       case ASTRONAUT:
         return true;
       default:
         return false;
     }
   }
-  
+
   @Override
   public void handleCollision(Entity e) {
-    switch(e.type) {
+    switch (e.type) {
       case ASTRONAUT:
         e.handleCollision(this);
         break;
@@ -59,5 +56,5 @@ public class Heart extends Entity {
         break;
     }
   }
-  
+
 }
