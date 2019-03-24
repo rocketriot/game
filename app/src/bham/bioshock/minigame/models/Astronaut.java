@@ -315,12 +315,14 @@ public class Astronaut extends Entity {
         // Check collision with legs
         if (legs.collideWith(e.collisionBoundary, null)) {
           // Standing on the platform
-          //System.out.println("STANDING ON PLATFORM: "+e.toString());
           setOnPlatform((Platform) e);
         }
         break;
       case HEART:
-
+        Heart heart = (Heart) e;
+        objective.get().pickupHeart(this);
+        heart.setState(State.REMOVING);
+        break;
       default:
         break;
     }

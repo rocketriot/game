@@ -7,6 +7,7 @@ import bham.bioshock.common.models.store.MinigameStore;
 import bham.bioshock.common.models.store.Store;
 import bham.bioshock.communication.messages.Message;
 import bham.bioshock.communication.messages.objectives.FlagOwnerUpdateMessage;
+import bham.bioshock.communication.messages.objectives.IncreaseHealthMessage;
 import bham.bioshock.communication.messages.objectives.KillAndRespawnMessage;
 import bham.bioshock.communication.messages.objectives.UpdateHealthMessage;
 import bham.bioshock.minigame.worlds.World;
@@ -28,13 +29,13 @@ public abstract class Objective implements Serializable {
   private static final Logger logger = LogManager.getLogger(Objective.class);
   private static final long serialVersionUID = 7485771472370553399L;
   private static int INITIAL_HEALTH = 4;
-  
+
   protected transient Store store;
   protected transient World world;
   protected transient Router router;
   protected transient MinigameStore localStore;
   private transient Position[] respawnPositions;
-  
+
   protected transient HashMap<UUID, Long> lastRespawn;
   protected HashMap<UUID, Integer> health = new HashMap<>();
 
@@ -47,32 +48,32 @@ public abstract class Objective implements Serializable {
     this.localStore = store.getMinigameStore();
     this.respawnPositions = world.getPlayerPositions();
     this.lastRespawn = new HashMap<>();
-    
+
     store.getPlayers().forEach(player -> {
       health.put(player.getId(), INITIAL_HEALTH);
     });
   }
-  
+
   /**
    * Get player health
-   * 
+   *
    * @param id
    * @return 0-4 health of a player
    */
   public int getHealth(UUID id) {
     return health.get(id);
   }
-  
+
   /**
    * Called every time a player is shot. Handled only by the host
-   * 
+   *
    * @param player: the player who got shot
    * @param killer: the player who shot
    */
   public final void gotShot(Astronaut player, Astronaut killer) {
     if(player.is(State.REMOVING)) return;
     if(!store.isHost()) return;
-    
+
     Integer h;
     synchronized(health) {
       h = health.get(player.getId());
@@ -80,31 +81,49 @@ public abstract class Objective implements Serializable {
     if(h == null || h > 1) {
       // Decrease health request
       router.call(Route.SEND_OBJECTIVE_UPDATE, new UpdateHealthMessage(player.getId(), killer.getId()));
-    } else {      
+    } else {
       // Send kill and update request
       router.call(Route.SEND_OBJECTIVE_UPDATE, new KillAndRespawnMessage(player.getId(), killer.getId(), getRandomRespawn()));
     }
   }
 
-  public final void pickupHealth(Astronaut player){
-    
+  public final void pickupHeart(Astronaut player){
+    if(player.is(State.REMOVING)) return;
+    if(!store.isHost()) return;
+    router.call(Route.SEND_OBJECTIVE_UPDATE, new IncreaseHealthMessage(player.getId()));
   }
-  
-  
+
+
   /**
-   * Default handler for SubstractHealthMessage - just decrease health
+   * Default handler for UpdateHealthMessage - just decrease health
    * check with last respawn time to avoid decreasing health after respawn
-   * 
-   * @param m
+   *
+   * @param m the message
    */
-  public void handle(UpdateHealthMessage m) { 
+  public void handle(UpdateHealthMessage m) {
     if(lastRespawn.get(m.playerId) == null || lastRespawn.get(m.playerId) < m.created) {
       synchronized(health) {
         health.computeIfPresent(m.playerId, (k, v) -> v - 1);
       }
     }
   }
-  
+
+  /**
+   * Default handler for IncreaseHealthMessage - just increase health
+   *
+   * @param m the message
+   */
+  public void handle(IncreaseHealthMessage m) {
+    synchronized(health) {
+      health.computeIfPresent(m.playerId, (k, v) -> v + 1);
+
+      if (health.get(m.playerId) > INITIAL_HEALTH){
+        health.computeIfPresent(m.playerId, (k, v) -> v = INITIAL_HEALTH);
+      }
+
+    }
+  }
+
   /**
    * Default handler for KillAndRespawnMessage - kill player and respawn in the new position
    * save respawn position to ignore all bullets created before that moment
@@ -115,10 +134,10 @@ public abstract class Objective implements Serializable {
     lastRespawn.put(m.playerId, m.created);
     killAndRespawnPlayer(m.playerId, m.position);
   }
-  
+
   /**
    * Generates random respawn position based on the 4 initial positions
-   * 
+   *
    * @return respawn position
    */
   protected Position getRandomRespawn() {
@@ -129,7 +148,7 @@ public abstract class Objective implements Serializable {
 
   /**
    * Handles player kill and respawn in provided position
-   * 
+   *
    * @param playerId
    * @param randomRespawn
    */
@@ -137,7 +156,7 @@ public abstract class Objective implements Serializable {
     Astronaut player = localStore.getPlayer(playerId);
     boolean hadGun = player.haveGun();
     Position oldPosition = player.getPos().copy();
-    
+
     if(player.is(State.REMOVING)) return;
     player.killAndRespawn(randomRespawn);
 
@@ -151,10 +170,10 @@ public abstract class Objective implements Serializable {
       health.put(player.getId(), INITIAL_HEALTH);
     }
   }
-  
+
   /**
    * Handle different update messages
-   * 
+   *
    * @param m
    */
   public void handleMessage(Message m) {
@@ -163,13 +182,15 @@ public abstract class Objective implements Serializable {
     } else if (m instanceof KillAndRespawnMessage) {
       this.handle((KillAndRespawnMessage) m);
     } else if(m instanceof FlagOwnerUpdateMessage) {
-      this.handle((FlagOwnerUpdateMessage) m); 
-    }
+      this.handle((FlagOwnerUpdateMessage) m);
+    } else if(m instanceof IncreaseHealthMessage) {
+    this.handle((IncreaseHealthMessage) m);
   }
-  
+  }
+
   /**
    * Unhandled messages
-   * 
+   *
    * @param m
    */
   public void handle(Message m) {
@@ -178,27 +199,26 @@ public abstract class Objective implements Serializable {
   public void handle(FlagOwnerUpdateMessage m) {
     logger.debug("Ignored message: " + m.getClass().getSimpleName());
   }
-  
+
   /**
    * Seeds the minigame store with the additional entities required to each objective
-   * 
+   *
    * @param store
    */
   public abstract void seed(MinigameStore store);
 
   /**
    * Called when the flag is captured
-   * 
+   *
    * @param a: the player who got the flag
    */
   public abstract void captured(Astronaut a);
 
   /**
    * The instructions of each objective
-   * 
+   *
    * @return the instruction String
    */
   public abstract String instructions();
-
 
 }
