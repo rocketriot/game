@@ -319,9 +319,11 @@ public class Astronaut extends Entity {
         }
         break;
       case HEART:
-        Heart heart = (Heart) e;
-        objective.get().pickupHeart(this);
-        heart.setState(State.REMOVING);
+        if (objective.isPresent()) {
+          Heart heart = (Heart) e;
+          objective.get().pickupHeart(this, heart.id);
+          heart.remove();
+        }
         break;
       default:
         break;

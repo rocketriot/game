@@ -10,11 +10,13 @@ import bham.bioshock.communication.messages.objectives.FlagOwnerUpdateMessage;
 import bham.bioshock.communication.messages.objectives.IncreaseHealthMessage;
 import bham.bioshock.communication.messages.objectives.KillAndRespawnMessage;
 import bham.bioshock.communication.messages.objectives.UpdateHealthMessage;
+import bham.bioshock.minigame.models.Entity;
 import bham.bioshock.minigame.worlds.World;
 import bham.bioshock.minigame.models.Astronaut;
 import bham.bioshock.minigame.models.Entity.State;
 import bham.bioshock.minigame.models.Gun;
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Random;
 import java.util.UUID;
@@ -87,10 +89,10 @@ public abstract class Objective implements Serializable {
     }
   }
 
-  public final void pickupHeart(Astronaut player){
+  public final void pickupHeart(Astronaut player, UUID heartID){
     if(player.is(State.REMOVING)) return;
     if(!store.isHost()) return;
-    router.call(Route.SEND_OBJECTIVE_UPDATE, new IncreaseHealthMessage(player.getId()));
+    router.call(Route.SEND_OBJECTIVE_UPDATE, new IncreaseHealthMessage(player.getId(), heartID));
   }
 
 
@@ -115,12 +117,16 @@ public abstract class Objective implements Serializable {
    */
   public void handle(IncreaseHealthMessage m) {
     synchronized(health) {
-      health.computeIfPresent(m.playerId, (k, v) -> v + 1);
-
-      if (health.get(m.playerId) > INITIAL_HEALTH){
-        health.computeIfPresent(m.playerId, (k, v) -> v = INITIAL_HEALTH);
+      Integer hp = health.get(m.playerID);
+      if(hp != null && hp < INITIAL_HEALTH) {
+        health.computeIfPresent(m.playerID, (k, v) -> v + 1);
+        Collection<Entity> entities = localStore.getEntities();
+        for (Entity entity : entities){
+          if (entity.getId() == m.heartID){
+            entities.remove(entity);
+          }
+        }
       }
-
     }
   }
 

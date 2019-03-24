@@ -1,5 +1,6 @@
 package bham.bioshock.minigame.models;
 
+import bham.bioshock.client.Assets;
 import bham.bioshock.minigame.worlds.World;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Texture;
@@ -24,37 +25,12 @@ public class Heart extends Entity {
   }
 
   public static void createTextures(AssetManager manager) {
-    Texture wholeImage = new Texture("app/assets/minigame/hearts.png");
+    Texture wholeImage = manager.get(Assets.hearts, Texture.class);
     texture = new TextureRegion(wholeImage, 0, 0, 50, 50);
   }
 
   public static void loadTextures(AssetManager manager) {
-    manager.load("app/assets/minigame/hearts.png", Texture.class);
-  }
-
-
-  /**
-   * Collisions
-   **/
-  @Override
-  public boolean canCollideWith(Entity e) {
-    switch (e.type) {
-      case ASTRONAUT:
-        return true;
-      default:
-        return false;
-    }
-  }
-
-  @Override
-  public void handleCollision(Entity e) {
-    switch (e.type) {
-      case ASTRONAUT:
-        e.handleCollision(this);
-        break;
-      default:
-        break;
-    }
+    manager.load(Assets.hearts, Texture.class);
   }
 
 }
