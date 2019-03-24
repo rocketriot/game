@@ -85,6 +85,10 @@ public abstract class Objective implements Serializable {
       router.call(Route.SEND_OBJECTIVE_UPDATE, new KillAndRespawnMessage(player.getId(), killer.getId(), getRandomRespawn()));
     }
   }
+
+  public final void pickupHealth(Astronaut player){
+    
+  }
   
   
   /**

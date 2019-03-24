@@ -276,6 +276,7 @@ public class Astronaut extends Entity {
       case PLATFORM:
       case FLAG:
       case GOAL:
+      case HEART:
         return true;
       default:
         return false;
@@ -318,6 +319,8 @@ public class Astronaut extends Entity {
           setOnPlatform((Platform) e);
         }
         break;
+      case HEART:
+
       default:
         break;
     }
