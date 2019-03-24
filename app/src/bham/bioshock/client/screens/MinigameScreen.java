@@ -7,6 +7,7 @@ import bham.bioshock.minigame.models.Astronaut;
 import bham.bioshock.minigame.models.Bullet;
 import bham.bioshock.minigame.models.Flag;
 import bham.bioshock.minigame.models.Gun;
+import bham.bioshock.minigame.models.Heart;
 import bham.bioshock.minigame.models.Platform;
 import bham.bioshock.minigame.models.Rocket;
 import bham.bioshock.minigame.worlds.World;

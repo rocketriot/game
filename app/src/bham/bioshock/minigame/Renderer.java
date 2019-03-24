@@ -98,6 +98,7 @@ public class Renderer {
     Gun.createTextures(manager);
     Bullet.createTextures(manager);
     Flag.createTextures(manager);
+    Heart.createTextures(manager);
     World.createTextures(manager, world.getTextureId());
     Platform.createTextures(manager, world.getTextureId());
 
