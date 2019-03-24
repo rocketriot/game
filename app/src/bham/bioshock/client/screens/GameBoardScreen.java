@@ -193,6 +193,16 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
       // Remove fuel from the grid
       gameBoard.removeGridPoint(player.getCoordinates());
     }
+
+    // Check if the grid point is an upgrade
+    if (gridPoint.getType() == GridPoint.Type.UPGRADE) {
+      // Increase the players fuel
+      Upgrade upgrade = (Upgrade) gridPoint.getValue();
+      player.addUpgrade(upgrade);
+
+      // Remove upgrade from the grid
+      gameBoard.removeGridPoint(player.getCoordinates());
+    }
   }
 
   public void drawBoardObjects() {
@@ -353,6 +363,7 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
     drawPlanet.dispose();
     drawFuel.dispose();
     drawAsteroid.dispose();
+    drawUpgrade.dispose();
 
     hud.dispose();
     background.getTexture().dispose();

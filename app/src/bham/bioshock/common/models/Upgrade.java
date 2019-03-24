@@ -13,13 +13,29 @@ public class Upgrade implements Serializable {
   /** Location of the fuel */
   private Coordinates coordinates;
 
-  public static enum Options {
+  /** Stores what actual upgrade the Upgrade contains */
+  private Type type;
 
+  public static enum Type {
+    INCREASE_FUEL_CAPACITY,
+    INCREASE_FUEL_PER_TURN,
+    MINES,
   }
 
   public Upgrade(Coordinates coordinates) {
     this.id = UUID.randomUUID();
     this.coordinates = coordinates;
+    
+    generateUpgradeType();
+  }
+
+  /** 
+   * Returns a random upgrade option 
+   * TODO: add different weightings for each upgrade option
+   * */
+  public void generateUpgradeType() {
+    int random = (int) (Math.random() * Type.values().length);
+    type = Type.values()[random];
   }
 
   public UUID getId() {
@@ -30,12 +46,7 @@ public class Upgrade implements Serializable {
     return coordinates;
   }
 
-  /** 
-   * Returns a random upgrade option 
-   * TODO: add different weightings for each upgrade option
-   * */
-  public Upgrade.Options getRandomOption() {
-    int random = (int) (Math.random() * Upgrade.Options.values().length);
-    return Upgrade.Options.values()[random];
+  public Type getType() {
+    return type;
   }
 }

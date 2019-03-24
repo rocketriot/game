@@ -46,6 +46,8 @@ public class Player implements Serializable {
   /** The maximum amount of fuel a player hold at one time */
   public static final float MAX_FUEL = 100f;
 
+  private ArrayList<Upgrade.Type> upgrades = new ArrayList<>();
+
   public Player(UUID id, String username, Boolean isCpu) {
     this.id = id;
     this.username = username;
@@ -104,6 +106,19 @@ public class Player implements Serializable {
   public void decreaseFuel(float fuel) {
     this.fuel = Math.max(this.fuel - fuel, 0f);
   }
+
+  public void addUpgrade(Upgrade upgrade) {
+    upgrades.add(upgrade.getType());
+  }
+  
+  public ArrayList<Upgrade.Type> getUpgrades() {
+    return upgrades;
+  }
+  
+  public boolean hasUpgrade(Upgrade.Type type) {
+    return upgrades.contains(type);
+  }
+
 
   public int getPlanetsCaptured() {
     return planetsCaptured;
@@ -169,7 +184,7 @@ public class Player implements Serializable {
       } 
       Player p = (Player) o; 
       return this.id.equals(p.getId());
-  } 
+  }
 
   public class Move implements Serializable {
     private Direction direction;

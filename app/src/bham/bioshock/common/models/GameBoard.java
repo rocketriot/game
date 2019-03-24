@@ -120,7 +120,7 @@ public class GameBoard implements Serializable {
     }
 
     // Generate an upgrade
-    if (randomFloat <= 0.02) {
+    if (randomFloat <= 0.025) {
       Upgrade upgrade = new Upgrade(new Coordinates(x, y));
       grid[x][y] = new GridPoint(GridPoint.Type.UPGRADE, upgrade);
 
@@ -144,7 +144,7 @@ public class GameBoard implements Serializable {
     }
 
     // Generate an asteroid
-    if (randomFloat <= 0.05) {
+    if (randomFloat <= 0.060) {
       // Check if there's enough space to generate the asteroid
       if (isEnoughSpace(x, y, Asteroid.WIDTH, Asteroid.HEIGHT)) {
         // Create a new asteroid

@@ -80,7 +80,8 @@ public class GameBoardHandler {
 
     GridPoint.Type goalType = gameBoard.getGridPoint(goalCoords).getType();
     if (pathCost <= currentPlayer.getFuel() && (goalType.equals(Type.EMPTY) || goalType
-        .equals(Type.FUEL))) {
+        .equals(Type.FUEL) || goalType
+            .equals(Type.UPGRADE))) {
 
       handler.sendToAll(new MovePlayerOnBoardMessage(goalCoords, playerID));
 

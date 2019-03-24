@@ -159,8 +159,7 @@ public class AStarPathfinding {
     // go through the passed gameGrid and assign values accordingly to the temporary grid
     for (int x = 0; x < maxX; x++) {
       for (int y = 0; y < maxY; y++) {
-        if (gameGrid[x][y].isType(GridPoint.Type.EMPTY) || gameGrid[x][y]
-            .isType(GridPoint.Type.FUEL)) {
+        if (gameGrid[x][y].isType(GridPoint.Type.EMPTY) || gameGrid[x][y].isType(GridPoint.Type.FUEL) || gameGrid[x][y].isType(GridPoint.Type.UPGRADE)) {
           tempGrid[x][y] = new PathfindingValues(true);
         } else {
           tempGrid[x][y] = new PathfindingValues(false);
