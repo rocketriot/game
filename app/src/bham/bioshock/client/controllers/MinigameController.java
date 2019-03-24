@@ -180,15 +180,17 @@ public class MinigameController extends Controller {
     // Only if there's a winner
     if (data.winnerID != null) {
       Player p = store.getPlayer(data.winnerID);
+      store.setMinigameWinner(p.getUsername());
       p.addPoints(data.points);
       if (data.initiatorWon) {
         UUID[] planetOwner = new UUID[] {data.winnerID, data.planetID};
         router.call(Route.SET_PLANET_OWNER, planetOwner);
-        store.setMinigameWinner(p.getUsername());
       } else {
+        store.getPlayer(data.playerID).moveToSpawn();
+      }
+    } else {
         store.setMinigameWinner("No one");
       }
-    }
     router.call(Route.FADE_OUT, "minigame");
     router.call(Route.GAME_BOARD_SHOW);
     store.resetMinigameStore();
