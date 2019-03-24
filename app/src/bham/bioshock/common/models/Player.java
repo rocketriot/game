@@ -96,6 +96,7 @@ public class Player implements Serializable {
     return fuel;
   }
 
+  /** Returns the maximum fuel a player has after modifiers e.g. upgrades or planets owned */
   public float getMaxFuel() {
     //TODO Calculate modifier
     float modifier = 0;
