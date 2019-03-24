@@ -12,7 +12,7 @@ public class BlackHole implements Serializable {
   public static final int WIDTH = 3;
   
   /** Height of the black hole */
-  public static final int HEIGHT = 4;
+  public static final int HEIGHT = 3;
 
   /** ID of the black hole */
   private UUID id;

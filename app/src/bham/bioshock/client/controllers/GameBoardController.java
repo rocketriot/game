@@ -90,6 +90,11 @@ public class GameBoardController extends Controller {
     store.nextTurn();
   }
 
+  /** Adds a black hole to the board */
+  public void addBlackHole(BlackHole blackHole) {
+    store.getGameBoard().addBlackHole(blackHole);
+  }
+
   /** Player move received from the server */
   public void moveReceived(MovePlayerOnBoardMessage data) {
     GameBoard gameBoard = store.getGameBoard();

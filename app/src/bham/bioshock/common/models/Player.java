@@ -46,6 +46,7 @@ public class Player implements Serializable {
   /** The fuel cost for moving one grid space */
   public static final float FUEL_GRID_COST = 10f;
 
+  private boolean isAddingBlackHole = false;
 
   private ArrayList<Upgrade.Type> upgrades = new ArrayList<>();
 
@@ -225,5 +226,13 @@ public class Player implements Serializable {
 
   public void setTextureID(int textureID) {
     this.textureID = textureID;
+  }
+
+  public boolean isAddingBlackHole() {
+    return isAddingBlackHole;
+  }
+
+  public void toggleAddingBlackHole() {
+    isAddingBlackHole = !isAddingBlackHole;
   }
 }

@@ -35,6 +35,7 @@ public enum Route {
   UPDATE_TURN                 (GameBoardController.class,     "updateTurn"),
   SET_PLANET_OWNER            (GameBoardController.class,     "setOwner"),
   COORDINATES_SAVE            (GameBoardController.class,     "updateCoordinates"),
+  ADD_BLACK_HOLE              (GameBoardController.class,     "addBlackHole"),
 
   DIRECT_MINIGAME_START       (MinigameController.class,      "directStart"), // FOR TESTS ONLY
   SEND_MINIGAME_START         (MinigameController.class,      "sendStart"),

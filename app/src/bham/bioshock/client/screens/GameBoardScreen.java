@@ -82,6 +82,9 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
   /** Flag for if the player is selecting a move */
   private boolean playerSelected = false;
 
+  /** Current coordinates of the mouse on the game board */
+  private Coordinates mouseCoordinates;
+
   public GameBoardScreen(Router router, Store store) {
     super(router);
 
@@ -346,6 +349,7 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
     batch.begin();
     drawBoardObjects();
     drawPlayers();
+    drawAddingBlackHole();
     batch.end();
 
     // Draw path rendering
@@ -442,6 +446,12 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
     mouseDownX = screenX;
     mouseDownY = screenY;
 
+    if (store.getMainPlayer().isAddingBlackHole() && canAddBlackHole()) {
+      router.call(Route.ADD_BLACK_HOLE, new BlackHole(mouseCoordinates));
+
+      return false;
+    }
+
     // Get mouse coordinates
     Vector3 mouse = getMouseCoordinates(screenX, screenY);
 
@@ -501,6 +511,28 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
     return true;
   }
 
+  /** If the player is adding a black hole, display it on the game board */
+  private void drawAddingBlackHole() {
+    if (store.getMainPlayer().isAddingBlackHole() && mouseCoordinates != null)
+      drawBlackHole.draw(new BlackHole(mouseCoordinates), PPS);
+  }
+
+  /** Checks if there is enough space to add a black hole to the game board */
+  private boolean canAddBlackHole() {
+    GridPoint[][] grid = store.getGameBoard().getGrid();
+
+    for (int i = 0; i < BlackHole.WIDTH; i++) {
+      for (int j = 0; j < BlackHole.HEIGHT; j++) {
+        GridPoint gridPoint = grid[mouseCoordinates.getX() + i][mouseCoordinates.getY() + j];
+
+        if (!gridPoint.getType().equals(GridPoint.Type.EMPTY))
+          return false;
+      }
+    }
+
+    return true;
+  }
+
   @Override
   public boolean keyDown(int keycode) {
     return false;
@@ -544,26 +576,32 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
 
   @Override
   public boolean mouseMoved(int screenX, int screenY) {
-    // Check if player is selected
-    if (!playerSelected)
-      return false;
-
     // Get the board coordinates of where the mouse is positioned
     Vector3 mouse = getMouseCoordinates(screenX, screenY);
-    Coordinates coordinates = new Coordinates((int) mouse.x / PPS, (int) mouse.y / PPS);
-
-    // Do nothing if the mouse is in the same position as where the player currently is at
-    if (coordinates.isEqual(store.getMainPlayer().getCoordinates()))
-      return false;
+    Coordinates coordinates = new Coordinates((int) mouse.x / PPS, (int) mouse.y / PPS);  
 
     // Ensure the mouse is clicking on the board
     if (coordinates.getX() >= gridSize || coordinates.getX() < 0 || coordinates.getY() >= gridSize
-        || coordinates.getY() < 0)
+        || coordinates.getY() < 0) {
+      mouseCoordinates = null;
       return false;
+    }
 
-    // Pathfind to where the mouse is located
-    pathRenderer.generatePath(store.getMainPlayer().getCoordinates(), coordinates);
-    return true;
+    // Update mouse coordinates
+    mouseCoordinates = coordinates;
+
+    // Check if player is selected
+    if (playerSelected) {
+      // Do nothing if the mouse is in the same position as where the player currently is at
+      if (mouseCoordinates.isEqual(store.getMainPlayer().getCoordinates()))
+        return false;
+
+      // Pathfind to where the mouse is located
+      pathRenderer.generatePath(store.getMainPlayer().getCoordinates(), coordinates);
+      return true;
+    }
+
+    return false;
   }
 
   @Override
