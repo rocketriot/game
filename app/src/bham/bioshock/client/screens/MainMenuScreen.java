@@ -46,21 +46,7 @@ public class MainMenuScreen extends ScreenMaster {
     super.render(delta);
   }
 
-  /** Generates an asset given an asset and screen coordinates */
-  private Image drawAsset(String asset, int x, int y) {
-    // Generate texture
-    Texture texture = new Texture(asset);
-    texture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 
-    // Generate image
-    Image image = new Image(texture);
-    image.setPosition(x, y);
-
-    // Add to screen
-    stage.addActor(image);
-
-    return image;
-  }
 
   private void addListener(Image image, BaseClickListener listener) {
     image.addListener(listener);

@@ -132,4 +132,20 @@ public abstract class ScreenMaster implements Screen {
 
     diag.show(stage);
   }
+
+  /** Generates an asset given an asset and screen coordinates */
+  protected Image drawAsset(String asset, int x, int y) {
+    // Generate texture
+    Texture texture = new Texture(asset);
+    texture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+
+    // Generate image
+    Image image = new Image(texture);
+    image.setPosition(x, y);
+
+    // Add to screen
+    stage.addActor(image);
+
+    return image;
+  }
 }
