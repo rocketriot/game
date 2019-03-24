@@ -1,10 +1,5 @@
 package bham.bioshock.server.handlers;
 
-import bham.bioshock.minigame.ai.CaptureTheFlagAI;
-import java.util.Random;
-import java.util.UUID;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import bham.bioshock.common.models.store.MinigameStore;
 import bham.bioshock.common.models.store.Store;
 import bham.bioshock.communication.messages.Message;
@@ -12,16 +7,18 @@ import bham.bioshock.communication.messages.minigame.EndMinigameMessage;
 import bham.bioshock.communication.messages.minigame.MinigameStartMessage;
 import bham.bioshock.communication.messages.minigame.RequestMinigameStartMessage;
 import bham.bioshock.minigame.Clock;
-import bham.bioshock.minigame.ai.KillThemAllAI;
 import bham.bioshock.minigame.ai.PlatformerAI;
-import bham.bioshock.minigame.objectives.CaptureTheFlag;
-import bham.bioshock.minigame.objectives.KillThemAll;
 import bham.bioshock.minigame.objectives.Objective;
 import bham.bioshock.minigame.objectives.Platformer;
 import bham.bioshock.minigame.worlds.RandomWorld;
 import bham.bioshock.minigame.worlds.World;
 import bham.bioshock.server.ServerHandler;
 import bham.bioshock.server.ai.MinigameAILoop;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import java.util.Random;
+import java.util.UUID;
 
 public class MinigameHandler {
 
@@ -57,7 +54,7 @@ public class MinigameHandler {
 
     Random rand = new Random();
 
-   switch(rand.nextInt(100)%3) {
+   /*switch(rand.nextInt(100)%3) {
       case 1:
         o = new Platformer(w);
         for (UUID id : store.getCpuPlayers()) {
@@ -76,8 +73,12 @@ public class MinigameHandler {
           aiLoop.registerHandler(new CaptureTheFlagAI(id, store, handler));
         }
         break;
-    }
+    }*/
 
+    o = new Platformer(w);
+    for (UUID id : store.getCpuPlayers()) {
+      aiLoop.registerHandler(new PlatformerAI(id, store, handler));
+    }
 
     aiLoop.start();
     

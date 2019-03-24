@@ -5,10 +5,8 @@ import bham.bioshock.client.Router;
 import bham.bioshock.common.Position;
 import bham.bioshock.common.models.store.MinigameStore;
 import bham.bioshock.common.models.store.Store;
+import bham.bioshock.communication.messages.objectives.EndPlatformerMessage;
 import bham.bioshock.communication.messages.objectives.UpdateHealthMessage;
-import bham.bioshock.minigame.models.Astronaut;
-import bham.bioshock.minigame.models.Flag;
-import bham.bioshock.minigame.models.Platform;
 import bham.bioshock.minigame.models.*;
 import bham.bioshock.minigame.worlds.RandomWorld;
 import bham.bioshock.minigame.worlds.World;
@@ -86,7 +84,12 @@ public class Platformer extends Objective {
     if(a.is(Entity.State.REMOVING)) return;
     this.winner = Optional.of(a.getId());
 
-    // make a method that ends the game
+    //end the game
+    if (!store.isHost()){
+      return;
+    }
+
+    router.call(Route.SEND_OBJECTIVE_UPDATE, new EndPlatformerMessage(winner.get()));
     return;
   }
 
