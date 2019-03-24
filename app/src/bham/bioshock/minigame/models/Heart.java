@@ -34,8 +34,7 @@ public class Heart extends Entity {
   }
 
   public static void loadTextures(AssetManager manager) {
-    manager.load("app/assets/minigame/bullet.png", Texture.class);
-    manager.load("app/assets/minigame/bullet_animation.png", Texture.class);
+    manager.load("app/assets/minigame/hearts.png", Texture.class);
   }
 
 

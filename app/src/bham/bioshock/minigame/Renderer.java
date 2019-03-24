@@ -99,6 +99,7 @@ public class Renderer {
     Bullet.createTextures(manager);
     Flag.createTextures(manager);
     Platform.createTextures(manager);
+    Heart.createTextures(manager);
 
     background = new Sprite(new Texture(Gdx.files.internal("app/assets/backgrounds/game.png")));
 
