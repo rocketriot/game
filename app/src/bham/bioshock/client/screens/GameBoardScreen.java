@@ -5,7 +5,7 @@ import bham.bioshock.client.Route;
 import bham.bioshock.client.Router;
 import bham.bioshock.client.controllers.SoundController;
 import bham.bioshock.client.gameLogic.gameboard.*;
-import bham.bioshock.client.scenes.gameboard.hud.Hud;
+import bham.bioshock.client.scenes.gameboard.GameBoardHud;
 import bham.bioshock.common.Direction;
 import bham.bioshock.common.consts.Config;
 import bham.bioshock.common.consts.GridPoint;
@@ -65,7 +65,7 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
   private int gridSize;
 
   /** Used for displaying the current game statistics */
-  private Hud hud;
+  private GameBoardHud hud;
 
   /** Used for mouse panning */
   private int mouseDownX, mouseDownY;
@@ -100,7 +100,7 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
     pathRenderer =
         new PathRenderer(camera, store.getGameBoard(), store.getMainPlayer(), store.getPlayers());
 
-    hud = new Hud(batch, skin, store, router);
+    hud = new GameBoardHud(batch, skin, store, router);
     background = new Sprite(new Texture(Gdx.files.internal(Assets.gameBackground)));
 
     // Setup the input processing
@@ -278,7 +278,7 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
   @Override
   public void resize(int width, int height) {
     viewport.update(width, height);
-    hud.viewport.update(width, height, true);
+    hud.getViewport().update(width, height, true);
     resizeSprites();
   }
 
@@ -318,9 +318,9 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
     pathRenderer.draw(PPS);
 
     // Draw the HUD
-    batch.setProjectionMatrix(hud.stage.getCamera().combined);
+    batch.setProjectionMatrix(hud.getStage().getCamera().combined);
     hud.getStage().act(Gdx.graphics.getDeltaTime());
-    hud.updateHud();
+    hud.update();
     hud.draw();
   }
 
@@ -566,7 +566,6 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
           router.call(Route.SEND_MINIGAME_START, planetId);
         } else {
           SoundController.playSound("menuSelect");
-          System.out.println("Minigame not started");
           // Ends the turn
           router.call(Route.END_TURN);
         }

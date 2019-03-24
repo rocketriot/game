@@ -9,7 +9,6 @@ import java.net.InetAddress;
 import java.net.SocketTimeoutException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import com.google.inject.Singleton;
 
 public class DiscoveryThread implements Runnable {
   
@@ -48,7 +47,7 @@ public class DiscoveryThread implements Runnable {
       if(socket != null) {
         socket.close();
       }
-      logger.trace("Discovery socket closed");
+      logger.debug("Discovery socket closed");
     }
   }
 

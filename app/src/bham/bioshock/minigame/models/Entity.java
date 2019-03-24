@@ -20,7 +20,7 @@ import java.util.stream.Stream;
 
 public abstract class Entity implements Serializable {
 
-  private static final long serialVersionUID = 7916524444980988734L;
+  private static final long serialVersionUID = -8104423419633831645L;
 
   /** ID of the entity */
   protected UUID id;
@@ -258,8 +258,11 @@ public abstract class Entity implements Serializable {
 
 
   public void draw(SpriteBatch batch) {
+    if(getTexture() == null) return;
     Sprite sprite = getSprite();
-    sprite.setRegion(getTexture());
+    TextureRegion texture = getTexture();
+    if(texture == null) return;
+    sprite.setRegion(texture);
     sprite.setPosition(getX() - (sprite.getWidth() / 2), getY());
     sprite.setRotation((float) getRotation());
     sprite.draw(batch);

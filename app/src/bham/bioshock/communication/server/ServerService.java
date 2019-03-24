@@ -1,9 +1,9 @@
 package bham.bioshock.communication.server;
 
-import bham.bioshock.communication.Action;
-import bham.bioshock.communication.common.ActionHandler;
+import bham.bioshock.communication.common.MessageHandler;
 import bham.bioshock.communication.common.Receiver;
 import bham.bioshock.communication.common.Sender;
+import bham.bioshock.communication.messages.Message;
 import bham.bioshock.server.ServerHandler;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -16,7 +16,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 /** Executes the actions received by ServerReceiver. */
-public class ServerService extends Thread implements ActionHandler {
+public class ServerService extends Thread implements MessageHandler {
   private static final Logger logger = LogManager.getLogger(ServerService.class);
 
   /** Thread sending messages */
@@ -25,7 +25,7 @@ public class ServerService extends Thread implements ActionHandler {
   private Receiver receiver;
 
   /** Queue with received and not yet handled actions */
-  private BlockingQueue<Action> queue = new LinkedBlockingQueue<>();
+  private BlockingQueue<Message> queue = new LinkedBlockingQueue<>();
 
   private ServerHandler handler;
   private Optional<UUID> id = Optional.empty();
@@ -57,6 +57,18 @@ public class ServerService extends Thread implements ActionHandler {
   public Optional<UUID> Id() {
     return id;
   }
+  
+  public long getSenderCounter() {
+    return sender.getCounter();
+  }
+  
+  public void resetSenderCounter() {
+    sender.resetCounter();
+  }
+  
+  public int getSenderQueueSize() {
+    return sender.getQueueSize();
+  }
 
   public void run() {
     // start supporting threads
@@ -85,8 +97,8 @@ public class ServerService extends Thread implements ActionHandler {
    * @param action
    */
   @Override
-  public void handle(Action action) {
-    queue.add(action);
+  public void handle(Message message) {
+    queue.add(message);
   }
   
   /**
@@ -102,8 +114,8 @@ public class ServerService extends Thread implements ActionHandler {
    * 
    * @param action
    */
-  public void send(Action action) {
-    sender.send(action);
+  public void send(Message message) {
+    sender.send(message);
   }
 
 
@@ -112,8 +124,8 @@ public class ServerService extends Thread implements ActionHandler {
    * 
    * @param action to be executed
    */
-  private void execute(Action action) {
-    handler.handleRequest(action, this);
+  private void execute(Message message) {
+    handler.handleRequest(message, this);
   }
   
   private void close() {

@@ -30,7 +30,7 @@ public class DrawPlanet extends DrawEntity {
 
     // Draw a flag if a planet owns the planet
     if (player != null) {
-      Sprite flagSprite = flagSprites.get(1);
+      Sprite flagSprite = flagSprites.get(player.getTextureID());
 
       flagSprite.setX(planet.getCoordinates().getX() * PPS);
       flagSprite.setY(planet.getCoordinates().getY() * PPS);

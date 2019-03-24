@@ -34,16 +34,20 @@ public enum Route {
   END_TURN                    (GameBoardController.class,     "endTurn"),
   UPDATE_TURN                 (GameBoardController.class,     "updateTurn"),
   SET_PLANET_OWNER            (GameBoardController.class,     "setOwner"),
+  COORDINATES_SAVE            (GameBoardController.class,     "updateCoordinates"),
 
   DIRECT_MINIGAME_START       (MinigameController.class,      "directStart"), // FOR TESTS ONLY
   SEND_MINIGAME_START         (MinigameController.class,      "sendStart"),
   START_MINIGAME              (MinigameController.class,      "show"),
   MINIGAME_MOVE               (MinigameController.class,      "playerMove"),
-  MINIGAME_PLAYER_UPDATE      (MinigameController.class,      "updatePlayer"),
-  SERVER_MINIGAME_END         (MinigameController.class,      "sendEnd"),
+  MINIGAME_STEP               (MinigameController.class,      "playerStep"),
+  MINIGAME_PLAYER_UPDATE      (MinigameController.class,      "updatePlayerStep"),
+  MINIGAME_PLAYER_UPDATE_MOVE (MinigameController.class,      "updatePlayerMove"),
   MINIGAME_END                (MinigameController.class,      "end"),
   MINIGAME_BULLET             (MinigameController.class,      "bulletCreate"),
   MINIGAME_BULLET_SEND        (MinigameController.class,      "bulletShot"),
+  OBJECTIVE_UPDATE            (MinigameController.class,      "updateObjective"),
+  SEND_OBJECTIVE_UPDATE       (MinigameController.class,      "sendObjectiveUpdate"),
 
   START_MUSIC                 (SoundController.class,         "startMusic"),
   FADE_OUT                    (SoundController.class,         "fadeOut"),

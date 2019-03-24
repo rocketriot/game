@@ -8,12 +8,11 @@ import bham.bioshock.common.consts.GridPoint;
 import bham.bioshock.common.models.*;
 import bham.bioshock.common.models.store.Store;
 import bham.bioshock.common.pathfinding.AStarPathfinding;
-import bham.bioshock.communication.Action;
-import bham.bioshock.communication.Command;
 import bham.bioshock.communication.client.IClientService;
+import bham.bioshock.communication.messages.boardgame.EndTurnMessage;
+import bham.bioshock.communication.messages.boardgame.MovePlayerOnBoardMessage;
 import com.google.inject.Inject;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.UUID;
@@ -41,7 +40,7 @@ public class GameBoardController extends Controller {
   }
 
   public void savePlayers(ArrayList<Player> players) {
-    store.setPlayers(players);
+    store.savePlayers(players);
   }
   
   public void setOwner(UUID[] planetOwner) {
@@ -49,6 +48,14 @@ public class GameBoardController extends Controller {
     UUID planetId = planetOwner[1];
     
     store.setPlanetOwner(playerId, planetId);
+  }
+  
+  public void updateCoordinates(Coordinates[] coordinates) {
+    ArrayList<Player> players = store.getPlayers();
+    
+    for(int i=0; i<coordinates.length; i++) {
+      players.get(i).setCoordinates(coordinates[i]);
+    }
   }
 
   public void move(Coordinates destination) {
@@ -61,7 +68,6 @@ public class GameBoardController extends Controller {
     AStarPathfinding pathFinder =
         new AStarPathfinding(
             grid, mainPlayer.getCoordinates(), gridSize, gridSize, store.getPlayers());
-    pathFinder.setStartPosition(mainPlayer.getCoordinates());
 
     // pathsize - 1 since path includes start position
     ArrayList<Coordinates> path = pathFinder.pathfind(destination);
@@ -70,20 +76,13 @@ public class GameBoardController extends Controller {
     // Handle if player doesn't have enough fuel
     if (mainPlayer.getFuel() < pathCost || pathCost == -10) return;
 
-    mainPlayer.createBoardMove(path);
-
-    // Send the updated grid to the server
-    ArrayList<Serializable> arguments = new ArrayList<>();
-    arguments.add(gameBoard);
-    arguments.add(mainPlayer);
-    clientService.send(new Action(Command.MOVE_PLAYER_ON_BOARD, arguments));
+    // Send move request to the server
+    clientService.send(new MovePlayerOnBoardMessage(destination, mainPlayer.getId()));
   }
 
   /** Ends the players turn */
-  public void endTurn() {
-    ArrayList<Serializable> arguments = new ArrayList<>();
-    arguments.add(store.getMainPlayer().getId());
-    clientService.send(new Action(Command.END_TURN, arguments));
+  public void endTurn() {    
+    clientService.send(new EndTurnMessage());
   }
 
   /** Handles server message to end turn */
@@ -92,11 +91,22 @@ public class GameBoardController extends Controller {
   }
 
   /** Player move received from the server */
-  public void moveReceived(Player movingPlayer) {
-    // Update the model
-    Player p = store.getPlayer(movingPlayer.getId());
-    p.setCoordinates(movingPlayer.getCoordinates());
-    p.setFuel(movingPlayer.getFuel());
+  public void moveReceived(MovePlayerOnBoardMessage data) {
+    GameBoard gameBoard = store.getGameBoard();
+    GridPoint[][] grid = gameBoard.getGrid();
+
+    // Get data from the message
+    Coordinates goalCoords = data.coordinates;
+    Player movingPlayer = store.getPlayer(data.id);
+
+    // Initialize path finding
+    int gridSize = store.getGameBoard().GRID_SIZE;
+    AStarPathfinding pathFinder =
+        new AStarPathfinding(
+            grid, movingPlayer.getCoordinates(), gridSize, gridSize, store.getPlayers());
+
+    ArrayList<Coordinates> path = pathFinder.pathfind(goalCoords);
+    movingPlayer.createBoardMove(path);
   }
 
   public void miniGameWon(Player player, Planet planet) {

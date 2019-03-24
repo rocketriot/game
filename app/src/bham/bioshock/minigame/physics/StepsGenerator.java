@@ -1,16 +1,16 @@
 package bham.bioshock.minigame.physics;
 
-import bham.bioshock.common.Position;
-import bham.bioshock.minigame.PlanetPosition;
-import bham.bioshock.minigame.models.Astronaut.Move;
-import bham.bioshock.minigame.models.Entity;
-import bham.bioshock.minigame.worlds.World;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import java.util.Optional;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import bham.bioshock.common.Position;
+import bham.bioshock.minigame.PlanetPosition;
+import bham.bioshock.minigame.models.astronaut.AstronautMove;
+import bham.bioshock.minigame.models.Entity;
+import bham.bioshock.minigame.worlds.World;
 
 public class StepsGenerator {
   
@@ -30,7 +30,7 @@ public class StepsGenerator {
   private final float UNIT = 0.01f;
   private Generator generator;
   
-  private Move currentMove = new Move();
+  private AstronautMove currentMove = new AstronautMove();
 
   public StepsGenerator(World world, Entity entity) {
     this.entity = entity;
@@ -63,12 +63,6 @@ public class StepsGenerator {
       currentMove.jumping = isJumping; 
       this.reset();
     }
-  }
-  
-  public void moveChanged(Move move) {
-    currentMove.movingLeft = move.movingLeft;
-    currentMove.movingRight = move.movingRight;
-    currentMove.jumping = move.jumping;
   }
 
   public void moveStop() {
@@ -128,9 +122,8 @@ public class StepsGenerator {
     
     Step s = null;
     try {
-      s = steps.take(); 
+      s = steps.poll(20, TimeUnit.MILLISECONDS); 
     } catch (InterruptedException e) {
-      
     }
     
     fixUnderground(s);
@@ -149,6 +142,7 @@ public class StepsGenerator {
   }
   
   private void fixUnderground(Step step) {
+    if(step == null) return;
     double dist = entity.distanceFromGround(step.position.x, step.position.y);
     if(dist < -10) {
       step.updatePos(step.position.move(world).up((float) -(dist+10)).pos());
@@ -247,7 +241,7 @@ public class StepsGenerator {
           sleep(DELAY);
         }
       } catch (InterruptedException e) {
-        logger.debug("Steps generator interrupted");
+        logger.trace("Steps generator interrupted");
       }
     }
   }

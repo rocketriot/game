@@ -24,8 +24,8 @@ public abstract class ScreenMaster implements Screen {
   protected FitViewport viewport;
   protected Router router;
 
-  protected float screen_width;
-  protected float screen_height;
+  protected float screenWidth;
+  protected float screenHeight;
 
   protected Texture background;
 
@@ -39,10 +39,9 @@ public abstract class ScreenMaster implements Screen {
     viewport = new FitViewport(Config.GAME_WORLD_WIDTH, Config.GAME_WORLD_HEIGHT);
     stage = new Stage(viewport);
     batch = new SpriteBatch();
-    batch.getProjectionMatrix().setToOrtho2D(0, 0, Config.GAME_WORLD_WIDTH, Config.GAME_WORLD_HEIGHT);
     
-    this.screen_width = Gdx.graphics.getWidth();
-    this.screen_height = Gdx.graphics.getHeight();
+    this.screenWidth = Gdx.graphics.getWidth();
+    this.screenHeight = Gdx.graphics.getHeight();
     
   }
 
@@ -52,17 +51,13 @@ public abstract class ScreenMaster implements Screen {
     
     // Create background
     background = new Texture(Gdx.files.internal(Assets.menuBackground));
-
-    // drawBackground();
   }
 
   protected void drawBackground() {
-    // clear the screen
-    Gdx.gl.glClearColor(0, 0, 0, 0);
-    Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
     batch.begin();
-    batch.draw(background, 0, 0, Config.GAME_WORLD_WIDTH, Config.GAME_WORLD_HEIGHT);
+    batch.disableBlending();
+    batch.draw(background, 0, 0, screenWidth, screenHeight);
+    batch.enableBlending();
     batch.end();
   }
 
@@ -86,6 +81,9 @@ public abstract class ScreenMaster implements Screen {
 
   @Override
   public void render(float delta) {
+    Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+    batch.getProjectionMatrix().setToOrtho2D(0, 0, screenWidth, screenHeight);
+    
     drawBackground();
     stage.act(Gdx.graphics.getDeltaTime());
     stage.draw();
@@ -96,8 +94,8 @@ public abstract class ScreenMaster implements Screen {
     stage.getViewport().update(width, height, true);
     stage.act(Gdx.graphics.getDeltaTime());
 
-    screen_width = Gdx.graphics.getWidth();
-    screen_height = Gdx.graphics.getHeight();
+    screenWidth = Gdx.graphics.getWidth();
+    screenHeight = Gdx.graphics.getHeight();
   }
 
   @Override

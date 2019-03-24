@@ -1,13 +1,12 @@
 package bham.bioshock.common.models;
 
 import bham.bioshock.common.Direction;
-import bham.bioshock.communication.Sendable;
-
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.UUID;
 
 /** Stores the data of a player on the game board */
-public class Player extends Sendable {
+public class Player implements Serializable {
 
   private static final long serialVersionUID = 5775730008817100527L;
 
@@ -47,20 +46,19 @@ public class Player extends Sendable {
   /** The maximum amount of fuel a player hold at one time */
   public static final float MAX_FUEL = 100f;
 
-  public Player() {
-    this.id = UUID.randomUUID();
-    this.textureID = 0;
-  }
-
-  public Player(String username) {
-    this();
-    this.username = username;
-  }
-
-  public Player(String username, boolean isCpu) {
-    this();
+  public Player(UUID id, String username, Boolean isCpu) {
+    this.id = id;
     this.username = username;
     this.isCpu = isCpu;
+    this.textureID = 0;
+  }
+  
+  public Player(String username, boolean isCpu) {
+    this(UUID.randomUUID(), username, isCpu);
+  }
+  
+  public Player(String username) {
+    this(username, false);
   }
 
   public UUID getId() {
@@ -159,8 +157,21 @@ public class Player extends Sendable {
       }
     }
   }
+  
+  @Override
+  public boolean equals(Object o) { 
+      // If the object is compared with itself then return true   
+      if (o == this) { 
+          return true; 
+      }
+      if (!(o instanceof Player)) { 
+          return false; 
+      } 
+      Player p = (Player) o; 
+      return this.id.equals(p.getId());
+  } 
 
-  public class Move extends Sendable {
+  public class Move implements Serializable {
     private Direction direction;
     private Coordinates coordinates;
 
