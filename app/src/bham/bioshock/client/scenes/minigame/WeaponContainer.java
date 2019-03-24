@@ -55,7 +55,7 @@ public class WeaponContainer extends HudElement {
     
     // Only show weapon when the player has a weapon
     Astronaut mainPlayer = store.getMinigameStore().getMainPlayer();
-    weapon.setVisible(mainPlayer.haveGun());
+    weapon.setVisible(mainPlayer.getEquipment().haveGun);
   }
 
   /** Draws the background for the weapon container */

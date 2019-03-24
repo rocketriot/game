@@ -24,21 +24,17 @@ import bham.bioshock.communication.messages.minigame.RequestMinigameStartMessage
 import bham.bioshock.minigame.models.Bullet;
 import bham.bioshock.minigame.objectives.Objective;
 import bham.bioshock.minigame.worlds.World;
-import com.google.inject.Inject;
-
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.UUID;
 
 public class MinigameController extends Controller {
 
   private static final Logger logger = LogManager.getLogger(MinigameController.class);
-  
+
   private ClientService clientService;
   private MinigameStore localStore;
-  
+
   @Inject
-  public MinigameController(Store store, Router router, BoardGame game, ClientService clientService) {
+  public MinigameController(Store store, Router router, BoardGame game,
+      ClientService clientService) {
     super(store, router, game);
     this.clientService = clientService;
     localStore = store.getMinigameStore();
@@ -53,48 +49,51 @@ public class MinigameController extends Controller {
   public void sendStart(UUID planetId) {
     clientService.send(new RequestMinigameStartMessage(planetId));
   }
-  
+
   /**
    * Request direct minigame start (no planet is being captured)
    */
   public void directStart() {
     clientService.send(new RequestMinigameStartMessage(null));
   }
-  
+
   /**
    * Send information of astronaut's move
    */
   public void playerMove() {
     clientService.send(new MinigamePlayerMoveMessage(localStore.getMainPlayer()));
   }
-  
+
   /**
    * Send information about astronaut current position and speed vector
    */
   public void playerStep() {
     clientService.send(new MinigamePlayerStepMessage(localStore.getMainPlayer()));
   }
-  
+
   /**
    * Update astronaut speed vector, position and other details from the server
    * 
    * @param data
    */
   public void updatePlayerStep(MinigamePlayerStepMessage data) {
-    if(localStore == null) return;
-    localStore.updatePlayerStep(data.created, data.playerId, data.speed, data.position, data.haveGun);
+    if (localStore == null)
+      return;
+    localStore.updatePlayerStep(data.created, data.playerId, data.speed, data.position,
+        data.equipment);
   }
-  
+
   /**
    * Update player move from the server
    * 
    * @param data
    */
   public void updatePlayerMove(MinigamePlayerMoveMessage data) {
-    if(localStore == null) return;
+    if (localStore == null)
+      return;
     localStore.updatePlayerMove(data.playerId, data.move);
   }
-  
+
   /**
    * Send information about new bullet shot by the player
    * 
@@ -103,7 +102,7 @@ public class MinigameController extends Controller {
   public void bulletShot(Bullet bullet) {
     clientService.send(new BulletShotMessage(bullet));
   }
-  
+
   /**
    * Create a bullet based on the information from the server
    * 
@@ -111,55 +110,57 @@ public class MinigameController extends Controller {
    */
   public void bulletCreate(BulletShotMessage data) {
     Position p = data.position;
-    if(localStore == null || localStore.getMainPlayer() == null) return;
-    Bullet b = new Bullet(localStore.getWorld(), p.x, p.y, localStore.getMainPlayer());
+    if (localStore == null || localStore.getMainPlayer() == null)
+      return;
+    Bullet b = new Bullet(localStore.getWorld(), p.x, p.y, data.shooterId);
     b.setSpeedVector(data.speedVector);
     b.load();
     b.setCollisionHandler(localStore.getCollisionHandler());
     localStore.addEntity(b);
   }
-  
+
   /**
-   * Update objective from the server
-   * Exact logic for update is handled by the objective itself
+   * Update objective from the server Exact logic for update is handled by the objective itself
    * 
    * @param message
    */
   public void updateObjective(Message message) {
-    if(localStore == null) return;
+    if (localStore == null)
+      return;
     Objective o = localStore.getObjective();
-    if(o == null) return;
+    if (o == null)
+      return;
     o.handleMessage(message);
   }
-  
+
   /**
    * Send objective update, this method is called by the objective itself
    * 
    * @param message
    */
   public void sendObjectiveUpdate(Message message) {
-    if(message.command.equals(Command.MINIGAME_OBJECTIVE)) {
-      clientService.send(message);      
+    if (message.command.equals(Command.MINIGAME_OBJECTIVE)) {
+      clientService.send(message);
     } else {
       logger.fatal("Incorrect message in objective update");
     }
   }
-  
+
   /**
-   * Start minigame with provided world and objective
-   * Seed the minigameStore and initialise objective
+   * Start minigame with provided world and objective Seed the minigameStore and initialise
+   * objective
    * 
    * @param data
    */
   public void show(MinigameStartMessage data) {
     World world = data.world;
     Objective objective = data.objective;
-    MinigameStore localStore = new MinigameStore();    
-    
-    // Initialise store 
-    localStore.seed(store, world, objective);
+    MinigameStore localStore = new MinigameStore();
+
+    // Initialise store
+    localStore.seed(store, world, objective, data.planetId);
     store.setMinigameStore(localStore);
-    
+
     // Initialise objective
     objective.init(world, router, store);
     objective.seed(localStore);
@@ -172,15 +173,16 @@ public class MinigameController extends Controller {
 
   /**
    * Stop the minigame, show the winner, update the owner and go back to the board
+   * 
    * @param data
    */
-  public void end(EndMinigameMessage data){
+  public void end(EndMinigameMessage data) {
     // Only if there's a winner
-    if(data.winnerID != null) {
+    if (data.winnerID != null) {
       Player p = store.getPlayer(data.winnerID);
       p.addPoints(data.points);
       if (data.initiatorWon) {
-        UUID[] planetOwner = new UUID[]{data.winnerID, data.planetID};
+        UUID[] planetOwner = new UUID[] {data.winnerID, data.planetID};
         router.call(Route.SET_PLANET_OWNER, planetOwner);
         store.setMinigameWinner(p.getUsername());
       } else {

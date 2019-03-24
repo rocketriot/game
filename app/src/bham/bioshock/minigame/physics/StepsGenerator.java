@@ -8,7 +8,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import bham.bioshock.common.Position;
 import bham.bioshock.minigame.PlanetPosition;
-import bham.bioshock.minigame.models.Astronaut.Move;
+import bham.bioshock.minigame.models.astronaut.AstronautMove;
 import bham.bioshock.minigame.models.Entity;
 import bham.bioshock.minigame.worlds.World;
 
@@ -30,7 +30,7 @@ public class StepsGenerator {
   private final float UNIT = 0.01f;
   private Generator generator;
   
-  private Move currentMove = new Move();
+  private AstronautMove currentMove = new AstronautMove();
 
   public StepsGenerator(World world, Entity entity) {
     this.entity = entity;
