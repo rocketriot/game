@@ -1,8 +1,9 @@
 package bham.bioshock.communication.client;
 
-import bham.bioshock.communication.common.MessageHandler;
 import bham.bioshock.communication.common.Receiver;
 import bham.bioshock.communication.common.Sender;
+import bham.bioshock.communication.interfaces.MessageHandler;
+import bham.bioshock.communication.interfaces.MessageService;
 import bham.bioshock.communication.messages.Message;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -14,7 +15,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 /** Interprets commands received from server */
-public class ClientService extends Thread implements IClientService, MessageHandler {
+public class ClientService extends Thread implements MessageService, MessageHandler {
 
   private static final Logger logger = LogManager.getLogger(ClientService.class);
 
@@ -25,7 +26,7 @@ public class ClientService extends Thread implements IClientService, MessageHand
   private ObjectOutputStream toServer;
 
   private BlockingQueue<Message> queue = new LinkedBlockingQueue<>();
-  private IClientHandler handler;
+  private MessageHandler handler;
   private boolean connectionCreated = false;
 
   /**
@@ -37,6 +38,7 @@ public class ClientService extends Thread implements IClientService, MessageHand
    * @param client main client
    */
   public ClientService(Socket socket, ObjectInputStream fromServer, ObjectOutputStream toServer) {
+    super("ClientService");
     connectionCreated = true;
     // save socket and streams for communication
     this.socket = socket;
@@ -62,7 +64,7 @@ public class ClientService extends Thread implements IClientService, MessageHand
       while (!isInterrupted()) {
         // Execute action from a blocking queue
         if (handler != null) {
-          handler.execute(queue.take());
+          handler.handle(queue.take());
         }
       }
     } catch (InterruptedException e) {
@@ -74,7 +76,7 @@ public class ClientService extends Thread implements IClientService, MessageHand
 
   }
 
-  public void registerHandler(IClientHandler handler) {
+  public void registerHandler(MessageHandler handler) {
     this.handler = handler;
   }
 

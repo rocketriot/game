@@ -1,5 +1,6 @@
 package bham.bioshock.client.screens;
 
+import bham.bioshock.Config;
 import bham.bioshock.client.Assets;
 import bham.bioshock.client.Route;
 import bham.bioshock.client.Router;
@@ -7,7 +8,6 @@ import bham.bioshock.client.controllers.SoundController;
 import bham.bioshock.client.gameLogic.gameboard.*;
 import bham.bioshock.client.scenes.gameboard.GameBoardHud;
 import bham.bioshock.common.Direction;
-import bham.bioshock.common.consts.Config;
 import bham.bioshock.common.consts.GridPoint;
 import bham.bioshock.common.models.*;
 import bham.bioshock.common.models.store.Store;

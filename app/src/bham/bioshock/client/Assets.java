@@ -46,7 +46,7 @@ public class Assets {
 
   // Minigame HUD assets
   public static final String gun = "app/assets/minigame/gun.png";
-  
+
   // Minigame Astronauts
   public static final String hearts = "app/assets/minigame/hearts.png";
   public static final String astroBase = "app/assets/minigame/astronauts/";

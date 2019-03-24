@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import bham.bioshock.communication.interfaces.MessageHandler;
 import bham.bioshock.communication.messages.Message;
 
 public class Receiver extends Thread {
@@ -19,6 +20,7 @@ public class Receiver extends Thread {
    * @param client the reader with which this receiver will read data
    */
   public Receiver(MessageHandler actionHandler, ObjectInputStream client) {
+    super("Receiver");
     this.client = client;
     this.actionHandler = actionHandler;
   }

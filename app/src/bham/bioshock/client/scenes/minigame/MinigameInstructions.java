@@ -1,7 +1,7 @@
 package bham.bioshock.client.scenes.minigame;
 
+import bham.bioshock.Config;
 import bham.bioshock.client.FontGenerator;
-import bham.bioshock.common.consts.Config;
 import bham.bioshock.common.models.store.Store;
 import java.text.DecimalFormat;
 import com.badlogic.gdx.Gdx;
