@@ -10,6 +10,7 @@ import bham.bioshock.minigame.models.Gun;
 import bham.bioshock.minigame.models.Heart;
 import bham.bioshock.minigame.models.Platform;
 import bham.bioshock.minigame.models.Rocket;
+import bham.bioshock.minigame.worlds.World;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.assets.AssetManager;
 
@@ -18,12 +19,14 @@ public class MinigameScreen implements Screen {
   private Renderer renderer;
   private boolean loading = true;
   private AssetManager manager;
+  private World world;
 
   private LoadingScreen loadingScreen;
   
   public MinigameScreen(Store store, Router router) {
     this.loadingScreen = new LoadingScreen(router);
     manager = new AssetManager();
+    world = store.getMinigameStore().getWorld();
     this.renderer = new Renderer(store, router, manager);
   }
 
@@ -37,9 +40,8 @@ public class MinigameScreen implements Screen {
     Gun.loadTextures(manager);
     Bullet.loadTextures(manager);
     Flag.loadTextures(manager);
-    Platform.loadTextures(manager);
-    Heart.loadTextures(manager);
-
+    World.loadTextures(manager, world.getTextureId());
+    Platform.loadTextures(manager, world.getTextureId());
   }
 
 

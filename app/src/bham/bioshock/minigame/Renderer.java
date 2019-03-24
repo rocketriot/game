@@ -98,8 +98,9 @@ public class Renderer {
     Gun.createTextures(manager);
     Bullet.createTextures(manager);
     Flag.createTextures(manager);
-    Platform.createTextures(manager);
     Heart.createTextures(manager);
+    World.createTextures(manager, world.getTextureId());
+    Platform.createTextures(manager, world.getTextureId());
 
     background = new Sprite(new Texture(Gdx.files.internal("app/assets/backgrounds/game.png")));
 
@@ -182,7 +183,6 @@ public class Renderer {
     backgroundBatch.dispose();
     textBatch.dispose();
     background.getTexture().dispose();
-    world.dispose();
     hud.dispose();
   }
 }

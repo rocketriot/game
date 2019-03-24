@@ -3,8 +3,6 @@ package bham.bioshock.minigame.seeders;
 import bham.bioshock.minigame.PlanetPosition;
 import bham.bioshock.minigame.worlds.World;
 import java.util.ArrayList;
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import bham.bioshock.common.Position;
 import bham.bioshock.minigame.models.Gun;
@@ -79,11 +77,6 @@ public class TestingWorld extends World {
 
   public ArrayList<Platform> getPlatforms() {
     return platforms;
-  }
-
-  @Override
-  public Texture getTexture() {
-    return new Texture(Gdx.files.internal("app/assets/minigame/planet1.png"));
   }
 
   /**

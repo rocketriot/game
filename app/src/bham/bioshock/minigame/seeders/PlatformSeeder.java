@@ -35,22 +35,13 @@ public class PlatformSeeder {
    */
   public void seed() {
     // generate for top right quarter
-    generatePlatforms(0, 90, "High");
+    generatePlatforms(0, 90, generateFrequency());
     // generate for bottom right quarter
-    generatePlatforms(90, 180, "High");
+    generatePlatforms(90, 180, generateFrequency());
     // generate for bottom left quarter
-    generatePlatforms(180, 270, "High");
+    generatePlatforms(180, 270, generateFrequency());
     // generate for top left quarter
-    generatePlatforms(270, 360, "High");
-    /*
-    // generate for top right quarter
-    generatePlatforms(0, 90, "High");
-    // generate for bottom right quarter
-    generatePlatforms(90, 180, "High");
-    // generate for bottom left quarter
-    generatePlatforms(180, 270, "High");
-    // generate for top left quarter
-    generatePlatforms(270, 360, "High");*/
+    generatePlatforms(270, 360, generateFrequency());
   }
 
   /**
@@ -62,7 +53,7 @@ public class PlatformSeeder {
   private String generateFrequency() {
     // a result of 1 is low frequency, 2 is medium and 3 is high
     Random generator = new Random();
-    int frequency = generator.nextInt((3 - 1) + 1) + 1;
+    int frequency = generator.nextInt(3) + 1;
 
     switch (frequency) {
       case 1:

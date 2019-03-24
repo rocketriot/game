@@ -1,5 +1,7 @@
 package bham.bioshock.minigame.objectives;
 
+import bham.bioshock.minigame.models.Platform;
+import java.util.ArrayList;
 import java.util.Random;
 import java.util.UUID;
 import bham.bioshock.client.Route;
@@ -25,9 +27,18 @@ public class CaptureTheFlag extends Objective {
 
   public CaptureTheFlag(World world) {
     Random r = new Random();
-    float angle = (r.nextInt(1000) % 360);
-    float distance = (float) (world.getPlanetRadius() + r.nextInt(500));
-    flagPosition = world.convert(new PlanetPosition(angle, distance));
+    ArrayList<Platform> allPlatforms = world.getPlatforms();
+    ArrayList<Platform> platforms = new ArrayList<>();
+
+    for (Platform platform : allPlatforms){
+      if (platform.getPlanetPos().fromCenter < 2400){
+        platforms.add(platform);
+      }
+    }
+
+    PlanetPosition pPos = platforms.get(r.nextInt(platforms.size())).getPlanetPos();
+    pPos.fromCenter += 25;
+    flagPosition = world.convert(pPos);
   }
 
   @Override

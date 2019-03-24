@@ -2,17 +2,14 @@ package bham.bioshock.minigame;
 
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputAdapter;
-import com.badlogic.gdx.math.Vector3;
 
 import bham.bioshock.client.Route;
 import bham.bioshock.client.Router;
 import bham.bioshock.client.controllers.SoundController;
 import bham.bioshock.client.scenes.minigame.MinigameHud;
-import bham.bioshock.common.Position;
 import bham.bioshock.common.models.store.MinigameStore;
 import bham.bioshock.minigame.models.*;
 import bham.bioshock.minigame.physics.CollisionHandler;
-import bham.bioshock.minigame.physics.SpeedVector;
 import bham.bioshock.minigame.worlds.World;
 
 public class InputListener extends InputAdapter {
@@ -36,7 +33,7 @@ public class InputListener extends InputAdapter {
 
   @Override
   public boolean keyDown(int keyCode) {
-    if (Input.Keys.SPACE == keyCode && !shooting && mainPlayer.haveGun()) {
+    if (Input.Keys.SPACE == keyCode && !shooting && mainPlayer.getEquipment().haveGun) {
       createBullet();
       SoundController.playSound("laser");
       shooting = true;
@@ -84,28 +81,11 @@ public class InputListener extends InputAdapter {
   }
 
   public void createBullet() {
-    Position pos = mainPlayer.getPos();
-    PlanetPosition pp = world.convert(pos);
-    pp.fromCenter += mainPlayer.getHeight() / 2;
-    
-    SpeedVector speed = mainPlayer.getSpeedVector().copy();
-    
-    if (mainPlayer.getMove().movingRight) {
-      pp.angle += world.angleRatio(pp.fromCenter) * 80;
-      speed.apply(world.getAngleTo(pos.x, pos.y)+90 , Bullet.launchSpeed);
-    } else {
-      pp.angle -= world.angleRatio(pp.fromCenter) * 80;
-      speed.apply(world.getAngleTo(pos.x, pos.y)-90 , Bullet.launchSpeed);
-    }
-
-    Position bulletPos = world.convert(pp);
-    Bullet b = new Bullet(world, bulletPos.x, bulletPos.y, mainPlayer);
-    // Apply bullet speed
-    b.setSpeedVector(speed);
-
-    router.call(Route.MINIGAME_BULLET_SEND, b);
+    Bullet b = Bullet.createForPlayer(world, mainPlayer);
     b.load();
     b.setCollisionHandler(collisionHandler);
+    b.update(0);
+    router.call(Route.MINIGAME_BULLET_SEND, b);
     localStore.addEntity(b);
   }
 

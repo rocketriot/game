@@ -15,6 +15,7 @@ import bham.bioshock.minigame.worlds.World;
 import bham.bioshock.minigame.models.Astronaut;
 import bham.bioshock.minigame.models.Entity.State;
 import bham.bioshock.minigame.models.Gun;
+import bham.bioshock.minigame.models.astronaut.Equipment;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashMap;
@@ -72,7 +73,7 @@ public abstract class Objective implements Serializable {
    * @param player: the player who got shot
    * @param killer: the player who shot
    */
-  public final void gotShot(Astronaut player, Astronaut killer) {
+  public final void gotShot(Astronaut player, UUID killer) {
     if(player.is(State.REMOVING)) return;
     if(!store.isHost()) return;
 
@@ -82,10 +83,10 @@ public abstract class Objective implements Serializable {
     }
     if(h == null || h > 1) {
       // Decrease health request
-      router.call(Route.SEND_OBJECTIVE_UPDATE, new UpdateHealthMessage(player.getId(), killer.getId()));
-    } else {
+      router.call(Route.SEND_OBJECTIVE_UPDATE, new UpdateHealthMessage(player.getId(), killer));
+    } else {      
       // Send kill and update request
-      router.call(Route.SEND_OBJECTIVE_UPDATE, new KillAndRespawnMessage(player.getId(), killer.getId(), getRandomRespawn()));
+      router.call(Route.SEND_OBJECTIVE_UPDATE, new KillAndRespawnMessage(player.getId(), killer, getRandomRespawn()));
     }
   }
 
@@ -104,7 +105,12 @@ public abstract class Objective implements Serializable {
    */
   public void handle(UpdateHealthMessage m) {
     if(lastRespawn.get(m.playerId) == null || lastRespawn.get(m.playerId) < m.created) {
-      synchronized(health) {
+      Astronaut astro = localStore.getPlayer(m.playerId);
+      
+      Equipment equipment = astro.getEquipment();
+      if(equipment.haveShield) {
+        equipment.removeShieldHealth();
+      } else {
         health.computeIfPresent(m.playerId, (k, v) -> v - 1);
       }
     }
@@ -160,10 +166,9 @@ public abstract class Objective implements Serializable {
    */
   protected void killAndRespawnPlayer(UUID playerId, Position randomRespawn) {
     Astronaut player = localStore.getPlayer(playerId);
-    boolean hadGun = player.haveGun();
+    boolean hadGun = player.getEquipment().haveGun;
     Position oldPosition = player.getPos().copy();
-
-    if(player.is(State.REMOVING)) return;
+    
     player.killAndRespawn(randomRespawn);
 
     if (hadGun) {
