@@ -6,10 +6,10 @@ import bham.bioshock.minigame.models.Platform;
 import bham.bioshock.minigame.models.Rocket;
 
 import java.util.ArrayList;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 public class JoinScreenWorld extends World {
+  private static final long serialVersionUID = 1L;
   private double radius;
   private double gravity;
   Position gravityCenter = new Position(0, 0);
@@ -65,15 +65,10 @@ public class JoinScreenWorld extends World {
   }
 
   @Override
-  public Texture getTexture() {
-    return null;
-  }
-
-  @Override
   public ArrayList<Platform> getPlatformPath(Platform platform) {
     return null;
   }
-
+  
   @Override
   public void afterDraw(SpriteBatch batch) {}
 }

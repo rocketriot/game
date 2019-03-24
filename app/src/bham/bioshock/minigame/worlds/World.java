@@ -1,11 +1,13 @@
 package bham.bioshock.minigame.worlds;
 
+import bham.bioshock.client.Assets;
 import bham.bioshock.common.Position;
 import bham.bioshock.minigame.PlanetPosition;
 import bham.bioshock.minigame.models.Gun;
 import bham.bioshock.minigame.models.Platform;
 import bham.bioshock.minigame.models.Rocket;
 import bham.bioshock.minigame.physics.Vector;
+import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
@@ -18,14 +20,31 @@ import java.util.ArrayList;
 abstract public class World implements Serializable {
 
   private static final long serialVersionUID = 4046769956963960819L;
-  protected int textureOffset = 530;
+  protected static int textureOffset = 530;
+  protected int textureId;
+  static Texture texture;
+  static Texture frontTexture;
+  
+
 
   /**
    * Draws planet texture on the screen
    */
   public void draw(SpriteBatch batch) {
-    float radius = (float) getPlanetRadius() + textureOffset;
-    batch.draw(getTexture(), -radius, -radius, radius * 2, radius * 2);
+    if(texture == null) return;
+    float radius = (float) getPlanetRadius()+textureOffset;
+    batch.draw(texture, -radius, -radius, radius*2, radius*2);
+  }
+  
+
+  public void afterDraw(SpriteBatch batch) {
+    if(textureId == 4) {   
+      if(frontTexture == null) return;
+      batch.begin();
+      float radius = (float) getPlanetRadius()+textureOffset;
+      batch.draw(frontTexture, -radius, -radius, radius*2, radius*2);
+      batch.end();      
+    }
   }
 
   /**
@@ -163,13 +182,6 @@ abstract public class World implements Serializable {
   abstract public ArrayList<Platform> getPlatforms();
 
   /**
-   * Gets texture.
-   *
-   * @return the texture
-   */
-  abstract public Texture getTexture();
-
-  /**
    * Method to get the platform path to a platform inclusive
    *
    * @param platform the platform you want a path to
@@ -177,13 +189,40 @@ abstract public class World implements Serializable {
    */
   abstract public ArrayList<Platform> getPlatformPath(Platform platform);
 
-  public abstract void afterDraw(SpriteBatch batch);
+  /**
+   * Get texture Id
+   * 
+   * @return
+   */
+  public int getTextureId() {
+    return textureId;
+  }
 
-  public void dispose() {
-    Texture t = getTexture();
-    if (t != null) {
-      t.dispose();
+  /**
+   * Load textures from the asset manager
+   * 
+   * @param manager
+   * @param id
+   */
+  public static void loadTextures(AssetManager manager, int id) {
+    manager.load(Assets.planetBase + id + ".png", Texture.class);
+    if(id == 4) {
+      manager.load(Assets.planetBase + "4_front.png", Texture.class);
     }
+  }
+  
+  /**
+   * Create textures using asset manager
+   * 
+   * @param manager
+   * @param id
+   */
+  public static void createTextures(AssetManager manager, int id) {
+    texture = manager.get(Assets.planetBase + id + ".png", Texture.class);
+    if(id == 4) {
+      textureOffset = 770;
+      frontTexture = manager.get(Assets.planetBase + "4_front.png", Texture.class);
+    } 
   }
 
 }
