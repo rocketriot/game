@@ -4,9 +4,8 @@ public enum Command {
   // @formatter:off
 
   // Connecting to a server
-  COMM_DISCOVER,
-  COMM_DISCOVER_RESPONSE,
-  UNKNOWN,
+  COMM_DISCOVER_REQ,
+  COMM_DISCOVER_RES,
   TEST,
 
   // Creating a game
@@ -15,6 +14,7 @@ public enum Command {
   ADD_PLAYER,
   REMOVE_PLAYER,
   START_GAME,
+  RECONNECT_PLAYER,
 
   // Game board
   GET_GAME_BOARD,

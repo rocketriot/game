@@ -9,10 +9,24 @@ public class RequestMinigameStartMessage extends Message {
   private static final long serialVersionUID = 2557419532991502272L;
 
   public final UUID planetId;
-  
-  public RequestMinigameStartMessage(UUID planetId) {
-    super(planetId == null ? Command.MINIGAME_DIRECT_START : Command.MINIGAME_START);
+  public final Integer objectiveId;
+
+  public RequestMinigameStartMessage(UUID planetId, Integer objectiveId) {
+    super(Command.MINIGAME_START);
     this.planetId = planetId;
+    this.objectiveId = objectiveId;
+  }
+
+  public RequestMinigameStartMessage(UUID planetId) {
+    super(Command.MINIGAME_START);
+    this.planetId = planetId;
+    this.objectiveId = null;
+  }
+  
+  public RequestMinigameStartMessage() {
+    super(Command.MINIGAME_DIRECT_START);
+    this.planetId = null;
+    this.objectiveId = null;
   }
 
 }

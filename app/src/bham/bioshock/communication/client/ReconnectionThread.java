@@ -14,6 +14,7 @@ public class ReconnectionThread extends Thread {
   private CommunicationClient commClient;
   
   public ReconnectionThread(CommunicationClient commClient, Router router) {
+    super("ReconnectionThread");
     this.router = router;
     this.commClient = commClient;
   }
@@ -25,6 +26,7 @@ public class ReconnectionThread extends Thread {
 
         if (!service.isPresent() || !service.get().isCreated()) {
           router.call(Route.RECONNECT, true);
+          commClient.reconnect();
         } else {
           router.call(Route.RECONNECT, false);
         }

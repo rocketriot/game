@@ -1,8 +1,5 @@
 package bham.bioshock.common.models;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.files.FileHandle;
-
 import java.io.Serializable;
 import java.util.Random;
 import java.util.UUID;
@@ -41,9 +38,8 @@ public class Planet implements Serializable {
   }
 
   private void randomiseTexture() {
-    FileHandle[] fh = Gdx.files.internal("app/assets/entities/planets").list();
     Random r = new Random();
-    this.setTextureID(r.nextInt(fh.length));
+    this.setTextureID(r.nextInt(5));
   }
 
   public String getName() {

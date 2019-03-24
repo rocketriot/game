@@ -7,12 +7,12 @@ import bham.bioshock.common.models.GameBoard;
 import bham.bioshock.common.models.store.Store;
 import bham.bioshock.communication.client.ClientService;
 import bham.bioshock.communication.client.CommunicationClient;
-import bham.bioshock.communication.client.IClientService;
+import bham.bioshock.communication.interfaces.MessageService;
 
 public class BoardGameModule extends AbstractModule {
   @Override 
   protected void configure() {
-    bind(IClientService.class).to(ClientService.class);
+    bind(MessageService.class).to(ClientService.class);
   }
   
   @Provides

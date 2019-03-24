@@ -4,7 +4,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import com.badlogic.gdx.Gdx;
 import com.google.inject.Inject;
-import bham.bioshock.communication.client.IClientHandler;
+import bham.bioshock.communication.interfaces.MessageHandler;
 import bham.bioshock.communication.messages.Message;
 import bham.bioshock.communication.messages.boardgame.GameBoardMessage;
 import bham.bioshock.communication.messages.boardgame.MovePlayerOnBoardMessage;
@@ -15,7 +15,7 @@ import bham.bioshock.communication.messages.minigame.MinigamePlayerMoveMessage;
 import bham.bioshock.communication.messages.minigame.MinigamePlayerStepMessage;
 import bham.bioshock.communication.messages.minigame.MinigameStartMessage;
 
-public class ClientHandler implements IClientHandler {
+public class ClientHandler implements MessageHandler {
   
   private static final Logger logger = LogManager.getLogger(ClientHandler.class);
   private Router router;
@@ -25,7 +25,7 @@ public class ClientHandler implements IClientHandler {
     this.router = router;
   }
   
-  public void execute(Message message) {
+  public void handle(Message message) {
     Gdx.app.postRunnable(
       () -> {
         switch (message.command) {
@@ -39,16 +39,15 @@ public class ClientHandler implements IClientHandler {
             router.call(Route.REMOVE_PLAYER, data.playerId);
             break;
           }
-          case START_GAME: {
-            router.call(Route.GAME_BOARD_SHOW);
-            break;
-          }
           case GET_GAME_BOARD: {
             GameBoardMessage data = (GameBoardMessage) message;
             
             router.call(Route.PLAYERS_SAVE, data.cpuPlayers);  
             router.call(Route.COORDINATES_SAVE, data.coordinates);  
             router.call(Route.GAME_BOARD_SAVE, data.gameBoard);
+            if(data.startGame) {
+              router.call(Route.GAME_BOARD_SHOW);              
+            }
             break;
           }
           case MOVE_PLAYER_ON_BOARD: {
@@ -96,5 +95,11 @@ public class ClientHandler implements IClientHandler {
             logger.error("Received unhandled command: " + message.command.toString());
           }}
       });
+  }
+
+  @Override
+  public void abort() {
+    // TODO Auto-generated method stub
+    
   }
 }

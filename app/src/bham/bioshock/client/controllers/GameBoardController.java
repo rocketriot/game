@@ -8,7 +8,7 @@ import bham.bioshock.common.consts.GridPoint;
 import bham.bioshock.common.models.*;
 import bham.bioshock.common.models.store.Store;
 import bham.bioshock.common.pathfinding.AStarPathfinding;
-import bham.bioshock.communication.client.IClientService;
+import bham.bioshock.communication.interfaces.MessageService;
 import bham.bioshock.communication.messages.boardgame.EndTurnMessage;
 import bham.bioshock.communication.messages.boardgame.MovePlayerOnBoardMessage;
 import com.google.inject.Inject;
@@ -18,10 +18,10 @@ import java.util.Random;
 import java.util.UUID;
 
 public class GameBoardController extends Controller {
-  private IClientService clientService;
+  private MessageService clientService;
 
   @Inject
-  public GameBoardController(Router router, Store store, IClientService clientService, BoardGame game) {
+  public GameBoardController(Router router, Store store, MessageService clientService, BoardGame game) {
     super(store, router, game);
     this.clientService = clientService;
     this.router = router;
