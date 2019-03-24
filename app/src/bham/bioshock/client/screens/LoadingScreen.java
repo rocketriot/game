@@ -12,7 +12,7 @@ import bham.bioshock.client.Router;
 public class LoadingScreen extends ScreenMaster {
   
   private BitmapFont font;
-  private int progress;
+  private String text;
   GlyphLayout layout;
   
   
@@ -20,12 +20,12 @@ public class LoadingScreen extends ScreenMaster {
     super(router);
     stage = new Stage(new ScreenViewport());
     batch = stage.getBatch();
-    progress = 0;
+    text = "";
     layout = new GlyphLayout();
   }
 
-  public void setProgress(int p) {
-    progress = p;
+  public void setText(String text) {
+    this.text = text;
   }
   
   @Override
@@ -42,7 +42,6 @@ public class LoadingScreen extends ScreenMaster {
     float x = screenWidth / 2;
     float y = screenHeight / 2;
 
-    String text = progress + "%";
     layout.setText(font, text);
     batch.begin();
     font.draw(batch, text, x - layout.width, y - layout.height);

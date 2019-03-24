@@ -11,7 +11,6 @@ import bham.bioshock.minigame.models.Platform;
 import bham.bioshock.minigame.models.Rocket;
 import java.util.Collections;
 
-
 public class RandomWorld extends World {
 
   private static final long serialVersionUID = -5432716795106522826L;

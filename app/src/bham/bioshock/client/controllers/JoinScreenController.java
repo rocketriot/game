@@ -101,9 +101,7 @@ public class JoinScreenController extends Controller {
     ClientService service = commClient.connect();
     service.registerHandler(clientHandler);
     
-    ReconnectionThread reconnect = new ReconnectionThread(commClient, router);
-    reconnect.start();
-    commClient.setReconnectionThread(reconnect);
+    commClient.startReconnectionThread(router);
 
     // Add the player to the server
     service.send(new RegisterMessage(player));
@@ -128,7 +126,7 @@ public class JoinScreenController extends Controller {
 
     Optional<ClientService> clientService = commClient.getConnection();
     if(clientService.isPresent()) {
-      clientService.get().send(new JoinScreenMoveMessage(playerId, animation));  
+      clientService.get().send(new JoinScreenMoveMessage(playerId, animation.getPos(), animation.getRotation()));  
     } else {
       logger.fatal("ClientService doesn't exists!");
     }

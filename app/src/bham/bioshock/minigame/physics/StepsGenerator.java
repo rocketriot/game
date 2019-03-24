@@ -175,6 +175,10 @@ public class StepsGenerator {
 
   private class Generator extends Thread {
 
+    public Generator() {
+      super("Generator - " + entity.getClass().getSimpleName());
+    }
+    
     private final int DELAY = 0;
 
     private void applyMovement(double angle, SpeedVector speed) {

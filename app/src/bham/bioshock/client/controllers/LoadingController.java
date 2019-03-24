@@ -14,8 +14,10 @@ public class LoadingController extends Controller {
     super(store, router, game);
   }
   
-  public void show() {
-    setScreen(new LoadingScreen(router));
+  public void show(String text) {
+    LoadingScreen screen = new LoadingScreen(router);
+    screen.setText(text);
+    setScreen(screen);
   }
   
   public void reconnect(Boolean v) {

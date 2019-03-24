@@ -14,8 +14,9 @@ public class GameBoardMessage extends Message {
   public final ArrayList<Player> cpuPlayers;
   public final Coordinates[] coordinates;
   public final GameBoard gameBoard;
+  public final boolean startGame;
   
-  public GameBoardMessage(GameBoard gameBoard, ArrayList<Player> players, ArrayList<Player> cpuPlayers) {
+  public GameBoardMessage(GameBoard gameBoard, ArrayList<Player> players, ArrayList<Player> cpuPlayers, boolean startGame) {
     super(Command.GET_GAME_BOARD);
     coordinates = new Coordinates[4];
     for(int i=0; i<players.size(); i++) {
@@ -23,5 +24,6 @@ public class GameBoardMessage extends Message {
     }
     this.cpuPlayers = cpuPlayers;
     this.gameBoard = gameBoard;
+    this.startGame = startGame;
   }
 }

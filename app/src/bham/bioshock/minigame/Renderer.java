@@ -1,9 +1,9 @@
 package bham.bioshock.minigame;
 
+import bham.bioshock.Config;
 import bham.bioshock.client.Assets;
 import bham.bioshock.client.Route;
 import bham.bioshock.client.Router;
-import bham.bioshock.common.consts.Config;
 import bham.bioshock.common.models.store.MinigameStore;
 import bham.bioshock.common.models.store.Store;
 import bham.bioshock.minigame.models.*;
@@ -122,6 +122,11 @@ public class Renderer {
   }
 
   public void render(float delta) {
+    if(store.isReconnecting()) {
+      router.call(Route.LOADING, new String("Reconnecting..."));
+      return;
+    }
+    
     time += delta;
     batch.setProjectionMatrix(cam.combined);
     textBatch.setProjectionMatrix(cam.combined);
