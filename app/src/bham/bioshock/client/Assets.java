@@ -48,4 +48,7 @@ public class Assets {
   public static final String astroFall = "/fall.png";
   public static final String astroFFall = "/ffall.png";
   
+  // Minigame world
+  public static final String planetBase = "app/assets/minigame/planets/";
+  public static final String platformsBase = "app/assets/minigame/platforms/";
 }

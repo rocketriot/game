@@ -1,5 +1,6 @@
 package bham.bioshock.server.handlers;
 
+import bham.bioshock.minigame.ai.CaptureTheFlagAI;
 import java.util.Random;
 import java.util.UUID;
 import org.apache.logging.log4j.LogManager;
@@ -82,8 +83,7 @@ public class MinigameHandler {
       default:
         o = new CaptureTheFlag(w);
         for (UUID id : store.getCpuPlayers()) {
-          // NOTE CHANGE TO CAPTURE the flag
-          aiLoop.registerHandler(new KillThemAllAI(id, store, handler));
+          aiLoop.registerHandler(new CaptureTheFlagAI(id, store, handler));
         }
         break;
     }
