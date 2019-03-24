@@ -12,11 +12,13 @@ public class MinigameStartMessage extends Message {
   
   public final World world;
   public final Objective objective;
+  public final UUID planetId;
   
-  public MinigameStartMessage(World w, Objective o) {
+  public MinigameStartMessage(World w, Objective o, UUID planetId) {
     super(Command.MINIGAME_START);
     this.world = w;
     this.objective = o;
+    this.planetId = planetId;
   }
 
 }

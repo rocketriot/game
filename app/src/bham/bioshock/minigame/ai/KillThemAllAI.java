@@ -42,7 +42,7 @@ public class KillThemAllAI extends MinigameAI {
     PlanetPosition astroPos = astro.getPlanetPos();
     PlanetPosition goalPos;
 
-    if (!astro.haveGun() && !world.getGuns().isEmpty()) {
+    if (!astro.getEquipment().haveGun && !world.getGuns().isEmpty()) {
       goalPos = findNearestGun(astroPos);
     } else {
       goalPos = findNearestPlayer(astronaut.astronaut);
@@ -58,12 +58,12 @@ public class KillThemAllAI extends MinigameAI {
       astronaut.moveRight();
     }
 
-    if (astronaut.astronaut.haveGun()
+    if (astronaut.astronaut.getEquipment().haveGun
         && goalPos.fromCenter > astroPos.fromCenter) {
       astronaut.jump();
     }
 
-    if (astronaut.astronaut.haveGun()
+    if (astronaut.astronaut.getEquipment().haveGun
         && Math.abs(normaliseAngle(goalPos.angle) - normaliseAngle(astroPos.angle)) <= 20) {
       astronaut.shoot();
     }

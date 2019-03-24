@@ -1,5 +1,10 @@
 package bham.bioshock.client;
 
+import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+
 public class Assets {
   // General
   public static final String skin = "app/assets/skin/skin.json";
@@ -42,11 +47,27 @@ public class Assets {
   public static final String gun = "app/assets/minigame/gun.png";
   
   // Minigame Astronauts
+  public static final String hearts = "app/assets/minigame/hearts.png";
   public static final String astroBase = "app/assets/minigame/astronauts/";
   public static final String astroWalk = "/astro.png";
   public static final String astroGun = "/astro_gun.png";
   public static final String astroFall = "/fall.png";
   public static final String astroFFall = "/ffall.png";
+  public static final String astroShield = "/shield.png";
+  
+  
+  public static TextureRegion[][] splittedTexture(AssetManager manager, String path, int fnum) {
+    Texture t = manager.get(path, Texture.class);
+    return TextureRegion.split(t, t.getWidth() / fnum, t.getHeight());
+  }
+
+  public static Animation<TextureRegion> textureToAnimation(TextureRegion[][] list, int fnum, int skip, float duration) {
+    TextureRegion[] frames = new TextureRegion[fnum - skip];
+    for (int i = skip; i < fnum; i++) {
+      frames[i - skip] = list[0][i];
+    }
+    return new Animation<TextureRegion>(duration, frames);
+  }
   
   // Minigame world
   public static final String planetBase = "app/assets/minigame/planets/";

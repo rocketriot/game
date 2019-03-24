@@ -81,7 +81,7 @@ public class MinigameHandler {
     aiLoop.start();
     
     setupMinigameEnd(gameBoardHandler, playerId);
-    handler.sendToAll(new MinigameStartMessage(w, o));
+    handler.sendToAll(new MinigameStartMessage(w, o, planetId));
   }
 
   /**
