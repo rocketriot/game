@@ -1,6 +1,7 @@
 package bham.bioshock.minigame.models;
 
 
+import bham.bioshock.client.Assets;
 import bham.bioshock.common.Position;
 import bham.bioshock.minigame.PlanetPosition;
 import bham.bioshock.minigame.worlds.World;
@@ -28,6 +29,7 @@ public class Platform extends StaticEntity {
    */
   public Platform(World w, float x, float y, int width, int height) {
     super(w, x, y, EntityType.PLATFORM);
+    this.world = w;
     this.width = width;
     this.height = height;
     collisionWidth = width;
@@ -63,12 +65,12 @@ public class Platform extends StaticEntity {
     return texture;
   }
   
-  public static void loadTextures(AssetManager manager) {
-    manager.load("app/assets/minigame/platform.png", Texture.class);
+  public static void loadTextures(AssetManager manager, int id) {
+    manager.load(Assets.platformsBase + id + ".png", Texture.class);
   }
   
-  public static void createTextures(AssetManager manager) {
-    texture = new TextureRegion(manager.get("app/assets/minigame/platform.png", Texture.class));
+  public static void createTextures(AssetManager manager, int id) {
+    texture = new TextureRegion(manager.get(Assets.platformsBase + id + ".png", Texture.class));
   }
 
   /**

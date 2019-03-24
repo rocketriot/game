@@ -8,7 +8,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import bham.bioshock.common.Position;
 import bham.bioshock.common.models.Player;
 import bham.bioshock.minigame.models.*;
-import bham.bioshock.minigame.models.Astronaut.Move;
+import bham.bioshock.minigame.models.astronaut.Equipment;
+import bham.bioshock.minigame.models.astronaut.AstronautMove;
 import bham.bioshock.minigame.objectives.Objective;
 import bham.bioshock.minigame.physics.CollisionHandler;
 import bham.bioshock.minigame.physics.SpeedVector;
@@ -22,7 +23,7 @@ public class MinigameStore {
   private HashMap<UUID, Long> lastMessage = new HashMap<>();
   private ArrayList<Entity> entities = new ArrayList<>();
   private ArrayList<Entity> staticEntities = new ArrayList<>();
-
+  
   private Skin skin;
   private CollisionHandler collisionHandler;
   private Objective objective;
@@ -32,17 +33,16 @@ public class MinigameStore {
     players = new HashMap<>();
   }
 
-  public void updatePlayerStep(long time, UUID playerId, SpeedVector speed, Position pos,
-      Boolean haveGun) {
+  public void updatePlayerStep(long time, UUID playerId, SpeedVector speed, Position pos, Equipment eq) {
     Long previous = lastMessage.get(playerId);
     if(previous == null || previous < time) {
       lastMessage.put(playerId, time);
       Astronaut p = getPlayer(playerId);
-      p.updateFromServer(speed, pos, haveGun);      
+      p.updateFromServer(speed, pos, eq);      
     }
   }
   
-  public void updatePlayerMove(UUID playerId, Move move) {
+  public void updatePlayerMove(UUID playerId, AstronautMove move) {
     Astronaut p = getPlayer(playerId);
     p.updateMove(move);
   }
@@ -52,7 +52,7 @@ public class MinigameStore {
   }
   
   // Create world from the seeder
-  public void seed(Store store, World world, Objective o) {
+  public void seed(Store store, World world, Objective o, UUID planetId) {
     this.currentWorld = world;
     mainPlayerId = store.getMainPlayer().getId();
     Position[] playerPos = world.getPlayerPositions();
@@ -61,6 +61,9 @@ public class MinigameStore {
     for (Player player : store.getPlayers()) {
       Astronaut p = new Astronaut(world, playerPos[i], player.getId(), i);
       p.setName(player.getUsername());
+      
+      addUpgrades(store, player, p, planetId);
+      
       players.put(player.getId(), p);
       i++;
     }
@@ -71,6 +74,13 @@ public class MinigameStore {
     entities.addAll(getPlayers());
 
     objective = o;
+  }
+  
+  public void addUpgrades(Store store, Player player, Astronaut astronaut, UUID planetId) {
+    UUID ownerId = store.getPlanetOwner(planetId);
+    if(player.getId().equals(ownerId)) {
+      astronaut.getEquipment().haveShield = true;
+    }
   }
 
 
