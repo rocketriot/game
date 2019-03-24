@@ -4,6 +4,7 @@ import bham.bioshock.Config;
 import bham.bioshock.client.Route;
 import bham.bioshock.client.Router;
 import bham.bioshock.client.scenes.HudElement;
+import bham.bioshock.common.models.Player;
 import bham.bioshock.common.models.store.Store;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -12,14 +13,18 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 
+import java.util.ArrayList;
+
 public class SkipTurnButton extends HudElement {
   TextButton endTurnButton;
+  TextButton blackHoleButton;
 
   public SkipTurnButton(Stage stage, SpriteBatch batch, Skin skin, Store store, Router router) {
     super(stage, batch, skin, store, router);
   }
 
   protected void setup() {
+    endTurnButton = new TextButton("End Turn", skin);
     endTurnButton = new TextButton("End Turn", skin);
 
     endTurnButton.setX((Config.GAME_WORLD_WIDTH - endTurnButton.getWidth()) / 2);
@@ -38,6 +43,10 @@ public class SkipTurnButton extends HudElement {
 
   protected void render() {
     boolean isMainPlayersTurn = store.isMainPlayersTurn();
-    endTurnButton.setVisible(isMainPlayersTurn);
+
+    ArrayList<Player.Move> boardMove = store.getMainPlayer().getBoardMove();
+    boolean isMainPlayerMoving = boardMove == null || !boardMove.isEmpty();
+
+    endTurnButton.setVisible(isMainPlayersTurn && isMainPlayerMoving);
   }
 }
