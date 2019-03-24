@@ -5,8 +5,8 @@ import java.util.Collection;
 import bham.bioshock.common.Position;
 import bham.bioshock.minigame.PlanetPosition;
 import bham.bioshock.minigame.models.Astronaut;
-import bham.bioshock.minigame.models.Astronaut.Move;
 import bham.bioshock.minigame.models.Bullet;
+import bham.bioshock.minigame.models.astronaut.AstronautMove;
 import bham.bioshock.minigame.physics.SpeedVector;
 import bham.bioshock.minigame.worlds.World;
 
@@ -23,7 +23,7 @@ public class CpuAstronaut {
   /**
    * The current move.
    */
-  Move move;
+  AstronautMove move;
 
   /**
    * The World.
@@ -44,7 +44,7 @@ public class CpuAstronaut {
   public CpuAstronaut(Astronaut a, World w) {
     this.astronaut = a;
     this.world = w;
-    move = new Move();
+    move = new AstronautMove();
   }
 
   /**
@@ -126,9 +126,9 @@ public class CpuAstronaut {
    *
    * @return the move
    */
-  public Move endMove() {
-    Move oldMove = move;
-    move = new Move();
+  public AstronautMove endMove() {
+    AstronautMove oldMove = move;
+    move = new AstronautMove();
     return oldMove;
   }
 

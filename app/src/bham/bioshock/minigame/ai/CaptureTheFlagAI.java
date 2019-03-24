@@ -47,7 +47,7 @@ public class CaptureTheFlagAI extends MinigameAI {
     PlanetPosition astroPos = astro.getPlanetPos();
     PlanetPosition goalPos = null;
 
-    if (!astro.haveGun() && !world.getGuns().isEmpty()) {
+    if (!astro.getEquipment().haveGun && !world.getGuns().isEmpty()) {
       goalPos = findNearestGun(astroPos);
     } else if (astro.getId() != ctf.getFlagOwner()) {
       goalPos = world.convert(ctf.getFlagPosition());
@@ -71,7 +71,7 @@ public class CaptureTheFlagAI extends MinigameAI {
       return;
     }
 
-    if (astronaut.astronaut.haveGun()
+    if (astronaut.astronaut.getEquipment().haveGun
         && goalPos.fromCenter > astroPos.fromCenter) {
       astronaut.jump();
     }
@@ -82,7 +82,7 @@ public class CaptureTheFlagAI extends MinigameAI {
       astronaut.moveRight();
     }
 
-    if (astronaut.astronaut.haveGun()
+    if (astronaut.astronaut.getEquipment().haveGun
         && Math.abs(normaliseAngle(goalPos.angle) - normaliseAngle(astroPos.angle)) <= 20) {
       astronaut.shoot();
     }

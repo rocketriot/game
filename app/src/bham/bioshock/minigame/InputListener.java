@@ -2,7 +2,6 @@ package bham.bioshock.minigame;
 
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputAdapter;
-import com.badlogic.gdx.math.Vector3;
 
 import bham.bioshock.client.Route;
 import bham.bioshock.client.Router;
@@ -36,7 +35,7 @@ public class InputListener extends InputAdapter {
 
   @Override
   public boolean keyDown(int keyCode) {
-    if (Input.Keys.SPACE == keyCode && !shooting && mainPlayer.haveGun()) {
+    if (Input.Keys.SPACE == keyCode && !shooting && mainPlayer.getEquipment().haveGun) {
       createBullet();
       SoundController.playSound("laser");
       shooting = true;

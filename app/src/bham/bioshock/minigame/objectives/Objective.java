@@ -13,6 +13,7 @@ import bham.bioshock.minigame.worlds.World;
 import bham.bioshock.minigame.models.Astronaut;
 import bham.bioshock.minigame.models.Entity.State;
 import bham.bioshock.minigame.models.Gun;
+import bham.bioshock.minigame.models.astronaut.Equipment;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Random;
@@ -95,9 +96,15 @@ public abstract class Objective implements Serializable {
    */
   public void handle(UpdateHealthMessage m) { 
     if(lastRespawn.get(m.playerId) == null || lastRespawn.get(m.playerId) < m.created) {
-      synchronized(health) {
+      Astronaut astro = localStore.getPlayer(m.playerId);
+      
+      Equipment equipment = astro.getEquipment();
+      if(equipment.haveShield) {
+        equipment.removeShieldHealth();
+      } else {
         health.computeIfPresent(m.playerId, (k, v) -> v - 1);
       }
+      
     }
   }
   
@@ -131,7 +138,7 @@ public abstract class Objective implements Serializable {
    */
   protected void killAndRespawnPlayer(UUID playerId, Position randomRespawn) {
     Astronaut player = localStore.getPlayer(playerId);
-    boolean hadGun = player.haveGun();
+    boolean hadGun = player.getEquipment().haveGun;
     Position oldPosition = player.getPos().copy();
     
     if(player.is(State.REMOVING)) return;

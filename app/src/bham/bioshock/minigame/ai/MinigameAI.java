@@ -1,15 +1,14 @@
 package bham.bioshock.minigame.ai;
 
-import java.util.Collection;
 import java.util.UUID;
 import bham.bioshock.common.models.store.MinigameStore;
 import bham.bioshock.common.models.store.Store;
 import bham.bioshock.communication.messages.minigame.BulletShotMessage;
 import bham.bioshock.communication.messages.minigame.MinigamePlayerMoveMessage;
 import bham.bioshock.communication.messages.minigame.MinigamePlayerStepMessage;
-import bham.bioshock.minigame.models.Astronaut.Move;
 import bham.bioshock.server.ServerHandler;
 import bham.bioshock.minigame.models.Bullet;
+import bham.bioshock.minigame.models.astronaut.AstronautMove;
 
 /** The type Minigame ai. */
 public abstract class MinigameAI {
@@ -70,7 +69,7 @@ public abstract class MinigameAI {
 
   /** After update. */
   public void afterUpdate() {
-    Move move = astronaut.endMove();
+    AstronautMove move = astronaut.endMove();
 
     // Send to all new move, position and speed vector
     if(move != null) {

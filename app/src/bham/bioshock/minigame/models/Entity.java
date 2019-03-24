@@ -258,6 +258,7 @@ public abstract class Entity implements Serializable {
 
 
   public void draw(SpriteBatch batch) {
+    if(getTexture() == null) return;
     Sprite sprite = getSprite();
     sprite.setRegion(getTexture());
     sprite.setPosition(getX() - (sprite.getWidth() / 2), getY());

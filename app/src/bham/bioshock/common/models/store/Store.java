@@ -127,6 +127,12 @@ public class Store {
     Player p = getPlayer(playerId);
     planet.setPlayerCaptured(p);
   }
+  
+  public UUID getPlanetOwner(UUID planetId) {
+    Planet planet = gameBoard.getPlanet(planetId);
+    Player p = planet.getPlayerCaptured();
+    return p == null ? null : p.getId();
+  }
 
   /**
    * Returns whether it's the main player's turn
