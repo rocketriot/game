@@ -213,7 +213,7 @@ public class Player implements Serializable {
     addPoints(planetsCaptured * POINTS_PER_PLANET);
     increaseFuel(FUEL_PER_ROUND);
     if (hasUpgrade(Type.FUEL_PER_ROUND)) {
-      increaseFuel(20f);
+      increaseFuel(10f);
     }
   }
 
