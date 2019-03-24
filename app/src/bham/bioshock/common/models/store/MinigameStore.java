@@ -1,19 +1,23 @@
 package bham.bioshock.common.models.store;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.UUID;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import bham.bioshock.common.Position;
 import bham.bioshock.common.models.Player;
-import bham.bioshock.minigame.models.*;
-import bham.bioshock.minigame.models.astronaut.Equipment;
+import bham.bioshock.minigame.models.Astronaut;
+import bham.bioshock.minigame.models.Entity;
+import bham.bioshock.minigame.models.EntityType;
+import bham.bioshock.minigame.models.Gun;
 import bham.bioshock.minigame.models.astronaut.AstronautMove;
+import bham.bioshock.minigame.models.astronaut.Equipment;
 import bham.bioshock.minigame.objectives.Objective;
 import bham.bioshock.minigame.physics.CollisionHandler;
 import bham.bioshock.minigame.physics.SpeedVector;
 import bham.bioshock.minigame.worlds.World;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.UUID;
 
 public class MinigameStore {
 
@@ -28,6 +32,7 @@ public class MinigameStore {
   private CollisionHandler collisionHandler;
   private Objective objective;
   private boolean started;
+  private UUID planetID;
 
   public MinigameStore() {
     players = new HashMap<>();
@@ -53,6 +58,7 @@ public class MinigameStore {
   
   // Create world from the seeder
   public void seed(Store store, World world, Objective o, UUID planetId) {
+    this.planetID = planetId;
     this.currentWorld = world;
     mainPlayerId = store.getMainPlayer().getId();
     Position[] playerPos = world.getPlayerPositions();
@@ -158,4 +164,6 @@ public class MinigameStore {
     return collisionHandler;
   }
 
+    public UUID getPlanetID() { return planetID;
+    }
 }
