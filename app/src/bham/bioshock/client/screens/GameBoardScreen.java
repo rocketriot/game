@@ -196,7 +196,7 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
 
     // Check if the grid point is an upgrade
     if (gridPoint.getType() == GridPoint.Type.UPGRADE) {
-      // Increase the players fuel
+      // Add the upgrade to the player's upgrades
       Upgrade upgrade = (Upgrade) gridPoint.getValue();
       player.addUpgrade(upgrade);
 
