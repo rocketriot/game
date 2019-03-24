@@ -123,7 +123,7 @@ public abstract class Objective implements Serializable {
         Collection<Entity> entities = localStore.getEntities();
         for (Entity entity : entities){
           if (entity.getId() == m.heartID){
-            entities.remove(entity);
+            entity.remove();
           }
         }
       }
@@ -190,7 +190,7 @@ public abstract class Objective implements Serializable {
     } else if(m instanceof FlagOwnerUpdateMessage) {
       this.handle((FlagOwnerUpdateMessage) m);
     } else if(m instanceof IncreaseHealthMessage) {
-    this.handle((IncreaseHealthMessage) m);
+      this.handle((IncreaseHealthMessage) m);
   }
   }
 
