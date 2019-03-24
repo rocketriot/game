@@ -19,7 +19,7 @@ public class Upgrade implements Serializable {
   public static enum Type {
     INCREASE_FUEL_CAPACITY,
     INCREASE_FUEL_PER_TURN,
-    MINES,
+    BLACKHOLE,
   }
 
   public Upgrade(Coordinates coordinates) {
