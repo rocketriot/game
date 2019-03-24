@@ -160,6 +160,7 @@ public class Store {
       // Increase player's fuel after each round
       for (Player p : players) {
         p.increaseFuel(30.0f);
+        p.addPoints(p.getPlanetsCaptured() * 100);
       }
     }
   }

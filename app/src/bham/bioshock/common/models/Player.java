@@ -1,6 +1,7 @@
 package bham.bioshock.common.models;
 
 import bham.bioshock.common.Direction;
+import bham.bioshock.common.models.Upgrade.Type;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.UUID;
@@ -100,6 +101,10 @@ public class Player implements Serializable {
   public float getMaxFuel() {
     //TODO Calculate modifier
     float modifier = 0;
+    if (hasUpgrade(Type.FUEL_TANK_SIZE)) {
+      modifier += 50;
+    }
+    modifier += planetsCaptured * 20;
     return this.BASE_MAX_FUEL + modifier;
   }
 
@@ -112,7 +117,11 @@ public class Player implements Serializable {
   }
 
   public void decreaseFuel(float fuel) {
-    this.fuel = Math.max(this.fuel - fuel, 0f);
+    float modifier = 1.0f;
+    if (hasUpgrade(Type.ENGINE_EFFICIENCY)) {
+      modifier -= 0.2f;
+    }
+    this.fuel = Math.max(this.fuel - fuel * modifier, 0f);
   }
 
   public void addUpgrade(Upgrade upgrade) {
