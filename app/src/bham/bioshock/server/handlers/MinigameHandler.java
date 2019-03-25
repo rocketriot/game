@@ -170,9 +170,10 @@ public class MinigameHandler {
    * 
    * @param gameBoardHandler
    */
-  private void endMinigame(UUID winnerId, GameBoardHandler gameBoardHandler, UUID playerId) {
+  public void endMinigame(UUID winnerId, GameBoardHandler gameBoardHandler, UUID playerId) {
     Message msg = new EndMinigameMessage(playerId, winnerId, planetId, Config.PLANET_POINTS);
     planetId = null;
+
 
     aiLoop.finish();
     handler.sendToAll(msg);

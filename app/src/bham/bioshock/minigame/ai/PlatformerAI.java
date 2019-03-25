@@ -17,12 +17,26 @@ import java.util.Optional;
 import java.util.Random;
 import java.util.UUID;
 
+
+/**
+ * PlatformerAI uses a stack based Finite State Machine implementation
+ * Each state extends an abstract class and implements methods execute() and updateStack().
+ * execute() contains the functions of the state
+ * updateStack() determines when/if and how the next state is added to the stack.
+ */
 public class PlatformerAI extends MinigameAI {
 
     private static final Logger logger = LogManager.getLogger(PlatformerAI.class);
 
 
+    /**
+     * initialise a new stack
+     */
     private ArrayList<CPUState> statesStack = new ArrayList<>();
+
+    /**
+     * The platform which contains the goal and the path from the ground to it.
+     */
     private Platform goalPlatform;
     private ArrayList<Platform> pathToGoal;
 
@@ -30,6 +44,10 @@ public class PlatformerAI extends MinigameAI {
     private double JUMP_MID = 80000;
     private double JUMP_MAX = 1600000;
 
+    /**
+     * currentPlatformIndex indicates which platform (in the path) the cpu must reach next
+     * 0 indicates that the player is on the ground.
+     */
     private int currentPlatformIndex = 0;
     private Platform nextPlatform;
 
@@ -42,7 +60,14 @@ public class PlatformerAI extends MinigameAI {
 
     }
 
-    
+    /**
+     * Called everytime the game updates
+     * If the goalPlatform is null, this indicates the first update of the minigame,
+     * the path to the goal is got from the world
+     *
+     * Execute the next state by popping the stop element of the states stack
+     * @param delta the time between iterations
+     */
     @Override
     public void update(float delta) {
         if (goalPlatform == null) {

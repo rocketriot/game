@@ -6,23 +6,21 @@ import bham.bioshock.common.Position;
 import bham.bioshock.common.models.store.MinigameStore;
 import bham.bioshock.common.models.store.Store;
 import bham.bioshock.communication.messages.Message;
-import bham.bioshock.communication.messages.objectives.FlagOwnerUpdateMessage;
-import bham.bioshock.communication.messages.objectives.IncreaseHealthMessage;
-import bham.bioshock.communication.messages.objectives.KillAndRespawnMessage;
-import bham.bioshock.communication.messages.objectives.UpdateHealthMessage;
-import bham.bioshock.minigame.models.Entity;
-import bham.bioshock.minigame.worlds.World;
+import bham.bioshock.communication.messages.objectives.*;
 import bham.bioshock.minigame.models.Astronaut;
+import bham.bioshock.minigame.models.Entity;
 import bham.bioshock.minigame.models.Entity.State;
 import bham.bioshock.minigame.models.Gun;
 import bham.bioshock.minigame.models.astronaut.Equipment;
+import bham.bioshock.minigame.worlds.World;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Random;
 import java.util.UUID;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 /**
  * Objective abstract class.
@@ -73,7 +71,7 @@ public abstract class Objective implements Serializable {
    * @param player: the player who got shot
    * @param killer: the player who shot
    */
-  public final void gotShot(Astronaut player, UUID killer) {
+  public void gotShot(Astronaut player, UUID killer) {
     if(player.is(State.REMOVING)) return;
     if(!store.isHost()) return;
 
@@ -136,6 +134,8 @@ public abstract class Objective implements Serializable {
     }
   }
 
+
+
   /**
    * Default handler for KillAndRespawnMessage - kill player and respawn in the new position
    * save respawn position to ignore all bullets created before that moment
@@ -196,7 +196,9 @@ public abstract class Objective implements Serializable {
       this.handle((FlagOwnerUpdateMessage) m);
     } else if(m instanceof IncreaseHealthMessage) {
       this.handle((IncreaseHealthMessage) m);
-  }
+    } else if (m instanceof UpdateFrozenMessage) {
+      this.handle((UpdateFrozenMessage) m);
+    }
   }
 
   /**
@@ -211,6 +213,9 @@ public abstract class Objective implements Serializable {
     logger.debug("Ignored message: " + m.getClass().getSimpleName());
   }
 
+  public void handle(UpdateFrozenMessage m) {
+    logger.debug("unhandled update frozen message");
+  }
   /**
    * Seeds the minigame store with the additional entities required to each objective
    *

@@ -7,10 +7,12 @@ import bham.bioshock.common.models.Player;
 import bham.bioshock.common.models.store.MinigameStore;
 import bham.bioshock.common.models.store.Store;
 import bham.bioshock.communication.messages.minigame.EndMinigameMessage;
-import bham.bioshock.communication.messages.objectives.UpdateHealthMessage;
+import bham.bioshock.communication.messages.objectives.UpdateFrozenMessage;
 import bham.bioshock.minigame.models.*;
 import bham.bioshock.minigame.worlds.World;
 
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.*;
 
 public class Platformer extends Objective {
@@ -21,7 +23,7 @@ public class Platformer extends Objective {
    * Maps players to whether or not they are frozen.
    */
   private HashMap<UUID, Boolean> frozen = new HashMap<>();
-  private HashMap<UUID, Float> frozenFor = new HashMap<>();
+  private HashMap<UUID, Long> frozenFor = new HashMap<>();
   private float maxFreeze = 3f;
   private transient Optional<UUID> winner = Optional.empty();
   private Goal goal;
@@ -61,15 +63,29 @@ public class Platformer extends Objective {
   }
 
   /**
+   * Send a message to the server to freeze a player, if they get shot.
+   * @param player: the player who got shot
+   * @param killer: the player who shot
+   */
+  @Override
+  public void gotShot(Astronaut player, UUID killer) {
+    //super.gotShot(player,killer);
+    if(!store.isHost())
+      return;
+    router.call(Route.SEND_OBJECTIVE_UPDATE, new UpdateFrozenMessage(player.getId()));
+  }
+
+  /**
    * Called when the objective recives a message from the server.
-   * This will be a message to tell that a player has been shot.
+   * This will be a message to tell that a player has been shot and should be frozen.
    * @param m the message
    */
   @Override
-  public void handle(UpdateHealthMessage m) {
+  public void handle(UpdateFrozenMessage m) {
     /* when the player is shot, they should freeze for a certain amount of time */
-    if (!checkIfFrozen(m.playerId)) {
-      setFrozen(m.playerId, true);
+    System.out.println("UPDATE FROZEN");
+    if (!checkIfFrozen(m.playerID)) {
+      setFrozen(m.playerID, true);
     }
   }
 
@@ -86,7 +102,6 @@ public class Platformer extends Objective {
     super.init(world, router, store);
      store.getPlayers().forEach(player -> {
        frozen.put(player.getId(), false);
-       frozenFor.put(player.getId(), 0f);
      });
      winner = Optional.empty();
   }
@@ -168,22 +183,24 @@ public class Platformer extends Objective {
    */
   public void setFrozen(UUID playerId, boolean status) {
     frozen.put(playerId, status);
-    frozenFor.put(playerId, 0f);
-  }
-
-  /**
-   * Players only remain frozen for a certain amount of time. Everytime the game updates, increment how long
-   * a player has been frozen for. If it's over the maximum freeze time, unfreeze the player.
-   * @param delta
-   */
-  public void countDown(float delta) {
-    for (Map.Entry<UUID, Float> astronautFloatEntry : frozenFor.entrySet()) {
-      float newValue = astronautFloatEntry.getValue().floatValue() + delta;
-      if (newValue >= maxFreeze) {
-        setFrozen(astronautFloatEntry.getKey(), false);
-      }
+    if (status) {
+      frozenFor.put(playerId, LocalDateTime.now().toEpochSecond(ZoneOffset.UTC));
+    }
+    else {
+      frozenFor.remove(playerId);
     }
   }
+
+  public long getFrozenFor(UUID playerId) {
+    if(frozenFor.containsKey(playerId)){
+      return frozenFor.get(playerId);
+    }
+    else {
+      return 0;
+    }
+  }
+
+
 
   /**
    * Get the sequence of platforms by following which a player can travel from the ground to the goal
