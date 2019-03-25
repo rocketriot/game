@@ -41,6 +41,9 @@ public class Player implements Serializable {
   /** Object containing infomation about a players move */
   private ArrayList<Move> boardMove;
 
+  /** The coordinates at which the player first spawns on the gameboard */
+  private Coordinates spawnPoint;
+
   /** The maximum amount of fuel a player hold at one time */
   public static final float BASE_MAX_FUEL = 100f;
 
@@ -66,6 +69,11 @@ public class Player implements Serializable {
   
   public Player(String username, boolean isCpu) {
     this(UUID.randomUUID(), username, isCpu);
+  }
+
+  /** Sets the players coordinates to their original spawn coordinates */
+  public void moveToSpawn() {
+    setCoordinates(spawnPoint);
   }
   
   public Player(String username) {
@@ -210,6 +218,13 @@ public class Player implements Serializable {
       return this.id.equals(p.getId());
   }
 
+  public Coordinates getSpawnPoint() {
+    return spawnPoint;
+  }
+
+  public void setSpawnPoint(Coordinates spawnPoint) {
+    this.spawnPoint = spawnPoint;
+    
   /** Handles changes to player when a new round begins */
   public void newRound() {
     addPoints(planetsCaptured * POINTS_PER_PLANET);

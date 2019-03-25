@@ -42,10 +42,14 @@ public class GameBoardHandler {
   private void generateGrid(GameBoard board, ArrayList<Player> players) {
     // Set coordinates of the players
     int last = board.GRID_SIZE - 1;
-    players.get(0).setCoordinates(new Coordinates(0, 0));
-    players.get(1).setCoordinates(new Coordinates(0, last));
-    players.get(2).setCoordinates(new Coordinates(last, last));
-    players.get(3).setCoordinates(new Coordinates(last, 0));
+    players.get(0).setSpawnPoint(new Coordinates(0, 0));
+    players.get(1).setSpawnPoint(new Coordinates(0, last));
+    players.get(2).setSpawnPoint(new Coordinates(last, last));
+    players.get(3).setSpawnPoint(new Coordinates(last, 0));
+
+    for (Player p : players) {
+      p.moveToSpawn();
+    }
 
     board.generateGrid();
   }
