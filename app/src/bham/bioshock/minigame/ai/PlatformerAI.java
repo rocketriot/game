@@ -12,6 +12,8 @@ import bham.bioshock.server.ServerHandler;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Optional;
 import java.util.Random;
@@ -83,6 +85,20 @@ public class PlatformerAI extends MinigameAI {
 
         }
         else {
+
+            Platformer o = (Platformer) store.getMinigameStore().getObjective();
+            if(o.checkIfFrozen(astronaut.get().getId())) {
+                long now = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC);
+                long frozen = o.getFrozenFor(astronaut.get().getId());
+                if((now - frozen) > (o.MAX_FROZEN_TIME)) {
+                    o.setFrozen(astronaut.get().getId(),false, now);
+                }
+                else {
+                    return;
+                }
+            }
+
+
 
             if(statesStack.isEmpty()) {
                 statesStack.add(new FindNextPlatform());

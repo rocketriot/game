@@ -9,7 +9,7 @@ import java.util.UUID;
 
 public class UpdateFrozenMessage extends Message {
 
-    private final long created;
+    public final long created;
     public UUID playerID;
     public UpdateFrozenMessage(UUID playerID) {
     super(Command.MINIGAME_OBJECTIVE);

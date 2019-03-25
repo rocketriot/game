@@ -11,8 +11,6 @@ import bham.bioshock.communication.messages.objectives.UpdateFrozenMessage;
 import bham.bioshock.minigame.models.*;
 import bham.bioshock.minigame.worlds.World;
 
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
 import java.util.*;
 
 public class Platformer extends Objective {
@@ -24,7 +22,7 @@ public class Platformer extends Objective {
    */
   private HashMap<UUID, Boolean> frozen = new HashMap<>();
   private HashMap<UUID, Long> frozenFor = new HashMap<>();
-  private float maxFreeze = 3f;
+  public float MAX_FROZEN_TIME = 5;
   private transient Optional<UUID> winner = Optional.empty();
   private Goal goal;
   private Platform goalPlatform;
@@ -70,8 +68,9 @@ public class Platformer extends Objective {
   @Override
   public void gotShot(Astronaut player, UUID killer) {
     //super.gotShot(player,killer);
-    if(!store.isHost())
+    if(!store.isHost()) {
       return;
+    }
     router.call(Route.SEND_OBJECTIVE_UPDATE, new UpdateFrozenMessage(player.getId()));
   }
 
@@ -83,9 +82,8 @@ public class Platformer extends Objective {
   @Override
   public void handle(UpdateFrozenMessage m) {
     /* when the player is shot, they should freeze for a certain amount of time */
-    System.out.println("UPDATE FROZEN");
     if (!checkIfFrozen(m.playerID)) {
-      setFrozen(m.playerID, true);
+      setFrozen(m.playerID, true, m.created);
     }
   }
 
@@ -172,8 +170,7 @@ public class Platformer extends Objective {
    * @return if the player is frozen or not
    */
   public boolean checkIfFrozen(UUID playerId) {
-    Boolean isFrozen = frozen.get(playerId);
-    return isFrozen != null && frozen.get(playerId);
+    return frozen.get(playerId);
   }
 
   /**
@@ -181,10 +178,10 @@ public class Platformer extends Objective {
    * @param playerId
    * @param status
    */
-  public void setFrozen(UUID playerId, boolean status) {
+  public void setFrozen(UUID playerId, boolean status, long time) {
     frozen.put(playerId, status);
     if (status) {
-      frozenFor.put(playerId, LocalDateTime.now().toEpochSecond(ZoneOffset.UTC));
+      frozenFor.put(playerId, time);
     }
     else {
       frozenFor.remove(playerId);

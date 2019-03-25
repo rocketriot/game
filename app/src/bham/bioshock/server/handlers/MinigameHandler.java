@@ -17,6 +17,8 @@ import bham.bioshock.server.ai.MinigameAILoop;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.Random;
 import java.util.UUID;
 
@@ -42,10 +44,11 @@ public class MinigameHandler {
    * Creates and seed the world
    * Starts minigame timer to ending the game
    * 
-   * 
-   * @param data
+   *
    * @param playerId
-   * @param gameBoardHandler
+   * @param planetId
+   * @param gbHandler
+   * @param objectiveId
    */
   public void startMinigame(UUID playerId, UUID planetId, GameBoardHandler gbHandler, Integer objectiveId) {
     // Create a world for the minigame
@@ -150,7 +153,25 @@ public class MinigameHandler {
    * Sync player movement and position
    */
   public void playerMove(Message message, UUID playerId) {
-    handler.sendToAllExcept(message, playerId);
+    //for platform, check if the player is frozen
+    if(store.getMinigameStore().getObjective() instanceof Platformer) {
+      Platformer o = (Platformer) store.getMinigameStore().getObjective();
+      if(o.checkIfFrozen(playerId)) {
+        long now = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC);
+        long frozen = o.getFrozenFor(playerId);
+        if((now - frozen) > o.MAX_FROZEN_TIME) {
+          o.setFrozen(playerId,false, now);
+          handler.sendToAllExcept(message, playerId);
+        }
+        else {
+          return;
+        }
+      }
+    }
+    else {
+      handler.sendToAllExcept(message, playerId);
+    }
+
   }
 
   public void playerStep(Message message, UUID playerId) {

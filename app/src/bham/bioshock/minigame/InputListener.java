@@ -7,14 +7,10 @@ import bham.bioshock.client.scenes.minigame.MinigameHud;
 import bham.bioshock.common.models.store.MinigameStore;
 import bham.bioshock.minigame.models.Astronaut;
 import bham.bioshock.minigame.models.Bullet;
-import bham.bioshock.minigame.objectives.Platformer;
 import bham.bioshock.minigame.physics.CollisionHandler;
 import bham.bioshock.minigame.worlds.World;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputAdapter;
-
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
 
 public class InputListener extends InputAdapter {
 
@@ -25,7 +21,7 @@ public class InputListener extends InputAdapter {
   private Router router;
   private CollisionHandler collisionHandler;
   private MinigameHud hud;
-  private long MAX_FROZEN_TIME = 3;
+  private long MAX_FROZEN_TIME = 2;
 
   public InputListener(MinigameStore minigameStore, Router router, CollisionHandler collisionHandler, MinigameHud hud) {
     this.world = minigameStore.getWorld();
@@ -38,21 +34,6 @@ public class InputListener extends InputAdapter {
 
   @Override
   public boolean keyDown(int keyCode) {
-
-    //for platform, check if the player is frozen
-    if(localStore.getObjective() instanceof Platformer) {
-      Platformer o = (Platformer) localStore.getObjective();
-      if(o.checkIfFrozen(mainPlayer.getId())) {
-        long now = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC);
-        long frozen = o.getFrozenFor(mainPlayer.getId());
-        if((frozen - now) > MAX_FROZEN_TIME) {
-          o.setFrozen(mainPlayer.getId(),false);
-        }
-        else {
-          return false;
-        }
-      }
-    }
     if (Input.Keys.SPACE == keyCode && !shooting && mainPlayer.getEquipment().haveGun) {
       createBullet();
       SoundController.playSound("laser");
