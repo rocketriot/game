@@ -146,8 +146,13 @@ public class Player implements Serializable {
   }
 
   public void addUpgrade(Upgrade upgrade) {
-    upgrades.add(upgrade.getType());
-    lastUpgradeText = upgrade.getDisplayName();
+    if (hasUpgrade(upgrade.getType()) && !(upgrade.getType().equals(Type.BLACK_HOLE))) {
+      increaseFuel(30);
+      lastUpgradeText = "Upgrade already owned";
+    } else {
+      upgrades.add(upgrade.getType());
+      lastUpgradeText = upgrade.getDisplayName();
+    }
   }
   
   public ArrayList<Upgrade.Type> getUpgrades() {
