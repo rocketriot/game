@@ -22,7 +22,7 @@ public enum Route {
   JOIN_SCREEN                 (JoinScreenController.class,    "show"),
   DISCONNECT                  (JoinScreenController.class,    "disconnect"),
   ADD_PLAYER                  (JoinScreenController.class,    "addPlayer"),
-  OVERWRITE_PLAYERS           (JoinScreenController.class,    "overwritePlayers"),
+  UPDATE_FROM_RECONNECT       (JoinScreenController.class,    "updateReconnect"),
   REMOVE_PLAYER               (JoinScreenController.class,    "removePlayer"),
   START_GAME                  (JoinScreenController.class,    "start"),
   JOIN_SCREEN_MOVE            (JoinScreenController.class,    "rocketMove"),

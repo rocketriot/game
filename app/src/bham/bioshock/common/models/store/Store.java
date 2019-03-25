@@ -121,6 +121,14 @@ public class Store {
   public int getTurn() {
     return turn;
   }
+  
+  public void setTurn(int turn) {
+    this.turn = turn;
+  }
+  
+  public void setRound(int round) {
+    this.round = round;
+  }
 
   /** Get's the player who's turn it is */
   public Player getMovingPlayer() {

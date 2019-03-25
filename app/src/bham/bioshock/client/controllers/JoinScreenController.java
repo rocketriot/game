@@ -20,6 +20,7 @@ import bham.bioshock.communication.client.CommunicationClient;
 import bham.bioshock.communication.messages.boardgame.StartGameMessage;
 import bham.bioshock.communication.messages.joinscreen.JoinScreenMoveMessage;
 import bham.bioshock.communication.messages.joinscreen.ReconnectMessage;
+import bham.bioshock.communication.messages.joinscreen.ReconnectResponseMessage;
 import bham.bioshock.communication.messages.joinscreen.RegisterMessage;
 import bham.bioshock.communication.messages.joinscreen.AddPlayerMessage.JoiningPlayer;
 
@@ -68,8 +69,13 @@ public class JoinScreenController extends Controller {
   /**
    * For reconnection
    */
-  public void overwritePlayers(ArrayList<Player> players) {
-    store.overwritePlayers(players);
+  public void updateReconnect(ReconnectResponseMessage data) {
+    store.overwritePlayers(data.players);
+    store.setTurn(data.turnNum);
+    store.setRound(data.roundNum);
+    router.call(Route.COORDINATES_SAVE, data.coordinates);  
+    router.call(Route.GAME_BOARD_SAVE, data.gameBoard); 
+    router.call(Route.GAME_BOARD_SHOW);
   }
   
   public void sendReconnect() {
