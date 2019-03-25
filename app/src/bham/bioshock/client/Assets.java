@@ -56,6 +56,9 @@ public class Assets {
   public static final String astroFall = "/fall.png";
   public static final String astroFFall = "/ffall.png";
   public static final String astroShield = "/shield.png";
+
+  //Animations
+  public static final String blackHoleAnimationSheet = "app/assets/animations/blackHoleSheet.png";
   
   
   public static TextureRegion[][] splittedTexture(AssetManager manager, String path, int fnum) {

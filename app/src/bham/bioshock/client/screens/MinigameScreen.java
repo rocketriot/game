@@ -34,7 +34,7 @@ public class MinigameScreen implements Screen {
     Gun.loadTextures(manager);
     Bullet.loadTextures(manager);
     Flag.loadTextures(manager);
-    Goal.loadTextures();
+    Goal.loadTextures(manager);
     World.loadTextures(manager, world.getTextureId());
     Platform.loadTextures(manager, world.getTextureId());
   }
