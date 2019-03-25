@@ -4,12 +4,13 @@ import java.io.IOException;
 import java.io.ObjectInput;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import bham.bioshock.communication.client.ClientService;
 import bham.bioshock.communication.interfaces.MessageHandler;
 import bham.bioshock.communication.messages.Message;
 
 public class Receiver extends Thread {
   private static final Logger logger = LogManager.getLogger(Receiver.class);
-  
+
   private ObjectInput client;
   private MessageHandler actionHandler;
 
@@ -24,7 +25,7 @@ public class Receiver extends Thread {
     this.client = client;
     this.actionHandler = actionHandler;
   }
-  
+
   /**
    * Reads messages from the stream and use registered action handler
    */
@@ -35,9 +36,9 @@ public class Receiver extends Thread {
         try {
           receivedMessage = (Message) client.readObject();
           
-          if(receivedMessage != null) {
+          if (receivedMessage != null) {
             // execute business logic
-            actionHandler.handle(receivedMessage);            
+            actionHandler.handle(receivedMessage);
           }
           
         } catch (ClassNotFoundException | ClassCastException e) {
@@ -46,7 +47,7 @@ public class Receiver extends Thread {
         }
       }
     } catch (IOException e) {
-      logger.error("Receiver ("+getId()+") disconnected " + e.getMessage());
+      logger.error("Receiver (" + getId() + ") disconnected " + e.getMessage());
     } finally {
       actionHandler.abort();
     }
