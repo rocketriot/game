@@ -4,11 +4,14 @@ import bham.bioshock.common.consts.GridPoint;
 import bham.bioshock.common.models.Planet;
 import bham.bioshock.common.pathfinding.AStarPathfinding;
 import java.util.ArrayList;
+
+import bham.bioshock.common.models.BlackHole;
 import bham.bioshock.common.models.Coordinates;
 import bham.bioshock.common.models.GameBoard;
 import bham.bioshock.common.models.Player;
 import bham.bioshock.common.models.store.Store;
 import bham.bioshock.communication.messages.Message;
+import bham.bioshock.communication.messages.boardgame.AddBlackHoleMessage;
 import bham.bioshock.communication.messages.boardgame.GameBoardMessage;
 import bham.bioshock.communication.messages.boardgame.MovePlayerOnBoardMessage;
 import bham.bioshock.communication.messages.boardgame.UpdateTurnMessage;
@@ -96,4 +99,10 @@ public class GameBoardHandler {
     handler.sendToAll(new UpdateTurnMessage());
   }
 
+  public void addBlackHole(Coordinates coordinates) {
+    GameBoard gameBoard = store.getGameBoard();
+    gameBoard.addBlackHole(new BlackHole(coordinates));
+
+    handler.sendToAll(new AddBlackHoleMessage(coordinates));
+  }
 }

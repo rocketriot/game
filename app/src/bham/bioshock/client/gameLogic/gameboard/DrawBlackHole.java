@@ -8,16 +8,21 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import java.util.ArrayList;
 
 public class DrawBlackHole extends DrawEntity {
-  private ArrayList<Sprite> sprites = new ArrayList<>();
+  private Sprite sprite;
 
   public DrawBlackHole(Batch batch) {
     super(batch);
 
-    sprites = generateSprites(Assets.blackholesFolder);
+    sprite = generateSprite(Assets.blackhole);
   }
 
   public void draw(BlackHole blackHole, int PPS) {
-    Sprite sprite = sprites.get(blackHole.getTextureID());
+    this.draw(blackHole, PPS, true);
+  }
+
+  public void draw(BlackHole blackHole, int PPS, boolean canDrawBlackHole) {
+    // Make black hole transparent if it can't be added
+    sprite.setAlpha(canDrawBlackHole ? 1f : 0.5f);
 
     sprite.setX(blackHole.getCoordinates().getX() * PPS);
     sprite.setY(blackHole.getCoordinates().getY() * PPS);
@@ -25,10 +30,10 @@ public class DrawBlackHole extends DrawEntity {
   }
 
   public void resize(int PPS) {
-    sprites.forEach(sprite -> sprite.setSize(PPS * BlackHole.WIDTH, PPS * BlackHole.HEIGHT));
+    sprite.setSize(PPS * BlackHole.WIDTH, PPS * BlackHole.HEIGHT);
   }
 
   public void dispose() {
-    sprites.forEach(sprite -> sprite.getTexture().dispose());
+    sprite.getTexture().dispose();
   }
 }

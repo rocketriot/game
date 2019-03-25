@@ -9,6 +9,7 @@ import bham.bioshock.common.models.*;
 import bham.bioshock.common.models.store.Store;
 import bham.bioshock.common.pathfinding.AStarPathfinding;
 import bham.bioshock.communication.interfaces.MessageService;
+import bham.bioshock.communication.messages.boardgame.AddBlackHoleMessage;
 import bham.bioshock.communication.messages.boardgame.EndTurnMessage;
 import bham.bioshock.communication.messages.boardgame.MovePlayerOnBoardMessage;
 import com.google.inject.Inject;
@@ -90,9 +91,15 @@ public class GameBoardController extends Controller {
     store.nextTurn();
   }
 
-  /** Adds a black hole to the board */
-  public void addBlackHole(BlackHole blackHole) {
-    store.getGameBoard().addBlackHole(blackHole);
+  /** Sends a new black hole to the server */
+  public void addBlackHole(Coordinates coordinates) {
+    clientService.send(new AddBlackHoleMessage(coordinates));
+    store.getMainPlayer().toggleAddingBlackHole();
+  }
+
+  /** Receives a black hole from the server */
+  public void blackHoleReceived(Coordinates coordinates) {
+    store.getGameBoard().addBlackHole(new BlackHole(coordinates));
   }
 
   /** Player move received from the server */

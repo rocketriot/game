@@ -20,29 +20,17 @@ public class BlackHole implements Serializable {
   /** Location of the black hole */
   private Coordinates coordinates;
 
-  /** The texture ID for the object */
-  private int textureID;
 
   public BlackHole(Coordinates coordinates) {
     this.id = UUID.randomUUID();
     this.coordinates = coordinates;
-    this.randomiseTexture();
   }
 
   public UUID getId() {
     return id;
   }
 
-  private void randomiseTexture() {
-    Random r = new Random();
-    textureID = r.nextInt(3);
-  }
-
   public Coordinates getCoordinates() {
     return coordinates;
-  }
-
-  public int getTextureID() {
-    return textureID;
   }
 }

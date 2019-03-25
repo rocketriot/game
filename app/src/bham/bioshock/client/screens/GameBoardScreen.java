@@ -83,7 +83,7 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
   private boolean playerSelected = false;
 
   /** Current coordinates of the mouse on the game board */
-  private Coordinates mouseCoordinates;
+  private Coordinates mouseCoordinates = null;
 
   public GameBoardScreen(Router router, Store store) {
     super(router);
@@ -209,6 +209,11 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
 
       // Remove upgrade from the grid
       gameBoard.removeGridPoint(player.getCoordinates());
+    }
+
+    // Check if the grid point is a black hole
+    if (gridPoint.getType() == GridPoint.Type.BLACKHOLE) {
+      // TODO: move player back to their starting position
     }
   }
 
@@ -447,7 +452,7 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
     mouseDownY = screenY;
 
     if (store.getMainPlayer().isAddingBlackHole() && canAddBlackHole()) {
-      router.call(Route.ADD_BLACK_HOLE, new BlackHole(mouseCoordinates));
+      router.call(Route.ADD_BLACK_HOLE, mouseCoordinates);
 
       return false;
     }
@@ -513,18 +518,35 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
 
   /** If the player is adding a black hole, display it on the game board */
   private void drawAddingBlackHole() {
-    if (store.getMainPlayer().isAddingBlackHole() && mouseCoordinates != null)
-      drawBlackHole.draw(new BlackHole(mouseCoordinates), PPS);
+    // Check if the player is adding a black hole and the mouse grid coordinates are available
+    if (store.getMainPlayer().isAddingBlackHole() && mouseCoordinates != null) {
+      // Check the black hole can fit on the grid
+      if (mouseCoordinates.getX() + BlackHole.WIDTH > gridSize
+          || mouseCoordinates.getY() + BlackHole.HEIGHT > gridSize) {
+        drawBlackHole.draw(new BlackHole(mouseCoordinates), PPS, false);
+        return;
+      }
+
+      drawBlackHole.draw(new BlackHole(mouseCoordinates), PPS, canAddBlackHole());
+    }
   }
 
   /** Checks if there is enough space to add a black hole to the game board */
   private boolean canAddBlackHole() {
     GridPoint[][] grid = store.getGameBoard().getGrid();
 
+    // Loop all spaces the black hole will take up
     for (int i = 0; i < BlackHole.WIDTH; i++) {
       for (int j = 0; j < BlackHole.HEIGHT; j++) {
+        // Get the grid point
         GridPoint gridPoint = grid[mouseCoordinates.getX() + i][mouseCoordinates.getY() + j];
 
+        // Check the black hole will not be in the way of players
+        for (Player player : store.getPlayers())
+        if (player.getCoordinates().isEqual(mouseCoordinates))
+        return false;
+        
+        // Check the black hole will not be in the way of other board entities
         if (!gridPoint.getType().equals(GridPoint.Type.EMPTY))
           return false;
       }
