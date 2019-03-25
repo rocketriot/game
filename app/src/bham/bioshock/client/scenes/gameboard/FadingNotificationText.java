@@ -6,7 +6,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
-public class MinigameWinnerText {
+public class FadingNotificationText {
 
   private final SpriteBatch batch;
   private final Store store;
@@ -18,7 +18,7 @@ public class MinigameWinnerText {
   private boolean showUpgradeText = false;
   private String upgradeText;
 
-  public MinigameWinnerText(SpriteBatch batch, Store store,
+  public FadingNotificationText(SpriteBatch batch, Store store,
       BitmapFont font) {
     this.batch = batch;
     this.store = store;
