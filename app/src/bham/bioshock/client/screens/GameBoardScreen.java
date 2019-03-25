@@ -338,8 +338,6 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
 
   @Override
   public void render(float delta) {
-
-    System.out.println(store.getMaxRounds());
     Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
 
     batch.setProjectionMatrix(camera.combined);
