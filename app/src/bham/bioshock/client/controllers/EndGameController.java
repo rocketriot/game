@@ -17,8 +17,8 @@ public class EndGameController extends Controller {
   }
 
   public void show() {
-    server.stop();
-    store.reconnecting(false);
+    //server.stop();
+   // store.reconnecting(false);
     setScreen(new EndScreen(router,store));
   }
 }

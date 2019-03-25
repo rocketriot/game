@@ -101,7 +101,7 @@ public class GameBoardHandler {
     }
 
 
-    if ((store.getRound() == store.MAX_ROUNDS) && (store.getTurn() == 3)) {
+    if ((store.getRound() == store.getMaxRounds()) && (store.getTurn() == 3)) {
       handler.sendToAll(new EndGameMessage());
     }
   }
@@ -109,7 +109,7 @@ public class GameBoardHandler {
   public void endTurn() {
     handler.sendToAll(new UpdateTurnMessage());
 
-    if ((store.getRound() == store.MAX_ROUNDS) && (store.getTurn() == 3)) {
+    if ((store.getRound() == store.getMaxRounds()) && (store.getTurn() == 3)) {
       handler.sendToAll(new EndGameMessage());
     }
   }

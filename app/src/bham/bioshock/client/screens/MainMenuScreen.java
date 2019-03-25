@@ -47,7 +47,6 @@ public class MainMenuScreen extends ScreenMaster {
   }
 
 
-
   private void addListener(Image image, BaseClickListener listener) {
     image.addListener(listener);
   }
@@ -60,10 +59,10 @@ public class MainMenuScreen extends ScreenMaster {
     public BaseClickListener(Image image, String normal, String hover) {
       Texture normalTexture = new Texture(normal);
       normalTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
-      
+
       Texture hoverTexture = new Texture(hover);
       hoverTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
-      
+
       this.image = image;
       this.normal = new SpriteDrawable(new Sprite(normalTexture));
       this.hover = new SpriteDrawable(new Sprite(hoverTexture));
@@ -79,7 +78,7 @@ public class MainMenuScreen extends ScreenMaster {
       image.setDrawable(normal);
     }
   }
-  
+
 
   private void drawButtons() {
     logo = drawAsset(Assets.logo, (Config.GAME_WORLD_WIDTH / 2) - 258, Config.GAME_WORLD_HEIGHT - 550);
@@ -90,6 +89,7 @@ public class MainMenuScreen extends ScreenMaster {
       public void clicked(InputEvent event, float x, float y) {
         SoundController.playSound("menuSelect");
         showDialogue("host");
+        showDialog2();
       }
     });
 
@@ -130,7 +130,9 @@ public class MainMenuScreen extends ScreenMaster {
     });
   }
 
-  /** Displays a dialogue to either host or join a game */
+  /**
+   * Displays a dialogue to either host or join a game
+   */
   private void showDialogue(String type) {
     TextField textField = new TextField("", skin);
 
@@ -150,12 +152,43 @@ public class MainMenuScreen extends ScreenMaster {
 
         if (type.equals("host"))
           router.call(Route.HOST_GAME, text);
+
         if (type.equals("join"))
           router.call(Route.JOIN_SCREEN, text);
       }
     };
 
     dialog.text(new Label("Enter your name:", skin, "window"));
+    dialog.getContentTable().add(textField);
+    dialog.button("OK", true);
+    dialog.button("Cancel", false);
+
+    dialog.show(stage);
+  }
+
+  private void showDialog2() {
+    TextField textField = new TextField("", skin);
+
+    Dialog dialog = new Dialog("", skin) {
+      protected void result(Object object) {
+        if (object.equals(false))
+          return;
+
+        String text = textField.getText();
+        String regex = "[0-9]+";
+
+        if (!text.matches(regex)) {
+          alert("Please enter a valid number of turns");
+          return;
+        }
+
+        SoundController.playSound("menuSelect");
+
+      }
+
+
+    };
+    dialog.text(new Label("Enter the turns:", skin, "window"));
     dialog.getContentTable().add(textField);
     dialog.button("OK", true);
     dialog.button("Cancel", false);

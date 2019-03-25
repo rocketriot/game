@@ -18,7 +18,6 @@ public class Store {
   /** Max number of players in a game */
   // FOR TESTING
   public final int MAX_PLAYERS = 4;
-  public final int MAX_ROUNDS = 1;
 
   private AppPreferences preferences;
   private Screen currentScreen;
@@ -31,6 +30,8 @@ public class Store {
   private UUID mainPlayerId;
   /** The game's round */
   private int round = 1;
+  /** the maximum number of rounds */
+  public int maxRounds = 1;
   /** The next player's turn */
   private int turn = 0;
   /** If the game is reconnecting with the server */
@@ -242,4 +243,7 @@ public class Store {
   public void setMinigameWinner(String minigameWinner) {
     this.minigameWinner = minigameWinner;
   }
+
+  public void setMaxRounds(int n){this.maxRounds = n;}
+  public int getMaxRounds(){return this.maxRounds;}
 }

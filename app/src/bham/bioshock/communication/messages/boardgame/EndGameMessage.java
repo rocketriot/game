@@ -11,5 +11,5 @@ public class EndGameMessage extends Message{
       super(Command.DIRECT_END);
     }
 
-  }
 }
+

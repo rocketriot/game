@@ -4,7 +4,6 @@ import bham.bioshock.client.Assets;
 import bham.bioshock.client.FontGenerator;
 import bham.bioshock.client.Router;
 import bham.bioshock.client.gameLogic.gameboard.DrawPlayer;
-import bham.bioshock.common.consts.Config;
 import bham.bioshock.common.models.Coordinates;
 import bham.bioshock.common.models.Player;
 import bham.bioshock.common.models.store.Store;
@@ -31,6 +30,7 @@ public class EndScreen extends ScreenMaster {
   private DrawPlayer drawPlayer;
   private FontGenerator fontGenerator;
   private BitmapFont font;
+  private Sprite winner;
 
   public EndScreen(Router router, Store store) {
     super(router);
@@ -41,11 +41,23 @@ public class EndScreen extends ScreenMaster {
     this.batch = new SpriteBatch();
     this.fontBatch = new SpriteBatch();
     this.renderer = new ShapeRenderer();
+    if(!tie()){
+      winners = store.getWinner();
+      int textureId = winners.get(0).getTextureID() + 1;
 
-    this.viewport = new FitViewport(Config.GAME_WORLD_WIDTH, Config.GAME_WORLD_HEIGHT, camera);
-    this.viewport.apply();
+      TextureRegion texture = new TextureRegion(new Texture(Gdx.files.internal("app/assets/entities/players/" + textureId + ".png")));
+      winner = new Sprite(texture);
 
-    displayWinner();
+      winner.setSize(200, 200);
+      winner.setOriginCenter();
+
+      winner.setX(200);
+      winner.setY(200);
+    }
+
+    //this.viewport = new FitViewport(GAME_WORLD_WIDTH, GAME_WORLD_HEIGHT, cam);
+   // this.viewport.apply();
+
 
   }
 
@@ -59,49 +71,40 @@ public class EndScreen extends ScreenMaster {
   public void render(float delta) {
     super.render(delta);
     displayWinner();
-    String name = winners.get(0).getUsername();
-    font(name);
+    font();
 
+  }
+
+  public boolean tie(){
+    return winners.size() == 1;
   }
 
   public void displayWinner() {
-    batch.begin();
-    winners = store.getWinner();
-
-
-
-      int textureId = winners.get(0).getTextureID() +1 ;
-    System.out.println(textureId);
-
-
-
-      TextureRegion texture = new TextureRegion(new Texture(Gdx.files.internal("app/assets/entities/players/" + textureId + ".png")));
-
-      Sprite sprite = new Sprite(texture);
-
-      sprite.setSize(200,200);
-      sprite.setOriginCenter();
-
-      sprite.setX(200);
-      sprite.setY(200);
-      sprite.draw(batch);
+    if(!tie()) {
+      batch.begin();
+      winner.draw(batch);
       batch.end();
-
-
-  }
-
-  public void tie(){
+    }
 
   }
 
-  public void font(String text){
-
-    fontGenerator = new FontGenerator();
-    font = fontGenerator.generate(100, Color.WHITE);
+  public void font(){
 
     fontBatch.begin();
+    String text;
+    fontGenerator = new FontGenerator();
+    font = fontGenerator.generate(50, Color.WHITE);
+
     int x = 100;
     int y = 100;
+
+    if(tie()){
+      text = " It's a tie!";
+    } else{
+
+    text = winners.get(0).getUsername();
+      text = "The winner is " + text + "!";
+    }
 
     font.draw(fontBatch, text, x, y);
     fontBatch.end();
