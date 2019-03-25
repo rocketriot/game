@@ -73,6 +73,8 @@ public class JoinScreenHandler {
   }
 
   public void disconnectPlayer(UUID clientId) {
+    Player player = store.getPlayer(clientId);
+    player.setCpu(true);
     handler.sendToAll(new DisconnectPlayerMessage(clientId));
   }
 
@@ -158,7 +160,8 @@ public class JoinScreenHandler {
    * @param playerId
    */
   public void sendReconnectData(UUID playerId) {
-    System.out.println("Sending reconnect message");
+    Player player = store.getPlayer(playerId);
+    player.setCpu(false);
     handler.sendTo(playerId, new ReconnectResponseMessage(store));
   }
 

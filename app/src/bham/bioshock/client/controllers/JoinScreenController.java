@@ -76,9 +76,11 @@ public class JoinScreenController extends Controller {
 
   public void removePlayer(UUID id) {
     if(JoinScreen.class.isInstance(game.getScreen())) {
-      ((JoinScreen) game.getScreen()).removePlayer(id);      
+      ((JoinScreen) game.getScreen()).removePlayer(id);    
+      // Remove the player only in the join screen
+      // If the game is running AI should take over
+      store.removePlayer(id);
     }
-    store.removePlayer(id);
   }
 
   /**
