@@ -41,7 +41,7 @@ public class Player implements Serializable {
   private ArrayList<Move> boardMove;
 
   /** The maximum amount of fuel a player hold at one time */
-  private float maxFuel = 100f;
+  public static final float BASE_MAX_FUEL = 100f;
 
   /** The fuel cost for moving one grid space */
   public static final float FUEL_GRID_COST = 10f;
@@ -97,16 +97,11 @@ public class Player implements Serializable {
     return fuel;
   }
 
+  /** Returns the maximum fuel a player has after modifiers e.g. upgrades or planets owned */
   public float getMaxFuel() {
-    return maxFuel;
-  }
-
-  public void increaseMaxFuel(float increase) {
-    this.maxFuel += increase;
-  }
-
-  public void decreaseMaxFuel(float decrease) {
-    this.maxFuel -= decrease;
+    //TODO Calculate modifier
+    float modifier = 0;
+    return this.BASE_MAX_FUEL + modifier;
   }
 
   public void setFuel(float fuel) {
@@ -114,7 +109,7 @@ public class Player implements Serializable {
   }
 
   public void increaseFuel(float fuel) {
-    this.fuel = Math.min(this.fuel + fuel, maxFuel);
+    this.fuel = Math.min(this.fuel + fuel, getMaxFuel());
   }
 
   public void decreaseFuel(float fuel) {
