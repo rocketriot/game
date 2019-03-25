@@ -1,7 +1,7 @@
 package bham.bioshock.communication.common;
 
 import java.io.IOException;
-import java.io.ObjectOutputStream;
+import java.io.ObjectOutput;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import org.apache.logging.log4j.LogManager;
@@ -11,7 +11,7 @@ import bham.bioshock.communication.messages.Message;
 public class Sender extends Thread {
   private static final Logger logger = LogManager.getLogger(Sender.class);
   
-  private ObjectOutputStream client;
+  private ObjectOutput client;
   private long counter = 0;
   private BlockingQueue<Message> queue = new LinkedBlockingQueue<>();
 
@@ -20,7 +20,7 @@ public class Sender extends Thread {
    *
    * @param toClient client output stream
    */
-  public Sender(ObjectOutputStream toClient) {
+  public Sender(ObjectOutput toClient) {
     super("Sender");
     this.client = toClient;
   }

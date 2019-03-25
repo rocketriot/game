@@ -1,4 +1,4 @@
-package bham.bioshock.testutils.communication;
+package bham.bioshock.testutils.server;
 
 import java.util.UUID;
 import bham.bioshock.communication.interfaces.ServerService;

@@ -1,4 +1,4 @@
-package bham.bioshock.communication.server;
+package bham.bioshock.server;
 
 import static org.junit.Assert.*;
 import java.util.UUID;
@@ -12,7 +12,9 @@ import bham.bioshock.communication.messages.boardgame.StartGameMessage;
 import bham.bioshock.communication.messages.joinscreen.*;
 import bham.bioshock.server.InvalidMessageSequence;
 import bham.bioshock.server.ServerHandler;
-import bham.bioshock.testutils.communication.*;
+import bham.bioshock.testutils.communication.FakeMessage;
+import bham.bioshock.testutils.communication.FakeServerService;
+import bham.bioshock.testutils.server.*;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class ServerHandlerTest {
