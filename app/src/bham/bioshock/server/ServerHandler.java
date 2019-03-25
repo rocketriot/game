@@ -45,6 +45,7 @@ public class ServerHandler implements MultipleConnectionsHandler {
     }
   }
   
+  // Start debug server
   private void startDebugServer(Store store) {
     try {
       devServer = new DevServer();

@@ -1,10 +1,18 @@
-package bham.bioshock.testutils.communication;
+package bham.bioshock.testutils.communication.streams;
 
 import java.io.IOException;
 import java.io.ObjectOutput;
+import java.util.LinkedList;
 
 public class FakeObjectOutput implements ObjectOutput {
 
+  public LinkedList<Object> messages = new LinkedList<>();
+  public boolean isOpen = true;
+  
+  public boolean isOpen() {
+    return isOpen;
+  }
+  
   @Override
   public void writeBoolean(boolean arg0) throws IOException {
     // TODO Auto-generated method stub
@@ -73,8 +81,7 @@ public class FakeObjectOutput implements ObjectOutput {
 
   @Override
   public void close() throws IOException {
-    // TODO Auto-generated method stub
-    
+    this.isOpen = false;
   }
 
   @Override
@@ -103,8 +110,7 @@ public class FakeObjectOutput implements ObjectOutput {
 
   @Override
   public void writeObject(Object obj) throws IOException {
-    // TODO Auto-generated method stub
-    
+    messages.add(obj);
   }
 
 }

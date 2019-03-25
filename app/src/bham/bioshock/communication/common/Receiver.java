@@ -24,7 +24,7 @@ public class Receiver extends Thread {
     this.client = client;
     this.actionHandler = actionHandler;
   }
-
+  
   /**
    * Reads messages from the stream and use registered action handler
    */
@@ -34,8 +34,11 @@ public class Receiver extends Thread {
         Message receivedMessage;
         try {
           receivedMessage = (Message) client.readObject();
-          // execute business logic
-          actionHandler.handle(receivedMessage);
+          
+          if(receivedMessage != null) {
+            // execute business logic
+            actionHandler.handle(receivedMessage);            
+          }
           
         } catch (ClassNotFoundException | ClassCastException e) {
           logger.error("Invalid message class!");

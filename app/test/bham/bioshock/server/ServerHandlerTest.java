@@ -88,11 +88,16 @@ public class ServerHandlerTest {
     FakeServerService service1 = new FakeServerService();
     handler.add(service1);
     UUID serviceId = UUID.randomUUID();
+    service1.start();
     handler.register(serviceId, "TestUser", service1);
     
     // Add one unregistered service
     FakeServerService service2 = new FakeServerService();
+    service2.start();
     handler.add(service2);
+    
+    assertTrue(service1.isRunning());
+    assertTrue(service2.isRunning());
     
     // Abort
     handler.abort();

@@ -1,10 +1,25 @@
-package bham.bioshock.testutils.communication;
+package bham.bioshock.testutils.communication.streams;
 
 import java.io.IOException;
 import java.io.ObjectInput;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.TimeUnit;
+import bham.bioshock.communication.messages.Message;
 
 public class FakeObjectInput implements ObjectInput {
 
+  private BlockingQueue<Message> queue = new LinkedBlockingQueue<>();
+  private boolean isOpen = true;
+  
+  public boolean isOpen() {
+    return isOpen;
+  }
+  
+  public void add(Message m) {
+    queue.add(m);
+  }
+  
   @Override
   public boolean readBoolean() throws IOException {
     // TODO Auto-generated method stub
@@ -97,37 +112,41 @@ public class FakeObjectInput implements ObjectInput {
 
   @Override
   public int available() throws IOException {
-    // TODO Auto-generated method stub
     return 0;
   }
 
   @Override
   public void close() throws IOException {
-    // TODO Auto-generated method stub
-    
+    this.isOpen = false;
   }
 
   @Override
   public int read() throws IOException {
-    // TODO Auto-generated method stub
     return 0;
   }
 
   @Override
   public int read(byte[] arg0) throws IOException {
-    // TODO Auto-generated method stub
     return 0;
   }
 
   @Override
   public int read(byte[] arg0, int arg1, int arg2) throws IOException {
-    // TODO Auto-generated method stub
     return 0;
   }
 
   @Override
   public Object readObject() throws ClassNotFoundException, IOException {
-    // TODO Auto-generated method stub
+    try {
+      while(isOpen) {
+        Object v = queue.poll(200, TimeUnit.MILLISECONDS);
+        if(v != null) {
+          return v;
+        }
+      }
+      throw new IOException();
+    } catch (InterruptedException e) {
+    }
     return null;
   }
 

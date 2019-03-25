@@ -6,10 +6,10 @@ import bham.bioshock.communication.interfaces.ServerService;
 import bham.bioshock.communication.interfaces.MessageHandler;
 import bham.bioshock.communication.messages.Message;
 import bham.bioshock.server.InvalidMessageSequence;
-import bham.bioshock.server.ServerHandler;
+import bham.bioshock.server.interfaces.MultipleConnectionsHandler;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.BlockingQueue;
@@ -29,14 +29,15 @@ public class PlayerService extends Thread implements MessageHandler, ServerServi
   /** Queue with received and not yet handled actions */
   private BlockingQueue<Message> queue = new LinkedBlockingQueue<>();
 
-  private ServerHandler handler;
+  private MultipleConnectionsHandler handler;
   private Optional<UUID> id = Optional.empty();
   
-  private ObjectInputStream fromClient;
-  private ObjectOutputStream toClient;
+  private ObjectInput fromClient;
+  private ObjectOutput toClient;
+  private boolean aborting = false;
 
-  public PlayerService(ObjectInputStream fromClient, ObjectOutputStream toClient,
-      ServerHandler handler) {
+  public PlayerService(ObjectInput fromClient, ObjectOutput toClient,
+      MultipleConnectionsHandler handler) {
     super("ServerService");
     this.fromClient = fromClient;
     this.toClient = toClient;
@@ -95,7 +96,6 @@ public class PlayerService extends Thread implements MessageHandler, ServerServi
     try {
       while (!isInterrupted()) {
         try {
-          
           // Execute actions from queue
           handler.handleRequest(queue.take(), this);
           
@@ -104,8 +104,6 @@ public class PlayerService extends Thread implements MessageHandler, ServerServi
         }
       }
     } catch (InterruptedException e) {
-      receiver.interrupt();
-      sender.interrupt();
       logger.trace("ServerService was interrupted");
     } finally {
       logger.trace("ServerService ending");
@@ -129,7 +127,28 @@ public class PlayerService extends Thread implements MessageHandler, ServerServi
    */
   @Override
   public void abort() {
-    this.interrupt();  
+    if(!aborting) {
+      this.interrupt();
+      this.aborting = true;
+    }
+  }
+  
+  /**
+   * Checks if all related threads are down
+   * 
+   * @return true if everything is stopped
+   */
+  public boolean aborted() {
+    return !isAlive() && !sender.isAlive() && !receiver.isAlive();
+  }
+  
+  /**
+   * Checks if all related threads are running
+   * 
+   * @return true if all threads are running
+   */
+  public boolean isRunning() {
+    return isAlive() && sender.isAlive() && receiver.isAlive();
   }
 
   /**
@@ -145,20 +164,30 @@ public class PlayerService extends Thread implements MessageHandler, ServerServi
    * Stop the service and underlying threads
    */
   private void close() {
+    receiver.interrupt();
+    sender.interrupt();
+    
     try {
       sender.join();
-      // Close incoming stream
-      try {
-        fromClient.close();        
-      } catch (IOException e) {}
-      // Close outgoing stream
-      try {
-        toClient.close();
-      } catch (IOException e) {};
+    } catch (InterruptedException e) {
+      logger.error("Unexpected interruption " + e.getMessage());
+    }
+  
+    // Close incoming stream
+    try {
+      fromClient.close();        
+    } catch (IOException e) {}
+    // Close outgoing stream
+    try {
+      toClient.close();
+    } catch (IOException e) {};
+    
+    try {
       receiver.join();
     } catch (InterruptedException e) {
       logger.error("Unexpected interruption " + e.getMessage());
     }
+    
     logger.debug("Client disconnected");
   }
 }
