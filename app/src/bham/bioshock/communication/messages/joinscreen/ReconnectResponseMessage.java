@@ -12,15 +12,16 @@ public class ReconnectResponseMessage extends Message {
 
   private static final long serialVersionUID = 306644053577753583L;
   
-  public final AddPlayerMessage players;
+  public final ArrayList<Player> players;
   public final Coordinates[] coordinates;
   public final GameBoard gameBoard;
   public final boolean minigameRunning;
+  public final int turnNum;
+  public final int roundNum;
   
   public ReconnectResponseMessage(Store store) {
     super(Command.RECONNECT_PLAYER);
-    ArrayList<Player> players = store.getPlayers();
-    this.players = new AddPlayerMessage(players);
+    this.players = store.getPlayers();
     this.gameBoard = store.getGameBoard();
     
     coordinates = new Coordinates[4];
@@ -28,6 +29,8 @@ public class ReconnectResponseMessage extends Message {
       coordinates[i] = players.get(i).getCoordinates();
     }
     minigameRunning = store.getMinigameStore() != null;
+    turnNum = store.getTurn();
+    roundNum = store.getRound();
   }
 
 }

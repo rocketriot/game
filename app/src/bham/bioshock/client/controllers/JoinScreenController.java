@@ -65,6 +65,13 @@ public class JoinScreenController extends Controller {
     router.back();
   }
   
+  /**
+   * For reconnection
+   */
+  public void overwritePlayers(ArrayList<Player> players) {
+    store.overwritePlayers(players);
+  }
+  
   public void sendReconnect() {
     Optional<ClientService> clientService = commClient.getConnection();
     if(clientService.isPresent()) {

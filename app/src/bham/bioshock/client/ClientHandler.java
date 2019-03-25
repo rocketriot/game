@@ -102,14 +102,15 @@ public class ClientHandler implements MessageHandler {
             ReconnectResponseMessage data = (ReconnectResponseMessage) message;
             
             router.call(Route.RECONNECT, false);
-            router.call(Route.ADD_PLAYER, data.players.players);
+            router.call(Route.OVERWRITE_PLAYERS, data.players);
+//            router.call(Route.ADD_PLAYER, data.players);
             router.call(Route.COORDINATES_SAVE, data.coordinates);  
             router.call(Route.GAME_BOARD_SAVE, data.gameBoard); 
-            if(data.minigameRunning) {
-              router.call(Route.START_MINIGAME);
-            } else {              
-              router.call(Route.GAME_BOARD_SHOW);              
-            }
+//            if(data.minigameRunning) {
+//              router.call(Route.START_MINIGAME);
+//            } else {              
+            router.call(Route.GAME_BOARD_SHOW);              
+//            }
             break;
           }
           default: {

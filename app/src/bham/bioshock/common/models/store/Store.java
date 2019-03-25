@@ -86,6 +86,11 @@ public class Store {
       }
     }
   }
+  
+  public void overwritePlayers(ArrayList<Player> newPlayers) {
+    players.clear();
+    players = newPlayers;
+  }
 
   public void addPlayer(Player player) {
     if(getPlayer(player.getId()) == null) {
