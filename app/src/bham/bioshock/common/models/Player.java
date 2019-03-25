@@ -224,6 +224,7 @@ public class Player implements Serializable {
 
   public void setSpawnPoint(Coordinates spawnPoint) {
     this.spawnPoint = spawnPoint;
+  }
     
   /** Handles changes to player when a new round begins */
   public void newRound() {
