@@ -6,6 +6,7 @@ import bham.bioshock.common.models.Coordinates;
 import bham.bioshock.common.models.GameBoard;
 import bham.bioshock.common.models.Planet;
 import bham.bioshock.common.models.Player;
+import bham.bioshock.common.models.Upgrade;
 import bham.bioshock.common.models.store.Store;
 import bham.bioshock.common.pathfinding.AStarPathfinding;
 import bham.bioshock.communication.messages.boardgame.MovePlayerOnBoardMessage;
@@ -187,8 +188,7 @@ public class BoardAi extends Thread {
       moveVal.setCapturablePlanet(planet);
     }
 
-
-    // Add 50 / distance to the planet for each capturable planet to the reward
+    // Add 50 / distance to the planet for each capturable planet and upgrade to the reward
     for (int x = 0; x < gameBoard.GRID_SIZE; x++) {
       for (int y = 0; y < gameBoard.GRID_SIZE; y++) {
         GridPoint gridPoint = grid[x][y];
@@ -198,6 +198,9 @@ public class BoardAi extends Thread {
             reward += 50f / moveVal.getMoveCoords().calcDistance(planet.getCoordinates());
             planetChecklist.add(planet);
           }
+        } else if (gridPoint.getType().equals(Type.UPGRADE)) {
+          Upgrade upgrade = (Upgrade) gridPoint.getValue();
+          reward += 50f / moveVal.getMoveCoords().calcDistance(upgrade.getCoordinates());
         }
       }
     }
