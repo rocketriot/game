@@ -60,7 +60,7 @@ public class FuelBar extends HudElement {
     LabelStyle style1 = new LabelStyle();
     style1.font = fontGenerator.generate(25);
     
-    fuelValueLabel = new Label(String.format("%.0f", Player.MAX_FUEL), style1);
+    fuelValueLabel = new Label(String.format("%.0f", store.getMainPlayer().getMaxFuel()), style1);
     fuelValueLabel.setFontScale(1.2f);
     fuelValueLabel.setWidth(60);
     fuelValueLabel.setAlignment(Align.center);
@@ -74,7 +74,7 @@ public class FuelBar extends HudElement {
   }
 
   public void render(float fuelValue) {
-    float height = (fuelValue / Player.MAX_FUEL) * fuelMaxHeight;
+    float height = (fuelValue / store.getMainPlayer().getMaxFuel()) * fuelMaxHeight;
 
     Gdx.gl.glEnable(GL30.GL_BLEND);
     Gdx.gl.glBlendFunc(GL30.GL_SRC_ALPHA, GL30.GL_ONE_MINUS_SRC_ALPHA);

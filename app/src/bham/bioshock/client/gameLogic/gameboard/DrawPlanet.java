@@ -39,8 +39,8 @@ public class DrawPlanet extends DrawEntity {
   }
 
   public void resize(int PPS) {
-    planetSprites.forEach(sprite -> sprite.setSize(PPS * 3, PPS * 3));
-    flagSprites.forEach(sprite -> sprite.setSize(PPS * 3, PPS * 3));
+    planetSprites.forEach(sprite -> sprite.setSize(PPS * Planet.WIDTH, PPS * Planet.HEIGHT));
+    flagSprites.forEach(sprite -> sprite.setSize(PPS * Planet.WIDTH, PPS * Planet.HEIGHT));
   }
 
   public void dispose() {

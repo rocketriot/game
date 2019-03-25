@@ -1,6 +1,7 @@
 package bham.bioshock.common.models;
 
 import bham.bioshock.common.Direction;
+import bham.bioshock.common.models.Upgrade.Type;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.UUID;
@@ -43,11 +44,21 @@ public class Player implements Serializable {
   /** The coordinates at which the player first spawns on the gameboard */
   private Coordinates spawnPoint;
 
+  /** The maximum amount of fuel a player hold at one time */
+  public static final float BASE_MAX_FUEL = 100f;
+
   /** The fuel cost for moving one grid space */
   public static final float FUEL_GRID_COST = 10f;
 
-  /** The maximum amount of fuel a player hold at one time */
-  public static final float MAX_FUEL = 100f;
+  /** Points gained per round for each planet owned */
+  public static final int POINTS_PER_PLANET = 100;
+
+  /** Fuel gained per round */
+  public static final float FUEL_PER_ROUND = 30f;
+
+  private boolean isAddingBlackHole = false;
+
+  private ArrayList<Upgrade.Type> upgrades = new ArrayList<>();
 
   public Player(UUID id, String username, Boolean isCpu) {
     this.id = id;
@@ -101,17 +112,45 @@ public class Player implements Serializable {
     return fuel;
   }
 
+  /** Returns the maximum fuel a player has after modifiers e.g. upgrades or planets owned */
+  public float getMaxFuel() {
+    //TODO Calculate modifier
+    float modifier = 0;
+    if (hasUpgrade(Type.FUEL_TANK_SIZE)) {
+      modifier += 50;
+    }
+    modifier += planetsCaptured * 20;
+    return this.BASE_MAX_FUEL + modifier;
+  }
+
   public void setFuel(float fuel) {
     this.fuel = fuel;
   }
 
   public void increaseFuel(float fuel) {
-    this.fuel = Math.min(this.fuel + fuel, MAX_FUEL);
+    this.fuel = Math.min(this.fuel + fuel, getMaxFuel());
   }
 
   public void decreaseFuel(float fuel) {
-    this.fuel = Math.max(this.fuel - fuel, 0f);
+    float modifier = 1.0f;
+    if (hasUpgrade(Type.ENGINE_EFFICIENCY)) {
+      modifier -= 0.2f;
+    }
+    this.fuel = Math.max(this.fuel - fuel * modifier, 0f);
   }
+
+  public void addUpgrade(Upgrade upgrade) {
+    upgrades.add(upgrade.getType());
+  }
+  
+  public ArrayList<Upgrade.Type> getUpgrades() {
+    return upgrades;
+  }
+  
+  public boolean hasUpgrade(Upgrade.Type type) {
+    return upgrades.contains(type);
+  }
+
 
   public int getPlanetsCaptured() {
     return planetsCaptured;
@@ -185,6 +224,14 @@ public class Player implements Serializable {
 
   public void setSpawnPoint(Coordinates spawnPoint) {
     this.spawnPoint = spawnPoint;
+    
+  /** Handles changes to player when a new round begins */
+  public void newRound() {
+    addPoints(planetsCaptured * POINTS_PER_PLANET);
+    increaseFuel(FUEL_PER_ROUND);
+    if (hasUpgrade(Type.FUEL_PER_ROUND)) {
+      increaseFuel(10f);
+    }
   }
 
   public class Move implements Serializable {
@@ -213,5 +260,18 @@ public class Player implements Serializable {
 
   public void setTextureID(int textureID) {
     this.textureID = textureID;
+  }
+
+  public boolean isAddingBlackHole() {
+    return isAddingBlackHole;
+  }
+
+  public void toggleAddingBlackHole() {
+    isAddingBlackHole = !isAddingBlackHole;
+  }
+
+  public void addedBlackHole() {
+    isAddingBlackHole = false;
+    upgrades.remove(Upgrade.Type.BLACK_HOLE);
   }
 }

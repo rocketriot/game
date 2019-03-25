@@ -25,7 +25,7 @@ public class DrawAsteroid extends DrawEntity {
   }
 
   public void resize(int PPS) {
-    sprites.forEach(sprite -> sprite.setSize(PPS * 3, PPS * 4));
+    sprites.forEach(sprite -> sprite.setSize(PPS * Asteroid.WIDTH, PPS * Asteroid.HEIGHT));
   }
 
   public void dispose() {
