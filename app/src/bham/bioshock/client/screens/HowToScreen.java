@@ -17,6 +17,8 @@ import java.util.HashMap;
 public class HowToScreen extends ScreenMaster {
 
   private Table textTable;
+  private Container<Table> tableContainer;
+
   private XMLInteraction xmlInteraction = new XMLInteraction();
   private HashMap<String, String> descriptionFromFile;
 
@@ -36,6 +38,8 @@ public class HowToScreen extends ScreenMaster {
   private Label howToCaptureA;
   private Label howToCaptureB;
   private Label fuelDescription;
+
+
 
   /**
    * Instantiates a new How to screen.
@@ -78,49 +82,45 @@ public class HowToScreen extends ScreenMaster {
     fuelDescription = new Label(descriptionFromFile.get("fuel"),skin);
     fuelDescription.setWrap(true);
 
-  }
-
-  private void assemble() {
-    // create container
-    Container<Table> tableContainer = new Container<>();
-    float containerWidth = screenWidth * 0.9f;
+    tableContainer = new Container<>();
+    float containerWidth = screenWidth * 0.8f;
     float containerHeight = screenHeight * 0.7f;
     tableContainer.setSize(containerWidth, containerHeight);
     tableContainer.setPosition((screenWidth - containerWidth) / 2.0f,
-        (screenHeight - containerHeight) / 2.0f);
+            (screenHeight - containerHeight) / 2.0f);
 
-    // create table
     textTable = new Table(skin);
-    //textTable.setDebug(true);
     textTable.setFillParent(true);
     textTable.top();
     textTable.setHeight(containerHeight);
 
+  }
 
+  private void assemble() {
 
     float rowHeight = textTable.getHeight() / 7f;
 
     textTable.padLeft(50).padRight(50);
     textTable.padBottom(20);
 
-    textTable.add(title).colspan(2).expandX().padBottom(20);
+    textTable.add(title).colspan(2).expandX().padBottom(50);
     textTable.row();
     textTable.add(description).colspan(2).expandX().padBottom(30);
     textTable.row().height(rowHeight);
-    textTable.columnDefaults(1).width(100).padRight(20).padBottom(20);
+    textTable.columnDefaults(1).width(120).padRight(50).padBottom(20);
     textTable.columnDefaults(0).expand().left().padBottom(20);
     VerticalGroup group = new VerticalGroup();
     group.addActor(howToMoveA);
     group.addActor(howToMoveB);
     group.addActor(howToMoveC);
-    group.align(Align.left);
+    group.columnAlign(Align.left);
     textTable.add(group);
     textTable.add(cursor);
     textTable.row().height(rowHeight);
     VerticalGroup group2 = new VerticalGroup();
     group2.addActor(howToCaptureA);
     group2.addActor(howToCaptureB);
-    group2.align(Align.left);
+    group2.columnAlign(Align.left);
     textTable.add(group2);
     textTable.add(planet);
     textTable.row().height(rowHeight);
