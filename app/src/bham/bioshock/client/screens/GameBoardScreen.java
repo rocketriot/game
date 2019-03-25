@@ -50,6 +50,9 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
   /** Draws asteroids on the board */
   private DrawAsteroid drawAsteroid;
 
+  /** Draws black holes on the board */
+  private DrawBlackHole drawBlackHole;
+
   /** Handles the path rendering */
   private PathRenderer pathRenderer;
 
@@ -79,6 +82,9 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
   /** Flag for if the player is selecting a move */
   private boolean playerSelected = false;
 
+  /** Current coordinates of the mouse on the game board */
+  private Coordinates mouseCoordinates = null;
+
   public GameBoardScreen(Router router, Store store) {
     super(router);
 
@@ -100,6 +106,7 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
     drawFuel = new DrawFuel(batch);
     drawUpgrade = new DrawUpgrade(batch);
     drawAsteroid = new DrawAsteroid(batch);
+    drawBlackHole = new DrawBlackHole(batch);
 
     pathRenderer =
         new PathRenderer(camera, store.getGameBoard(), store.getMainPlayer(), store.getPlayers());
@@ -203,6 +210,11 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
       // Remove upgrade from the grid
       gameBoard.removeGridPoint(player.getCoordinates());
     }
+
+    // Check if the grid point is a black hole
+    if (gridPoint.getType() == GridPoint.Type.BLACKHOLE) {
+      router.call(Route.MOVE_PLAYER_TO_RANDOM_POINT, player);
+    }
   }
 
   public void drawBoardObjects() {
@@ -230,6 +242,15 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
             // Only draw the asteroid from the bottom left coordinate
             if (asteroid.getCoordinates().isEqual(new Coordinates(x, y)))
               drawAsteroid.draw(asteroid, PPS);
+
+            break;
+
+          case BLACKHOLE:
+            BlackHole blackHole = (BlackHole) grid[x][y].getValue();
+
+            // Only draw the asteroid from the bottom left coordinate
+            if (blackHole.getCoordinates().isEqual(new Coordinates(x, y)))
+              drawBlackHole.draw(blackHole, PPS);
 
             break;
 
@@ -307,6 +328,7 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
     drawFuel.resize(PPS);
     drawUpgrade.resize(PPS);
     drawAsteroid.resize(PPS);
+    drawBlackHole.resize(PPS);
 
     background.setSize(PPS * 38.4f, PPS * 21.6f);
   }
@@ -332,6 +354,7 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
     batch.begin();
     drawBoardObjects();
     drawPlayers();
+    drawAddingBlackHole();
     batch.end();
 
     // Draw path rendering
@@ -362,8 +385,9 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
     drawPlayer.dispose();
     drawPlanet.dispose();
     drawFuel.dispose();
-    drawAsteroid.dispose();
     drawUpgrade.dispose();
+    drawAsteroid.dispose();
+    drawBlackHole.dispose();
 
     hud.dispose();
     background.getTexture().dispose();
@@ -427,6 +451,12 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
     mouseDownX = screenX;
     mouseDownY = screenY;
 
+    if (store.getMainPlayer().isAddingBlackHole() && canAddBlackHole()) {
+      router.call(Route.ADD_BLACK_HOLE, mouseCoordinates);
+
+      return false;
+    }
+
     // Get mouse coordinates
     Vector3 mouse = getMouseCoordinates(screenX, screenY);
 
@@ -486,6 +516,45 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
     return true;
   }
 
+  /** If the player is adding a black hole, display it on the game board */
+  private void drawAddingBlackHole() {
+    // Check if the player is adding a black hole and the mouse grid coordinates are available
+    if (store.getMainPlayer().isAddingBlackHole() && mouseCoordinates != null) {
+      // Check the black hole can fit on the grid
+      if (mouseCoordinates.getX() + BlackHole.WIDTH > gridSize
+          || mouseCoordinates.getY() + BlackHole.HEIGHT > gridSize) {
+        drawBlackHole.draw(new BlackHole(mouseCoordinates), PPS, false);
+        return;
+      }
+
+      drawBlackHole.draw(new BlackHole(mouseCoordinates), PPS, canAddBlackHole());
+    }
+  }
+
+  /** Checks if there is enough space to add a black hole to the game board */
+  private boolean canAddBlackHole() {
+    GridPoint[][] grid = store.getGameBoard().getGrid();
+
+    // Loop all spaces the black hole will take up
+    for (int i = 0; i < BlackHole.WIDTH; i++) {
+      for (int j = 0; j < BlackHole.HEIGHT; j++) {
+        // Get the grid point
+        GridPoint gridPoint = grid[mouseCoordinates.getX() + i][mouseCoordinates.getY() + j];
+
+        // Check the black hole will not be in the way of players
+        for (Player player : store.getPlayers())
+        if (player.getCoordinates().isEqual(mouseCoordinates))
+        return false;
+        
+        // Check the black hole will not be in the way of other board entities
+        if (!gridPoint.getType().equals(GridPoint.Type.EMPTY))
+          return false;
+      }
+    }
+
+    return true;
+  }
+
   @Override
   public boolean keyDown(int keycode) {
     return false;
@@ -529,26 +598,32 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
 
   @Override
   public boolean mouseMoved(int screenX, int screenY) {
-    // Check if player is selected
-    if (!playerSelected)
-      return false;
-
     // Get the board coordinates of where the mouse is positioned
     Vector3 mouse = getMouseCoordinates(screenX, screenY);
-    Coordinates coordinates = new Coordinates((int) mouse.x / PPS, (int) mouse.y / PPS);
-
-    // Do nothing if the mouse is in the same position as where the player currently is at
-    if (coordinates.isEqual(store.getMainPlayer().getCoordinates()))
-      return false;
+    Coordinates coordinates = new Coordinates((int) mouse.x / PPS, (int) mouse.y / PPS);  
 
     // Ensure the mouse is clicking on the board
     if (coordinates.getX() >= gridSize || coordinates.getX() < 0 || coordinates.getY() >= gridSize
-        || coordinates.getY() < 0)
+        || coordinates.getY() < 0) {
+      mouseCoordinates = null;
       return false;
+    }
 
-    // Pathfind to where the mouse is located
-    pathRenderer.generatePath(store.getMainPlayer().getCoordinates(), coordinates);
-    return true;
+    // Update mouse coordinates
+    mouseCoordinates = coordinates;
+
+    // Check if player is selected
+    if (playerSelected) {
+      // Do nothing if the mouse is in the same position as where the player currently is at
+      if (mouseCoordinates.isEqual(store.getMainPlayer().getCoordinates()))
+        return false;
+
+      // Pathfind to where the mouse is located
+      pathRenderer.generatePath(store.getMainPlayer().getCoordinates(), coordinates);
+      return true;
+    }
+
+    return false;
   }
 
   @Override

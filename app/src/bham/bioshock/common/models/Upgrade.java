@@ -21,6 +21,9 @@ public class Upgrade implements Serializable {
     ENGINE_EFFICIENCY,
     FUEL_PER_ROUND,
     BLACKHOLE,
+    INCREASE_FUEL_CAPACITY,
+    INCREASE_FUEL_PER_TURN,
+    BLACK_HOLE
   }
 
   public Upgrade(Coordinates coordinates) {

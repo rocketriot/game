@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.Random;
 import java.util.UUID;
 
-/** Stores the data of a player on the game board */
+/** Stores the data of an asteroid on the game board */
 public class Asteroid implements Serializable {
 
   /** Width of the asteroid */

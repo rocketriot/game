@@ -208,4 +208,12 @@ public class GameBoard implements Serializable {
     }
     return null;
   }
+
+  public void addBlackHole(BlackHole blackHole) {
+    Coordinates coordinates = blackHole.getCoordinates();
+    
+    for (int i = 0; i < BlackHole.WIDTH; i++)
+      for (int j = 0; j < BlackHole.HEIGHT; j++)
+        grid[coordinates.getX() + i][coordinates.getY() + j] = new GridPoint(GridPoint.Type.BLACKHOLE, blackHole);
+  }
 }

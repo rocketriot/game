@@ -53,6 +53,8 @@ public class Player implements Serializable {
   /** Fuel gained per round */
   public static final float FUEL_PER_ROUND = 30f;
 
+  private boolean isAddingBlackHole = false;
+
   private ArrayList<Upgrade.Type> upgrades = new ArrayList<>();
 
   public Player(UUID id, String username, Boolean isCpu) {
@@ -243,5 +245,18 @@ public class Player implements Serializable {
 
   public void setTextureID(int textureID) {
     this.textureID = textureID;
+  }
+
+  public boolean isAddingBlackHole() {
+    return isAddingBlackHole;
+  }
+
+  public void toggleAddingBlackHole() {
+    isAddingBlackHole = !isAddingBlackHole;
+  }
+
+  public void addedBlackHole() {
+    isAddingBlackHole = false;
+    upgrades.remove(Upgrade.Type.BLACK_HOLE);
   }
 }

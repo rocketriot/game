@@ -47,10 +47,11 @@ public class GridPoint implements Serializable {
     ASTEROID,
     FUEL,
     UPGRADE,
+    BLACKHOLE,
     EMPTY;
 
     public boolean isValidForPlayer() {
-      return this.equals(EMPTY) || this.equals(FUEL) || this.equals(UPGRADE);
+      return this.equals(EMPTY) || this.equals(FUEL) || this.equals(UPGRADE) || this.equals(BLACKHOLE);
     }
   }
 }

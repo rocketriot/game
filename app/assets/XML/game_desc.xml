@@ -2,10 +2,14 @@
 
 <description>
   <how_to>
-    <game_desc>Rocket Riot is a multiplayer strategy game. The Aim is to gain as many points as
-      possible by capturing planets.
+    <game_desc>Rocket Riot is a multiplayer strategy game. The Aim is to gain as many points as possible by capturing planets.
     </game_desc>
-
-    <game_controls>Move around the board by clicking where you would like to move</game_controls>
+      <how_to_move_1>Right click your player and move your cursor to where you'd like to move.</how_to_move_1>
+      <how_to_move_2>If you have enough fuel, your path will be displayed in green.</how_to_move_2>
+      <how_to_move_3>Click the board to move.</how_to_move_3>
+      <how_to_capture_1>When you move close to a planet, you can attempt to capture it by playing a minigame.</how_to_capture_1>
+      <how_to_capture_2>Capturing a planet wins you points.</how_to_capture_2>
+      <fuel>Move over the fuel icon to gain extra fuel for your next turn.</fuel>
+      <upgrade>Move over an upgrade to receive a random power boost.</upgrade>
   </how_to>
 </description>

@@ -10,7 +10,7 @@ public class Planet implements Serializable {
   /** Width of the planet */
   public static final int WIDTH = 3;
   /** Height of the planet */
-  public static final int HEIGHT = 4;
+  public static final int HEIGHT = 3;
 
   private static final long serialVersionUID = 5775730008817100527L;
   /** ID of the planet */
