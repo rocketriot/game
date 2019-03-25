@@ -1,4 +1,4 @@
-package bham.bioshock.communication.server.handlers;
+package bham.bioshock.server.handlers;
 
 import static org.junit.Assert.*;
 import java.util.UUID;
@@ -19,8 +19,8 @@ import bham.bioshock.communication.messages.joinscreen.ServerFullMessage;
 import bham.bioshock.server.InvalidMessageSequence;
 import bham.bioshock.server.ServerHandler;
 import bham.bioshock.testutils.communication.FakeMessage;
-import bham.bioshock.testutils.communication.FakeServer;
 import bham.bioshock.testutils.communication.FakeServerService;
+import bham.bioshock.testutils.server.FakeServer;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class JoinScreenHandlerTest {

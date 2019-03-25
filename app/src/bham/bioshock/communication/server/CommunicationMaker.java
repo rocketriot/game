@@ -1,14 +1,16 @@
 package bham.bioshock.communication.server;
 
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import bham.bioshock.server.ServerHandler;
+import bham.bioshock.communication.interfaces.ObjectStreamFactory;
+import bham.bioshock.communication.interfaces.ServerService;
+import bham.bioshock.server.interfaces.MultipleConnectionsHandler;
 
 public class CommunicationMaker extends Thread {
   
@@ -16,21 +18,23 @@ public class CommunicationMaker extends Thread {
   
   private boolean connecting = false;
   private ServerSocket serverSocket = null;
-  private ServerHandler handler;
+  private MultipleConnectionsHandler handler;
   private Thread discoveryThread;
+  private ObjectStreamFactory streamFactory;
   
-  public CommunicationMaker() {
+  public CommunicationMaker(ObjectStreamFactory streamFactory) {
     super("CommunicationMaker");
+    this.streamFactory = streamFactory;
   }
   
-  private PlayerService createNewConnection(Socket socket, ServerHandler handler)
+  private ServerService createNewConnection(Socket socket, MultipleConnectionsHandler handler)
       throws IOException {
     // Create streams for input and output
-    ObjectInputStream fromClient = new ObjectInputStream(socket.getInputStream());
-    ObjectOutputStream toClient = new ObjectOutputStream(socket.getOutputStream());
+    ObjectInput fromClient = streamFactory.getInput(socket);
+    ObjectOutput toClient = streamFactory.getOutput(socket);
 
     // Service to execute business logic
-    PlayerService service = new PlayerService(fromClient, toClient, handler);
+    ServerService service = new PlayerService(fromClient, toClient, handler);
     service.start();
     return service;
   }
@@ -44,16 +48,23 @@ public class CommunicationMaker extends Thread {
     discoveryThread.start();
   }
   
-  public boolean socketCreated() {
-    return serverSocket != null;
-  }
-  
-  public void startSearch(ServerHandler handler, ServerSocket serverSocket) {
+  /**
+   * Start connecting, for all new connected clients new streams will be created
+   * and ServerService will be added to the handler
+   * 
+   * @param handler
+   * @param serverSocket
+   * @param discoverClients
+   */
+  public void startSearch(MultipleConnectionsHandler handler, ServerSocket serverSocket, boolean discoverClients) {
     this.handler = handler;
     this.serverSocket = serverSocket;
     connecting = true;
     
-    discoverClients();
+    if(discoverClients) {
+      discoverClients();      
+    }
+    
     start();
   }
   
@@ -62,23 +73,28 @@ public class CommunicationMaker extends Thread {
    */
   public void run() {
     logger.debug("Server started!");
+    if(serverSocket == null ) {
+      logger.fatal("CommunicationMaker started without a socket! Use startSearch() method instead");
+      return;
+    }
+    
     try {
-      serverSocket.setSoTimeout(2000);
+      serverSocket.setSoTimeout(1000);
       // Register new clients
       while (connecting) {
         try {
           Socket socket = serverSocket.accept();
           // Create streams and objects for sending messages to and from client
-          PlayerService service = createNewConnection(socket, handler);
+          ServerService service = createNewConnection(socket, handler);
           handler.add(service);
         } catch(SocketTimeoutException e) {}
       }
     } catch (IOException e) {
-      logger.error("IO error " + e.getMessage());
+      logger.catching(e);
     } finally {
-      close();   
+      logger.debug("Search finished. Reconnection will be impossible");
+      close();
     } 
-    logger.debug("Search finished");
   }
   
   /**
@@ -93,6 +109,15 @@ public class CommunicationMaker extends Thread {
    */
   public void disconnect() {
     this.connecting = false;
+  }
+  
+  /**
+   * Checks if all related threads are stopped
+   * 
+   * @return true if all related threads stopped
+   */
+  public boolean aborted() {
+    return !isAlive() && !discoveryThread.isAlive();
   }
   
   /**

@@ -1,16 +1,17 @@
 package bham.bioshock.communication.common;
 
 import java.io.IOException;
-import java.io.ObjectInputStream;
+import java.io.ObjectInput;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import bham.bioshock.communication.client.ClientService;
 import bham.bioshock.communication.interfaces.MessageHandler;
 import bham.bioshock.communication.messages.Message;
 
 public class Receiver extends Thread {
   private static final Logger logger = LogManager.getLogger(Receiver.class);
-  
-  private ObjectInputStream client;
+
+  private ObjectInput client;
   private MessageHandler actionHandler;
 
   /**
@@ -19,7 +20,7 @@ public class Receiver extends Thread {
    * @param actionHandler used when new action is received
    * @param client the reader with which this receiver will read data
    */
-  public Receiver(MessageHandler actionHandler, ObjectInputStream client) {
+  public Receiver(MessageHandler actionHandler, ObjectInput client) {
     super("Receiver");
     this.client = client;
     this.actionHandler = actionHandler;
@@ -34,8 +35,11 @@ public class Receiver extends Thread {
         Message receivedMessage;
         try {
           receivedMessage = (Message) client.readObject();
-          // execute business logic
-          actionHandler.handle(receivedMessage);
+          
+          if (receivedMessage != null) {
+            // execute business logic
+            actionHandler.handle(receivedMessage);
+          }
           
         } catch (ClassNotFoundException | ClassCastException e) {
           logger.error("Invalid message class!");
@@ -43,7 +47,7 @@ public class Receiver extends Thread {
         }
       }
     } catch (IOException e) {
-      logger.error("Receiver ("+getId()+") disconnected " + e.getMessage());
+      logger.error("Receiver (" + getId() + ") disconnected " + e.getMessage());
     } finally {
       actionHandler.abort();
     }

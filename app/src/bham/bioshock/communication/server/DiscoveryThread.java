@@ -20,7 +20,7 @@ public class DiscoveryThread implements Runnable {
     try {
       socket = new DatagramSocket(Config.PORT, InetAddress.getByName("0.0.0.0"));
       socket.setBroadcast(true);
-      socket.setSoTimeout(2000);
+      socket.setSoTimeout(500);
 
       while (!Thread.currentThread().isInterrupted()) {
         byte[] buffer = new byte[Command.COMM_DISCOVER_REQ.getBytes().length];
