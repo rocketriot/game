@@ -14,7 +14,7 @@ import com.badlogic.gdx.InputAdapter;
 
 public class InputListener extends InputAdapter {
 
-  private boolean shooting = false;
+  private long lastShot;
   private Astronaut mainPlayer;
   private MinigameStore localStore;
   private World world;
@@ -34,10 +34,10 @@ public class InputListener extends InputAdapter {
 
   @Override
   public boolean keyDown(int keyCode) {
-    if (Input.Keys.SPACE == keyCode && !shooting && mainPlayer.getEquipment().haveGun) {
+    if (Input.Keys.SPACE == keyCode && (System.currentTimeMillis() - lastShot >= 500) && mainPlayer.getEquipment().haveGun) {
       createBullet();
       SoundController.playSound("laser");
-      shooting = true;
+      lastShot = System.currentTimeMillis();
     }
     if (keyCode == Input.Keys.LEFT || keyCode == Input.Keys.A) {
       mainPlayer.moveLeft(true);
@@ -63,9 +63,6 @@ public class InputListener extends InputAdapter {
 
   @Override
   public boolean keyUp(int keyCode) {
-    if (Input.Keys.SPACE == keyCode) {
-      shooting = false;
-    }
     if (keyCode == Input.Keys.UP || keyCode == Input.Keys.W) {
       mainPlayer.jump(false);
     }

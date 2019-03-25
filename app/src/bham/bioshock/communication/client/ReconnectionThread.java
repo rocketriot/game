@@ -21,14 +21,24 @@ public class ReconnectionThread extends Thread {
 
   public void run() {
     try {
+      boolean connecting = false;
       while (!isInterrupted()) {
         Optional<ClientService> service = commClient.getConnection();
 
         if (!service.isPresent() || !service.get().isCreated()) {
           router.call(Route.RECONNECT, true);
-          commClient.reconnect();
+          
+          if(!connecting) {
+            connecting = true;
+            boolean successful = commClient.reconnect();
+            if(successful) {
+              router.call(Route.SEND_RECONNECT);
+            } else {
+              connecting = false;
+            }
+          } 
         } else {
-          router.call(Route.RECONNECT, false);
+          connecting = false;
         }
         sleep(3000);
       }

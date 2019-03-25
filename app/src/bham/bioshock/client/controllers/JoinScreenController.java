@@ -17,9 +17,9 @@ import bham.bioshock.common.models.store.JoinScreenStore;
 import bham.bioshock.common.models.store.Store;
 import bham.bioshock.communication.client.ClientService;
 import bham.bioshock.communication.client.CommunicationClient;
-import bham.bioshock.communication.client.ReconnectionThread;
 import bham.bioshock.communication.messages.boardgame.StartGameMessage;
 import bham.bioshock.communication.messages.joinscreen.JoinScreenMoveMessage;
+import bham.bioshock.communication.messages.joinscreen.ReconnectMessage;
 import bham.bioshock.communication.messages.joinscreen.RegisterMessage;
 import bham.bioshock.communication.messages.joinscreen.AddPlayerMessage.JoiningPlayer;
 
@@ -58,15 +58,20 @@ public class JoinScreenController extends Controller {
       router.call(Route.ALERT, e.getMessage());
     }
   }
-
-  public void disconnectPlayer() {  
-    commClient.disconnect();
-  }
   
   public void disconnect() {
-    disconnectPlayer();
+    commClient.disconnect();
     store.removeAllPlayers();
     router.back();
+  }
+  
+  public void sendReconnect() {
+    Optional<ClientService> clientService = commClient.getConnection();
+    if(clientService.isPresent()) {
+      clientService.get().registerHandler(clientHandler);
+      UUID playerId = store.getMainPlayer().getId();
+      clientService.get().send(new ReconnectMessage(playerId));
+    }
   }
 
   public void removePlayer(UUID id) {

@@ -1,4 +1,4 @@
-package bham.bioshock.communication.server;
+package bham.bioshock.server;
 
 import static org.junit.Assert.*;
 import java.util.UUID;
@@ -12,7 +12,9 @@ import bham.bioshock.communication.messages.boardgame.StartGameMessage;
 import bham.bioshock.communication.messages.joinscreen.*;
 import bham.bioshock.server.InvalidMessageSequence;
 import bham.bioshock.server.ServerHandler;
-import bham.bioshock.testutils.communication.*;
+import bham.bioshock.testutils.communication.FakeMessage;
+import bham.bioshock.testutils.communication.FakeServerService;
+import bham.bioshock.testutils.server.*;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class ServerHandlerTest {
@@ -86,11 +88,16 @@ public class ServerHandlerTest {
     FakeServerService service1 = new FakeServerService();
     handler.add(service1);
     UUID serviceId = UUID.randomUUID();
+    service1.start();
     handler.register(serviceId, "TestUser", service1);
     
     // Add one unregistered service
     FakeServerService service2 = new FakeServerService();
+    service2.start();
     handler.add(service2);
+    
+    assertTrue(service1.isRunning());
+    assertTrue(service2.isRunning());
     
     // Abort
     handler.abort();
