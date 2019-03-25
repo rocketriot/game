@@ -137,21 +137,23 @@ public class GameBoardController extends Controller {
   }
 
   public void miniGameLost(Player player) {
-    GridPoint[][] grid = store.getGameBoard().getGrid();
-
-    // if player attacks planet and doesn't win gets moved in a random position
-    int x, y;
-    do {
-      x = new Random().nextInt();
-      y = new Random().nextInt();
-    } while (grid[x][y].getType() != GridPoint.Type.EMPTY);
-
-    Coordinates newCoordinates = new Coordinates(x, y);
-    player.setCoordinates(newCoordinates);
-
+    movePlayerToRandomPoint(player);
+    
     if(store.isMainPlayersTurn()) {
       router.call(Route.END_TURN);
     }
+  }
+  
+  public void movePlayerToRandomPoint(Player player) {
+    GridPoint[][] grid = store.getGameBoard().getGrid();
+
+    int x, y;
+    do {
+      x = new Random().nextInt(store.getGameBoard().GRID_SIZE);
+      y = new Random().nextInt(store.getGameBoard().GRID_SIZE);
+    } while (grid[x][y].getType() != GridPoint.Type.EMPTY);
+
+    player.setCoordinates(new Coordinates(x, y));
   }
 
   public boolean hasReceivedGrid() {
