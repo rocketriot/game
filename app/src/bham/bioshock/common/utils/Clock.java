@@ -1,4 +1,4 @@
-package bham.bioshock.minigame;
+package bham.bioshock.common.utils;
 
 import java.util.ArrayList;
 
@@ -9,6 +9,10 @@ public class Clock {
   private final ArrayList<TimeListener> listeners = new ArrayList<>();
   
   
+  /**
+   * Update current clock state
+   * @param delta
+   */
   public void update(int delta) {
     time += delta;
     if(time > MAX_TIME) {
@@ -23,10 +27,16 @@ public class Clock {
     }
   }
   
+
   public void update(float delta) {
     update((int) delta * 1000);
   }
   
+  /**
+   * Call listener every n seconds
+   * 
+   * @param delta
+   */
   public void every(float second, TimeListener listener) {
     listener.setEvery(second);
     if(!listeners.contains(listener)) {
@@ -34,6 +44,12 @@ public class Clock {
     }
   }
   
+  /**
+   * Call listener once, after n seconds
+   * 
+   * @param second
+   * @param listener
+   */
   public void at(float second, TimeListener listener) {
     listener.setAt(second);
     if(!listeners.contains(listener)) {
@@ -41,8 +57,11 @@ public class Clock {
     }
   }
   
-  public void everySecond(TimeListener listener) {
-    every(1, listener);
+  /**
+   * Reset the clock
+   */
+  public void reset() {
+    time = 0;
   }
   
   abstract public static class TimeListener {

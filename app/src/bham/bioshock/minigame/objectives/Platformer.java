@@ -91,7 +91,7 @@ public class Platformer extends Objective {
     }
 
     Player initiator = store.getMovingPlayer();
-    router.call(Route.MINIGAME_END, new EndMinigameMessage(initiator.getId(), winner.get(), localStore.getPlanetID(), (winner.get().equals(initiator.getId())), 75));
+    router.call(Route.MINIGAME_END, new EndMinigameMessage(initiator.getId(), winner.get(), localStore.getPlanetID(), 75));
 
     return;
   }

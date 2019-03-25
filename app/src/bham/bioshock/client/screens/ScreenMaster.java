@@ -1,10 +1,9 @@
 package bham.bioshock.client.screens;
 
+import bham.bioshock.Config;
 import bham.bioshock.client.Assets;
 import bham.bioshock.client.Router;
 import bham.bioshock.client.controllers.SoundController;
-import bham.bioshock.common.consts.Config;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
@@ -132,5 +131,21 @@ public abstract class ScreenMaster implements Screen {
     diag.button("OK", true);
 
     diag.show(stage);
+  }
+
+  /** Generates an asset given an asset and screen coordinates */
+  protected Image drawAsset(String asset, int x, int y) {
+    // Generate texture
+    Texture texture = new Texture(asset);
+    texture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+
+    // Generate image
+    Image image = new Image(texture);
+    image.setPosition(x, y);
+
+    // Add to screen
+    stage.addActor(image);
+
+    return image;
   }
 }

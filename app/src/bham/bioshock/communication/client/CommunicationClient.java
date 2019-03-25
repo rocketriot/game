@@ -1,6 +1,7 @@
 package bham.bioshock.communication.client;
 
-import bham.bioshock.communication.Config;
+import bham.bioshock.Config;
+import bham.bioshock.client.Router;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -28,12 +29,12 @@ public class CommunicationClient {
     }
     return Optional.of(service);
   }
-  
-  public void setReconnectionThread(ReconnectionThread reconnect) {
-    if(reconnect != null) {
-      reconnect.interrupt();
+
+  public void startReconnectionThread(Router router) {
+    if(reconnect == null || !reconnect.isAlive()) {
+      reconnect = new ReconnectionThread(this, router);
+      reconnect.start();      
     }
-    this.reconnect = reconnect;
   }
 
   public ClientService createConnection() throws ConnectException {
@@ -61,7 +62,16 @@ public class CommunicationClient {
     logger.debug("Client connected!");
     return service;
   }
-
+  
+  
+  public void reconnect() {
+    logger.info("Reconnecting to " + CommunicationClient.hostAddress);
+    try {
+      createConnection();
+    } catch (ConnectException e) {
+      logger.catching(e);
+    }
+  }
 
   public ClientService connect() throws ConnectException {
     if (Config.SERVER_ADDRESS.length() == 0) {

@@ -51,7 +51,7 @@ public class MinigameScreen implements Screen {
     if(loading) {
       // Update loading progress
       float progress = manager.getProgress();
-      loadingScreen.setProgress((int) Math.floor(progress * 100));
+      loadingScreen.setText( ((int) Math.floor(progress * 100))+"%" );
       loadingScreen.render(delta);
     } else {
       // Render game

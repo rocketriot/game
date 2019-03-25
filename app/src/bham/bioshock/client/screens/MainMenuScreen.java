@@ -1,11 +1,10 @@
 package bham.bioshock.client.screens;
 
+import bham.bioshock.Config;
 import bham.bioshock.client.Assets;
 import bham.bioshock.client.Route;
 import bham.bioshock.client.Router;
 import bham.bioshock.client.controllers.SoundController;
-import bham.bioshock.common.consts.Config;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
@@ -47,21 +46,7 @@ public class MainMenuScreen extends ScreenMaster {
     super.render(delta);
   }
 
-  /** Generates an asset given an asset and screen coordinates */
-  private Image drawAsset(String asset, int x, int y) {
-    // Generate texture
-    Texture texture = new Texture(asset);
-    texture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 
-    // Generate image
-    Image image = new Image(texture);
-    image.setPosition(x, y);
-
-    // Add to screen
-    stage.addActor(image);
-
-    return image;
-  }
 
   private void addListener(Image image, BaseClickListener listener) {
     image.addListener(listener);

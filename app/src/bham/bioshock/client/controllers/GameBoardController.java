@@ -8,7 +8,8 @@ import bham.bioshock.common.consts.GridPoint;
 import bham.bioshock.common.models.*;
 import bham.bioshock.common.models.store.Store;
 import bham.bioshock.common.pathfinding.AStarPathfinding;
-import bham.bioshock.communication.client.IClientService;
+import bham.bioshock.communication.interfaces.MessageService;
+import bham.bioshock.communication.messages.boardgame.AddBlackHoleMessage;
 import bham.bioshock.communication.messages.boardgame.EndTurnMessage;
 import bham.bioshock.communication.messages.boardgame.MovePlayerOnBoardMessage;
 import com.google.inject.Inject;
@@ -18,10 +19,10 @@ import java.util.Random;
 import java.util.UUID;
 
 public class GameBoardController extends Controller {
-  private IClientService clientService;
+  private MessageService clientService;
 
   @Inject
-  public GameBoardController(Router router, Store store, IClientService clientService, BoardGame game) {
+  public GameBoardController(Router router, Store store, MessageService clientService, BoardGame game) {
     super(store, router, game);
     this.clientService = clientService;
     this.router = router;
@@ -90,6 +91,17 @@ public class GameBoardController extends Controller {
     store.nextTurn();
   }
 
+  /** Sends a new black hole to the server */
+  public void addBlackHole(Coordinates coordinates) {
+    clientService.send(new AddBlackHoleMessage(coordinates));
+    store.getMainPlayer().addedBlackHole();
+  }
+
+  /** Receives a black hole from the server */
+  public void blackHoleReceived(Coordinates coordinates) {
+    store.getGameBoard().addBlackHole(new BlackHole(coordinates));
+  }
+
   /** Player move received from the server */
   public void moveReceived(MovePlayerOnBoardMessage data) {
     GameBoard gameBoard = store.getGameBoard();
@@ -125,21 +137,23 @@ public class GameBoardController extends Controller {
   }
 
   public void miniGameLost(Player player) {
-    GridPoint[][] grid = store.getGameBoard().getGrid();
-
-    // if player attacks planet and doesn't win gets moved in a random position
-    int x, y;
-    do {
-      x = new Random().nextInt();
-      y = new Random().nextInt();
-    } while (grid[x][y].getType() != GridPoint.Type.EMPTY);
-
-    Coordinates newCoordinates = new Coordinates(x, y);
-    player.setCoordinates(newCoordinates);
-
+    movePlayerToRandomPoint(player);
+    
     if(store.isMainPlayersTurn()) {
       router.call(Route.END_TURN);
     }
+  }
+  
+  public void movePlayerToRandomPoint(Player player) {
+    GridPoint[][] grid = store.getGameBoard().getGrid();
+
+    int x, y;
+    do {
+      x = new Random().nextInt(store.getGameBoard().GRID_SIZE);
+      y = new Random().nextInt(store.getGameBoard().GRID_SIZE);
+    } while (grid[x][y].getType() != GridPoint.Type.EMPTY);
+
+    player.setCoordinates(new Coordinates(x, y));
   }
 
   public boolean hasReceivedGrid() {

@@ -264,6 +264,7 @@ public class Astronaut extends Entity {
       case PLATFORM:
       case FLAG:
       case GOAL:
+      case HEART:
         return true;
       default:
         return false;
@@ -303,6 +304,12 @@ public class Astronaut extends Entity {
         if (legs.collideWith(e.collisionBoundary, null)) {
           // Standing on the platform
           setOnPlatform((Platform) e);
+        }
+        break;
+      case HEART:
+        if (objective.isPresent()) {
+          Heart heart = (Heart) e;
+          objective.get().pickupHeart(this, heart.id);
         }
         break;
       default:

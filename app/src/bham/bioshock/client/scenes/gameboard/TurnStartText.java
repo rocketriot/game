@@ -1,7 +1,7 @@
 package bham.bioshock.client.scenes.gameboard;
 
+import bham.bioshock.Config;
 import bham.bioshock.client.FontGenerator;
-import bham.bioshock.common.consts.Config;
 import bham.bioshock.common.models.store.Store;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;

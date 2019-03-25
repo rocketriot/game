@@ -130,3 +130,4 @@ Thumbs.db
 .vscode
 
 /logs
+app/logs

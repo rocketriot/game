@@ -1,13 +1,17 @@
 package bham.bioshock.server.handlers;
 
+import bham.bioshock.Config;
 import bham.bioshock.common.models.store.MinigameStore;
 import bham.bioshock.common.models.store.Store;
+import bham.bioshock.common.utils.Clock;
 import bham.bioshock.communication.messages.Message;
 import bham.bioshock.communication.messages.minigame.EndMinigameMessage;
 import bham.bioshock.communication.messages.minigame.MinigameStartMessage;
-import bham.bioshock.communication.messages.minigame.RequestMinigameStartMessage;
-import bham.bioshock.minigame.Clock;
+import bham.bioshock.minigame.ai.CaptureTheFlagAI;
+import bham.bioshock.minigame.ai.KillThemAllAI;
 import bham.bioshock.minigame.ai.PlatformerAI;
+import bham.bioshock.minigame.objectives.CaptureTheFlag;
+import bham.bioshock.minigame.objectives.KillThemAll;
 import bham.bioshock.minigame.objectives.Objective;
 import bham.bioshock.minigame.objectives.Platformer;
 import bham.bioshock.minigame.worlds.RandomWorld;
@@ -31,30 +35,45 @@ public class MinigameHandler {
   Clock clock;
   UUID planetId;
 
-  public MinigameHandler(Store store, ServerHandler handler) {
+  public MinigameHandler(Store store, ServerHandler handler, Clock clock) {
     this.store = store;
     this.handler = handler;
+    this.clock = clock;
   }
 
-  /*
-   * Create and seed the world, and send start game command to all clients
+  /**
+   * Creates and sends minigame start request to all clients
+   * Creates and seed the world
+   * Starts minigame timer to ending the game
+   * 
+   * 
+   * @param data
+   * @param playerId
+   * @param gameBoardHandler
    */
-  public void startMinigame(RequestMinigameStartMessage data, UUID playerId,
-      GameBoardHandler gameBoardHandler) {
+  public void startMinigame(UUID playerId, UUID planetId, GameBoardHandler gbHandler, Integer objectiveId) {
     // Create a world for the minigame
     World w = new RandomWorld();
-    if (data.planetId == null) {
+    if (planetId == null) {
       logger.error("Starting minigame without a planet ID (That's OK. for tests)!");
     } else {
-      planetId = data.planetId;
+      this.planetId = planetId;
     }
     Objective o;
     aiLoop = new MinigameAILoop();
+    
+    if(objectiveId == null) {
+      Random rand = new Random();
+      objectiveId = rand.nextInt(10) % 3;
+    }
+
 
 
     Random rand = new Random();
 
-   /*switch(rand.nextInt(100)%3) {
+
+    switch (objectiveId) {
+
       case 1:
         o = new Platformer(w);
         for (UUID id : store.getCpuPlayers()) {
@@ -73,7 +92,7 @@ public class MinigameHandler {
           aiLoop.registerHandler(new CaptureTheFlagAI(id, store, handler));
         }
         break;
-    }*/
+    }
 
     o = new Platformer(w);
     for (UUID id : store.getCpuPlayers()) {
@@ -82,31 +101,36 @@ public class MinigameHandler {
 
     aiLoop.start();
     
-    setupMinigameEnd(gameBoardHandler, playerId);
+    setupMinigameEnd(gbHandler, playerId);
     handler.sendToAll(new MinigameStartMessage(w, o, planetId));
   }
+
 
   /**
    * Starts a clock ending the minigame
    */
   private void setupMinigameEnd(GameBoardHandler gameBoardHandler, UUID playerId) {
-    clock = new Clock();
 
+    clock.reset();
     clock.at(60f, new Clock.TimeListener() {
       @Override
       public void handle(Clock.TimeUpdateEvent event) {
+        logger.info("Ending minigame");
         if (planetId == null)
           return;
         if (minigameTimer != null) {
           minigameTimer.interrupt();
         }
         MinigameStore localStore = store.getMinigameStore();
-        Objective o = localStore.getObjective();
-        endMinigame(o.getWinner(), gameBoardHandler, playerId);
+        UUID winner = null;
+        if(localStore != null && localStore.getObjective() != null) {
+          winner = localStore.getObjective().getWinner();
+        }
+        endMinigame(winner, gameBoardHandler, playerId);
       }
     });
 
-    minigameTimer = new Thread() {
+    minigameTimer = new Thread("MinigameTimer") {
       private long time;
 
       public void run() {
@@ -146,28 +170,26 @@ public class MinigameHandler {
 
   /**
    * Method to end the minigame and send the players back to the main board
+   * called by the inner timer
    * 
    * @param gameBoardHandler
    */
-  public void endMinigame(UUID winnerId, GameBoardHandler gameBoardHandler, UUID playerId) {
-    boolean capturedPlanet = false;
-    int points = 100;
-    if (winnerId != null) {
-      if (winnerId.equals(playerId)) {
-        capturedPlanet = true;
-      }
-    }
-
-    EndMinigameMessage msg =
-        new EndMinigameMessage(playerId, winnerId, planetId, capturedPlanet, points);
+  private void endMinigame(UUID winnerId, GameBoardHandler gameBoardHandler, UUID playerId) {
+    Message msg = new EndMinigameMessage(playerId, winnerId, planetId, Config.PLANET_POINTS);
     planetId = null;
 
     aiLoop.finish();
     handler.sendToAll(msg);
-    gameBoardHandler.endTurn(playerId);
+    gameBoardHandler.endTurn();
   }
 
+  /**
+   * Send objective update to all clients
+   * 
+   * @param message
+   */
   public void updateObjective(Message message) {
     handler.sendToAll(message);
   }
+
 }
