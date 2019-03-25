@@ -222,7 +222,9 @@ abstract public class World implements Serializable {
     if(id == 4) {
       textureOffset = 770;
       frontTexture = manager.get(Assets.planetBase + "4_front.png", Texture.class);
-    } 
+    }  else {
+      textureOffset = 530;
+    }
   }
 
 }
