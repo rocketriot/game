@@ -52,7 +52,10 @@ public enum Route {
   LOOP_SOUND                  (SoundController.class,         "loopSound"),
   STOP_SOUND                  (SoundController.class,         "stopSound"),
   SOUNDS_VOLUME               (SoundController.class,         "setSoundsVolume"),
-  SOUNDS_ENABLED              (SoundController.class,         "enableSounds");
+  SOUNDS_ENABLED              (SoundController.class,         "enableSounds"),
+
+
+  DIRECT_END                  (EndGameController.class,      "show"); // FOR TESTS ONLY
   
 //@formatter:on
 

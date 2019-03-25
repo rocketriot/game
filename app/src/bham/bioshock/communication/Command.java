@@ -22,6 +22,8 @@ public enum Command {
   MOVE_PLAYER_ON_BOARD,
   END_TURN,
   SET_PLANET_OWNER,
+
+  DIRECT_END,
   
   // Minigame
   MINIGAME_START,

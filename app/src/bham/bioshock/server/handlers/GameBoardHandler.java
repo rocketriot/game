@@ -83,6 +83,7 @@ public class GameBoardHandler {
     
     handler.sendToAll(new Action(Command.MOVE_PLAYER_ON_BOARD, response));
 
+
     if (movingPlayer.isCpu()) {
       int waitTime = calculateMoveTime(currentPlayer.getBoardMove());
       new Thread(() -> {
@@ -99,6 +100,11 @@ public class GameBoardHandler {
         }
       }).start();
     }
+
+    if((store.getRound() == store.MAX_ROUNDS )&& (store.getTurn() == 3)){
+      handler.sendToAll(new Action(Command.DIRECT_END));
+    }
+
   }
 
   private void startMinigame(GameBoard gameBoard, Player currentPlayer,
@@ -118,6 +124,12 @@ public class GameBoardHandler {
 
   public void endTurn(UUID id) {
     handler.sendToAll(new Action(Command.UPDATE_TURN));
+
+
+    if((store.getRound() == store.MAX_ROUNDS) && (store.getTurn() == 3)) {
+      handler.sendToAll(new Action(Command.DIRECT_END));
+    }
+
     // Handle if the next player is a CPU
     new Thread(() -> {
       try {
@@ -132,5 +144,6 @@ public class GameBoardHandler {
         e.printStackTrace();
       }
     }).start();
+
   }
 }

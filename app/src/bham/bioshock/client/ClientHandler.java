@@ -98,6 +98,10 @@ public class ClientHandler implements IClientHandler {
             router.call(Route.SET_PLANET_OWNER, action.getArgument(0));
             break;
           }
+          case DIRECT_END: {
+            router.call(Route.DIRECT_END);
+            break;
+          }
           default: {
             System.out.println("Received unhandled command: " + action.getCommand().toString());
           }}

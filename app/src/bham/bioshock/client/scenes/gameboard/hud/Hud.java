@@ -1,5 +1,6 @@
 package bham.bioshock.client.scenes.gameboard.hud;
 
+import bham.bioshock.client.Route;
 import bham.bioshock.client.Router;
 import bham.bioshock.common.consts.Config;
 import bham.bioshock.common.models.Player;

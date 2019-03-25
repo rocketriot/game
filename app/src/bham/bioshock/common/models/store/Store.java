@@ -1,6 +1,7 @@
 package bham.bioshock.common.models.store;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 import com.badlogic.gdx.Screen;
@@ -17,6 +18,7 @@ public class Store {
   /** Max number of players in a game */
   // FOR TESTING
   public final int MAX_PLAYERS = 4;
+  public final int MAX_ROUNDS = 1;
 
   private AppPreferences preferences;
   private Screen currentScreen;
@@ -150,6 +152,26 @@ public class Store {
     }
   }
 
+
+  public ArrayList<Player>getWinner(){
+    int maxScore =0;
+    ArrayList<Player> winners = new ArrayList<Player>();
+
+    for(Player player:players) {
+      if (player.getPoints() > maxScore)
+        maxScore = player.getPoints();
+    }
+
+    for(Player player : players)
+      if(player.getPoints() == maxScore)
+        winners.add(player);
+
+      // will return the winner or the winners if its a tie;
+     return winners;
+
+  }
+
+
   /*
    * MINIGAME
    */
@@ -190,7 +212,7 @@ public class Store {
   public Boolean isReconnecting() {
     return reconnecting;
   }
-  
-  
+
+
 
 }

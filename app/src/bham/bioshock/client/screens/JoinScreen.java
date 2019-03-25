@@ -349,6 +349,7 @@ public class JoinScreen extends ScreenMaster {
           router.call(Route.DIRECT_MINIGAME_START);
         }
       });
+
     }
 
     @Override
