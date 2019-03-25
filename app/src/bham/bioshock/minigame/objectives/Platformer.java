@@ -3,10 +3,8 @@ package bham.bioshock.minigame.objectives;
 import bham.bioshock.client.Route;
 import bham.bioshock.client.Router;
 import bham.bioshock.common.Position;
-import bham.bioshock.common.models.Player;
 import bham.bioshock.common.models.store.MinigameStore;
 import bham.bioshock.common.models.store.Store;
-import bham.bioshock.communication.messages.minigame.EndMinigameMessage;
 import bham.bioshock.communication.messages.objectives.UpdateFrozenMessage;
 import bham.bioshock.minigame.models.*;
 import bham.bioshock.minigame.worlds.World;
@@ -126,8 +124,8 @@ public class Platformer extends Objective {
       return;
     }
 
-    Player initiator = store.getMovingPlayer();
-    router.call(Route.MINIGAME_END, new EndMinigameMessage(initiator.getId(), winner.get(), localStore.getPlanetID(), 75));
+    //Player initiator = store.getMovingPlayer();
+    //router.call(Route.MINIGAME_END, new EndMinigameMessage(initiator.getId(), winner.get(), localStore.getPlanetID(), 75));
 
     return;
   }
