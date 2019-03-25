@@ -45,7 +45,7 @@ public class JoinScreen extends ScreenMaster {
   private float rocketSpeed = 200f;
   private float rotationSpeed = 1.8f;
   private int rocketWidth = 50;
-  private int rocketHeight = 100;
+  private int rocketHeight = 110;
   private float rocketRotation = 0;
 
   private Player mainPlayer;
@@ -98,8 +98,8 @@ public class JoinScreen extends ScreenMaster {
   public void addPlayer(Player player) {
     /// create a new rocket animation
     int index = localStore.getRocketNum();
-    int x = (int) ((stage.getWidth() / 4) * (index + 1) - 20);
-    int y = (int) stage.getHeight() / 2;
+    int x = (int) ((screenWidth / 4) * (index + 1) - 20);
+    int y = (int) screenHeight / 2;
     RocketAnimation anim = new RocketAnimation(world, x, y, index);
     // add it to the map
     localStore.addRocket(player.getId(), anim);
