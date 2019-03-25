@@ -80,7 +80,7 @@ public class PathRenderer {
         allowedMove[i] = false;
       } else {
         allowedMove[i] = true;
-        fuel -= 10 * mainPlayer.getFuelGridCost();
+        fuel -= mainPlayer.getFuelGridCost();
       }
     }
 

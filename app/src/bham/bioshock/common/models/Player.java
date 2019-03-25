@@ -84,7 +84,7 @@ public class Player implements Serializable {
     if (hasUpgrade(Type.ENGINE_EFFICIENCY)) {
       modifier -= 0.2;
     }
-    return this.BASE_MAX_FUEL * modifier;
+    return this.FUEL_GRID_COST * modifier;
   }
   
   public Player(String username) {

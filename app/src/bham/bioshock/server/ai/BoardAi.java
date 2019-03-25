@@ -96,7 +96,6 @@ public class BoardAi extends Thread {
     if (bestMove != null) {
       MovePlayerOnBoardMessage msg = new MovePlayerOnBoardMessage(bestMove.getMoveCoords(), player.getId());
       gameBoardHandler.movePlayer(msg, player.getId());
-      
       return bestMove.getPath();
     }
     return new ArrayList<Coordinates>();
@@ -164,6 +163,20 @@ public class BoardAi extends Thread {
     // Initiate the reward to be the fuel cost of the move / 10
     float reward = -moveVal.getPathCost() / 10f;
 
+    // Add two to the reward for each fuel box in the path
+    // Add 75 points per upgrade in the path
+    // Set the reward to 50 + fuel cost if pathing through a black hole
+    for (Coordinates c: moveVal.getPath()) {
+      if (gameBoard.getGridPoint(c).getType().equals(Type.FUEL)) {
+        reward += (2 * player.getFuelGridCost()) / 10f;
+      } else if (gameBoard.getGridPoint(c).getType().equals(Type.UPGRADE)) {
+        reward += 75;
+      } else if (gameBoard.getGridPoint(c).getType().equals(Type.BLACKHOLE)) {
+        moveVal.setReward(reward + 50);
+        return;
+      }
+    }
+
     // Arraylist containing the planets that have been checked
     ArrayList<Planet> planetChecklist = new ArrayList<>();
 
@@ -174,15 +187,6 @@ public class BoardAi extends Thread {
       moveVal.setCapturablePlanet(planet);
     }
 
-    // Add 100 points per upgrade in the path
-    // Add two to the reward for each fuel box in the path
-    for (Coordinates c: moveVal.getPath()) {
-      if (gameBoard.getGridPoint(c).getType().equals(Type.FUEL)) {
-        reward += (2 * player.getFuelGridCost()) / 10f;
-      } else if (gameBoard.getGridPoint(c).getType().equals(Type.UPGRADE)) {
-        reward += 100;
-      }
-    }
 
     // Add 50 / distance to the planet for each capturable planet to the reward
     for (int x = 0; x < gameBoard.GRID_SIZE; x++) {
