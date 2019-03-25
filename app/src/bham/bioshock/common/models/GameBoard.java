@@ -119,8 +119,16 @@ public class GameBoard implements Serializable {
       return;
     }
 
+    // Generate an upgrade
+    if (randomFloat <= 0.025) {
+      Upgrade upgrade = new Upgrade(new Coordinates(x, y));
+      grid[x][y] = new GridPoint(GridPoint.Type.UPGRADE, upgrade);
+
+      return;
+    }
+
     // Generate a planet
-    if (randomFloat <= 0.035) {
+    if (randomFloat <= 0.045) {
       // Check if there's enough space to generate the planet
       if (isEnoughSpace(x, y, Planet.WIDTH, Planet.HEIGHT)) {
         // Create a new planet
@@ -136,7 +144,7 @@ public class GameBoard implements Serializable {
     }
 
     // Generate an asteroid
-    if (randomFloat <= 0.05) {
+    if (randomFloat <= 0.060) {
       // Check if there's enough space to generate the asteroid
       if (isEnoughSpace(x, y, Asteroid.WIDTH, Asteroid.HEIGHT)) {
         // Create a new asteroid
@@ -199,5 +207,13 @@ public class GameBoard implements Serializable {
       }
     }
     return null;
+  }
+
+  public void addBlackHole(BlackHole blackHole) {
+    Coordinates coordinates = blackHole.getCoordinates();
+    
+    for (int i = 0; i < BlackHole.WIDTH; i++)
+      for (int j = 0; j < BlackHole.HEIGHT; j++)
+        grid[coordinates.getX() + i][coordinates.getY() + j] = new GridPoint(GridPoint.Type.BLACKHOLE, blackHole);
   }
 }

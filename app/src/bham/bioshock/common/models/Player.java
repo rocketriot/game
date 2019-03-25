@@ -40,11 +40,15 @@ public class Player implements Serializable {
   /** Object containing infomation about a players move */
   private ArrayList<Move> boardMove;
 
+  /** The maximum amount of fuel a player hold at one time */
+  public static final float BASE_MAX_FUEL = 100f;
+
   /** The fuel cost for moving one grid space */
   public static final float FUEL_GRID_COST = 10f;
 
-  /** The maximum amount of fuel a player hold at one time */
-  public static final float MAX_FUEL = 100f;
+  private boolean isAddingBlackHole = false;
+
+  private ArrayList<Upgrade.Type> upgrades = new ArrayList<>();
 
   public Player(UUID id, String username, Boolean isCpu) {
     this.id = id;
@@ -93,17 +97,37 @@ public class Player implements Serializable {
     return fuel;
   }
 
+  /** Returns the maximum fuel a player has after modifiers e.g. upgrades or planets owned */
+  public float getMaxFuel() {
+    //TODO Calculate modifier
+    float modifier = 0;
+    return this.BASE_MAX_FUEL + modifier;
+  }
+
   public void setFuel(float fuel) {
     this.fuel = fuel;
   }
 
   public void increaseFuel(float fuel) {
-    this.fuel = Math.min(this.fuel + fuel, MAX_FUEL);
+    this.fuel = Math.min(this.fuel + fuel, getMaxFuel());
   }
 
   public void decreaseFuel(float fuel) {
     this.fuel = Math.max(this.fuel - fuel, 0f);
   }
+
+  public void addUpgrade(Upgrade upgrade) {
+    upgrades.add(upgrade.getType());
+  }
+  
+  public ArrayList<Upgrade.Type> getUpgrades() {
+    return upgrades;
+  }
+  
+  public boolean hasUpgrade(Upgrade.Type type) {
+    return upgrades.contains(type);
+  }
+
 
   public int getPlanetsCaptured() {
     return planetsCaptured;
@@ -169,7 +193,7 @@ public class Player implements Serializable {
       } 
       Player p = (Player) o; 
       return this.id.equals(p.getId());
-  } 
+  }
 
   public class Move implements Serializable {
     private Direction direction;
@@ -197,5 +221,18 @@ public class Player implements Serializable {
 
   public void setTextureID(int textureID) {
     this.textureID = textureID;
+  }
+
+  public boolean isAddingBlackHole() {
+    return isAddingBlackHole;
+  }
+
+  public void toggleAddingBlackHole() {
+    isAddingBlackHole = !isAddingBlackHole;
+  }
+
+  public void addedBlackHole() {
+    isAddingBlackHole = false;
+    upgrades.remove(Upgrade.Type.BLACK_HOLE);
   }
 }

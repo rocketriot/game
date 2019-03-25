@@ -5,6 +5,7 @@ import bham.bioshock.common.utils.Clock;
 import bham.bioshock.communication.Command;
 import bham.bioshock.communication.interfaces.ServerService;
 import bham.bioshock.communication.messages.Message;
+import bham.bioshock.communication.messages.boardgame.AddBlackHoleMessage;
 import bham.bioshock.communication.messages.joinscreen.JoinScreenMoveMessage;
 import bham.bioshock.communication.messages.minigame.RequestMinigameStartMessage;
 import bham.bioshock.server.handlers.GameBoardHandler;
@@ -192,6 +193,10 @@ public class ServerHandler implements MultipleConnectionsHandler {
         break;
       case END_TURN:
         gameBoardHandler.endTurn();
+        break;
+      case ADD_BLACK_HOLE:
+        AddBlackHoleMessage addBlackHoleMessage = (AddBlackHoleMessage) message;
+        gameBoardHandler.addBlackHole(addBlackHoleMessage.coordinates);
         break;
       case MINIGAME_START:
         RequestMinigameStartMessage request = (RequestMinigameStartMessage) message;

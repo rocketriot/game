@@ -6,6 +6,7 @@ import com.badlogic.gdx.Gdx;
 import com.google.inject.Inject;
 import bham.bioshock.communication.interfaces.MessageHandler;
 import bham.bioshock.communication.messages.Message;
+import bham.bioshock.communication.messages.boardgame.AddBlackHoleMessage;
 import bham.bioshock.communication.messages.boardgame.GameBoardMessage;
 import bham.bioshock.communication.messages.boardgame.MovePlayerOnBoardMessage;
 import bham.bioshock.communication.messages.joinscreen.AddPlayerMessage;
@@ -57,6 +58,11 @@ public class ClientHandler implements MessageHandler {
           }
           case UPDATE_TURN: {
             router.call(Route.UPDATE_TURN);
+            break;
+          }
+          case ADD_BLACK_HOLE: {
+            AddBlackHoleMessage addBlackHoleMessage = (AddBlackHoleMessage) message;
+            router.call(Route.BLACK_HOLE_RECEIVED, addBlackHoleMessage.coordinates);
             break;
           }
           case MINIGAME_START: {
