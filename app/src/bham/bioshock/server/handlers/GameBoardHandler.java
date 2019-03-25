@@ -1,7 +1,6 @@
 package bham.bioshock.server.handlers;
 
 import bham.bioshock.common.consts.GridPoint;
-import bham.bioshock.common.models.Planet;
 import bham.bioshock.common.pathfinding.AStarPathfinding;
 import java.util.ArrayList;
 
@@ -15,7 +14,7 @@ import bham.bioshock.communication.messages.boardgame.AddBlackHoleMessage;
 import bham.bioshock.communication.messages.boardgame.GameBoardMessage;
 import bham.bioshock.communication.messages.boardgame.MovePlayerOnBoardMessage;
 import bham.bioshock.communication.messages.boardgame.UpdateTurnMessage;
-import bham.bioshock.communication.server.BoardAi;
+import bham.bioshock.server.ai.BoardAi;
 import bham.bioshock.server.ServerHandler;
 
 import java.util.UUID;
@@ -90,7 +89,7 @@ public class GameBoardHandler {
             grid, startCoords, gridSize, gridSize, store.getPlayers());
 
     ArrayList<Coordinates> path = pathFinder.pathfind(goalCoords);
-    float pathCost = (path.size() - 1) * 10;
+    float pathCost = (path.size() - 1) * currentPlayer.getFuelGridCost();
 
     GridPoint.Type goalType = gameBoard.getGridPoint(goalCoords).getType();
     
