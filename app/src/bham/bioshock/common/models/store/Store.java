@@ -157,9 +157,9 @@ public class Store {
       round++;
       turn = 0;
 
-      // Increase player's fuel after each round
+      // Increase player's fuel after each round and add points for each planet owned
       for (Player p : players) {
-        p.increaseFuel(30.0f);
+        p.newRound();
       }
     }
   }
