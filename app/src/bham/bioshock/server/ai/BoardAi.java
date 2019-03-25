@@ -1,4 +1,4 @@
-package bham.bioshock.communication.server;
+package bham.bioshock.server.ai;
 
 import bham.bioshock.common.consts.GridPoint;
 import bham.bioshock.common.consts.GridPoint.Type;
@@ -136,7 +136,7 @@ public class BoardAi extends Thread {
 
         // Attempt to generate path to the point
         ArrayList<Coordinates> path = pathFinder.pathfind(moveCoords);
-        float pathCost = (path.size() - 1) * 10;
+        float pathCost = (path.size() - 1) * player.getFuelGridCost();
 
         // Skip points if no path is available
         if (path.size() == 0) {
@@ -174,10 +174,13 @@ public class BoardAi extends Thread {
       moveVal.setCapturablePlanet(planet);
     }
 
+    // Add 100 points per upgrade in the path
     // Add two to the reward for each fuel box in the path
     for (Coordinates c: moveVal.getPath()) {
       if (gameBoard.getGridPoint(c).getType().equals(Type.FUEL)) {
-        reward += 2;
+        reward += (2 * player.getFuelGridCost()) / 10f;
+      } else if (gameBoard.getGridPoint(c).getType().equals(Type.UPGRADE)) {
+        reward += 100;
       }
     }
 
