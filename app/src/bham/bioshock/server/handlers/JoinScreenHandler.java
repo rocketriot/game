@@ -1,21 +1,27 @@
 package bham.bioshock.server.handlers;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 import bham.bioshock.common.models.Player;
 import bham.bioshock.common.models.store.Store;
-import bham.bioshock.communication.Action;
-import bham.bioshock.communication.Command;
-import bham.bioshock.communication.server.ServerService;
-import bham.bioshock.server.ServerHandler;
+import bham.bioshock.communication.interfaces.ServerService;
+import bham.bioshock.communication.messages.Message;
+import bham.bioshock.communication.messages.joinscreen.AddPlayerMessage;
+import bham.bioshock.communication.messages.joinscreen.DisconnectPlayerMessage;
+import bham.bioshock.communication.messages.joinscreen.JoinScreenMoveMessage;
+import bham.bioshock.communication.messages.joinscreen.RegisterMessage;
+import bham.bioshock.communication.messages.joinscreen.ServerFullMessage;
+import bham.bioshock.communication.messages.minigame.RequestMinigameStartMessage;
+import bham.bioshock.server.interfaces.MultipleConnectionsHandler;
 
 public class JoinScreenHandler {
 
-  Store store;
-  ServerHandler handler;
+  private Store store;
+  private MultipleConnectionsHandler handler;
+  private ConcurrentHashMap<UUID, Long> lastRocketMessage = new ConcurrentHashMap<>();
 
-  public JoinScreenHandler(Store store, ServerHandler handler) {
+  public JoinScreenHandler(Store store, MultipleConnectionsHandler handler) {
     this.store = store;
     this.handler = handler;
   }
@@ -26,13 +32,14 @@ public class JoinScreenHandler {
    * @param action
    * @param service
    */
-  public void registerPlayer(Action action, ServerService service) {
+  public void registerPlayer(Message message, ServerService service) {
     if (store.getPlayers().size() >= 4) {
-      service.send(new Action(Command.SERVER_FULL));
+      service.send(new ServerFullMessage());
       return;
     }
-    Player player = (Player) action.getArgument(0);
-    handler.registerClient(player.getId(), service);
+    RegisterMessage data = (RegisterMessage) message;
+    Player player = data.player;
+    handler.register(player.getId(), player.getUsername(), service);
     addPlayer(player);
   }
 
@@ -45,29 +52,31 @@ public class JoinScreenHandler {
     // Set the texture ID of the player
     int textureId = store.getPlayers().size();
     player.setTextureID(textureId);
-
+    
+    ArrayList<Player> players = store.getPlayers();
+    players.add(player);
+    
     // Send all connected clients the new player
-    handler.sendToAllExcept(new Action(Command.ADD_PLAYER, player), player.getId());
-
+    handler.sendToAllExcept(new AddPlayerMessage(player), player.getId());
+    
     // Send all connected players to the new player
-    ArrayList<Serializable> arguments = new ArrayList<>();
-    for (Player p : store.getPlayers()) {
-      arguments.add(p);
-    }
-    arguments.add(player);
-    handler.sendTo(player.getId(), new Action(Command.ADD_PLAYER, arguments));
+    handler.sendTo(player.getId(), new AddPlayerMessage(players));
   }
 
   public void disconnectPlayer(UUID clientId) {
-    handler.sendToAll(new Action(Command.REMOVE_PLAYER, clientId));
+    handler.sendToAll(new DisconnectPlayerMessage(clientId));
   }
 
+  /**
+   * Create CPU players
+   * 
+   * @return list of created cpu players
+   */
   private ArrayList<Player> createCpuPlayers() {
     ArrayList<Player> cpuPlayers = new ArrayList<>();
     int storedPlayersNum = store.getPlayers().size();
 
-    // If there is not 4 players, create CPU players
-
+    // If there is less then 4 players, create new CPU player
     while (storedPlayersNum + cpuPlayers.size() < store.MAX_PLAYERS) {
       int number = storedPlayersNum + cpuPlayers.size();
 
@@ -83,21 +92,30 @@ public class JoinScreenHandler {
     return cpuPlayers;
   }
 
-  /** Creates CPU players and starts the game */
-  public void startGame(Action action, GameBoardHandler gameBoardHandler) {
+  /**
+   * Creates CPU players and starts the game
+   * @param gameBoardHandler
+   */
+  public void startGame(GameBoardHandler gameBoardHandler) {
     ArrayList<Player> cpuPlayers = createCpuPlayers();
+    
     // Send the board and the players
-    gameBoardHandler.getGameBoard(action, cpuPlayers);
-
-    // Tell the clients to start the game
-    handler.sendToAll(new Action(Command.START_GAME));
+    gameBoardHandler.getGameBoard(cpuPlayers, true);
+    gameBoardHandler.startAI();
   }
-
-  public void minigameDirectStart(Action action, UUID playerId, GameBoardHandler gameBoardHandler,
+  
+  /**
+   * Starts minigame directly from the join screen
+   * 
+   * @param playerId initiator
+   * @param gameBoardHandler
+   * @param minigameHandler
+   */
+  public void minigameDirectStart(UUID playerId, GameBoardHandler gameBoardHandler,
       MinigameHandler minigameHandler) {
     ArrayList<Player> cpuPlayers = createCpuPlayers();
     // Send the board and the players
-    gameBoardHandler.getGameBoard(action, cpuPlayers);
+    gameBoardHandler.getGameBoard(cpuPlayers, false);
 
     // Wait for the board
     try {
@@ -105,12 +123,24 @@ public class JoinScreenHandler {
     } catch (InterruptedException e) {
       e.printStackTrace();
     }
-
-    minigameHandler.startMinigame(new Action(Command.MINIGAME_START), playerId, gameBoardHandler);
+ 
+    minigameHandler.startMinigame(playerId, null, gameBoardHandler, null);
   }
 
-  public void moveRocket(Action action, UUID player) {
-    handler.sendToAllExcept(action, player);
+  /**
+   * Update rocket position on the board
+   * 
+   * @param message
+   * @param playerId
+   */
+  public void moveRocket(JoinScreenMoveMessage message, UUID playerId) {
+    Long lastMessage = lastRocketMessage.get(playerId);
+    
+    // Ignore old messages
+    if(lastMessage == null || lastMessage <= message.created) {
+      lastRocketMessage.put(playerId, message.created);
+      handler.sendToAllExcept(message, playerId);
+    }
   }
 
 }

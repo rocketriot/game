@@ -1,8 +1,9 @@
 package bham.bioshock.minigame.physics;
 
-import java.util.ArrayList;
 import bham.bioshock.common.Position;
 import bham.bioshock.minigame.models.Entity;
+
+import java.util.ArrayList;
 
 public class Step {
   public final Position position;
@@ -35,6 +36,10 @@ public class Step {
   public void updatePos(Position pos) {
     this.position.x = pos.x;
     this.position.y = pos.y;
+  }
+
+  public Position getPos() {
+    return position;
   }
 
 }

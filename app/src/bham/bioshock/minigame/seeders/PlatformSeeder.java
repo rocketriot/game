@@ -4,10 +4,8 @@ import bham.bioshock.common.Position;
 import bham.bioshock.minigame.PlanetPosition;
 import bham.bioshock.minigame.models.Platform;
 import bham.bioshock.minigame.worlds.World;
-import java.lang.reflect.Array;
+
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.Random;
 
 /** The Map Seeder. */
@@ -18,6 +16,9 @@ public class PlatformSeeder {
 
   /** List of all the platforms in the world */
   private ArrayList<Platform> platforms = new ArrayList<>();
+
+  private int WIDTH_LOWERBOUND = 150;
+  private int WIDTH_UPPERBOUND = 200;
 
   /**
    * Instantiates a new Map seeder.
@@ -34,13 +35,13 @@ public class PlatformSeeder {
    */
   public void seed() {
     // generate for top right quarter
-    generatePlatforms(0, 90, "High");
+    generatePlatforms(0, 90, generateFrequency());
     // generate for bottom right quarter
-    generatePlatforms(90, 180, "High");
+    generatePlatforms(90, 180, generateFrequency());
     // generate for bottom left quarter
-    generatePlatforms(180, 270, "High");
+    generatePlatforms(180, 270, generateFrequency());
     // generate for top left quarter
-    generatePlatforms(270, 360, "High");
+    generatePlatforms(270, 360, generateFrequency());
   }
 
   /**
@@ -52,7 +53,7 @@ public class PlatformSeeder {
   private String generateFrequency() {
     // a result of 1 is low frequency, 2 is medium and 3 is high
     Random generator = new Random();
-    int frequency = generator.nextInt((3 - 1) + 1) + 1;
+    int frequency = generator.nextInt(3) + 1;
 
     switch (frequency) {
       case 1:
@@ -212,7 +213,6 @@ public class PlatformSeeder {
       difference = (float) generator.nextInt((max - min) + 1) + min;
       angle = platformAngle + difference;
     }
-
     return angle;
   }
 

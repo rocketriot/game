@@ -4,8 +4,8 @@ public enum Command {
   // @formatter:off
 
   // Connecting to a server
-  COMM_DISCOVER,
-  COMM_DISCOVER_RESPONSE,
+  COMM_DISCOVER_REQ,
+  COMM_DISCOVER_RES,
   TEST,
 
   // Creating a game
@@ -14,6 +14,7 @@ public enum Command {
   ADD_PLAYER,
   REMOVE_PLAYER,
   START_GAME,
+  RECONNECT_PLAYER,
 
   // Game board
   GET_GAME_BOARD,
@@ -21,16 +22,23 @@ public enum Command {
   UPDATE_TURN,
   MOVE_PLAYER_ON_BOARD,
   END_TURN,
+
   SET_PLANET_OWNER,
 
   DIRECT_END,
+
+  ADD_BLACK_HOLE,
+
   
   // Minigame
   MINIGAME_START,
   MINIGAME_DIRECT_START, // FOR TESTS ONLY
   MINIGAME_PLAYER_MOVE,
+  MINIGAME_PLAYER_STEP,
   MINIGAME_END,
   MINIGAME_BULLET,
+  MINIGAME_UPDATE_OBJECTIVE,
+  MINIGAME_OBJECTIVE,
 
   //JoinScreen
   JOIN_SCREEN_MOVE;

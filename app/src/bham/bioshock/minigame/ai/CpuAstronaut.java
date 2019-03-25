@@ -1,36 +1,114 @@
 package bham.bioshock.minigame.ai;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import bham.bioshock.minigame.models.Astronaut;
+import bham.bioshock.minigame.models.Bullet;
+import bham.bioshock.minigame.models.astronaut.AstronautMove;
+import bham.bioshock.minigame.worlds.World;
 
+/**
+ * The CPU Astronaut.
+ */
 public class CpuAstronaut {
 
+  /**
+   * The Astronaut.
+   */
   Astronaut astronaut;
-  
-  public CpuAstronaut(Astronaut a) {
+
+  /**
+   * The current move.
+   */
+  AstronautMove move;
+
+  /**
+   * The World.
+   */
+  World world;
+
+  /**
+   * The Bullets.
+   */
+  ArrayList<Bullet> bullets = new ArrayList<>();
+
+  /**
+   * Instantiates a new CPU astronaut.
+   *
+   * @param a the a
+   * @param w the w
+   */
+  public CpuAstronaut(Astronaut a, World w) {
     this.astronaut = a;
-  }
-  
-  public void moveLeft() {
-    astronaut.moveLeft(true);
-    astronaut.moveRight(false);
-  }
-  
-  public void moveRight() {
-    astronaut.moveRight(true);
-    astronaut.moveLeft(false);
-  }
-  
-  public void jump() {
-    astronaut.jump(true);
+    this.world = w;
+    move = new AstronautMove();
   }
 
-  public void moveChange() {
-    astronaut.moveChange();
-    astronaut.jump(false);
+  /**
+   * Move left.
+   */
+  public void moveLeft() {
+    move.movingLeft = true;
+    move.movingRight = false;
   }
-  
+
+  /**
+   * Move right.
+   */
+  public void moveRight() {
+    move.movingLeft = false;
+    move.movingRight = true;
+  }
+
+  /**
+   * Jump.
+   */
+  public void jump() {
+    move.jumping = true;
+  }
+
+  /**
+   * Gets all the bullets.
+   *
+   * @return the bullets
+   */
+  public Collection<Bullet> getBullets() {
+    return bullets;
+  }
+
+  /**
+   * Clear bullets list.
+   */
+  public void clearBullets() {
+    bullets.clear();
+  }
+
+  /**
+   * Shoot.
+   */
+  public void shoot() {
+    Bullet b = Bullet.createForPlayer(world, astronaut);
+    bullets.add(b);
+  }
+
+  /**
+   * Get astronaut.
+   *
+   * @return the astronaut
+   */
   public Astronaut get() {
     return astronaut;
   }
-  
+
+  /**
+   * End move.
+   *
+   * @return the move
+   */
+  public AstronautMove endMove() {
+    AstronautMove oldMove = move;
+    move = new AstronautMove();
+    return oldMove;
+  }
+
 }

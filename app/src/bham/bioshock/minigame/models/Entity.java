@@ -2,14 +2,9 @@ package bham.bioshock.minigame.models;
 
 import bham.bioshock.common.Position;
 import bham.bioshock.minigame.PlanetPosition;
-import bham.bioshock.minigame.models.Entity.State;
 import bham.bioshock.minigame.objectives.Objective;
 import bham.bioshock.minigame.physics.*;
 import bham.bioshock.minigame.worlds.World;
-import java.io.Serializable;
-import java.util.Optional;
-import java.util.UUID;
-import java.util.stream.Stream;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -18,9 +13,14 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Intersector.MinimumTranslationVector;
 
+import java.io.Serializable;
+import java.util.Optional;
+import java.util.UUID;
+import java.util.stream.Stream;
+
 public abstract class Entity implements Serializable {
 
-  private static final long serialVersionUID = 7916524444980988734L;
+  private static final long serialVersionUID = -8104423419633831645L;
 
   /** ID of the entity */
   protected UUID id;
@@ -56,7 +56,9 @@ public abstract class Entity implements Serializable {
     speed = new SpeedVector();
     fromGround = 0;
     world = w;
-    stepsGenerator = new StepsGenerator(w, this);
+    if(!isStatic) {
+      stepsGenerator = new StepsGenerator(w, this);
+    }
   }
 
   public Entity(World w, float x, float y, EntityType type) {
@@ -226,12 +228,10 @@ public abstract class Entity implements Serializable {
     return false;
   }
 
-  public void handleCollision(Entity e) {};
+  public void handleCollision(Entity e) {}
 
-  public boolean canColideWith(Entity e) {
-    return false;
-  }
-
+  public boolean canCollideWith(Entity e) { return false; }
+  
   public CollisionBoundary collisionBoundary() {
     return collisionBoundary;
   }
@@ -260,8 +260,10 @@ public abstract class Entity implements Serializable {
 
 
   public void draw(SpriteBatch batch) {
+    TextureRegion texture = getTexture();
+    if(texture == null) return;
     Sprite sprite = getSprite();
-    sprite.setRegion(getTexture());
+    sprite.setRegion(texture);
     sprite.setPosition(getX() - (sprite.getWidth() / 2), getY());
     sprite.setRotation((float) getRotation());
     sprite.draw(batch);
@@ -273,6 +275,13 @@ public abstract class Entity implements Serializable {
     CREATED, LOADED, REMOVED, REMOVING,
   }
 
+  public StepsGenerator getStepsGenerator() {
+    return stepsGenerator;
+  }
+
+  public boolean loaded() {
+    return loaded;
+  }
 }
 
 

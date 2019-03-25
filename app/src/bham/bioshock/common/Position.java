@@ -1,10 +1,10 @@
 package bham.bioshock.common;
 
-import bham.bioshock.communication.Sendable;
+import java.io.Serializable;
 import bham.bioshock.minigame.PlanetPosition;
 import bham.bioshock.minigame.worlds.World;
 
-public class Position extends Sendable {
+public class Position implements Serializable {
 
   private static final long serialVersionUID = 1L;
   
@@ -26,6 +26,9 @@ public class Position extends Sendable {
     return new PositionMove(world, this);
   }
 
+  public Position copy() {
+    return new Position(x, y);
+  }
   
   public class PositionMove {
     private World world;
@@ -65,6 +68,10 @@ public class Position extends Sendable {
     public PlanetPosition ppos() {
       return pp;
     }
-    
+  }
+
+  @Override
+  public String toString() {
+    return "x: " + x + " y: " + y;
   }
 }

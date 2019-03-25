@@ -1,17 +1,25 @@
 package bham.bioshock.server.ai;
 
-import java.util.ArrayList;
+import bham.bioshock.minigame.ai.MinigameAI;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import bham.bioshock.minigame.ai.MinigameAI;
 
+import java.util.ArrayList;
+
+/** The Minigame ai loop. */
 public class MinigameAILoop extends Thread {
 
   private static final Logger logger = LogManager.getLogger(MinigameAILoop.class);
 
+  /** The list of AI Handlers */
   private ArrayList<MinigameAI> aiHandlers = new ArrayList<>();
 
-  private int LOOP_TIME = 1000;
+  /** The loop time */
+  private final int LOOP_TIME = 300;
+
+  public MinigameAILoop() {
+    super("MinigameAILoop");
+  }
 
   @Override
   public void run() {
@@ -36,13 +44,19 @@ public class MinigameAILoop extends Thread {
     }
   }
 
+  /** Finish the loop. */
   public void finish() {
     this.interrupt();
   }
 
+  /**
+   * Register the handler.
+   *
+   * @param ais all of the ai to register
+   */
   public void registerHandler(MinigameAI ais) {
     synchronized(aiHandlers) {
-      aiHandlers.add(ais);      
+      aiHandlers.add(ais);
     }
   }
 

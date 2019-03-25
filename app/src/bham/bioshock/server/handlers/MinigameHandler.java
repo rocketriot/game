@@ -1,18 +1,20 @@
 package bham.bioshock.server.handlers;
 
-import java.io.Serializable;
-import java.util.ArrayList;
+import bham.bioshock.minigame.ai.CaptureTheFlagAI;
 import java.util.Random;
 import java.util.UUID;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import bham.bioshock.Config;
 import bham.bioshock.common.models.store.MinigameStore;
 import bham.bioshock.common.models.store.Store;
-import bham.bioshock.communication.Action;
-import bham.bioshock.communication.Command;
-import bham.bioshock.minigame.Clock;
-import bham.bioshock.minigame.ai.KillEveryoneAI;
-import bham.bioshock.minigame.ai.PlatformerAi;
+import bham.bioshock.common.utils.Clock;
+import bham.bioshock.communication.messages.Message;
+import bham.bioshock.communication.messages.minigame.EndMinigameMessage;
+import bham.bioshock.communication.messages.minigame.MinigameStartMessage;
+import bham.bioshock.communication.messages.minigame.RequestMinigameStartMessage;
+import bham.bioshock.minigame.ai.KillThemAllAI;
+import bham.bioshock.minigame.ai.PlatformerAI;
 import bham.bioshock.minigame.objectives.CaptureTheFlag;
 import bham.bioshock.minigame.objectives.KillThemAll;
 import bham.bioshock.minigame.objectives.Objective;
@@ -23,9 +25,9 @@ import bham.bioshock.server.ServerHandler;
 import bham.bioshock.server.ai.MinigameAILoop;
 
 public class MinigameHandler {
-  
+
   private static final Logger logger = LogManager.getLogger(MinigameHandler.class);
-  
+
   Store store;
   ServerHandler handler;
   MinigameAILoop aiLoop;
@@ -33,87 +35,91 @@ public class MinigameHandler {
   Clock clock;
   UUID planetId;
 
-  public MinigameHandler(Store store, ServerHandler handler) {
+  public MinigameHandler(Store store, ServerHandler handler, Clock clock) {
     this.store = store;
     this.handler = handler;
+    this.clock = clock;
   }
 
-  /*
-   * Create and seed the world, and send start game command to all clients
+  /**
+   * Creates and sends minigame start request to all clients
+   * Creates and seed the world
+   * Starts minigame timer to ending the game
+   * 
+   * 
+   * @param data
+   * @param playerId
+   * @param gameBoardHandler
    */
-  public void startMinigame(Action action, UUID playerId, GameBoardHandler gameBoardHandler) {
+  public void startMinigame(UUID playerId, UUID planetId, GameBoardHandler gbHandler, Integer objectiveId) {
     // Create a world for the minigame
     World w = new RandomWorld();
-    if(action.getArguments().size() != 0) {
-      planetId = (UUID) action.getArgument(0);      
-    } else {
+    if (planetId == null) {
       logger.error("Starting minigame without a planet ID (That's OK. for tests)!");
+    } else {
+      this.planetId = planetId;
     }
     Objective o;
     aiLoop = new MinigameAILoop();
+    
+    if(objectiveId == null) {
+      Random rand = new Random();
+      objectiveId = rand.nextInt(10) % 3;
+    }
 
-    Random rand = new Random();
-
-    switch(rand.nextInt(100)%4) {
+    switch (objectiveId) {
       case 1:
-        o = new CaptureTheFlag(w);
+        o = new Platformer(w);
         for (UUID id : store.getCpuPlayers()) {
-          //NOTE CHANGE TO CAPTURE the flag
-          aiLoop.registerHandler(new KillEveryoneAI(id, store, handler));
+          aiLoop.registerHandler(new PlatformerAI(id, store, handler));
         }
         break;
       case 2:
-        o = new Platformer(w);
-        for (UUID id : store.getCpuPlayers()) {
-          aiLoop.registerHandler(new PlatformerAi(id, store, handler));
-        }
-        break;
-      case 3:
         o = new KillThemAll();
         for (UUID id : store.getCpuPlayers()) {
-          aiLoop.registerHandler(new KillEveryoneAI(id, store, handler));
+          aiLoop.registerHandler(new KillThemAllAI(id, store, handler));
         }
         break;
       default:
         o = new CaptureTheFlag(w);
         for (UUID id : store.getCpuPlayers()) {
-          //NOTE CHANGE TO CAPTURE the flag
-          aiLoop.registerHandler(new KillEveryoneAI(id, store, handler));
+          aiLoop.registerHandler(new CaptureTheFlagAI(id, store, handler));
         }
         break;
     }
-    
-    aiLoop.start();
-   if(planetId != null) {
-      setupMinigameEnd(gameBoardHandler, playerId);
-   }
 
-    ArrayList<Serializable> arguments = new ArrayList<>();
-    arguments.add((Serializable) w);
-    arguments.add((Serializable) o);
-    handler.sendToAll(new Action(Command.MINIGAME_START, arguments));
+    aiLoop.start();
+    
+    setupMinigameEnd(gbHandler, playerId);
+    handler.sendToAll(new MinigameStartMessage(w, o, planetId));
   }
-  
+
+
   /**
    * Starts a clock ending the minigame
    */
   private void setupMinigameEnd(GameBoardHandler gameBoardHandler, UUID playerId) {
-    clock = new Clock();
-    long t = System.currentTimeMillis();
 
+    clock.reset();
     clock.at(60f, new Clock.TimeListener() {
       @Override
       public void handle(Clock.TimeUpdateEvent event) {
-        if(minigameTimer != null) {
+        logger.info("Ending minigame");
+        if (planetId == null)
+          return;
+        if (minigameTimer != null) {
           minigameTimer.interrupt();
         }
         MinigameStore localStore = store.getMinigameStore();
-        Objective o = localStore.getObjective();
-        endMinigame(o.getWinner(), gameBoardHandler, playerId);          
+        UUID winner = null;
+        if(localStore != null && localStore.getObjective() != null) {
+          winner = localStore.getObjective().getWinner();
+        }
+        endMinigame(winner, gameBoardHandler, playerId);
       }
     });
-    
-    minigameTimer = new Thread() {
+
+    minigameTimer = new Thread("MinigameTimer") {
       private long time;
 
       public void run() {
@@ -136,30 +142,43 @@ public class MinigameHandler {
   /**
    * Sync player movement and position
    */
-  public void playerMove(Action action, UUID playerId) {
-    handler.sendToAllExcept(action, playerId);
+  public void playerMove(Message message, UUID playerId) {
+    handler.sendToAllExcept(message, playerId);
+  }
+
+  public void playerStep(Message message, UUID playerId) {
+    handler.sendToAllExcept(message, playerId);
   }
 
   /**
    * Create new bullet
    */
-  public void bulletShot(Action action, UUID playerId) {
-    handler.sendToAllExcept(action, playerId);
+  public void bulletShot(Message message, UUID playerId) {
+    handler.sendToAllExcept(message, playerId);
   }
 
   /**
    * Method to end the minigame and send the players back to the main board
-   * @param gameBoardHandler 
+   * called by the inner timer
+   * 
+   * @param gameBoardHandler
    */
-  public void endMinigame(UUID winnerId, GameBoardHandler gameBoardHandler, UUID playerId) {
-    ArrayList<Serializable> args = new ArrayList<>();
-    args.add(winnerId);
-    args.add(planetId);
-    args.add(100);
+  private void endMinigame(UUID winnerId, GameBoardHandler gameBoardHandler, UUID playerId) {
+    Message msg = new EndMinigameMessage(playerId, winnerId, planetId, Config.PLANET_POINTS);
     planetId = null;
 
     aiLoop.finish();
-    handler.sendToAll(new Action(Command.MINIGAME_END, args));
-    gameBoardHandler.endTurn(playerId);
+    handler.sendToAll(msg);
+    gameBoardHandler.endTurn();
   }
+
+  /**
+   * Send objective update to all clients
+   * 
+   * @param message
+   */
+  public void updateObjective(Message message) {
+    handler.sendToAll(message);
+  }
+
 }

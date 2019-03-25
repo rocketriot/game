@@ -1,10 +1,11 @@
 package bham.bioshock.minigame.models;
 
 
+import bham.bioshock.client.Assets;
 import bham.bioshock.common.Position;
 import bham.bioshock.minigame.PlanetPosition;
 import bham.bioshock.minigame.worlds.World;
-import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
@@ -13,7 +14,7 @@ public class Platform extends StaticEntity {
 
   private static final long serialVersionUID = -2823962935775990161L;
 
-  private TextureRegion texture;
+  private static TextureRegion texture;
 
   private Platform parent;
 
@@ -28,6 +29,7 @@ public class Platform extends StaticEntity {
    */
   public Platform(World w, float x, float y, int width, int height) {
     super(w, x, y, EntityType.PLATFORM);
+    this.world = w;
     this.width = width;
     this.height = height;
     collisionWidth = width;
@@ -62,11 +64,13 @@ public class Platform extends StaticEntity {
   public TextureRegion getTexture() {
     return texture;
   }
-
-  public void load() {
-    texture =
-        new TextureRegion(new Texture(Gdx.files.internal("app/assets/minigame/platform.png")));
-    super.load();
+  
+  public static void loadTextures(AssetManager manager, int id) {
+    manager.load(Assets.platformsBase + id + ".png", Texture.class);
+  }
+  
+  public static void createTextures(AssetManager manager, int id) {
+    texture = new TextureRegion(manager.get(Assets.platformsBase + id + ".png", Texture.class));
   }
 
   /**
@@ -85,5 +89,24 @@ public class Platform extends StaticEntity {
    */
   public Platform getParent() {
     return parent;
+  }
+
+  public String toString() {
+    return "Platform "+getPlanetPos().toString();
+  }
+
+  /**
+   * Get the planet position of the left edge of the platform
+   * @return the planet position of the left edge of the platform
+   */
+  public PlanetPosition getLeftEdge() {
+    return world.convert(new Position(getX()-(width/2f), getY()));
+  }
+  /**
+   * Get the planet position of the right edge of the platform
+   * @return the planet position of the right edge of the platform
+   */
+  public PlanetPosition getRightEdge() {
+    return world.convert(new Position(getX()+(width/2f), getY()));
   }
 }

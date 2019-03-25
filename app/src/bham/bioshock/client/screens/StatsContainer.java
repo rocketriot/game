@@ -63,13 +63,14 @@ public class StatsContainer extends Container {
 
         UUID id = player_container.getId();
         Player player = store.getPlayer(id);
-
-        float fuel = player.getFuel();
-        int planets = player.getPlanetsCaptured();
-        int points = player.getPoints();
-        player_container.setFuel(fuel);
-        player_container.setPlanets(planets);
-        player_container.setPoints(points);
+        if(player != null) {
+          float fuel = player.getFuel();
+          int planets = player.getPlanetsCaptured();
+          int points = player.getPoints();
+          player_container.setFuel(fuel);
+          player_container.setPlanets(planets);
+          player_container.setPoints(points);          
+        }
     }
 
     private class PlayerContainer extends Container {

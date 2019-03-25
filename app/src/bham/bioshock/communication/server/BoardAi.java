@@ -8,29 +8,73 @@ import bham.bioshock.common.models.Planet;
 import bham.bioshock.common.models.Player;
 import bham.bioshock.common.models.store.Store;
 import bham.bioshock.common.pathfinding.AStarPathfinding;
-import bham.bioshock.communication.Action;
-import bham.bioshock.communication.Command;
+import bham.bioshock.communication.messages.boardgame.MovePlayerOnBoardMessage;
 import bham.bioshock.server.handlers.GameBoardHandler;
-import java.io.Serializable;
+import bham.bioshock.server.handlers.MinigameHandler;
 import java.util.ArrayList;
+import java.util.UUID;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class BoardAi extends Thread {
 
+  private static final Logger logger = LogManager.getLogger(BoardAi.class);
+      
   private final Store store;
   private final GameBoardHandler gameBoardHandler;
-
-  public BoardAi(Store store, GameBoardHandler gameBoardHandler) {
+  private final MinigameHandler minigameHandler;
+  private UUID lastMoved = null;
+  
+  public BoardAi(Store store, GameBoardHandler gameBoardHandler, MinigameHandler minigameHandler) {
+    super("BoardAi");
     this.store = store;
     this.gameBoardHandler = gameBoardHandler;
+    this.minigameHandler = minigameHandler;
   }
 
   @Override
   public void run() {
-    moveCpuPlayer();
+    
+    try {
+      while(!isInterrupted()) {
+          
+        Player player = store.getMovingPlayer();
+        if(player.isCpu() && (lastMoved == null || !player.getId().equals(lastMoved))) {
+          
+          // Make a move
+          ArrayList<Coordinates> path = moveCpuPlayer();
+          int waitTime = calculateMoveTime(player, path);
+          Thread.sleep(waitTime);
+        
+          GameBoard gameBoard = store.getGameBoard();
+          Planet planet = gameBoard.getAdjacentPlanet(player.getCoordinates(), player);
+          
+          // Make a decision after a move
+          if (planet != null) {
+            minigameHandler.startMinigame(player.getId(), planet.getId(), gameBoardHandler, null);
+          } else {
+            gameBoardHandler.endTurn();
+          }
+          lastMoved = player.getId();
+        }
+        sleep(1000);
+      }
+    } catch(InterruptedException e) {
+      logger.info("Board AI interrupted");
+    }
+  }
+  
+  private int calculateMoveTime(Player player, ArrayList<Coordinates> path) {
+    // Players move 3 tiles per second + 500 to prevent race condition
+    if (path != null)
+      return (path.size() * 1000)/3 + 500;
+    else
+      return 0;
   }
 
-  /** Handle movement if the next player is a CPU */
-  private void moveCpuPlayer() {
+  /** Handle movement if the next player is a CPU 
+   * @return */
+  private ArrayList<Coordinates> moveCpuPlayer() {
     // Get values from store
     GameBoard gameBoard = store.getGameBoard();
     GridPoint[][] grid = gameBoard.getGrid();
@@ -40,7 +84,6 @@ public class BoardAi extends Thread {
     ArrayList<MoveVal> possibleMoves = generatePossibleMoves(store);
 
     // Picks the best move from the list
-    //TODO Make this random?
     MoveVal bestMove = null;
     for (MoveVal mv: possibleMoves) {
       if (bestMove == null) {
@@ -49,29 +92,14 @@ public class BoardAi extends Thread {
         bestMove = mv;
       }
     }
-    if (bestMove == null) {
-      possibleMoves = generatePossibleMoves(store);
+
+    if (bestMove != null) {
+      MovePlayerOnBoardMessage msg = new MovePlayerOnBoardMessage(bestMove.getMoveCoords(), player.getId());
+      gameBoardHandler.movePlayer(msg, player.getId());
+      
+      return bestMove.getPath();
     }
-
-    // Generate a boardMove for the chosen move
-    ArrayList<Coordinates> movePath = bestMove.getPath();
-    player.createBoardMove(movePath);
-
-
-    // Set player Cooordinates to final coordinate in the list
-    player.setCoordinates(player.getBoardMove().get(player.getBoardMove().size()-1).getCoordinates());
-
-    // Update fuel
-    float pathCost = (movePath.size() - 1) * 10;
-    player.decreaseFuel(pathCost);
-
-    // Setup action arguments
-    ArrayList<Serializable> arguments = new ArrayList<>();
-    arguments.add(gameBoard);
-    arguments.add(player);
-
-    Action action = new Action(Command.MOVE_PLAYER_ON_BOARD, arguments);
-    gameBoardHandler.movePlayer(action);
+    return new ArrayList<Coordinates>();
   }
 
   /**

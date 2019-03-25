@@ -4,22 +4,27 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import bham.bioshock.Config;
 import bham.bioshock.common.models.store.Store;
-import bham.bioshock.communication.Config;
+import bham.bioshock.common.utils.Clock;
 import bham.bioshock.communication.server.CommunicationMaker;
+import bham.bioshock.server.interfaces.StoppableServer;
 
 @Singleton
-public class Server {
+public class Server implements StoppableServer {
   private ServerHandler handler;
   private CommunicationMaker connMaker;
   private ServerSocket serverSocket;
+  private Store store;
 
   @Inject
   public Server(Store store) {
-    this.handler = new ServerHandler(store, this);
+    this.store = store;
   }
 
   public Boolean start() {
+    Clock clock = new Clock();
+    this.handler = new ServerHandler(store, this, Config.DEBUG_SERVER, clock);
     try {
       serverSocket = new ServerSocket(Config.PORT);
     } catch (IOException e1) {
@@ -38,8 +43,12 @@ public class Server {
   }
 
   public void stop() {
-    stopDiscovery();
-    handler.stopAll();
+    if(connMaker != null) {
+      connMaker.disconnect();      
+    }
+    if(handler != null) {
+      handler.abort();      
+    }
     if (serverSocket != null) {
       try {
         serverSocket.close();

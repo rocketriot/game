@@ -1,6 +1,6 @@
 package bham.bioshock.minigame.models;
 
-import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import bham.bioshock.minigame.worlds.World;
@@ -22,8 +22,11 @@ public class Gun extends Entity {
     return texture;
   }
 
-  public static void loadTextures() {
-    texture = new TextureRegion(new Texture(Gdx.files.internal("app/assets/minigame/gun.png")));
+  public static void createTextures(AssetManager manager) {
+    texture = new TextureRegion(manager.get("app/assets/minigame/gun.png", Texture.class));
+  }
+  public static void loadTextures(AssetManager manager) {
+    manager.load("app/assets/minigame/gun.png", Texture.class);
   }
 
 }

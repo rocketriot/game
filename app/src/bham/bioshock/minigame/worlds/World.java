@@ -1,15 +1,18 @@
 package bham.bioshock.minigame.worlds;
 
-import java.io.Serializable;
-import bham.bioshock.minigame.PlanetPosition;
-import java.util.ArrayList;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import bham.bioshock.client.Assets;
 import bham.bioshock.common.Position;
+import bham.bioshock.minigame.PlanetPosition;
 import bham.bioshock.minigame.models.Gun;
 import bham.bioshock.minigame.models.Platform;
 import bham.bioshock.minigame.models.Rocket;
 import bham.bioshock.minigame.physics.Vector;
+import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+
+import java.io.Serializable;
+import java.util.ArrayList;
 
 /**
  * The type World.
@@ -17,18 +20,33 @@ import bham.bioshock.minigame.physics.Vector;
 abstract public class World implements Serializable {
 
   private static final long serialVersionUID = 4046769956963960819L;
-  protected int textureOffset = 530;
+  protected static int textureOffset = 530;
+  protected int textureId;
+  static Texture texture;
+  static Texture frontTexture;
   
+
+
   /**
    * Draws planet texture on the screen
-   * 
-   * @param batch
    */
   public void draw(SpriteBatch batch) {
+    if(texture == null) return;
     float radius = (float) getPlanetRadius()+textureOffset;
-    batch.draw(getTexture(), -radius, -radius, radius*2, radius*2);
+    batch.draw(texture, -radius, -radius, radius*2, radius*2);
   }
   
+
+  public void afterDraw(SpriteBatch batch) {
+    if(textureId == 4) {   
+      if(frontTexture == null) return;
+      batch.begin();
+      float radius = (float) getPlanetRadius()+textureOffset;
+      batch.draw(frontTexture, -radius, -radius, radius*2, radius*2);
+      batch.end();      
+    }
+  }
+
   /**
    * Gets angle to an x and y coordinate.
    *
@@ -79,8 +97,8 @@ abstract public class World implements Serializable {
   }
 
   /**
-   * Calculate angle ratio - in the distance R from the planet center
-   * Used to calculate angle given the length (X) distance
+   * Calculate angle ratio - in the distance R from the planet center Used to calculate angle given
+   * the length (X) distance
    *
    * @param r the ratio
    * @return ratio between pixels and angle
@@ -140,11 +158,21 @@ abstract public class World implements Serializable {
   abstract public ArrayList<Rocket> getRockets();
 
   /**
+   * Spawns guns.
+   */
+  abstract public void spawnGuns();
+
+  /**
    * Gets guns.
    *
    * @return the guns
    */
   abstract public ArrayList<Gun> getGuns();
+
+  /**
+   * Spawns platforms
+   */
+  abstract public void spawnPlatforms();
 
   /**
    * Gets platforms.
@@ -154,12 +182,47 @@ abstract public class World implements Serializable {
   abstract public ArrayList<Platform> getPlatforms();
 
   /**
-   * Gets texture.
+   * Method to get the platform path to a platform inclusive
    *
-   * @return the texture
+   * @param platform the platform you want a path to
+   * @return the path
    */
-  abstract public Texture getTexture();
+  abstract public ArrayList<Platform> getPlatformPath(Platform platform);
 
-  public abstract void afterDraw(SpriteBatch batch);
+  /**
+   * Get texture Id
+   * 
+   * @return
+   */
+  public int getTextureId() {
+    return textureId;
+  }
+
+  /**
+   * Load textures from the asset manager
+   * 
+   * @param manager
+   * @param id
+   */
+  public static void loadTextures(AssetManager manager, int id) {
+    manager.load(Assets.planetBase + id + ".png", Texture.class);
+    if(id == 4) {
+      manager.load(Assets.planetBase + "4_front.png", Texture.class);
+    }
+  }
+  
+  /**
+   * Create textures using asset manager
+   * 
+   * @param manager
+   * @param id
+   */
+  public static void createTextures(AssetManager manager, int id) {
+    texture = manager.get(Assets.planetBase + id + ".png", Texture.class);
+    if(id == 4) {
+      textureOffset = 770;
+      frontTexture = manager.get(Assets.planetBase + "4_front.png", Texture.class);
+    } 
+  }
 
 }

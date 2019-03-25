@@ -1,8 +1,14 @@
 package bham.bioshock.client.screens;
 
-import java.util.ArrayList;
-import java.util.Optional;
-import java.util.UUID;
+import bham.bioshock.client.Route;
+import bham.bioshock.client.Router;
+import bham.bioshock.common.Position;
+import bham.bioshock.common.models.Player;
+import bham.bioshock.common.models.store.JoinScreenStore;
+import bham.bioshock.common.models.store.Store;
+import bham.bioshock.minigame.models.Entity;
+import bham.bioshock.minigame.worlds.JoinScreenWorld;
+import bham.bioshock.minigame.worlds.World;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Texture;
@@ -17,15 +23,10 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
-import bham.bioshock.client.Route;
-import bham.bioshock.client.Router;
-import bham.bioshock.common.Position;
-import bham.bioshock.common.models.Player;
-import bham.bioshock.common.models.store.JoinScreenStore;
-import bham.bioshock.common.models.store.Store;
-import bham.bioshock.minigame.models.Entity;
-import bham.bioshock.minigame.worlds.JoinScreenWorld;
-import bham.bioshock.minigame.worlds.World;
+
+import java.util.ArrayList;
+import java.util.Optional;
+import java.util.UUID;
 
 public class JoinScreen extends ScreenMaster {
 
@@ -90,7 +91,7 @@ public class JoinScreen extends ScreenMaster {
   public void addPlayer(Player player) {
     /// create a new rocket animation
     int index = localStore.getRocketNum();
-    int x = (int) ((stage.getWidth() / 4) * (index + 1) - 100);
+    int x = (int) ((stage.getWidth() / 4) * (index + 1) - 20);
     int y = (int) stage.getHeight() / 2;
     RocketAnimation anim = new RocketAnimation(world, x, y, index);
     // add it to the map

@@ -86,7 +86,7 @@ public class GameBoard implements Serializable {
   public Planet getAdjacentPlanet(Coordinates pos, Player player) {
     // Next to the planet
     for (Coordinates p : pos.getNearby()) {
-      if (pos.getX() > 0 && pos.getX() < GRID_SIZE - 1 && pos.getY() > 0 && pos.getY() < GRID_SIZE - 1) {
+      if (p.getX() >= 0 && p.getX() <= GRID_SIZE - 1 && p.getY() >= 0 && p.getY() <= GRID_SIZE - 1) {
         if (getGridPoint(p).isType(GridPoint.Type.PLANET)) {
           Planet planet = (Planet) getGridPoint(p).getValue();
           if (planet.getPlayerCaptured() == null || !planet.getPlayerCaptured().equals(player)) {
@@ -119,8 +119,16 @@ public class GameBoard implements Serializable {
       return;
     }
 
+    // Generate an upgrade
+    if (randomFloat <= 0.025) {
+      Upgrade upgrade = new Upgrade(new Coordinates(x, y));
+      grid[x][y] = new GridPoint(GridPoint.Type.UPGRADE, upgrade);
+
+      return;
+    }
+
     // Generate a planet
-    if (randomFloat <= 0.035) {
+    if (randomFloat <= 0.045) {
       // Check if there's enough space to generate the planet
       if (isEnoughSpace(x, y, Planet.WIDTH, Planet.HEIGHT)) {
         // Create a new planet
@@ -136,7 +144,7 @@ public class GameBoard implements Serializable {
     }
 
     // Generate an asteroid
-    if (randomFloat <= 0.05) {
+    if (randomFloat <= 0.060) {
       // Check if there's enough space to generate the asteroid
       if (isEnoughSpace(x, y, Asteroid.WIDTH, Asteroid.HEIGHT)) {
         // Create a new asteroid
@@ -199,5 +207,13 @@ public class GameBoard implements Serializable {
       }
     }
     return null;
+  }
+
+  public void addBlackHole(BlackHole blackHole) {
+    Coordinates coordinates = blackHole.getCoordinates();
+    
+    for (int i = 0; i < BlackHole.WIDTH; i++)
+      for (int j = 0; j < BlackHole.HEIGHT; j++)
+        grid[coordinates.getX() + i][coordinates.getY() + j] = new GridPoint(GridPoint.Type.BLACKHOLE, blackHole);
   }
 }

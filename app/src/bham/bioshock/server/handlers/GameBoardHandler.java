@@ -1,149 +1,126 @@
 package bham.bioshock.server.handlers;
 
+import bham.bioshock.common.consts.GridPoint;
 import bham.bioshock.common.models.Planet;
-import java.io.Serializable;
+import bham.bioshock.common.pathfinding.AStarPathfinding;
 import java.util.ArrayList;
+
+import bham.bioshock.common.models.BlackHole;
 import bham.bioshock.common.models.Coordinates;
 import bham.bioshock.common.models.GameBoard;
 import bham.bioshock.common.models.Player;
-import bham.bioshock.common.models.Player.Move;
 import bham.bioshock.common.models.store.Store;
-import bham.bioshock.communication.Action;
-import bham.bioshock.communication.Command;
+import bham.bioshock.communication.messages.Message;
+import bham.bioshock.communication.messages.boardgame.*;
 import bham.bioshock.communication.server.BoardAi;
 import bham.bioshock.server.ServerHandler;
 
 import java.util.UUID;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 
 public class GameBoardHandler {
+
+  private static final Logger logger = LogManager.getLogger(GameBoardHandler.class);
 
   Store store;
   ServerHandler handler;
   MinigameHandler minigameHandler;
+  BoardAi boardAi;
 
   public GameBoardHandler(Store store, ServerHandler handler,
-      MinigameHandler minigameHandler) {
+                          MinigameHandler minigameHandler) {
     this.store = store;
     this.handler = handler;
     this.minigameHandler = minigameHandler;
+    this.boardAi = new BoardAi(store, this, minigameHandler);
   }
-  
+
   private void generateGrid(GameBoard board, ArrayList<Player> players) {
     // Set coordinates of the players
     int last = board.GRID_SIZE - 1;
-    players.get(0).setCoordinates(new Coordinates(0, 0));
-    players.get(1).setCoordinates(new Coordinates(0, last));
-    players.get(2).setCoordinates(new Coordinates(last, last));
-    players.get(3).setCoordinates(new Coordinates(last, 0));
+    players.get(0).setSpawnPoint(new Coordinates(0, 0));
+    players.get(1).setSpawnPoint(new Coordinates(0, last));
+    players.get(2).setSpawnPoint(new Coordinates(last, last));
+    players.get(3).setSpawnPoint(new Coordinates(last, 0));
+
+    for (Player p : players) {
+      p.moveToSpawn();
+    }
 
     board.generateGrid();
   }
 
-  /** Adds a player to the server and sends the player to all the clients */
-  public void getGameBoard(Action action, ArrayList<Player> additionalPlayers) {
+  public void startAI() {
+    boardAi.start();
+  }
+
+  /**
+   * Adds a player to the server and sends the player to all the clients
+   */
+  public void getGameBoard(ArrayList<Player> additionalPlayers, boolean startGame) {
     ArrayList<Player> players = store.getPlayers();
-    if(additionalPlayers != null) {
+    if (additionalPlayers != null) {
       players.addAll(additionalPlayers);
     }
-    
-    GameBoard gameBoard = store.getGameBoard();
+
     // Generate a grid when starting the game
+    GameBoard gameBoard = new GameBoard();
+    generateGrid(gameBoard, players);
 
-    if (gameBoard == null) {
-      gameBoard = new GameBoard(); 
-      generateGrid(gameBoard, players);
-    }
-
-    ArrayList<Serializable> response = new ArrayList<>();
-    response.add(gameBoard);
-    for (Player p : players) {
-      response.add(p);
-    }
-
-    handler.sendToAll(new Action(Command.GET_GAME_BOARD, response));
+    handler.sendToAll(new GameBoardMessage(gameBoard, players, additionalPlayers, startGame));
   }
 
-  /** Handles a player moving on their turn */
-  public void movePlayer(Action action) {
-    // Get game board and player from arguments
-    ArrayList<Serializable> arguments = action.getArguments();
-    GameBoard gameBoard = (GameBoard) arguments.get(0);
-    Player movingPlayer = (Player) arguments.get(1);
+  /**
+   * Handles a player moving on their turn
+   */
+  public void movePlayer(Message message, UUID playerID) {
+    // Get the goal coordinates of the move
+    MovePlayerOnBoardMessage data = (MovePlayerOnBoardMessage) message;
+    Coordinates goalCoords = data.coordinates;
 
-    // Update the store
-    store.setGameBoard(gameBoard);
-    Player currentPlayer = store.getPlayer(movingPlayer.getId());
-    currentPlayer.setCoordinates(movingPlayer.getCoordinates());
-    currentPlayer.setFuel(movingPlayer.getFuel());
+    Player currentPlayer = store.getPlayer(playerID);
+    Coordinates startCoords = currentPlayer.getCoordinates();
 
-    // Send out new game board and moving player to players
-    ArrayList<Serializable> response = new ArrayList<>();
-    response.add(gameBoard);
-    response.add(movingPlayer);
-    
-    handler.sendToAll(new Action(Command.MOVE_PLAYER_ON_BOARD, response));
+    // Initialise pathfinder
+    GameBoard gameBoard = store.getGameBoard();
+    GridPoint[][] grid = gameBoard.getGrid();
+    int gridSize = store.getGameBoard().GRID_SIZE;
+    AStarPathfinding pathFinder =
+            new AStarPathfinding(
+                    grid, startCoords, gridSize, gridSize, store.getPlayers());
 
+    ArrayList<Coordinates> path = pathFinder.pathfind(goalCoords);
+    float pathCost = (path.size() - 1) * 10;
 
-    if (movingPlayer.isCpu()) {
-      int waitTime = calculateMoveTime(currentPlayer.getBoardMove());
-      new Thread(() -> {
-        try {
-          Thread.sleep(waitTime);
-          Planet planet;
-          if ((planet = gameBoard.getAdjacentPlanet(currentPlayer.getCoordinates(), currentPlayer)) != null) {
-            startMinigame(gameBoard, currentPlayer, planet, minigameHandler);
-          } else {
-            endTurn(movingPlayer.getId());
-          }
-        } catch (InterruptedException e) {
-          e.printStackTrace();
-        }
-      }).start();
+    GridPoint.Type goalType = gameBoard.getGridPoint(goalCoords).getType();
+
+    if (pathCost <= currentPlayer.getFuel() && goalType.isValidForPlayer()) {
+      handler.sendToAll(new MovePlayerOnBoardMessage(goalCoords, playerID));
     }
 
-    if((store.getRound() == store.MAX_ROUNDS )&& (store.getTurn() == 3)){
-      handler.sendToAll(new Action(Command.DIRECT_END));
+
+    if ((store.getRound() == store.MAX_ROUNDS) && (store.getTurn() == 3)) {
+      handler.sendToAll(new EndGameMessage());
     }
-
   }
 
-  private void startMinigame(GameBoard gameBoard, Player currentPlayer,
-      Planet planet, MinigameHandler minigameHandler) {
-    ArrayList<Serializable> arg = new ArrayList<>();
-    arg.add(planet.getId());
-    minigameHandler.startMinigame(new Action(Command.MINIGAME_START, arg), currentPlayer.getId(), this);
-  }
+  public void endTurn() {
+    handler.sendToAll(new UpdateTurnMessage());
 
-  private int calculateMoveTime(ArrayList<Move> boardMove) {
-    // Players move 3 tiles per second + 500 to prevent race condition
-    if (boardMove != null)
-      return (boardMove.size() * 1000)/3 + 500;
-    else
-      return 0;
-  }
-
-  public void endTurn(UUID id) {
-    handler.sendToAll(new Action(Command.UPDATE_TURN));
-
-
-    if((store.getRound() == store.MAX_ROUNDS) && (store.getTurn() == 3)) {
-      handler.sendToAll(new Action(Command.DIRECT_END));
+    if ((store.getRound() == store.MAX_ROUNDS) && (store.getTurn() == 3)) {
+      handler.sendToAll(new EndGameMessage());
     }
-
-    // Handle if the next player is a CPU
-    new Thread(() -> {
-      try {
-        int waitTime = 100;
-        while(store.getMovingPlayer().getId().equals(id)) {
-          Thread.sleep(waitTime);
-        }
-
-        if (store.getMovingPlayer().isCpu())
-          new BoardAi(store, this).run();
-      } catch (InterruptedException e) {
-        e.printStackTrace();
-      }
-    }).start();
-
   }
-}
+
+    public void addBlackHole (Coordinates coordinates){
+      GameBoard gameBoard = store.getGameBoard();
+      gameBoard.addBlackHole(new BlackHole(coordinates));
+
+      handler.sendToAll(new AddBlackHoleMessage(coordinates));
+    }
+  }
+
+
+

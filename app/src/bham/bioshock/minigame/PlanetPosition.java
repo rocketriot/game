@@ -24,6 +24,10 @@ public class PlanetPosition {
     this.angle = angle;
     this.fromCenter = fromCenter;
   }
-  
-  
+
+  public String toString() {
+    return "distance from center: " + fromCenter + " angle: " + angle;
+  }
+
+
 }

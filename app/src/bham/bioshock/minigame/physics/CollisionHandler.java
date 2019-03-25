@@ -35,7 +35,7 @@ public class CollisionHandler {
   private MinimumTranslationVector applyCollision(Step step, Entity entity, Entity e) {
     if(e == entity) return null;
     if(step.position.sqDistanceFrom(e.getPos()) > MIN_DISTANCE) return null;
-    if(!entity.canColideWith(e)) return null;
+    if(!entity.canCollideWith(e)) return null;
     
     MinimumTranslationVector v = checkCollision(step.position, entity, e);
     if(v != null) {
