@@ -213,7 +213,7 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
 
     // Check if the grid point is a black hole
     if (gridPoint.getType() == GridPoint.Type.BLACKHOLE) {
-      router.call(Route.MOVE_PLAYER_TO_RANDOM_POINT, player);
+      router.call(Route.MOVE_PLAYER_TO_BLACK_HOLE, player);
     }
   }
 

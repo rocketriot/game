@@ -102,6 +102,11 @@ public class GameBoardController extends Controller {
     store.getGameBoard().addBlackHole(new BlackHole(coordinates));
   }
 
+  public void movePlayerToBlackHole(Player player) {
+    player.clearBoardMove();
+    movePlayerToRandomPoint(player);
+  }
+
   /** Player move received from the server */
   public void moveReceived(MovePlayerOnBoardMessage data) {
     GameBoard gameBoard = store.getGameBoard();
