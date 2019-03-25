@@ -94,7 +94,7 @@ public class GameBoardController extends Controller {
   /** Sends a new black hole to the server */
   public void addBlackHole(Coordinates coordinates) {
     clientService.send(new AddBlackHoleMessage(coordinates));
-    store.getMainPlayer().toggleAddingBlackHole();
+    store.getMainPlayer().addedBlackHole();
   }
 
   /** Receives a black hole from the server */
