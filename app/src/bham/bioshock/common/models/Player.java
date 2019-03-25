@@ -235,4 +235,9 @@ public class Player implements Serializable {
   public void toggleAddingBlackHole() {
     isAddingBlackHole = !isAddingBlackHole;
   }
+
+  public void addedBlackHole() {
+    isAddingBlackHole = false;
+    upgrades.remove(Upgrade.Type.BLACK_HOLE);
+  }
 }
