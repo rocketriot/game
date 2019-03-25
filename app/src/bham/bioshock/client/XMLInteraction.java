@@ -1,8 +1,10 @@
 package bham.bioshock.client;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.OutputKeys;
@@ -10,10 +12,8 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
+import java.io.File;
+import java.util.HashMap;
 
 
 /**
@@ -194,11 +194,28 @@ public class XMLInteraction {
           // get the strings stored in the document and add to the arraylist
           String gameDescription = element.getElementsByTagName("game_desc").item(0)
               .getTextContent();
-          readText.put("Game Description", gameDescription);
+          readText.put("gameDescription", gameDescription);
 
-          String gameControls = element.getElementsByTagName("game_controls").item(0)
-              .getTextContent();
-          readText.put("Game Controls", gameControls);
+          for(int j=1;j<4;j++) {
+            String howToMove = element.getElementsByTagName("how_to_move_"+j).item(0)
+                    .getTextContent();
+            readText.put("howToMove_"+j, howToMove);
+          }
+
+          for(int j=1;j<3;j++) {
+            String howToCapture = element.getElementsByTagName("how_to_capture_"+j).item(0)
+                    .getTextContent();
+            readText.put("howToCapture_"+j, howToCapture);
+          }
+
+
+          String fuel = element.getElementsByTagName("fuel").item(0)
+                  .getTextContent();
+          readText.put("fuel", fuel);
+
+          String upgrade = element.getElementsByTagName("upgrade").item(0)
+                  .getTextContent();
+          readText.put("upgrade", upgrade);
         }
       }
     } catch (Exception e) {
