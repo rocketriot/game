@@ -12,7 +12,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.*;
 
 public class GameBoardHud extends Hud {
 
-  private MinigameWinnerText minigameWinnerText;
+  private FadingNotificationText minigameWinnerText;
   private FuelBar fuelBar;
   private ScoreBoard scoreBoard;
   private TurnStartText turnStartText;
@@ -28,7 +28,7 @@ public class GameBoardHud extends Hud {
     scoreBoard = new ScoreBoard(stage, batch, skin, store, router);
     fuelBar = new FuelBar(stage, batch, skin, store, router);
     skipTurnButton = new SkipTurnButton(stage, batch, skin, store, router);
-    minigameWinnerText = new MinigameWinnerText(batch, store, font);
+    minigameWinnerText = new FadingNotificationText(batch, store, font);
   }
 
   @Override

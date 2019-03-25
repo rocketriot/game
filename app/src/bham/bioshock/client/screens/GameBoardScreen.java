@@ -248,7 +248,7 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
           case BLACKHOLE:
             BlackHole blackHole = (BlackHole) grid[x][y].getValue();
 
-            // Only draw the asteroid from the bottom left coordinate
+            // Only draw the blackhole from the bottom left coordinate
             if (blackHole.getCoordinates().isEqual(new Coordinates(x, y)))
               drawBlackHole.draw(blackHole, PPS);
 
