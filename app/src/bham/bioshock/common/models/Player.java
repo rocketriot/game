@@ -44,6 +44,9 @@ public class Player implements Serializable {
   /** The coordinates at which the player first spawns on the gameboard */
   private Coordinates spawnPoint;
 
+  /** The textual description of the last upgrade to be picked up by the player */
+  private String lastUpgradeText = null;
+
   /** The maximum amount of fuel a player hold at one time */
   public static final float BASE_MAX_FUEL = 100f;
 
@@ -74,6 +77,14 @@ public class Player implements Serializable {
   /** Sets the players coordinates to their original spawn coordinates */
   public void moveToSpawn() {
     setCoordinates(spawnPoint);
+  }
+
+  public float getFuelGridCost() {
+    float modifier = 1;
+    if (hasUpgrade(Type.ENGINE_EFFICIENCY)) {
+      modifier -= 0.2;
+    }
+    return FUEL_GRID_COST * modifier;
   }
   
   public Player(String username) {
@@ -114,13 +125,12 @@ public class Player implements Serializable {
 
   /** Returns the maximum fuel a player has after modifiers e.g. upgrades or planets owned */
   public float getMaxFuel() {
-    //TODO Calculate modifier
     float modifier = 0;
     if (hasUpgrade(Type.FUEL_TANK_SIZE)) {
       modifier += 50;
     }
     modifier += planetsCaptured * 20;
-    return this.BASE_MAX_FUEL + modifier;
+    return BASE_MAX_FUEL + modifier;
   }
 
   public void setFuel(float fuel) {
@@ -132,15 +142,17 @@ public class Player implements Serializable {
   }
 
   public void decreaseFuel(float fuel) {
-    float modifier = 1.0f;
-    if (hasUpgrade(Type.ENGINE_EFFICIENCY)) {
-      modifier -= 0.2f;
-    }
-    this.fuel = Math.max(this.fuel - fuel * modifier, 0f);
+    this.fuel = Math.max(this.fuel - fuel, 0f);
   }
 
   public void addUpgrade(Upgrade upgrade) {
-    upgrades.add(upgrade.getType());
+    if (hasUpgrade(upgrade.getType()) && !(upgrade.getType().equals(Type.BLACK_HOLE))) {
+      increaseFuel(30);
+      lastUpgradeText = "Upgrade already owned";
+    } else {
+      upgrades.add(upgrade.getType());
+      lastUpgradeText = upgrade.getDisplayName();
+    }
   }
   
   public ArrayList<Upgrade.Type> getUpgrades() {
@@ -233,6 +245,14 @@ public class Player implements Serializable {
     if (hasUpgrade(Type.FUEL_PER_ROUND)) {
       increaseFuel(10f);
     }
+  }
+
+  public String getLastUpgradeText() {
+    return lastUpgradeText;
+  }
+
+  public void setLastUpgradeText(String lastUpgradeText) {
+    this.lastUpgradeText = lastUpgradeText;
   }
 
   public class Move implements Serializable {

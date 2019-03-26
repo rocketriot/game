@@ -1,8 +1,6 @@
 package bham.bioshock.common.models.store;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import com.badlogic.gdx.Screen;
 import com.google.inject.Singleton;
 import bham.bioshock.client.AppPreferences;
@@ -29,6 +27,8 @@ public class Store {
   private UUID mainPlayerId;
   /** The game's round */
   private int round = 1;
+  /** the maximum number of rounds */
+  public int maxRounds = 1;
   /** The next player's turn */
   private int turn = 0;
   /** If the game is reconnecting with the server */
@@ -39,7 +39,7 @@ public class Store {
 
   /** Minigame World */
   private MinigameStore minigameStore;
-  
+
   /** Communication store */
   private CommunicationStore communicationStore = new CommunicationStore();
 
@@ -57,7 +57,7 @@ public class Store {
   public Screen getScreen() {
     return currentScreen;
   }
- 
+
   public boolean isMainPlayer(UUID id) {
     if (mainPlayerId == null) {
       return false;
@@ -82,21 +82,21 @@ public class Store {
   }
 
   public void savePlayers(ArrayList<Player> ps) {
-    for(Player p : ps) {
-      if(!players.contains(p)) {
+    for (Player p : ps) {
+      if (!players.contains(p)) {
         players.add(p);
       }
     }
   }
-  
+
   public void overwritePlayers(ArrayList<Player> newPlayers) {
     players.clear();
     players = newPlayers;
   }
 
   public void addPlayer(Player player) {
-    if(getPlayer(player.getId()) == null) {
-      players.add(player);      
+    if (getPlayer(player.getId()) == null) {
+      players.add(player);
     }
   }
 
@@ -111,7 +111,7 @@ public class Store {
   public Player getMainPlayer() {
     return getPlayer(mainPlayerId);
   }
-  
+
   public UUID getMainPlayerId() {
     return mainPlayerId;
   }
@@ -127,11 +127,11 @@ public class Store {
   public int getTurn() {
     return turn;
   }
-  
+
   public void setTurn(int turn) {
     this.turn = turn;
   }
-  
+
   public void setRound(int round) {
     this.round = round;
   }
@@ -140,15 +140,16 @@ public class Store {
   public Player getMovingPlayer() {
     return players.get(turn % players.size());
   }
-  
+
   public void setPlanetOwner(UUID playerId, UUID planetId) {
     Planet planet = gameBoard.getPlanet(planetId);
     Player p = getPlayer(playerId);
     planet.setPlayerCaptured(p);
   }
-  
+
   public UUID getPlanetOwner(UUID planetId) {
-    if(planetId == null) return null;
+    if (planetId == null)
+      return null;
     Planet planet = gameBoard.getPlanet(planetId);
     Player p = planet.getPlayerCaptured();
     return p == null ? null : p.getId();
@@ -156,6 +157,7 @@ public class Store {
 
   /**
    * Returns whether it's the main player's turn
+   * 
    * @return Whether it's the mainPlayer's turn
    */
   public boolean isMainPlayersTurn() {
@@ -164,10 +166,13 @@ public class Store {
 
   /**
    * Returns whether it's the passed in player's turn
+   * 
    * @param player the player being checked
    * @return Whether it's the passed in player's turns
    */
-  public boolean isThisPlayersTurn(Player player) { return player.equals(getMovingPlayer()); }
+  public boolean isThisPlayersTurn(Player player) {
+    return player.equals(getMovingPlayer());
+  }
 
   /** After a player has finished their turn, set the next turn */
   public void nextTurn() {
@@ -182,6 +187,26 @@ public class Store {
       }
     }
   }
+
+
+  public ArrayList<Player> getWinner() {
+    int maxScore = 0;
+    ArrayList<Player> winners = new ArrayList<Player>();
+
+    for (Player player : players) {
+      if (player.getPoints() > maxScore)
+        maxScore = player.getPoints();
+    }
+
+    for (Player player : players)
+      if (player.getPoints() == maxScore)
+        winners.add(player);
+
+    // will return the winner or the winners if its a tie;
+    return winners;
+
+  }
+
 
   /*
    * MINIGAME
@@ -200,14 +225,14 @@ public class Store {
 
   public List<UUID> getCpuPlayers() {
     List<UUID> cpuPlayers = new ArrayList<>();
-    for(Player p : players) {
-      if(p.isCpu()) {
+    for (Player p : players) {
+      if (p.isCpu()) {
         cpuPlayers.add(p.getId());
       }
     }
     return cpuPlayers;
   }
-  
+
   public JoinScreenStore getJoinScreenStore() {
     return joinScreenStore;
   }
@@ -219,7 +244,7 @@ public class Store {
   public void reconnecting(boolean isLoading) {
     this.reconnecting = isLoading;
   }
-  
+
   public Boolean isReconnecting() {
     return reconnecting;
   }
@@ -227,7 +252,7 @@ public class Store {
   public void setHost(boolean value) {
     communicationStore.setHost(value);
   }
-  
+
   public boolean isHost() {
     return communicationStore.isHost();
   }
@@ -242,5 +267,26 @@ public class Store {
 
   public CommunicationStore getCommStore() {
     return communicationStore;
+  }
+
+  public void setMaxRounds(int n) {
+    this.maxRounds = n;
+  }
+
+  public int getMaxRounds() {
+    return this.maxRounds;
+  }
+
+  /**
+   * Sorts the arraylist descending on the players scores
+   * 
+   * @return arraylist of the players sorted descending on their score
+   */
+
+  public ArrayList<Player> getSortedPlayers() {
+    ArrayList<Player> sorted = players;
+    sorted.sort(Comparator.comparingInt(Player::getPoints).reversed());
+
+    return sorted;
   }
 }

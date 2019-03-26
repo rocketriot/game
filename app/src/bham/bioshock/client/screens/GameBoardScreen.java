@@ -23,8 +23,11 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import java.util.ArrayList;
 import java.util.UUID;
@@ -248,7 +251,7 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
           case BLACKHOLE:
             BlackHole blackHole = (BlackHole) grid[x][y].getValue();
 
-            // Only draw the asteroid from the bottom left coordinate
+            // Only draw the blackhole from the bottom left coordinate
             if (blackHole.getCoordinates().isEqual(new Coordinates(x, y)))
               drawBlackHole.draw(blackHole, PPS);
 
@@ -679,4 +682,5 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
 
     dialog.show(hud.getStage());
   }
+
 }
