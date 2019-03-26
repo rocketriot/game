@@ -20,22 +20,19 @@ import bham.bioshock.server.InvalidMessageSequence;
 import bham.bioshock.server.ServerHandler;
 import bham.bioshock.testutils.communication.FakeMessage;
 import bham.bioshock.testutils.communication.FakeServerService;
-import bham.bioshock.testutils.server.FakeServer;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class JoinScreenHandlerTest {
   
   Store store;
-  FakeServer server;
   ServerHandler handler;
   Clock clock;
 
   @BeforeEach
   public void createFakeServer() {
     store = new Store();
-    server = new FakeServer();
     clock = new Clock();
-    handler = new ServerHandler(store, server, false, clock);
+    handler = new ServerHandler(store, false, clock);
   }
   
   @Test

@@ -100,7 +100,7 @@ public class MainMenuScreen extends ScreenMaster {
       @Override
       public void clicked(InputEvent event, float x, float y) {
         SoundController.playSound("menuSelect");
-        showDialogue("join");
+        router.call(Route.SERVERS_SCREEN);
       }
     });
 
@@ -142,7 +142,7 @@ public class MainMenuScreen extends ScreenMaster {
       protected void result(Object object) {
         if (object.equals(false))
           return;
-
+        
         String text = textField.getText();
 
         if (text.equals("")) {

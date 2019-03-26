@@ -54,7 +54,7 @@ public class MinigameStore {
   // Create world from the seeder
   public void seed(Store store, World world, Objective o, UUID planetId) {
     this.currentWorld = world;
-    mainPlayerId = store.getMainPlayer().getId();
+    mainPlayerId = store.getMainPlayerId();
     Position[] playerPos = world.getPlayerPositions();
 
     int i = 0;

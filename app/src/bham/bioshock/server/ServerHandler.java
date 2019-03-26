@@ -28,14 +28,12 @@ public class ServerHandler implements MultipleConnectionsHandler {
   private ArrayList<ServerService> connecting = new ArrayList<>();
   private ConcurrentHashMap<UUID, ServerService> connected = new ConcurrentHashMap<>();
 
-  private StoppableServer server;
   private JoinScreenHandler joinHandler;
   private GameBoardHandler gameBoardHandler;
   private MinigameHandler minigameHandler;
   private DevServer devServer;
   
-  public ServerHandler(Store store, StoppableServer server, boolean runDebugServer, Clock clock) {
-    this.server = server;
+  public ServerHandler(Store store, boolean runDebugServer, Clock clock) {
     joinHandler = new JoinScreenHandler(store, this);
     minigameHandler = new MinigameHandler(store, this, clock);
     gameBoardHandler = new GameBoardHandler(store, this, minigameHandler);
@@ -193,7 +191,6 @@ public class ServerHandler implements MultipleConnectionsHandler {
         joinHandler.moveRocket((JoinScreenMoveMessage) message, clientId);
         break;
       case START_GAME:
-        server.stopDiscovery();
         joinHandler.startGame(gameBoardHandler);
         break;
       case MOVE_PLAYER_ON_BOARD:
@@ -223,7 +220,6 @@ public class ServerHandler implements MultipleConnectionsHandler {
         minigameHandler.updateObjective(message);
         break;
       case MINIGAME_DIRECT_START:
-        server.stopDiscovery();
         joinHandler.minigameDirectStart(clientId, gameBoardHandler, minigameHandler);
         break;
       case RECONNECT_PLAYER:

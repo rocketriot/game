@@ -131,3 +131,4 @@ Thumbs.db
 
 /logs
 app/logs
+app/hostinfo.txt

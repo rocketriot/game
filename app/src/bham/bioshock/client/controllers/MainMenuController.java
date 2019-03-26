@@ -2,7 +2,8 @@ package bham.bioshock.client.controllers;
 
 import bham.bioshock.client.screens.ScreenMaster;
 import bham.bioshock.common.models.store.Store;
-import com.badlogic.gdx.audio.Sound;
+import bham.bioshock.communication.client.CommunicationClient;
+import bham.bioshock.communication.client.ServerStatus;
 import com.google.inject.Inject;
 import bham.bioshock.client.BoardGame;
 import bham.bioshock.client.Route;
@@ -14,12 +15,14 @@ public class MainMenuController extends Controller {
 
   Server server;
   BoardGame game;
+  CommunicationClient commClient;
 
   @Inject
-  public MainMenuController(Store store, Router router, BoardGame game, Server server) {
+  public MainMenuController(Store store, Router router, BoardGame game, Server server, CommunicationClient commClient) {
     super(store, router, game);
     this.server = server;
     this.game = game;
+    this.commClient = commClient;
   }
 
   /**
@@ -28,8 +31,10 @@ public class MainMenuController extends Controller {
    * @param hostName
    */
   public void hostGame(String hostName) {
-    if (server.start()) {
+    if (server.start(hostName)) {
       store.setHost(true);
+      ServerStatus server = new ServerStatus(hostName, "localhost");
+      router.call(Route.CONNECT, server);
       router.call(Route.JOIN_SCREEN, hostName);
     } else {
       alert("Server cannot be created.\nCheck if one is not already running");
@@ -41,6 +46,8 @@ public class MainMenuController extends Controller {
     server.stop();
     store.setHost(false);
     store.reconnecting(false);
+    store.getCommStore().clearServers();
+    
     setScreen(new MainMenuScreen(router));
   }
 
