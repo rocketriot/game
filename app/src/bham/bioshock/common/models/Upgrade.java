@@ -64,10 +64,7 @@ public class Upgrade implements Serializable {
     generateUpgradeType();
   }
 
-  /**
-   * Returns a random upgrade option
-   * TODO: add different weightings for each upgrade option
-   * */
+  /** Returns a random upgrade option */
   public void generateUpgradeType() {
     int random = (int) (Math.random() * Type.values().length);
     type = Type.values()[random];

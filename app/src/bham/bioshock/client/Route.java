@@ -44,7 +44,7 @@ public enum Route {
   COORDINATES_SAVE            (GameBoardController.class,     "updateCoordinates"),
   ADD_BLACK_HOLE              (GameBoardController.class,     "addBlackHole"),
   BLACK_HOLE_RECEIVED         (GameBoardController.class,     "blackHoleReceived"),
-  MOVE_PLAYER_TO_RANDOM_POINT (GameBoardController.class,     "movePlayerToRandomPoint"),
+  MOVE_PLAYER_TO_BLACK_HOLE   (GameBoardController.class,     "movePlayerToBlackHole"),
 
   DIRECT_MINIGAME_START       (MinigameController.class,      "directStart"), // FOR TESTS ONLY
   SEND_MINIGAME_START         (MinigameController.class,      "sendStart"),

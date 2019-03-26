@@ -182,13 +182,14 @@ public class MainMenuScreen extends ScreenMaster {
         String regex = "[0-9]+";
 
         if (!text.matches(regex)) {
-          alert("Please enter a valid number of turns");
+          alert("Please enter a valid number of rounds");
+
           return;
         }
         SoundController.playSound("menuSelect");
       }
     };
-    dialog.text(new Label("Enter the turns:", skin, "window"));
+    dialog.text(new Label("Enter the rounds:", skin, "window"));
     dialog.getContentTable().add(textField);
     dialog.button("OK", true);
     dialog.button("Cancel", false);

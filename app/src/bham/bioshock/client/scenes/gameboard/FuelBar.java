@@ -4,7 +4,6 @@ import bham.bioshock.Config;
 import bham.bioshock.client.FontGenerator;
 import bham.bioshock.client.Router;
 import bham.bioshock.client.scenes.HudElement;
-import bham.bioshock.common.models.Player;
 import bham.bioshock.common.models.store.Store;
 
 import com.badlogic.gdx.Gdx;
@@ -97,7 +96,8 @@ public class FuelBar extends HudElement {
 
     // 75% to 100%
     sr.setColor(new Color(0xFFE04AFF));
-    sr.rect(fuelXCoordinate, fuelPadding + 50f, fuelWidth, height);
+    float height1 = Float.min(fuelMaxHeight, height);
+    sr.rect(fuelXCoordinate, fuelPadding + 50f, fuelWidth, height1);
     
     // 50% to 75%
     sr.setColor(new Color(0xFFA947FF));

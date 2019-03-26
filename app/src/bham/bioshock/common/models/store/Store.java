@@ -283,8 +283,8 @@ public class Store {
    * @return arraylist of the players sorted descending on their score
    */
 
-  public ArrayList<Player> getSortedPlayers() {
-    ArrayList<Player> sorted = players;
+  public ArrayList<Player> getSortedPlayers(){
+    ArrayList<Player> sorted = new ArrayList<>(players);
     sorted.sort(Comparator.comparingInt(Player::getPoints).reversed());
 
     return sorted;

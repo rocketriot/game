@@ -57,7 +57,7 @@ public class Player implements Serializable {
   public static final int POINTS_PER_PLANET = 100;
 
   /** Fuel gained per round */
-  public static final float FUEL_PER_ROUND = 30f;
+  public static final float FUEL_PER_ROUND = 50f;
 
   private boolean isAddingBlackHole = false;
 
