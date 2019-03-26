@@ -26,11 +26,6 @@ public class Upgrade implements Serializable {
     FUEL_TANK_SIZE,
     ENGINE_EFFICIENCY,
     FUEL_PER_ROUND,
-<<<<<<< HEAD
-    INCREASE_FUEL_CAPACITY,
-    INCREASE_FUEL_PER_TURN,
-=======
->>>>>>> master
     BLACK_HOLE
   }
 
