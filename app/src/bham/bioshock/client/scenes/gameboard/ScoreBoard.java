@@ -109,7 +109,7 @@ public class ScoreBoard extends HudElement {
     int position = 0;
       
     // Figure out the player's position
-    for (Player sortedPlayer : store.getPlayers()) {
+    for (Player sortedPlayer : store.getSortedPlayers()) {
       if (player.getId().equals(sortedPlayer.getId())) break;
       position++;
     }

@@ -251,7 +251,7 @@ public class Store {
    */
 
   public ArrayList<Player> getSortedPlayers(){
-    ArrayList<Player> sorted = players;
+    ArrayList<Player> sorted = new ArrayList<>(players);
     sorted.sort(Comparator.comparingInt(Player::getPoints).reversed());
 
     return sorted;
