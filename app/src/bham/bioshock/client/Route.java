@@ -10,6 +10,7 @@ public enum Route {
   MAIN_MENU                   (MainMenuController.class,      "show"),
   HOST_GAME                   (MainMenuController.class,      "hostGame"),
   ALERT                       (MainMenuController.class,      "alert"),
+  SELECTED_TURNS              (MainMenuController.class,     "saveTurns"),
   
   HOW_TO                      (HowToController.class,         "show"),
   
@@ -61,7 +62,10 @@ public enum Route {
   LOOP_SOUND                  (SoundController.class,         "loopSound"),
   STOP_SOUND                  (SoundController.class,         "stopSound"),
   SOUNDS_VOLUME               (SoundController.class,         "setSoundsVolume"),
-  SOUNDS_ENABLED              (SoundController.class,         "enableSounds");
+  SOUNDS_ENABLED              (SoundController.class,         "enableSounds"),
+
+
+  DIRECT_END                  (EndGameController.class,      "show");
   
 //@formatter:on
 

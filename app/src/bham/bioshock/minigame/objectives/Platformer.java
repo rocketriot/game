@@ -92,7 +92,7 @@ public class Platformer extends Objective {
 
   @Override
   public String instructions() {
-    return "You have 3 minutes to find the goal! \n " +
+    return "You have 1 minute to find the goal! \n " +
             "The first astronaut to reach it wins!";
   }
 

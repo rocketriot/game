@@ -22,7 +22,13 @@ public enum Command {
   UPDATE_TURN,
   MOVE_PLAYER_ON_BOARD,
   END_TURN,
+
+  SET_PLANET_OWNER,
+
+  DIRECT_END,
+
   ADD_BLACK_HOLE,
+
   
   // Minigame
   MINIGAME_START,
