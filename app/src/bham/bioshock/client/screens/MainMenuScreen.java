@@ -183,10 +183,8 @@ public class MainMenuScreen extends ScreenMaster {
 
         if (!text.matches(regex)) {
           alert("Please enter a valid number of turns");
-
           return;
         }
-
         SoundController.playSound("menuSelect");
       }
     };

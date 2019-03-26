@@ -48,8 +48,10 @@ public class EndScreen extends ScreenMaster {
     this.players = store.getSortedPlayers();
 
     this.table = new Table();
-    table.setX(screenWidth * 2 - 200);
-    table.setY(screenHeight*2 -100);
+
+    System.out.println(screenWidth + " " + screenHeight);
+    table.setX(screenWidth - screenWidth/3);
+    table.setY(screenHeight-screenHeight/4);
 
     viewport = new FitViewport(Config.GAME_WORLD_WIDTH, Config.GAME_WORLD_HEIGHT, camera);
     stage = new Stage(viewport, batch);
@@ -77,8 +79,8 @@ public class EndScreen extends ScreenMaster {
   private void font(){
     fontBatch.begin();
 
-    int x = 200;
-    int y = 450;
+    int x = (int)screenWidth/2;
+    int y = (int)screenHeight - (int)screenHeight/6;
 
     font.draw(fontBatch, "Final Results", x, y);
     fontBatch.end();
