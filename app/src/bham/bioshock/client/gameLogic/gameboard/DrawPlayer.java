@@ -1,10 +1,11 @@
 package bham.bioshock.client.gameLogic.gameboard;
 
 import bham.bioshock.client.Assets;
-import bham.bioshock.common.Direction;
+import bham.bioshock.client.FontGenerator;
 import bham.bioshock.common.models.Player;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.ParticleEffect;
 import com.badlogic.gdx.graphics.g2d.ParticleEmitter;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -21,12 +22,18 @@ public class DrawPlayer extends DrawEntity {
   private ArrayList<Sprite> sprites = new ArrayList<>();
   private ArrayList<Sprite> outlinedSprites = new ArrayList<>();
 
+  private FontGenerator fontGenerator;
+  private BitmapFont font;
+
   public DrawPlayer(Batch batch) {
     super(batch);
 
     sprites = generateSprites(Assets.playersFolder);
     outlinedSprites = generateSprites(Assets.playersFolder);
     generateEffects();
+
+    fontGenerator = new FontGenerator();
+    font = fontGenerator.generate(25);
   }
 
   private void generateEffects() {
@@ -41,11 +48,27 @@ public class DrawPlayer extends DrawEntity {
     Sprite sprite =
         selected ? outlinedSprites.get(player.getTextureID()) : sprites.get(player.getTextureID());
 
+    int x = player.getCoordinates().getX() * PPS;
+    int y = player.getCoordinates().getY() * PPS;
+
+    sprite.setPosition(x, y);
     sprite.setOriginCenter();
-    sprite.setX(player.getCoordinates().getX() * PPS);
-    sprite.setY(player.getCoordinates().getY() * PPS);
     sprite.draw(batch);
+
+    drawNameLabel(player, sprite, x, y, PPS);
   }
+
+  private void drawNameLabel(Player player, Sprite rocket, int rocketX, int rocketY, int PPS) {
+    // Figure out x position of label
+    float xOffset = fontGenerator.getOffset(font, player.getUsername());
+    int x = rocketX + (int) (rocket.getWidth() / 2 - xOffset);
+    
+    // Figure out y position of label
+    int y = rocketY - 10;
+
+    // Draw label
+    font.draw(batch, player.getUsername(), x, y);
+  };
 
   public void setupMove(Player player) {
     ArrayList<Player.Move> boardMove = player.getBoardMove();
@@ -73,7 +96,8 @@ public class DrawPlayer extends DrawEntity {
     int nextMoveX = nextMove.getCoordinates().getX();
     int nextMoveY = nextMove.getCoordinates().getY();
 
-    boolean posUpdated = false;
+    // Specifies if the player has moved a full grid space
+    boolean positionUpdated = false;
     
     switch (nextMove.getDirection()) {
       case UP:
@@ -86,7 +110,7 @@ public class DrawPlayer extends DrawEntity {
 
         // Has the sprite reach the next coordinate in the board move
         if (movingSprite.getY() >= nextMoveY * PPS) {
-          posUpdated = true;
+          positionUpdated = true;
         }
 
         break;
@@ -100,7 +124,7 @@ public class DrawPlayer extends DrawEntity {
         setRocketTrailAngle(180);
 
         if (movingSprite.getY() <= nextMoveY * PPS) {
-          posUpdated = true;
+          positionUpdated = true;
         }
 
         break;
@@ -114,7 +138,7 @@ public class DrawPlayer extends DrawEntity {
         setRocketTrailAngle(270);
 
         if (movingSprite.getX() >= nextMoveX * PPS) {
-          posUpdated = true;
+          positionUpdated = true;
         }
 
         break;
@@ -128,7 +152,7 @@ public class DrawPlayer extends DrawEntity {
         setRocketTrailAngle(90);
 
         if (movingSprite.getX() <= nextMoveX * PPS) {
-          posUpdated = true;
+          positionUpdated = true;
         }
 
         break;
@@ -140,17 +164,15 @@ public class DrawPlayer extends DrawEntity {
     rocketTrail.setPosition(rocketTrailX * PPS, rocketTrailY * PPS);
     rocketTrail.draw(batch, Gdx.graphics.getDeltaTime());
     
-    if(posUpdated) {
-      movingSprite.setX(nextMoveX * PPS);
-      movingSprite.setY(nextMoveY * PPS);
+    if (positionUpdated) {
+      movingSprite.setPosition(nextMoveX * PPS, nextMoveY * PPS);
     } else {
-      movingSprite.setX(movingSpriteX * PPS);
-      movingSprite.setY(movingSpriteY * PPS);
+      movingSprite.setPosition(movingSpriteX * PPS, movingSpriteY * PPS);
     }
-    movingSprite.draw(batch);      
-    
 
-    return posUpdated;
+    movingSprite.draw(batch);
+
+    return positionUpdated;
   }
 
 
@@ -172,8 +194,11 @@ public class DrawPlayer extends DrawEntity {
   public void resize(int PPS) {
     sprites.forEach(sprite -> sprite.setSize(PPS, PPS));
     outlinedSprites.forEach(sprite -> sprite.setSize(PPS, PPS));
+
+    font.getData().setScale(PPS * 0.03f, PPS * 0.03f);
+
     if(movingSprite != null) {
-      movingSprite.setSize(PPS, PPS);      
+      movingSprite.setSize(PPS, PPS);
     }
   }
 
