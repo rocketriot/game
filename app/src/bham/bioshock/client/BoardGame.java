@@ -17,10 +17,12 @@ public class BoardGame extends Game {
     this.router = router;
   }
   
+  /**
+   * Called when the game is ready to start
+   */
   @Override
   public void create() {
     Gdx.graphics.setTitle("Rocket Riot");
-
     router.call(Route.MAIN_MENU);
   }
 }

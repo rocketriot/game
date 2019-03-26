@@ -1,8 +1,8 @@
 package bham.bioshock.client.screens;
 
 import bham.bioshock.Config;
-import bham.bioshock.client.Assets;
 import bham.bioshock.client.Router;
+import bham.bioshock.client.assets.Assets;
 import bham.bioshock.client.controllers.SoundController;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;

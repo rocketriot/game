@@ -68,23 +68,38 @@ public enum Route {
   SOUNDS_VOLUME               (SoundController.class,         "setSoundsVolume"),
   SOUNDS_ENABLED              (SoundController.class,         "enableSounds"),
 
-
   DIRECT_END                  (EndGameController.class,      "show");
   
 //@formatter:on
 
   private Class<? extends Controller> controllerClass;
   private String method;
-
+  
+  /**
+   * Constructor for the route holding controller class and method name
+   * 
+   * @param controllerClass
+   * @param method
+   */
   Route(Class<? extends Controller> controllerClass, String method) {
     this.controllerClass = controllerClass;
     this.method = method;
   }
-
+  
+  /**
+   * Get controller class
+   * 
+   * @return controller class
+   */
   public Class<? extends Controller> getController() {
     return controllerClass;
   }
-
+  
+  /**
+   * Get method name
+   * 
+   * @return name of the method
+   */
   public String getMethod() {
     return method;
   }

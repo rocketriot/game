@@ -1,14 +1,17 @@
 package bham.bioshock.minigame.models;
 
+import bham.bioshock.client.assets.Assets.GameType;
+import bham.bioshock.client.assets.Assets;
+import bham.bioshock.client.interfaces.AssetContainer;
 import bham.bioshock.common.Position;
 import bham.bioshock.minigame.PlanetPosition;
 import bham.bioshock.minigame.worlds.World;
-import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 /**
- * The type Flag.
+ * The flag is a target for players while capture the flag objective.
+ * It can be carried by the player and is dropped when the player is killed
  */
 public class Flag extends StaticEntity {
 
@@ -40,6 +43,10 @@ public class Flag extends StaticEntity {
     return texture;
   }
 
+  /**
+   * Update the position of the flag.
+   * If it has an owner, adjust to owner position
+   */
   @Override
   public void update(float delta) {
     if (owner != null) {
@@ -78,20 +85,20 @@ public class Flag extends StaticEntity {
   }
 
   /**
-   * Load textures.
+   * Queue textures for loading
    *
    * @param manager the asset manager
    */
-  public static void loadTextures(AssetManager manager) {
-    manager.load("app/assets/minigame/flag.png", Texture.class);
+  public static void loadTextures(AssetContainer manager) {
+    manager.load(Assets.flag, Texture.class, GameType.MINIGAME);
   }
 
   /**
-   * Create textures.
+   * Create textures for rendering
    *
    * @param manager the asset manager
    */
-  public static void createTextures(AssetManager manager) {
-    texture = new TextureRegion(manager.get("app/assets/minigame/flag.png", Texture.class));
+  public static void createTextures(AssetContainer manager) {
+    texture = new TextureRegion(manager.get(Assets.flag, Texture.class));
   }
 }

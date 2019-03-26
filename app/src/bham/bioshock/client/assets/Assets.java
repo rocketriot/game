@@ -1,9 +1,9 @@
-package bham.bioshock.client;
+package bham.bioshock.client.assets;
 
-import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import bham.bioshock.client.interfaces.AssetContainer;
 
 public class Assets {
   // General
@@ -45,9 +45,12 @@ public class Assets {
   // Gameboard HUD assets
   public static final String turnPointer = "app/assets/ui/turn-pointer.png";
 
-  // Minigame HUD assets
+  // Minigame entities
   public static final String gun = "app/assets/minigame/gun.png";
-
+  public static final String flag = "app/assets/minigame/flag.png";
+  public static final String bullet = "app/assets/minigame/bullet.png";
+  public static final String bulletAnim = "app/assets/minigame/bullet_animation.png";
+  
   // Minigame Astronauts
   public static final String hearts = "app/assets/minigame/hearts.png";
   public static final String astroBase = "app/assets/minigame/astronauts/";
@@ -56,13 +59,34 @@ public class Assets {
   public static final String astroFall = "/fall.png";
   public static final String astroFFall = "/ffall.png";
   public static final String astroShield = "/shield.png";
+  public static final String astroShieldGun = "/shield_gun.png";
   
+  // Minigame world
+  public static final String planetBase = "app/assets/minigame/planets/";
+  public static final String platformsBase = "app/assets/minigame/platforms/";
   
-  public static TextureRegion[][] splittedTexture(AssetManager manager, String path, int fnum) {
+  /**
+   * Split texture to regions
+   * 
+   * @param manager
+   * @param path
+   * @param fnum
+   * @return
+   */
+  public static TextureRegion[][] splittedTexture(AssetContainer manager, String path, int fnum) {
     Texture t = manager.get(path, Texture.class);
     return TextureRegion.split(t, t.getWidth() / fnum, t.getHeight());
   }
 
+  /**
+   * Convert texture to animation
+   * 
+   * @param list
+   * @param fnum
+   * @param skip
+   * @param duration
+   * @return
+   */
   public static Animation<TextureRegion> textureToAnimation(TextureRegion[][] list, int fnum, int skip, float duration) {
     TextureRegion[] frames = new TextureRegion[fnum - skip];
     for (int i = skip; i < fnum; i++) {
@@ -71,7 +95,7 @@ public class Assets {
     return new Animation<TextureRegion>(duration, frames);
   }
   
-  // Minigame world
-  public static final String planetBase = "app/assets/minigame/planets/";
-  public static final String platformsBase = "app/assets/minigame/platforms/";
+  public enum GameType {
+    MINIGAME, BOARDGAME
+  }
 }

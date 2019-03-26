@@ -1,8 +1,8 @@
 package bham.bioshock.client.screens;
 
-import bham.bioshock.client.Assets;
 import bham.bioshock.client.Router;
 import bham.bioshock.client.XMLInteraction;
+import bham.bioshock.client.assets.Assets;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.ui.*;

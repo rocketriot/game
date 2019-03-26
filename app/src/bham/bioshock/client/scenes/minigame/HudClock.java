@@ -16,7 +16,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 
-public class Clock extends HudElement {
+public class HudClock extends HudElement {
   private FontGenerator fontGenerator;
   private BitmapFont font;
   private BitmapFont fontRed;
@@ -25,7 +25,7 @@ public class Clock extends HudElement {
   /** The length of the minigame */
   private float seconds = 60;
 
-  Clock(Stage stage, SpriteBatch batch, Skin skin, Store store, Router router) {
+  HudClock(Stage stage, SpriteBatch batch, Skin skin, Store store, Router router) {
     super(stage, batch, skin, store, router);
   }
 

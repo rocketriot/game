@@ -1,9 +1,9 @@
 package bham.bioshock.client.screens;
 
 import bham.bioshock.Config;
-import bham.bioshock.client.Assets;
 import bham.bioshock.client.Route;
 import bham.bioshock.client.Router;
+import bham.bioshock.client.assets.Assets;
 import bham.bioshock.client.controllers.SoundController;
 import bham.bioshock.client.gameLogic.gameboard.*;
 import bham.bioshock.client.scenes.gameboard.GameBoardHud;

@@ -113,7 +113,7 @@ public class Platformer extends Objective {
     }
     /* set the goal to the highest platform */
     goalPlatform = highestPlatform;
-    goal = new Goal(world, highestPlatform.getX(), highestPlatform.getY(), true, EntityType.GOAL);
+    goal = new Goal(world, highestPlatform.getX(), highestPlatform.getY());
   }
 
 

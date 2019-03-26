@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import bham.bioshock.minigame.models.Platform;
 import bham.bioshock.minigame.worlds.World;
+import bham.bioshock.testutils.minigame.FakeWorld;
 import java.util.ArrayList;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -30,8 +31,8 @@ public class PlatformSeedingTests {
    */
   @BeforeAll
   public void setupTests() {
-    world = new TestingWorld();
-    ((TestingWorld) world).seedPlatforms();
+    world = new FakeWorld();
+    ((FakeWorld) world).seedPlatforms();
     platforms = world.getPlatforms();
   }
 

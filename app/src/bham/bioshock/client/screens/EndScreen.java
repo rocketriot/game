@@ -89,7 +89,7 @@ public class EndScreen extends ScreenMaster {
   /**
    * Displays the players, the scores and the rockets
    */
-  private  void load(){
+  private void load(){
     font = fontGenerator.generate(45, Color.WHITE);
 
     for(int i= 0 ;i<players.size(); i++) {
