@@ -186,7 +186,6 @@ public class MainMenuScreen extends ScreenMaster {
 
           return;
         }
-
         SoundController.playSound("menuSelect");
       }
     };
