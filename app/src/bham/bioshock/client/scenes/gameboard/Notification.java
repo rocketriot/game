@@ -39,8 +39,8 @@ public class Notification {
   }
 
   public void render() {
-    renderTurnNotifcation();
     renderMinigameEndNotifiation();
+    renderTurnNotifcation();
   }
 
   private void drawNotification(String text) {
@@ -76,6 +76,7 @@ public class Notification {
   private void checkTurnChange() {
     // Don't show the turn prompt is the minigame prompt is visible
     if (showWinner) return;
+
     // If it's the main players turn show the notification
     if (store.isMainPlayersTurn() && !wasMainPlayerTurn) {
       duration = NOTIFICATION_DURATION;
