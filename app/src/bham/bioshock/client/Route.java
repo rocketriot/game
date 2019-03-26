@@ -19,7 +19,9 @@ public enum Route {
   PREFERENCES                 (PreferencesController.class,   "show"),
   PREFERENCES_WITH_BACK_ROUTE (PreferencesController.class,   "showWithBackRoute"),
   
-  JOIN_SCREEN                 (JoinScreenController.class,    "show"),
+  SERVERS_SCREEN              (JoinScreenController.class,    "showServers"),
+  JOIN_SCREEN                 (JoinScreenController.class,    "registerAndShow"),
+  CONNECT                     (JoinScreenController.class,    "connect"),
   DISCONNECT                  (JoinScreenController.class,    "disconnect"),
   ADD_PLAYER                  (JoinScreenController.class,    "addPlayer"),
   UPDATE_FROM_RECONNECT       (JoinScreenController.class,    "updateReconnect"),
@@ -28,6 +30,7 @@ public enum Route {
   JOIN_SCREEN_MOVE            (JoinScreenController.class,    "rocketMove"),
   JOIN_SCREEN_UPDATE          (JoinScreenController.class,    "updateRocket"),
   SEND_RECONNECT              (JoinScreenController.class,    "sendReconnect"),
+  RECONNECT_RECOVERED         (JoinScreenController.class,    "reconnectRecovered"),
 
   MOVE_PLAYER                 (GameBoardController.class,     "move"),
   MOVE_RECEIVED               (GameBoardController.class,     "moveReceived"),

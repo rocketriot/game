@@ -4,7 +4,6 @@ import bham.bioshock.client.screens.JoinScreen;
 import bham.bioshock.client.screens.JoinScreen.RocketAnimation;
 import bham.bioshock.common.Position;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 

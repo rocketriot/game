@@ -48,6 +48,8 @@ public class JoinScreenHandler {
       Player player = store.getPlayer(data.playerId);
       if(player != null) {
         handler.register(player.getId(), player.getUsername(), service);   
+      } else {
+        service.send(new ReconnectResponseMessage(false));
       }
     }
   }
@@ -74,7 +76,9 @@ public class JoinScreenHandler {
 
   public void disconnectPlayer(UUID clientId) {
     Player player = store.getPlayer(clientId);
-    player.setCpu(true);
+    if(player != null) {
+      player.setCpu(true);      
+    }
     handler.sendToAll(new DisconnectPlayerMessage(clientId));
   }
 

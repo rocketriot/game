@@ -13,13 +13,11 @@ import bham.bioshock.communication.messages.minigame.RequestMinigameStartMessage
 import bham.bioshock.server.InvalidMessageSequence;
 import bham.bioshock.server.ServerHandler;
 import bham.bioshock.testutils.communication.FakeServerService;
-import bham.bioshock.testutils.server.FakeServer;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class MinigameHandlerTest {
   
   Store store;
-  FakeServer server;
   ServerHandler handler;
   FakeServerService listener;
   Clock clock;
@@ -27,9 +25,8 @@ public class MinigameHandlerTest {
   @BeforeEach
   public void createFakeServer() {
     store = new Store();
-    server = new FakeServer();
     clock = new Clock();
-    handler = new ServerHandler(store, server, false, clock);
+    handler = new ServerHandler(store, false, clock);
     
     listener = new FakeServerService();
     handler.add(listener);

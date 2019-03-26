@@ -6,11 +6,6 @@ public class FakeServer implements StoppableServer {
 
   public boolean discoveryRunning = true;
   public boolean running = true;
-  
-  @Override
-  public void stopDiscovery() {
-    this.discoveryRunning = false;
-  }
 
   @Override
   public void stop() {

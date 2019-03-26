@@ -41,7 +41,7 @@ public class StatsContainer extends Container {
         int i = 0;
         while(iterator.hasNext()) {
             Player p = iterator.next();
-            if(!p.getId().equals(store.getMainPlayer().getId()) ) {
+            if(!p.getId().equals(store.getMainPlayerId()) ) {
                 playerTables.add(new PlayerContainer(p.getId(), p.getUsername()));
                 update(playerTables.get(i));
                 table.add(playerTables.get(i)).padRight(30);

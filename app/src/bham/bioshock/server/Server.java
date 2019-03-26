@@ -23,24 +23,19 @@ public class Server implements StoppableServer {
     this.store = store;
   }
 
-  public Boolean start() {
+  public Boolean start(String hostName) {
     Clock clock = new Clock();
-    this.handler = new ServerHandler(store, this, Config.DEBUG_SERVER, clock);
+    this.handler = new ServerHandler(store, Config.DEBUG_SERVER, clock);
     try {
       serverSocket = new ServerSocket(Config.PORT);
     } catch (IOException e1) {
       return false;
     }
     connMaker = new CommunicationMaker(new StreamFactory());
+    connMaker.setHostName(hostName);
     connMaker.startSearch(handler, serverSocket, true);
 
     return true;
-  }
-
-  public void stopDiscovery() {
-    if (connMaker != null) {
-      connMaker.stopDiscovery();
-    }
   }
 
   public void stop() {

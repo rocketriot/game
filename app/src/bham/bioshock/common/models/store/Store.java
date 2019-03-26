@@ -33,13 +33,15 @@ public class Store {
   private int turn = 0;
   /** If the game is reconnecting with the server */
   private boolean reconnecting = false;
-  /** If the player is the host */
-  private boolean isHost = false;
+
   /** The username of whoever just won a minigame */
   private String minigameWinner = null;
 
   /** Minigame World */
   private MinigameStore minigameStore;
+  
+  /** Communication store */
+  private CommunicationStore communicationStore = new CommunicationStore();
 
   /** Join Screen */
   private JoinScreenStore joinScreenStore;
@@ -55,7 +57,7 @@ public class Store {
   public Screen getScreen() {
     return currentScreen;
   }
-
+ 
   public boolean isMainPlayer(UUID id) {
     if (mainPlayerId == null) {
       return false;
@@ -109,9 +111,13 @@ public class Store {
   public Player getMainPlayer() {
     return getPlayer(mainPlayerId);
   }
+  
+  public UUID getMainPlayerId() {
+    return mainPlayerId;
+  }
 
-  public void setMainPlayer(Player player) {
-    this.mainPlayerId = player.getId();
+  public void setMainPlayer(UUID playerId) {
+    this.mainPlayerId = playerId;
   }
 
   public int getRound() {
@@ -219,11 +225,11 @@ public class Store {
   }
 
   public void setHost(boolean value) {
-    isHost = value;
+    communicationStore.setHost(value);
   }
   
   public boolean isHost() {
-    return isHost;
+    return communicationStore.isHost();
   }
 
   public String getMinigameWinner() {
@@ -232,5 +238,9 @@ public class Store {
 
   public void setMinigameWinner(String minigameWinner) {
     this.minigameWinner = minigameWinner;
+  }
+
+  public CommunicationStore getCommStore() {
+    return communicationStore;
   }
 }

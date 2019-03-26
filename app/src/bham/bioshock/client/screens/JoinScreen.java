@@ -143,9 +143,7 @@ public class JoinScreen extends ScreenMaster {
       return;
     }
     
-    stage.act(Gdx.graphics.getDeltaTime());
-    stage.draw();
-    stateTime += Gdx.graphics.getDeltaTime();
+    stateTime += delta;
 
     // draw rockets
     drawRockets();

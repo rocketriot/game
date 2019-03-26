@@ -7,9 +7,16 @@ import java.net.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class DiscoveryThread implements Runnable {
+public class DiscoveryThread extends Thread {
   
   private static final Logger logger = LogManager.getLogger(DiscoveryThread.class);
+  
+  String name = "Server";
+  
+  public DiscoveryThread(String hostName) {
+    super("ServerDiscoveryThread");
+    this.name = hostName;
+  }
   
   /**
    * Wait for a request packet from the client and respond
@@ -31,7 +38,8 @@ public class DiscoveryThread implements Runnable {
           String message = new String(packet.getData()).trim();
           if (message.equals(Command.COMM_DISCOVER_REQ.toString())) {
 
-            byte[] sendData = Command.COMM_DISCOVER_RES.getBytes();
+            String response = Command.COMM_DISCOVER_RES.toString() + name;
+            byte[] sendData = response.getBytes();
             // Send a response
             DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length,
                 packet.getAddress(), packet.getPort());
@@ -39,9 +47,12 @@ public class DiscoveryThread implements Runnable {
           }
         } catch (SocketTimeoutException e) {
         }
+        sleep(500);
       }
     } catch (IOException ex) {
       logger.catching(ex);
+    } catch (InterruptedException e) {
+
     } finally {
       if(socket != null) {
         socket.close();

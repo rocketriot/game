@@ -8,6 +8,7 @@ import bham.bioshock.common.consts.GridPoint;
 import bham.bioshock.common.models.*;
 import bham.bioshock.common.models.store.Store;
 import bham.bioshock.common.pathfinding.AStarPathfinding;
+import bham.bioshock.communication.client.CommunicationClient;
 import bham.bioshock.communication.interfaces.MessageService;
 import bham.bioshock.communication.messages.boardgame.AddBlackHoleMessage;
 import bham.bioshock.communication.messages.boardgame.EndTurnMessage;
@@ -20,18 +21,23 @@ import java.util.UUID;
 
 public class GameBoardController extends Controller {
   private MessageService clientService;
-
+  private CommunicationClient commClient;
+  
   @Inject
-  public GameBoardController(Router router, Store store, MessageService clientService, BoardGame game) {
+  public GameBoardController(Router router, Store store, MessageService clientService, BoardGame game, CommunicationClient commClient) {
     super(store, router, game);
     this.clientService = clientService;
     this.router = router;
+    this.commClient = commClient;
   }
 
   /** Start the game */
   public void show() {
     router.call(Route.FADE_OUT, "mainMenu");
     router.call(Route.START_MUSIC, "boardGame");
+    
+    Player player = store.getMainPlayer();
+    commClient.saveToFile(player.getUsername(), player.getId());
     setScreen(new GameBoardScreen(router, store));
   }
 
