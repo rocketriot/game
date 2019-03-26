@@ -24,6 +24,8 @@ public class ScoreBoard extends HudElement {
 
   private LabelStyle scoreBoardStyle;
   private LabelStyle scoreBoardCpuStyle;
+  private ArrayList<LabelStyle> scoreBoardPointsStyle;
+  
   private FontGenerator fontGenerator;
 
   public ScoreBoard(Stage stage, SpriteBatch batch, Skin skin, Store store, Router router) {
@@ -57,6 +59,12 @@ public class ScoreBoard extends HudElement {
 
     scoreBoardCpuStyle = new LabelStyle();
     scoreBoardCpuStyle.font = fontGenerator.generate(16);
+
+    scoreBoardPointsStyle = new ArrayList<>();
+    scoreBoardPointsStyle.add(new LabelStyle(fontGenerator.generate(25, new Color(0xFFD048FF)), new Color(0xFFD048FF)));
+    scoreBoardPointsStyle.add(new LabelStyle(fontGenerator.generate(25, new Color(0xC2C2C2FF)), new Color(0xC2C2C2FF)));
+    scoreBoardPointsStyle.add(new LabelStyle(fontGenerator.generate(25, new Color(0xD27114FF)), new Color(0xD27114FF)));
+    scoreBoardPointsStyle.add(new LabelStyle(fontGenerator.generate(25, new Color(0xCE2424FF)), new Color(0xCE2424FF)));
   }
 
   public void render(int round, ArrayList<Player> players, Player movingPlayer) {
@@ -67,7 +75,7 @@ public class ScoreBoard extends HudElement {
     scoreBoard.clearChildren();
 
     // Get players in order of score
-    ArrayList<Player> sortedPlayers = store.getSortedPlayers();
+    // ArrayList<Player> sortedPlayers = store.getSortedPlayers();
 
     // Add players to scoreboard
     for (Player player : players) {
@@ -84,7 +92,7 @@ public class ScoreBoard extends HudElement {
       Label cpuLabel = new Label("CPU", scoreBoardCpuStyle);
       scoreBoard.add(player.isCpu() ? cpuLabel : null).padLeft(8).bottom();
 
-      LabelStyle pointsStyle = generatePointsStyle(sortedPlayers, player);
+      LabelStyle pointsStyle = generatePointsStyle(player);
 
       // Add the player's points
       Label pointsLabel = new Label(player.getPoints() + "", pointsStyle);
@@ -96,41 +104,16 @@ public class ScoreBoard extends HudElement {
     batch.end();
   }
 
-  private LabelStyle generatePointsStyle(ArrayList<Player> sortedPlayers, Player player) {
-    LabelStyle pointsStyle = new LabelStyle();
-
+  private LabelStyle generatePointsStyle(Player player) {
     // The players position on the scoreboard in terms of points
     int position = 0;
       
     // Figure out the player's position
-    for (Player sortedPlayer : sortedPlayers) {
+    for (Player sortedPlayer : store.getPlayers()) {
       if (player.getId().equals(sortedPlayer.getId())) break;
       position++;
     }
-    
-    // Color the points style based on the player's position
-    switch (position) {
-      case 0:
-        pointsStyle.font = fontGenerator.generate(25, new Color(0xFFD048FF));
-        break;
-
-      case 1:
-        pointsStyle.font = fontGenerator.generate(25, new Color(0xC2C2C2FF));
-        break;
-
-      case 2:
-        pointsStyle.font = fontGenerator.generate(25, new Color(0xD27114FF));
-        break;
-
-      case 3:
-        pointsStyle.font = fontGenerator.generate(25, new Color(0xCE2424FF));
-        break;
-    
-      default:
-        pointsStyle.font = fontGenerator.generate(25);
-        break;
-    }
   
-    return pointsStyle;
+    return scoreBoardPointsStyle.get(position);
   } 
 }
