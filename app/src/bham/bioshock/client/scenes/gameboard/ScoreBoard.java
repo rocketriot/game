@@ -62,7 +62,7 @@ public class ScoreBoard extends HudElement {
   public void render(int round, ArrayList<Player> players, Player movingPlayer) {
     batch.begin();
 
-    roundLabel.setText("Round " + round);
+    roundLabel.setText("Round " + round + " / " + store.getMaxRounds());
 
     scoreBoard.clearChildren();
 
