@@ -113,23 +113,9 @@ public abstract class ScreenMaster implements Screen {
   }
 
   public void alert(String alert_text) {
-
-    Dialog diag = new Dialog("", skin) {
-
-      protected void result(Object object) {
-
-        if (object.equals(true)) {
-
-        } else {
-
-        }
-      }
-
-    };
-
+    Dialog diag = new Dialog("", skin);
     diag.text(new Label(alert_text, skin, "window"));
     diag.button("OK", true);
-
     diag.show(stage);
   }
 

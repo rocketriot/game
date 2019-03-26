@@ -21,6 +21,7 @@ public class CommunicationMaker extends Thread {
   private MultipleConnectionsHandler handler;
   private Thread discoveryThread;
   private ObjectStreamFactory streamFactory;
+  private String hostName;
   
   public CommunicationMaker(ObjectStreamFactory streamFactory) {
     super("CommunicationMaker");
@@ -38,13 +39,17 @@ public class CommunicationMaker extends Thread {
     service.start();
     return service;
   }
+  
+  public void setHostName(String name) {
+    this.hostName = name;
+  }
 
   /**
    * Starts discovery thread which sends UDP packets to all
    * available interfaces
    */
   private void discoverClients() {
-    discoveryThread = new Thread(new DiscoveryThread(), "DiscoveryThread");
+    discoveryThread = new DiscoveryThread(hostName);
     discoveryThread.start();
   }
   
@@ -95,13 +100,6 @@ public class CommunicationMaker extends Thread {
       logger.debug("Search finished. Reconnection will be impossible");
       close();
     } 
-  }
-  
-  /**
-   * Abort client discovery process
-   */
-  public void stopDiscovery() {
-    discoveryThread.interrupt();
   }
   
   /**

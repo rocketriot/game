@@ -47,6 +47,7 @@ public class LoadingScreen extends ScreenMaster {
     FontGenerator fontGenerator = new FontGenerator();
     font = fontGenerator.generate(60, Color.WHITE);
     super.show();
+    drawBackButton();
   }
 
   @Override

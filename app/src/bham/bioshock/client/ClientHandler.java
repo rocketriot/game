@@ -107,11 +107,12 @@ public class ClientHandler implements MessageHandler {
             ReconnectResponseMessage data = (ReconnectResponseMessage) message;
             
             router.call(Route.RECONNECT, false);
-            router.call(Route.ADD_PLAYER, data.players.players);
-            router.call(Route.COORDINATES_SAVE, data.coordinates);  
-            router.call(Route.GAME_BOARD_SAVE, data.gameBoard);  
-            router.call(Route.GAME_BOARD_SHOW);
-
+            if(data.isValid) {
+              router.call(Route.UPDATE_FROM_RECONNECT, data);              
+            } else {
+              router.back();
+              router.call(Route.ALERT, new String("Reconnection unsuccessful"));
+            }
             break;
           }
           default: {

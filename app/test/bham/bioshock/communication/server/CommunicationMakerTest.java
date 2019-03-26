@@ -15,7 +15,7 @@ import bham.bioshock.testutils.communication.streams.*;
 import bham.bioshock.testutils.server.FakeServerHandler;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class ReconnectionTest {
+public class CommunicationMakerTest {
 
   CommunicationMaker connector;
   FakeServerHandler handler;
@@ -85,18 +85,6 @@ public class ReconnectionTest {
     
     // Communication maker shouldn't start without a socket
     assertFalse(connector.isAlive());
-  }
-  
-  @Test
-  public void discoveryThreadTest() throws InterruptedException {
-    connector.startSearch(handler, serverSocket, true);
-    
-    connector.stopDiscovery();
-    
-    // Stopping discovery shouldn't stop the connector
-    assertFalse(connector.aborted());
-    
-    connector.join(100);
   }
   
   @Test

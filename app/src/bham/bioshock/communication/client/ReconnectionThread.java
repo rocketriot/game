@@ -30,7 +30,7 @@ public class ReconnectionThread extends Thread {
           
           if(!connecting) {
             connecting = true;
-            boolean successful = commClient.reconnect();
+            boolean successful = commClient.reconnect(null);
             if(successful) {
               router.call(Route.SEND_RECONNECT);
             } else {

@@ -84,7 +84,7 @@ public class Player implements Serializable {
     if (hasUpgrade(Type.ENGINE_EFFICIENCY)) {
       modifier -= 0.2;
     }
-    return this.FUEL_GRID_COST * modifier;
+    return FUEL_GRID_COST * modifier;
   }
   
   public Player(String username) {
@@ -130,7 +130,7 @@ public class Player implements Serializable {
       modifier += 50;
     }
     modifier += planetsCaptured * 20;
-    return this.BASE_MAX_FUEL + modifier;
+    return BASE_MAX_FUEL + modifier;
   }
 
   public void setFuel(float fuel) {

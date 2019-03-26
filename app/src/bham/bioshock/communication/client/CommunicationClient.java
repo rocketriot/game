@@ -2,13 +2,20 @@ package bham.bioshock.communication.client;
 
 import bham.bioshock.Config;
 import bham.bioshock.client.Router;
+import bham.bioshock.common.models.store.CommunicationStore;
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.PrintStream;
 import java.net.ConnectException;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.Optional;
+import java.util.UUID;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import com.google.inject.Singleton;
@@ -18,11 +25,13 @@ public class CommunicationClient {
 
   private static final Logger logger = LogManager.getLogger(CommunicationClient.class);
 
-  public static String hostAddress;
   public static int port = Config.PORT;
   private ClientService service = null;
   private ReconnectionThread reconnect = null;
-
+  private ClientConnectThread discoverThread = null;
+  private ServerStatus currentServer;
+  
+  
   /**
    * Get current connection to the server
    * 
@@ -53,12 +62,9 @@ public class CommunicationClient {
    * @return
    * @throws ConnectException
    */
-  public ClientService createConnection() throws ConnectException {
+  public ClientService createConnection(String hostAddress) throws ConnectException {
     if (service != null && service.isCreated()) {
       return service;
-    }
-    if(hostAddress == null) {
-      throw new ConnectException("No server address specified");
     }
     // Open sockets:
     ObjectOutputStream toServer = null;
@@ -82,11 +88,59 @@ public class CommunicationClient {
     return service;
   }
   
+  public void saveToFile(String name, UUID playerId) {
+    if(currentServer == null) return;
+    try (PrintStream out = new PrintStream(new FileOutputStream("app/hostInfo.txt"))) {
+      out.print(name + "\n" + playerId.toString() + "\n" + currentServer.getIP());
+      out.flush();
+    } catch(FileNotFoundException e) {}
+  }
   
-  public boolean reconnect() {
-    logger.info("Reconnecting to " + CommunicationClient.hostAddress);
+  public ServerStatus fromFile() {
+    BufferedReader reader = null;
     try {
-      createConnection();
+      
+      reader = new BufferedReader(new FileReader("app/hostInfo.txt"));
+      String name = reader.readLine();
+      String playerId = reader.readLine();
+      String address = reader.readLine();
+      
+      ServerStatus server = new ServerStatus(name, address);
+      server.setPlayerId(UUID.fromString(playerId));
+      return server;
+      
+    } catch (Exception e) {
+    } finally {
+      if(reader != null) {
+        try {
+          reader.close();
+        } catch (IOException e) {}        
+      }
+    }
+    return null;
+  }
+  
+  public void discover(CommunicationStore store, Router router) {
+
+    ServerStatus server = fromFile();
+    if(server != null) {
+      store.setRecoveredServer(server);
+    }
+    
+    discoverThread = new ClientConnectThread(store);
+    discoverThread.start();
+  }
+  
+  public boolean reconnect(String ip) {
+    if(currentServer == null && ip == null) {
+      logger.fatal("Connection has been lost");
+      return false;
+    }
+    
+    String address = ip != null ? ip : currentServer.getIP();
+    logger.info("Reconnecting to " + address);
+    try {
+      createConnection(address);
       logger.info("Reconnected!");
       return true;
     } catch (ConnectException e) {
@@ -95,43 +149,17 @@ public class CommunicationClient {
     return false;
   }
 
-  public ClientService connect() throws ConnectException {
-    if (Config.SERVER_ADDRESS.length() == 0) {
-      ClientConnectThread c = new ClientConnectThread();
-      long waiting = 0;
-      c.start();
-
-      // Wait for 5 seconds for the ClientConnectThread
-      try {
-        while (c.isAlive()) {
-          Thread.sleep(200);
-          waiting += 200;
-
-          if (waiting > 5000) {
-            c.interrupt();
-            throw new ConnectException("IP address not configured and no server has been found");
-          }
-        }
-      } catch (InterruptedException e) {
-        e.printStackTrace();
-      }
-
-    } else {
-      CommunicationClient.hostAddress = Config.SERVER_ADDRESS;
-    }
-
+  public ClientService connect(ServerStatus server) throws ConnectException {
+    this.currentServer = server;
     try {
-      return createConnection();
+      return createConnection(server.getIP());
     } catch (ConnectException e) {
     }
     throw new ConnectException("Connection unsuccessful");
   }
 
-  public static void setHostAddress(String address) {
-    hostAddress = address;
-  }
-
   public void disconnect() {
+    this.currentServer = null;
     if(reconnect != null) {
       reconnect.interrupt();
       reconnect = null;
@@ -140,4 +168,5 @@ public class CommunicationClient {
       service.abort();
     }
   }
+
 }
