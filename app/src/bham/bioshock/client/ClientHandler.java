@@ -98,6 +98,11 @@ public class ClientHandler implements MessageHandler {
             router.call(Route.OBJECTIVE_UPDATE, message);
             break;
           }
+          case DIRECT_END: {
+            router.call(Route.DIRECT_END);
+            break;
+          }
+
           case RECONNECT_PLAYER: {
             ReconnectResponseMessage data = (ReconnectResponseMessage) message;
             
@@ -106,6 +111,7 @@ public class ClientHandler implements MessageHandler {
             router.call(Route.COORDINATES_SAVE, data.coordinates);  
             router.call(Route.GAME_BOARD_SAVE, data.gameBoard);  
             router.call(Route.GAME_BOARD_SHOW);
+
             break;
           }
           default: {

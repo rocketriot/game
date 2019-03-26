@@ -58,7 +58,7 @@ public class ScoreBoard extends HudElement {
     scoreBoardCpuStyle.font = fontGenerator.generate(16);
   }
 
-  protected void render(int round, ArrayList<Player> players, Player movingPlayer) {
+  public void render(int round, ArrayList<Player> players, Player movingPlayer) {
     batch.begin();
 
     roundLabel.setText("Round " + round);

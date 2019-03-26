@@ -1,8 +1,7 @@
 package bham.bioshock.common.models.store;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
+
 import com.badlogic.gdx.Screen;
 import com.google.inject.Singleton;
 import bham.bioshock.client.AppPreferences;
@@ -29,6 +28,8 @@ public class Store {
   private UUID mainPlayerId;
   /** The game's round */
   private int round = 1;
+  /** the maximum number of rounds */
+  public int maxRounds = 1;
   /** The next player's turn */
   private int turn = 0;
   /** If the game is reconnecting with the server */
@@ -164,6 +165,26 @@ public class Store {
     }
   }
 
+
+  public ArrayList<Player>getWinner(){
+    int maxScore =0;
+    ArrayList<Player> winners = new ArrayList<Player>();
+
+    for(Player player:players) {
+      if (player.getPoints() > maxScore)
+        maxScore = player.getPoints();
+    }
+
+    for(Player player : players)
+      if(player.getPoints() == maxScore)
+        winners.add(player);
+
+      // will return the winner or the winners if its a tie;
+     return winners;
+
+  }
+
+
   /*
    * MINIGAME
    */
@@ -219,5 +240,20 @@ public class Store {
 
   public void setMinigameWinner(String minigameWinner) {
     this.minigameWinner = minigameWinner;
+  }
+
+  public void setMaxRounds(int n){this.maxRounds = n;}
+  public int getMaxRounds(){return this.maxRounds;}
+
+  /**
+   * Sorts the arraylist descending on the players scores
+   * @return arraylist of the players sorted descending on their score
+   */
+
+  public ArrayList<Player> getSortedPlayers(){
+    ArrayList<Player> sorted = players;
+    sorted.sort(Comparator.comparingInt(Player::getPoints).reversed());
+
+    return sorted;
   }
 }
