@@ -171,6 +171,7 @@ public class MainMenuScreen extends ScreenMaster {
 
     Dialog dialog = new Dialog("", skin) {
       protected void result(Object object) {
+
         if (object.equals(false))
           return;
 
@@ -183,10 +184,7 @@ public class MainMenuScreen extends ScreenMaster {
         }
 
         SoundController.playSound("menuSelect");
-
       }
-
-
     };
     dialog.text(new Label("Enter the turns:", skin, "window"));
     dialog.getContentTable().add(textField);

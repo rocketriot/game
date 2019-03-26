@@ -1,7 +1,6 @@
 package bham.bioshock.server.handlers;
 
 import bham.bioshock.common.consts.GridPoint;
-import bham.bioshock.common.models.Planet;
 import bham.bioshock.common.pathfinding.AStarPathfinding;
 import java.util.ArrayList;
 
@@ -102,7 +101,6 @@ public class GameBoardHandler {
 
 
     if ((store.getRound() == store.getMaxRounds()) && (store.getTurn() == 3)) {
-      System.out.println("da");
       handler.sendToAll(new EndGameMessage());
     }
   }
@@ -110,10 +108,10 @@ public class GameBoardHandler {
   public void endTurn() {
     handler.sendToAll(new UpdateTurnMessage());
 
-    // if ((store.getRound() == store.getMaxRounds()) && (store.getTurn() == 3)) {
-    //System.out.println("da");
+    if ((store.getRound() == store.getMaxRounds()) && (store.getTurn() == 3)) {
+
     handler.sendToAll(new EndGameMessage());
- // }
+  }
 
   }
 
