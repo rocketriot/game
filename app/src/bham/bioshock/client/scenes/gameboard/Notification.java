@@ -45,7 +45,7 @@ public class Notification {
 
   private void drawNotification(String text) {
     // Calculate coordinates of the text
-    float xOffset = fontGenerator.getOffset(font, turnText);
+    float xOffset = fontGenerator.getOffset(font, text);
     float x = (Config.GAME_WORLD_WIDTH / 2) - xOffset;
     float y = Config.GAME_WORLD_HEIGHT / 2;
     
