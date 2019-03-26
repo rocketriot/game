@@ -8,14 +8,23 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import bham.bioshock.client.FontGenerator;
 import bham.bioshock.client.Router;
 
-
+/** The Loading screen. */
 public class LoadingScreen extends ScreenMaster {
-  
+
+  /** The font. */
   private BitmapFont font;
+
+  /** The text. */
   private String text;
+
+  /** The Layout. */
   GlyphLayout layout;
-  
-  
+
+  /**
+   * Instantiates a new Loading screen.
+   *
+   * @param router the router
+   */
   public LoadingScreen(Router router) {
     super(router);
     stage = new Stage(new ScreenViewport());
@@ -24,28 +33,33 @@ public class LoadingScreen extends ScreenMaster {
     layout = new GlyphLayout();
   }
 
+  /**
+   * Sets text.
+   *
+   * @param text the text
+   */
   public void setText(String text) {
     this.text = text;
   }
-  
+
   @Override
   public void show() {
     FontGenerator fontGenerator = new FontGenerator();
-    font = fontGenerator.generate(30, Color.WHITE);
+    font = fontGenerator.generate(60, Color.WHITE);
     super.show();
   }
 
   @Override
   public void render(float delta) {
     super.render(delta);
-    
-    float x = screenWidth / 2;
-    float y = screenHeight / 2;
 
     layout.setText(font, text);
     batch.begin();
-    font.draw(batch, text, x - layout.width, y - layout.height);
+
+    float fontX = screenWidth / 2 - layout.width / 2;
+    float fontY = screenHeight / 2 - layout.height / 2;
+
+    font.draw(batch, text, fontX, fontY);
     batch.end();
   }
-
 }

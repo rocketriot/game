@@ -40,7 +40,7 @@ public class JoinScreen extends ScreenMaster {
   private float stateTime = 0;
   private Texture[] loadTextures;
   private Texture[] connectedTextures;
-  private Texture asteroidTexture;
+  private Texture[] playerTextures;
 
   private float rocketSpeed = 200f;
   private float rotationSpeed = 1.8f;
@@ -75,8 +75,15 @@ public class JoinScreen extends ScreenMaster {
     connectedTextures[3] =
         new Texture(Gdx.files.internal("app/assets/animations/connectedAnimSheet4.png"));
 
-    asteroidTexture = new Texture(Gdx.files.internal("app/assets/entities/asteroids/1.png"));
-
+    playerTextures = new Texture[store.MAX_PLAYERS];
+    playerTextures[0] =
+        new Texture(Gdx.files.internal("app/assets/minigame/astronauts/orange/shield.png"));
+    playerTextures[1] =
+        new Texture(Gdx.files.internal("app/assets/minigame/astronauts/red/shield.png"));
+    playerTextures[2] =
+        new Texture(Gdx.files.internal("app/assets/minigame/astronauts/green/shield.png"));
+    playerTextures[3] =
+        new Texture(Gdx.files.internal("app/assets/minigame/astronauts/blue/shield.png"));
 
     setUpHolder();
     setUpPlayerContainers();
@@ -100,7 +107,7 @@ public class JoinScreen extends ScreenMaster {
     // update the image in the player container
     PlayerContainer container = holder.getPlayerContainer(index);
     container.setId(player.getId());
-    container.changeAnimation(asteroidTexture, 1, 1, 100, 100, 1f);
+    container.changeAnimation(playerTextures[index], 11, 1, 100, 100, 1f, 0);
     container.setWaitText(WaitText.CONNECTED);
     container.setName(player.getUsername());
 
@@ -202,7 +209,7 @@ public class JoinScreen extends ScreenMaster {
         index++;
       }
       if(container != null) {
-        container.changeAnimation(loadTextures[index], 26, 1, 100, 100, 0.8f);
+        container.changeAnimation(loadTextures[index], 26, 1, 100, 100, 0.8f, -1);
         container.setWaitText(WaitText.WAITING);
         container.setName("Player" + (index + 1));
       }
@@ -230,7 +237,7 @@ public class JoinScreen extends ScreenMaster {
       // this.setDebug(true);
       name = new Label(n, skin);
       waitText = new Label(status.toString(), skin);
-      animation = new StaticAnimation(sheet, 26, 1, 100, 100, 0.8f);
+      animation = new StaticAnimation(sheet, 26, 1, 100, 100, 0.8f, -1);
 
       this.pad(topPadding, sidePadding, topPadding, sidePadding);
 
@@ -258,9 +265,9 @@ public class JoinScreen extends ScreenMaster {
     }
 
     public void changeAnimation(Texture sheet, int cols, int rows, int width, int height,
-        float frameDuration) {
+        float frameDuration, int skipCol) {
       StaticAnimation newAnimation =
-          new StaticAnimation(sheet, cols, rows, width, height, frameDuration);
+          new StaticAnimation(sheet, cols, rows, width, height, frameDuration, skipCol);
       this.animation = newAnimation;
     }
 
@@ -289,16 +296,23 @@ public class JoinScreen extends ScreenMaster {
     private TextureRegion[] textureRegion;
 
     public StaticAnimation(Texture sheet, int cols, int rows, int width, int height,
-        float frameDuration) {
+        float frameDuration, int skipCol) {
 
-      textureRegion = new TextureRegion[cols * rows];
+      if (skipCol == -1) {
+        textureRegion = new TextureRegion[cols * rows];
+      } else {
+        textureRegion = new TextureRegion[(cols - 1) * rows];
+      }
+
       TextureRegion[][] tmp =
           TextureRegion.split(sheet, sheet.getWidth() / cols, sheet.getHeight() / rows);
 
       int index = 0;
       for (int i = 0; i < rows; i++) {
         for (int j = 0; j < cols; j++) {
-          textureRegion[index++] = tmp[i][j];
+          if (j != skipCol) {
+            textureRegion[index++] = tmp[i][j];
+          }
         }
       }
 
@@ -441,8 +455,8 @@ public class JoinScreen extends ScreenMaster {
     for (int i = 0; i < loadTextures.length; i++) {
       loadTextures[i].dispose();
       connectedTextures[i].dispose();
+      playerTextures[i].dispose();
     }
-    asteroidTexture.dispose();
   }
 
   public class RocketAnimation extends Entity {
@@ -456,7 +470,7 @@ public class JoinScreen extends ScreenMaster {
       setRotation(rocketRotation);
 
       mainPlayerAnimation = (new StaticAnimation(connectedTextures[mainPlayerIndex], 4, 1,
-          rocketWidth, rocketHeight, frameDuration)).getAnimation();
+          rocketWidth, rocketHeight, frameDuration, -1)).getAnimation();
       load();
 
       sprite.setRegionWidth(rocketWidth);

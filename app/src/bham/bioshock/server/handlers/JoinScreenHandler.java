@@ -10,9 +10,10 @@ import bham.bioshock.communication.messages.Message;
 import bham.bioshock.communication.messages.joinscreen.AddPlayerMessage;
 import bham.bioshock.communication.messages.joinscreen.DisconnectPlayerMessage;
 import bham.bioshock.communication.messages.joinscreen.JoinScreenMoveMessage;
+import bham.bioshock.communication.messages.joinscreen.ReconnectMessage;
+import bham.bioshock.communication.messages.joinscreen.ReconnectResponseMessage;
 import bham.bioshock.communication.messages.joinscreen.RegisterMessage;
 import bham.bioshock.communication.messages.joinscreen.ServerFullMessage;
-import bham.bioshock.communication.messages.minigame.RequestMinigameStartMessage;
 import bham.bioshock.server.interfaces.MultipleConnectionsHandler;
 
 public class JoinScreenHandler {
@@ -33,14 +34,22 @@ public class JoinScreenHandler {
    * @param service
    */
   public void registerPlayer(Message message, ServerService service) {
-    if (store.getPlayers().size() >= 4) {
-      service.send(new ServerFullMessage());
-      return;
+    if(message instanceof RegisterMessage) {
+      if (store.getPlayers().size() >= 4) {
+        service.send(new ServerFullMessage());
+        return;
+      }
+      RegisterMessage data = (RegisterMessage) message;
+      Player player = data.player;
+      handler.register(player.getId(), player.getUsername(), service);
+      addPlayer(player);
+    } else if (message instanceof ReconnectMessage) {
+      ReconnectMessage data = (ReconnectMessage) message;
+      Player player = store.getPlayer(data.playerId);
+      if(player != null) {
+        handler.register(player.getId(), player.getUsername(), service);   
+      }
     }
-    RegisterMessage data = (RegisterMessage) message;
-    Player player = data.player;
-    handler.register(player.getId(), player.getUsername(), service);
-    addPlayer(player);
   }
 
   /**
@@ -141,6 +150,16 @@ public class JoinScreenHandler {
       lastRocketMessage.put(playerId, message.created);
       handler.sendToAllExcept(message, playerId);
     }
+  }
+  
+  /**
+   * Reconnect 
+   * 
+   * @param playerId
+   */
+  public void sendReconnectData(UUID playerId) {
+    System.out.println("Sending reconnect message");
+    handler.sendTo(playerId, new ReconnectResponseMessage(store));
   }
 
 }

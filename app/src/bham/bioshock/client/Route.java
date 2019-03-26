@@ -13,8 +13,10 @@ public enum Route {
   SELECTED_TURNS              (MainMenuController.class,     "saveTurns"),
   
   HOW_TO                      (HowToController.class,         "show"),
+  
   LOADING                     (LoadingController.class,       "show"),
-  RECONNECT                   (LoadingController.class,       "reconnect"),    
+  RECONNECT                   (LoadingController.class,       "reconnect"),
+  
   PREFERENCES                 (PreferencesController.class,   "show"),
   PREFERENCES_WITH_BACK_ROUTE (PreferencesController.class,   "showWithBackRoute"),
   
@@ -22,10 +24,10 @@ public enum Route {
   DISCONNECT                  (JoinScreenController.class,    "disconnect"),
   ADD_PLAYER                  (JoinScreenController.class,    "addPlayer"),
   REMOVE_PLAYER               (JoinScreenController.class,    "removePlayer"),
-  DISCONNECT_PLAYER           (JoinScreenController.class,    "disconnectPlayer"),
   START_GAME                  (JoinScreenController.class,    "start"),
   JOIN_SCREEN_MOVE            (JoinScreenController.class,    "rocketMove"),
   JOIN_SCREEN_UPDATE          (JoinScreenController.class,    "updateRocket"),
+  SEND_RECONNECT              (JoinScreenController.class,    "sendReconnect"),
 
   MOVE_PLAYER                 (GameBoardController.class,     "move"),
   MOVE_RECEIVED               (GameBoardController.class,     "moveReceived"),

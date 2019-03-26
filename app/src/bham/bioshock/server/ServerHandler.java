@@ -45,6 +45,7 @@ public class ServerHandler implements MultipleConnectionsHandler {
     }
   }
   
+  // Start debug server
   private void startDebugServer(Store store) {
     try {
       devServer = new DevServer();
@@ -121,15 +122,22 @@ public class ServerHandler implements MultipleConnectionsHandler {
    */
   private void registerPlayer(Message message, ServerService service) throws InvalidMessageSequence {
     boolean knownService = connecting.contains(service);
-    if (message.command.equals(Command.REGISTER) && knownService) {
-      
+    Command c = message.command;
+    
+    if(!knownService) {
+      throw new InvalidMessageSequence("Unknown service, not in the list!");
+    }
+    
+    if (c.equals(Command.REGISTER) || c.equals(Command.RECONNECT_PLAYER)) {
       // Register new connected player
       joinHandler.registerPlayer(message, service);
-    
-    } else if(!knownService) {
-      throw new InvalidMessageSequence("Unknown service, not in the list!");
     } else {
       throw new InvalidMessageSequence("Player must be registered first!");
+    }
+    
+    // If successfully registered
+    if(c.equals(Command.RECONNECT_PLAYER) && service.Id().isPresent()) {
+      handleRequest(message, service);
     }
   }
 
@@ -217,6 +225,9 @@ public class ServerHandler implements MultipleConnectionsHandler {
       case MINIGAME_DIRECT_START:
         server.stopDiscovery();
         joinHandler.minigameDirectStart(clientId, gameBoardHandler, minigameHandler);
+        break;
+      case RECONNECT_PLAYER:
+        joinHandler.sendReconnectData(clientId);
         break;
       default:
         logger.error("Received unhandled command: " + message.command.toString());
