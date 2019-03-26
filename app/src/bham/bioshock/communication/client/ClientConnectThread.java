@@ -32,6 +32,9 @@ public class ClientConnectThread extends Thread {
     }
   }
 
+  /**
+   * Try to find the server
+   */
   @Override
   public void run() {
     DatagramSocket c = null;

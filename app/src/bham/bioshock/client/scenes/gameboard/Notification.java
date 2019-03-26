@@ -20,15 +20,15 @@ public class Notification {
   /** How long the current notification has been displayed */
   private float duration;
   
-  private boolean showTurn = false;
- 
   private boolean wasMainPlayerTurn = false;
-
+  private boolean showTurn = false;
   private String turnText = "It's your turn!";
 
   private boolean showWinner = false;
-  
   private String winnerText;
+
+  private boolean showUpgrade = false;
+  private String upgradeText;
 
   public Notification(SpriteBatch batch, Store store) {
     this.batch = batch;
@@ -41,6 +41,7 @@ public class Notification {
   public void render() {
     renderMinigameEndNotifiation();
     renderTurnNotifcation();
+    renderUpgradePickup();
   }
 
   private void drawNotification(String text) {
@@ -109,10 +110,36 @@ public class Notification {
   private void checkMinigameEnd() {
     if (store.getMinigameWinner() == null) return;
 
-    duration = 3f;
+    duration = NOTIFICATION_DURATION;
     showWinner = true;
     winnerText = store.getMinigameWinner() + " won the minigame!";
     
     store.setMinigameWinner(null);
+  }
+
+  private void renderUpgradePickup() {
+    checkUpgradePickup();
+    
+    if (!showUpgrade) return;
+
+    duration -= Gdx.graphics.getDeltaTime();
+
+    if (duration <= 0)
+      showUpgrade = false;
+
+    font.setColor(1, 1, 1, duration / 2);
+
+    drawNotification(upgradeText);
+  }
+
+  /** Creates the string to display if client has just picked up an upgrade */
+  private void checkUpgradePickup() {
+    if (store.getMainPlayer().getLastUpgradeText() == null) return;
+    
+    duration = NOTIFICATION_DURATION;
+    showUpgrade = true;
+    upgradeText = store.getMainPlayer().getLastUpgradeText();
+    
+    store.getMainPlayer().setLastUpgradeText(null);
   }
 }

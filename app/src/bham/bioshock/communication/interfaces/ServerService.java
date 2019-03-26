@@ -54,4 +54,9 @@ public interface ServerService {
    */
   public void abort();
 
+  /**
+   * Starts the service
+   */
+  public void start();
+
 }

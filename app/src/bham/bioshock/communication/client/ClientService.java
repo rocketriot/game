@@ -1,31 +1,24 @@
 package bham.bioshock.communication.client;
 
-import bham.bioshock.communication.common.Receiver;
-import bham.bioshock.communication.common.Sender;
+import bham.bioshock.communication.common.Service;
 import bham.bioshock.communication.interfaces.MessageHandler;
 import bham.bioshock.communication.interfaces.MessageService;
 import bham.bioshock.communication.messages.Message;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
 import java.net.Socket;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.TimeUnit;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 /** Interprets commands received from server */
-public class ClientService extends Thread implements MessageService, MessageHandler {
+public class ClientService extends Service implements MessageService, MessageHandler {
 
   private static final Logger logger = LogManager.getLogger(ClientService.class);
 
-  private Sender sender;
-  private Receiver receiver;
   private Socket socket;
-  private ObjectInputStream fromServer;
-  private ObjectOutputStream toServer;
 
-  private BlockingQueue<Message> queue = new LinkedBlockingQueue<>();
   private MessageHandler handler;
   private boolean connectionCreated = false;
 
@@ -37,50 +30,61 @@ public class ClientService extends Thread implements MessageService, MessageHand
    * @param toServer stream to server
    * @param client main client
    */
-  public ClientService(Socket socket, ObjectInputStream fromServer, ObjectOutputStream toServer) {
-    super("ClientService");
+  public ClientService(Socket socket, ObjectInput fromServer, ObjectOutput toServer) {
+    super(fromServer, toServer, "ClientService");
     connectionCreated = true;
     // save socket and streams for communication
     this.socket = socket;
-    this.fromServer = fromServer;
-    this.toServer = toServer;
-
-    // Create two client object to send and receive messages
-    receiver = new Receiver(this, fromServer);
-    sender = new Sender(toServer);
   }
 
   public boolean isCreated() {
     return connectionCreated;
   }
 
-  /** Starts the sender and receiver threads */
+  /**
+   * Starts the sender and receiver threads
+   */
+  @Override
   public void run() {
-    // Run sender and receiver in parallel:
-    sender.start();
-    receiver.start();
+    super.run();
 
     try {
       while (!isInterrupted()) {
         // Execute action from a blocking queue
         if (handler != null) {
-          handler.handle(queue.take());
+          Message m = queue.poll(1000, TimeUnit.MILLISECONDS);
+          if(m != null) {
+            handler.handle(m);            
+          }
+        } else {
+          sleep(200);
         }
       }
     } catch (InterruptedException e) {
       logger.trace("Client service was interrupted");
     } finally {
+      connectionCreated = false;
       // wait for the threads to terminate and close the streams
       close();
+      try {
+        socket.close();
+      } catch (IOException e) {}       
     }
 
   }
-
+  
+  /**
+   * Register message handler
+   * 
+   * @param handler
+   */
   public void registerHandler(MessageHandler handler) {
     this.handler = handler;
   }
 
-  @Override
+  /**
+   * Queue message to be sent
+   */
   public void handle(Message action) {
     queue.add(action);
   }
@@ -97,44 +101,6 @@ public class ClientService extends Thread implements MessageService, MessageHand
     }
     sender.send(message);
   }
-
-  /**
-   * Server disconnected, close connection
-   */
-  @Override
-  public void abort() {
-    this.interrupt();
-  }
-
-  /**
-   * Wait for the threads to terminate and than close the sockets and streams
-   */
-  private void close() {
-    try {
-      sender.interrupt();
-      sender.join();
-      logger.debug("Client sender ended");
-      // Try to close all used sockets. Ignore errors
-      try {
-        toServer.close();
-      } catch (IOException e) {
-      };
-      try {
-        fromServer.close();
-      } catch (IOException e) {
-      };
-      try {
-        socket.close();
-      } catch (IOException e) {
-      };
-
-      receiver.join();
-      logger.debug("Client receiver ended");
-    } catch (InterruptedException e) {
-      logger.error("Unexpected interruption " + e.getMessage());
-    }
-    logger.debug("Client disconnected");
-    connectionCreated = false;
-  }
+  
 
 }

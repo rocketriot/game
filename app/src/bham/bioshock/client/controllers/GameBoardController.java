@@ -72,7 +72,7 @@ public class GameBoardController extends Controller {
 
     // pathsize - 1 since path includes start position
     ArrayList<Coordinates> path = pathFinder.pathfind(destination);
-    float pathCost = (path.size() - 1) * 10;
+    float pathCost = (path.size() - 1) * mainPlayer.getFuelGridCost();
 
     // Handle if player doesn't have enough fuel
     if (mainPlayer.getFuel() < pathCost || pathCost == -10) return;

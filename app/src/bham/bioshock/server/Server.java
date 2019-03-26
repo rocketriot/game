@@ -8,6 +8,7 @@ import bham.bioshock.Config;
 import bham.bioshock.common.models.store.Store;
 import bham.bioshock.common.utils.Clock;
 import bham.bioshock.communication.server.CommunicationMaker;
+import bham.bioshock.communication.server.StreamFactory;
 import bham.bioshock.server.interfaces.StoppableServer;
 
 @Singleton
@@ -30,8 +31,8 @@ public class Server implements StoppableServer {
     } catch (IOException e1) {
       return false;
     }
-    connMaker = new CommunicationMaker();
-    connMaker.startSearch(handler, serverSocket);
+    connMaker = new CommunicationMaker(new StreamFactory());
+    connMaker.startSearch(handler, serverSocket, true);
 
     return true;
   }

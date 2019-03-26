@@ -8,7 +8,7 @@ import bham.bioshock.communication.messages.Message;
 
 public class FakeServerService implements ServerService {
 
-  boolean running = true;
+  boolean running = false;
   Optional<UUID> id = Optional.empty();
   LinkedList<Message> messages = new LinkedList<Message>();
   
@@ -57,6 +57,11 @@ public class FakeServerService implements ServerService {
 
   public void clearMessages() {
     messages.clear();
+  }
+
+  @Override
+  public void start() {
+    running = true;
   }
   
 }

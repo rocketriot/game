@@ -12,6 +12,7 @@ import bham.bioshock.communication.messages.boardgame.MovePlayerOnBoardMessage;
 import bham.bioshock.communication.messages.joinscreen.AddPlayerMessage;
 import bham.bioshock.communication.messages.joinscreen.DisconnectPlayerMessage;
 import bham.bioshock.communication.messages.joinscreen.JoinScreenMoveMessage;
+import bham.bioshock.communication.messages.joinscreen.ReconnectResponseMessage;
 import bham.bioshock.communication.messages.minigame.MinigamePlayerMoveMessage;
 import bham.bioshock.communication.messages.minigame.MinigamePlayerStepMessage;
 import bham.bioshock.communication.messages.minigame.MinigameStartMessage;
@@ -95,6 +96,16 @@ public class ClientHandler implements MessageHandler {
           }
           case MINIGAME_OBJECTIVE: {
             router.call(Route.OBJECTIVE_UPDATE, message);
+            break;
+          }
+          case RECONNECT_PLAYER: {
+            ReconnectResponseMessage data = (ReconnectResponseMessage) message;
+            
+            router.call(Route.RECONNECT, false);
+            router.call(Route.ADD_PLAYER, data.players.players);
+            router.call(Route.COORDINATES_SAVE, data.coordinates);  
+            router.call(Route.GAME_BOARD_SAVE, data.gameBoard);  
+            router.call(Route.GAME_BOARD_SHOW);
             break;
           }
           default: {

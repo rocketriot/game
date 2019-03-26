@@ -23,6 +23,11 @@ public class CommunicationClient {
   private ClientService service = null;
   private ReconnectionThread reconnect = null;
 
+  /**
+   * Get current connection to the server
+   * 
+   * @return Optional with connection 
+   */
   public Optional<ClientService> getConnection() {
     if(service == null) {
       return Optional.empty();
@@ -30,16 +35,30 @@ public class CommunicationClient {
     return Optional.of(service);
   }
 
+  /**
+   * Starts reconnection thread if one is not already running
+   * 
+   * @param router
+   */
   public void startReconnectionThread(Router router) {
     if(reconnect == null || !reconnect.isAlive()) {
       reconnect = new ReconnectionThread(this, router);
       reconnect.start();      
     }
   }
-
+  
+  /**
+   * Creates new connection with the server
+   * 
+   * @return
+   * @throws ConnectException
+   */
   public ClientService createConnection() throws ConnectException {
     if (service != null && service.isCreated()) {
       return service;
+    }
+    if(hostAddress == null) {
+      throw new ConnectException("No server address specified");
     }
     // Open sockets:
     ObjectOutputStream toServer = null;
@@ -64,13 +83,16 @@ public class CommunicationClient {
   }
   
   
-  public void reconnect() {
+  public boolean reconnect() {
     logger.info("Reconnecting to " + CommunicationClient.hostAddress);
     try {
       createConnection();
+      logger.info("Reconnected!");
+      return true;
     } catch (ConnectException e) {
       logger.catching(e);
     }
+    return false;
   }
 
   public ClientService connect() throws ConnectException {
