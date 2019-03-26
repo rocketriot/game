@@ -39,16 +39,15 @@ public class EndScreen extends ScreenMaster {
   public EndScreen(Router router, Store store) {
     super(router);
     this.store = store;
-    this.winners = store.getWinner();
 
     this.camera = new OrthographicCamera();
     this.batch = new SpriteBatch();
     this.fontBatch = new SpriteBatch();
-    this.renderer = new ShapeRenderer();
     this.fontGenerator = new FontGenerator();
     this.number = store.getPlayers().size();
+    this.players = store.getSortedPlayers();
 
-    table = new Table();
+    this.table = new Table();
     table.setX(screenWidth * 2 - 200);
     table.setY(screenHeight*2 -100);
 
@@ -90,11 +89,6 @@ public class EndScreen extends ScreenMaster {
    */
   private  void load(){
     font = fontGenerator.generate(45, Color.WHITE);
-
-    // get the players and sort them in the descending order of the scores
-    players = store.getPlayers();
-    players.sort(Comparator.comparingInt(Player::getPoints).reversed());
-
 
     for(int i= 0 ;i<players.size(); i++) {
 

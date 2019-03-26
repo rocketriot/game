@@ -88,8 +88,10 @@ public class MainMenuScreen extends ScreenMaster {
       @Override
       public void clicked(InputEvent event, float x, float y) {
         SoundController.playSound("menuSelect");
+
         showDialogue("host");
         showDialog2();
+
       }
     });
 
@@ -164,6 +166,7 @@ public class MainMenuScreen extends ScreenMaster {
     dialog.button("Cancel", false);
 
     dialog.show(stage);
+
   }
 
   private void showDialog2() {
@@ -180,6 +183,7 @@ public class MainMenuScreen extends ScreenMaster {
 
         if (!text.matches(regex)) {
           alert("Please enter a valid number of turns");
+
           return;
         }
 

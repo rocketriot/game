@@ -1,9 +1,7 @@
 package bham.bioshock.common.models.store;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
+
 import com.badlogic.gdx.Screen;
 import com.google.inject.Singleton;
 import bham.bioshock.client.AppPreferences;
@@ -246,4 +244,16 @@ public class Store {
 
   public void setMaxRounds(int n){this.maxRounds = n;}
   public int getMaxRounds(){return this.maxRounds;}
+
+  /**
+   * Sorts the arraylist descending on the players scores
+   * @return arraylist of the players sorted descending on their score
+   */
+
+  public ArrayList<Player> getSortedPlayers(){
+    ArrayList<Player> sorted = players;
+    sorted.sort(Comparator.comparingInt(Player::getPoints).reversed());
+
+    return sorted;
+  }
 }
