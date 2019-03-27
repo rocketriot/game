@@ -3,11 +3,14 @@ package bham.bioshock.client;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.google.inject.Singleton;
+import bham.bioshock.client.assets.AssetContainer;
+import bham.bioshock.client.screens.InitLoadingScreen;
 
 @Singleton
 public class BoardGame extends Game {
   
   private Router router;
+  private AssetContainer assets;
   
   /**
    * Saves the router
@@ -18,11 +21,30 @@ public class BoardGame extends Game {
   }
   
   /**
+   * Saves asset container
+   * 
+   * @param asset container
+   */
+  public void addAssetContainer(AssetContainer assets) {
+    this.assets = assets;
+  }
+  
+  /**
    * Called when the game is ready to start
    */
   @Override
   public void create() {
     Gdx.graphics.setTitle("Rocket Riot");
-    router.call(Route.MAIN_MENU);
+    setScreen(new InitLoadingScreen(router, assets));
   }
+  
+  /**
+   * Free memory
+   */
+  @Override
+  public void dispose() {
+    assets.clear();
+    super.dispose();
+  }
+
 }

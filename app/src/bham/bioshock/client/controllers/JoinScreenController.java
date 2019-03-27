@@ -11,6 +11,7 @@ import bham.bioshock.client.BoardGame;
 import bham.bioshock.client.ClientHandler;
 import bham.bioshock.client.Route;
 import bham.bioshock.client.Router;
+import bham.bioshock.client.assets.AssetContainer;
 import bham.bioshock.client.screens.JoinScreen;
 import bham.bioshock.client.screens.RunningServersScreen;
 import bham.bioshock.common.models.Player;
@@ -33,14 +34,16 @@ public class JoinScreenController extends Controller {
   private CommunicationClient commClient;
   private ClientHandler clientHandler;
   private BoardGame game;
+  private AssetContainer assets;
 
   @Inject
   public JoinScreenController(Store store, Router router, BoardGame game,
-      CommunicationClient commClient, ClientHandler clientHandler) {
+      CommunicationClient commClient, ClientHandler clientHandler, AssetContainer assets) {
     super(store, router, game);
     this.clientHandler = clientHandler;
     this.commClient = commClient;
     this.game = game;
+    this.assets = assets;
   }
 
   public void registerAndShow(String username) {
@@ -63,7 +66,7 @@ public class JoinScreenController extends Controller {
   public void show(Player player) {
     store.setJoinScreenStore(new JoinScreenStore());
     // Create connection to the server
-    setScreen(new JoinScreen(router, store, player));
+    setScreen(new JoinScreen(router, store, player, assets));
   }
   
   public void connect(ServerStatus server) {
@@ -78,7 +81,7 @@ public class JoinScreenController extends Controller {
   
   public void showServers() {
     commClient.discover(store.getCommStore(), router);
-    setScreen(new RunningServersScreen(store.getCommStore(), router));
+    setScreen(new RunningServersScreen(store.getCommStore(), router, assets));
   }  
   
   public void reconnectRecovered() {

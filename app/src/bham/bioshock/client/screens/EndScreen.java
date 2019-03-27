@@ -3,6 +3,7 @@ package bham.bioshock.client.screens;
 import bham.bioshock.Config;
 import bham.bioshock.client.FontGenerator;
 import bham.bioshock.client.Router;
+import bham.bioshock.client.assets.AssetContainer;
 import bham.bioshock.common.Position;
 import bham.bioshock.common.models.Player;
 import bham.bioshock.common.models.store.Store;
@@ -36,8 +37,8 @@ public class EndScreen extends ScreenMaster {
   private int number =0;
   private BitmapFont scores;
 
-  public EndScreen(Router router, Store store) {
-    super(router);
+  public EndScreen(Router router, Store store, AssetContainer assets) {
+    super(router, assets);
     this.store = store;
 
     this.camera = new OrthographicCamera();

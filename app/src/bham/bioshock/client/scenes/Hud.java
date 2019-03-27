@@ -1,7 +1,7 @@
 package bham.bioshock.client.scenes;
-import bham.bioshock.client.Route;
 import bham.bioshock.Config;
 import bham.bioshock.client.Router;
+import bham.bioshock.client.assets.AssetContainer;
 import bham.bioshock.common.models.store.Store;
 
 import com.badlogic.gdx.InputProcessor;
@@ -18,18 +18,19 @@ public class Hud implements Disposable, InputProcessor {
   protected Stage stage;
   protected FitViewport viewport;
   protected Store store;
+  protected AssetContainer assets;
 
   private PauseMenu pauseMenu;
 
-  public Hud(SpriteBatch batch, Skin skin, Store store, Router router) {
+  public Hud(SpriteBatch batch, AssetContainer assets, Store store, Router router) {
     this.store = store;
-    this.skin = skin;
+    this.skin = assets.getSkin();
 
     OrthographicCamera camera = new OrthographicCamera();
     viewport = new FitViewport(Config.GAME_WORLD_WIDTH, Config.GAME_WORLD_HEIGHT, camera);
     stage = new Stage(viewport, batch);
 
-    pauseMenu = new PauseMenu(stage, batch, skin, store, router);
+    pauseMenu = new PauseMenu(stage, batch, assets, store, router);
   }
 
   public void update() {

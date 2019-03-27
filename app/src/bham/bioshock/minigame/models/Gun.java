@@ -2,9 +2,9 @@ package bham.bioshock.minigame.models;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import bham.bioshock.client.assets.AssetContainer;
 import bham.bioshock.client.assets.Assets;
-import bham.bioshock.client.assets.Assets.GameType;
-import bham.bioshock.client.interfaces.AssetContainer;
+import bham.bioshock.client.assets.Assets.GamePart;
 import bham.bioshock.minigame.worlds.World;
 
 /**
@@ -48,7 +48,7 @@ public class Gun extends Entity {
    * Queue textures for loading
    */
   public static void loadTextures(AssetContainer manager) {
-    manager.load(Assets.gun, Texture.class, GameType.MINIGAME);
+    manager.load(Assets.gun, Texture.class, GamePart.MINIGAME);
   }
 
 }

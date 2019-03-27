@@ -2,6 +2,7 @@ package bham.bioshock.client.screens;
 
 import bham.bioshock.client.Route;
 import bham.bioshock.client.Router;
+import bham.bioshock.client.assets.AssetContainer;
 import bham.bioshock.common.Position;
 import bham.bioshock.common.models.Player;
 import bham.bioshock.common.models.store.JoinScreenStore;
@@ -53,8 +54,8 @@ public class JoinScreen extends ScreenMaster {
   private RocketAnimation mainPlayerAnimation;
   private World world;
 
-  public JoinScreen(Router router, Store store, Player mainPlayer) {
-    super(router);
+  public JoinScreen(Router router, Store store, Player mainPlayer, AssetContainer assets) {
+    super(router, assets);
     this.store = store;
     this.localStore = store.getJoinScreenStore();
     this.mainPlayer = mainPlayer;

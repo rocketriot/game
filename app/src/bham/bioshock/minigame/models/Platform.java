@@ -1,9 +1,9 @@
 package bham.bioshock.minigame.models;
 
 
+import bham.bioshock.client.assets.AssetContainer;
 import bham.bioshock.client.assets.Assets;
-import bham.bioshock.client.assets.Assets.GameType;
-import bham.bioshock.client.interfaces.AssetContainer;
+import bham.bioshock.client.assets.Assets.GamePart;
 import bham.bioshock.common.Position;
 import bham.bioshock.minigame.PlanetPosition;
 import bham.bioshock.minigame.worlds.World;
@@ -83,7 +83,7 @@ public class Platform extends StaticEntity {
    * @param id
    */
   public static void loadTextures(AssetContainer manager, int id) {
-    manager.load(Assets.platformsBase + id + ".png", Texture.class, GameType.MINIGAME);
+    manager.load(Assets.platformsBase + id + ".png", Texture.class, GamePart.MINIGAME);
   }
 
   /**

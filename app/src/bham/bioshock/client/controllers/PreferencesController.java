@@ -7,6 +7,7 @@ import bham.bioshock.client.BoardGame;
 import bham.bioshock.client.Route;
 import bham.bioshock.client.Router;
 import bham.bioshock.client.XMLInteraction;
+import bham.bioshock.client.assets.AssetContainer;
 import bham.bioshock.common.models.store.Store;
 
 /**
@@ -33,6 +34,8 @@ public class PreferencesController extends Controller {
    * Keep track of the users current preferences
    */
   private AppPreferences preferences;
+  
+  private AssetContainer assets;
 
   /**
    * Instantiates a new Preferences controller.
@@ -42,7 +45,7 @@ public class PreferencesController extends Controller {
    * @param game the current BoardGame
    */
   @Inject
-  public PreferencesController(Store store, Router router, BoardGame game) {
+  public PreferencesController(Store store, Router router, BoardGame game, AssetContainer assets) {
     super(store, router, game);
 
     this.game = game;
@@ -56,11 +59,11 @@ public class PreferencesController extends Controller {
    */
   public void show() {
     preferences = xmlInteraction.xmlToPreferences();
-    setScreen(new PreferencesScreen(router, preferences));
+    setScreen(new PreferencesScreen(router, preferences, assets));
   }
 
   public void showWithBackRoute(Route backRoute) {
     preferences = xmlInteraction.xmlToPreferences();
-    setScreen(new PreferencesScreen(router, preferences, backRoute));
+    setScreen(new PreferencesScreen(router, preferences, backRoute, assets));
   }
 }

@@ -1,9 +1,9 @@
 package bham.bioshock.client.screens;
 
 import bham.bioshock.client.Router;
+import bham.bioshock.client.assets.AssetContainer;
 import bham.bioshock.client.assets.Assets;
-import bham.bioshock.client.assets.Assets.GameType;
-import bham.bioshock.client.interfaces.AssetContainer;
+import bham.bioshock.client.assets.Assets.GamePart;
 import bham.bioshock.common.models.store.Store;
 import bham.bioshock.minigame.Renderer;
 import bham.bioshock.minigame.models.Astronaut;
@@ -41,7 +41,7 @@ public class MinigameScreen implements Screen {
    * @param assets
    */
   public MinigameScreen(Store store, Router router, AssetContainer assets) {
-    this.loadingScreen = new LoadingScreen(router);
+    this.loadingScreen = new LoadingScreen(router, assets);
     this.assets = assets;
     world = store.getMinigameStore().getWorld();
     this.renderer = new Renderer(store, router, assets);
@@ -54,9 +54,6 @@ public class MinigameScreen implements Screen {
   @Override
   public void show() {
     loadingScreen.show();
-    
-    assets.load(Assets.gameBackground, Texture.class, GameType.MINIGAME);
-    assets.load(Assets.skin, Skin.class, GameType.MINIGAME);
     
     Astronaut.loadTextures(assets);
     Rocket.loadTextures(assets);
@@ -102,7 +99,7 @@ public class MinigameScreen implements Screen {
   @Override
   public void hide() {
     // Dispose minigame assets
-    assets.dispose(GameType.MINIGAME);
+    assets.dispose(GamePart.MINIGAME);
     renderer.dispose();
   }
 

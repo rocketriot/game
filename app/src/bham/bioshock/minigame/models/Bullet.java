@@ -1,8 +1,8 @@
 package bham.bioshock.minigame.models;
 
+import bham.bioshock.client.assets.AssetContainer;
 import bham.bioshock.client.assets.Assets;
-import bham.bioshock.client.assets.Assets.GameType;
-import bham.bioshock.client.interfaces.AssetContainer;
+import bham.bioshock.client.assets.Assets.GamePart;
 import bham.bioshock.common.Position;
 import bham.bioshock.minigame.PlanetPosition;
 import bham.bioshock.minigame.physics.SpeedVector;
@@ -137,8 +137,8 @@ public class Bullet extends Entity {
    * @param manager
    */
   public static void loadTextures(AssetContainer manager) {
-    manager.load(Assets.bullet, Texture.class, GameType.MINIGAME);
-    manager.load(Assets.bulletAnim, Texture.class, GameType.MINIGAME);
+    manager.load(Assets.bullet, Texture.class, GamePart.MINIGAME);
+    manager.load(Assets.bulletAnim, Texture.class, GamePart.MINIGAME);
   }
 
   /**

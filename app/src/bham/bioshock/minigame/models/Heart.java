@@ -1,8 +1,8 @@
 package bham.bioshock.minigame.models;
 
+import bham.bioshock.client.assets.AssetContainer;
 import bham.bioshock.client.assets.Assets;
-import bham.bioshock.client.assets.Assets.GameType;
-import bham.bioshock.client.interfaces.AssetContainer;
+import bham.bioshock.client.assets.Assets.GamePart;
 import bham.bioshock.minigame.worlds.World;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -54,7 +54,7 @@ public class Heart extends Entity {
    * @param manager
    */
   public static void loadTextures(AssetContainer manager) {
-    manager.load(Assets.hearts, Texture.class, GameType.MINIGAME);
+    manager.load(Assets.hearts, Texture.class, GamePart.MINIGAME);
   }
 
 }

@@ -1,7 +1,7 @@
 package bham.bioshock.client.scenes.minigame;
 
 import bham.bioshock.Config;
-import bham.bioshock.client.interfaces.AssetContainer;
+import bham.bioshock.client.assets.AssetContainer;
 import bham.bioshock.common.models.store.Store;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -28,6 +28,7 @@ public class MinigameInstructions {
    * @param store
    */
   public MinigameInstructions(SpriteBatch batch, Store store, AssetContainer assets) {
+    this.assets = assets;
     this.batch = batch;
     this.store = store;
     this.setup();

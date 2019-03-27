@@ -2,8 +2,12 @@ package bham.bioshock.client.screens;
 
 import bham.bioshock.Config;
 import bham.bioshock.client.Router;
+import bham.bioshock.client.assets.AssetContainer;
 import bham.bioshock.client.assets.Assets;
+import bham.bioshock.client.assets.Assets.GamePart;
 import bham.bioshock.client.controllers.SoundController;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
@@ -17,6 +21,9 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 
 public abstract class ScreenMaster implements Screen {
+  
+  private static final Logger logger = LogManager.getLogger(ScreenMaster.class);
+  
   protected Stage stage;
   protected Batch batch;
   protected Stack stack;
@@ -25,23 +32,25 @@ public abstract class ScreenMaster implements Screen {
 
   protected float screenWidth;
   protected float screenHeight;
+  protected AssetContainer assets;
 
   protected Texture background;
 
   protected TextButton backButton;
 
-  protected Skin skin = new Skin(Gdx.files.internal(Assets.skin));
+  protected Skin skin;
 
-  public ScreenMaster(Router router) {
+  public ScreenMaster(Router router, AssetContainer assets) {
     this.router = router;
+    this.assets = assets;
     
     viewport = new FitViewport(Config.GAME_WORLD_WIDTH, Config.GAME_WORLD_HEIGHT);
     stage = new Stage(viewport);
     batch = new SpriteBatch();
+    skin = assets.getSkin();
     
     this.screenWidth = Gdx.graphics.getWidth();
     this.screenHeight = Gdx.graphics.getHeight();
-    
   }
 
   @Override
@@ -49,7 +58,7 @@ public abstract class ScreenMaster implements Screen {
     Gdx.input.setInputProcessor(stage);
     
     // Create background
-    background = new Texture(Gdx.files.internal(Assets.menuBackground));
+    background = assets.get(Assets.menuBackground, Texture.class);
   }
 
   protected void drawBackground() {
@@ -84,7 +93,7 @@ public abstract class ScreenMaster implements Screen {
     batch.getProjectionMatrix().setToOrtho2D(0, 0, screenWidth, screenHeight);
     
     drawBackground();
-    stage.act(Gdx.graphics.getDeltaTime());
+    stage.act(delta);
     stage.draw();
   }
 
@@ -122,7 +131,19 @@ public abstract class ScreenMaster implements Screen {
   /** Generates an asset given an asset and screen coordinates */
   protected Image drawAsset(String asset, int x, int y) {
     // Generate texture
-    Texture texture = new Texture(asset);
+    Texture texture = null;
+    
+    // Make sure the asset is loaded
+    if(!assets.contains(asset)) {
+      logger.error("Lazy loading asset: " + asset);
+      assets.load(asset, Texture.class, GamePart.MENU);
+    }
+    if(assets.isLoaded(asset)) {
+      texture = assets.get(asset, Texture.class);
+    } else {
+      assets.finishLoadingAsset(asset);
+      texture = assets.get(asset, Texture.class);
+    }
     texture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
 
     // Generate image

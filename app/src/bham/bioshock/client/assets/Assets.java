@@ -3,7 +3,6 @@ package bham.bioshock.client.assets;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import bham.bioshock.client.interfaces.AssetContainer;
 
 public class Assets {
   // General
@@ -12,6 +11,7 @@ public class Assets {
   public static final String cursor = "app/assets/ui/cursor.png";
 
   // Backgrounds
+  public static final String loading = "app/assets/animations/loading2.png";
   public static final String gameBackground = "app/assets/backgrounds/game.png";
   public static final String menuBackground = "app/assets/backgrounds/menu.png";
   
@@ -95,7 +95,7 @@ public class Assets {
     return new Animation<TextureRegion>(duration, frames);
   }
   
-  public enum GameType {
-    MINIGAME, BOARDGAME
+  public enum GamePart {
+    MENU, MINIGAME, BOARDGAME
   }
 }

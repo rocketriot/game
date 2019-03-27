@@ -1,8 +1,8 @@
 package bham.bioshock.minigame.worlds;
 
+import bham.bioshock.client.assets.AssetContainer;
 import bham.bioshock.client.assets.Assets;
-import bham.bioshock.client.assets.Assets.GameType;
-import bham.bioshock.client.interfaces.AssetContainer;
+import bham.bioshock.client.assets.Assets.GamePart;
 import bham.bioshock.common.Position;
 import bham.bioshock.minigame.PlanetPosition;
 import bham.bioshock.minigame.models.Gun;
@@ -208,9 +208,9 @@ abstract public class World implements Serializable {
    * @param id
    */
   public static void loadTextures(AssetContainer manager, int id) {
-    manager.load(Assets.planetBase + id + ".png", Texture.class, GameType.MINIGAME);
+    manager.load(Assets.planetBase + id + ".png", Texture.class, GamePart.MINIGAME);
     if(id == 4) {
-      manager.load(Assets.planetBase + "4_front.png", Texture.class, GameType.MINIGAME);
+      manager.load(Assets.planetBase + "4_front.png", Texture.class, GamePart.MINIGAME);
     }
   }
   

@@ -7,7 +7,7 @@ import com.google.inject.Inject;
 import bham.bioshock.client.BoardGame;
 import bham.bioshock.client.Route;
 import bham.bioshock.client.Router;
-import bham.bioshock.client.interfaces.AssetContainer;
+import bham.bioshock.client.assets.AssetContainer;
 import bham.bioshock.client.screens.MinigameScreen;
 import bham.bioshock.common.Position;
 import bham.bioshock.common.models.Player;

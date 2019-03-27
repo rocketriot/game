@@ -2,8 +2,8 @@ package bham.bioshock.client.scenes.minigame;
 
 import bham.bioshock.Config;
 import bham.bioshock.client.Router;
+import bham.bioshock.client.assets.AssetContainer;
 import bham.bioshock.client.assets.Assets;
-import bham.bioshock.client.interfaces.AssetContainer;
 import bham.bioshock.client.scenes.HudElement;
 import bham.bioshock.common.models.store.Store;
 import bham.bioshock.minigame.models.Astronaut;
@@ -22,15 +22,13 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 public class WeaponContainer extends HudElement {
   private ShapeRenderer sr;
   private BitmapFont font;
-  private AssetContainer assets;
 
   private final int SIZE = 100;
   private final int RADIUS = 50;
   private Image weapon;
 
   WeaponContainer(Stage stage, SpriteBatch batch, Store store, Router router, AssetContainer assets) {
-    super(stage, batch, assets.getSkin(), store, router);
-    
+    super(stage, batch, assets, store, router);
     sr = new ShapeRenderer();
   }
 

@@ -3,7 +3,9 @@ package bham.bioshock.client.screens;
 import bham.bioshock.Config;
 import bham.bioshock.client.Route;
 import bham.bioshock.client.Router;
+import bham.bioshock.client.assets.AssetContainer;
 import bham.bioshock.client.assets.Assets;
+import bham.bioshock.client.assets.Assets.GamePart;
 import bham.bioshock.client.controllers.SoundController;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Pixmap;
@@ -17,20 +19,9 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.SpriteDrawable;
 
 public class MainMenuScreen extends ScreenMaster {
-  private Image logo;
-  private Image hostButton;
-  private Image joinButton;
-  private Image howToPlayButton;
-  private Image preferencesButton;
-  private Image exitButton;
 
-  public MainMenuScreen(Router router) {
-    super(router);
-
-    Pixmap pm = new Pixmap(Gdx.files.internal(Assets.cursor));
-    Gdx.graphics.setCursor(Gdx.graphics.newCursor(pm, 0, 0));
-    pm.dispose();
-
+  public MainMenuScreen(Router router, AssetContainer assets) {
+    super(router, assets);
     router.call(Route.START_MUSIC, "mainMenu");
   }
 
@@ -57,10 +48,10 @@ public class MainMenuScreen extends ScreenMaster {
     private SpriteDrawable hover;
 
     public BaseClickListener(Image image, String normal, String hover) {
-      Texture normalTexture = new Texture(normal);
+      Texture normalTexture = assets.get(normal, Texture.class);
       normalTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 
-      Texture hoverTexture = new Texture(hover);
+      Texture hoverTexture = assets.get(hover, Texture.class);
       hoverTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 
       this.image = image;
@@ -81,9 +72,9 @@ public class MainMenuScreen extends ScreenMaster {
 
 
   private void drawButtons() {
-    logo = drawAsset(Assets.logo, (Config.GAME_WORLD_WIDTH / 2) - 258, Config.GAME_WORLD_HEIGHT - 550);
+    Image logo = drawAsset(Assets.logo, (Config.GAME_WORLD_WIDTH / 2) - 258, Config.GAME_WORLD_HEIGHT - 550);
 
-    hostButton = drawAsset(Assets.hostButton, 200, 300);
+    Image hostButton = drawAsset(Assets.hostButton, 200, 300);
     addListener(hostButton, new BaseClickListener(hostButton, Assets.hostButton, Assets.hostButtonHover) {
       @Override
       public void clicked(InputEvent event, float x, float y) {
@@ -95,7 +86,7 @@ public class MainMenuScreen extends ScreenMaster {
       }
     });
 
-    joinButton = drawAsset(Assets.joinButton, 725, 50);
+    Image joinButton = drawAsset(Assets.joinButton, 725, 50);
     addListener(joinButton, new BaseClickListener(joinButton, Assets.joinButton, Assets.joinButtonHover) {
       @Override
       public void clicked(InputEvent event, float x, float y) {
@@ -104,7 +95,7 @@ public class MainMenuScreen extends ScreenMaster {
       }
     });
 
-    howToPlayButton = drawAsset(Assets.howToPlayButton, 1200, 250);
+    Image howToPlayButton = drawAsset(Assets.howToPlayButton, 1200, 250);
     addListener(howToPlayButton, new BaseClickListener(howToPlayButton, Assets.howToPlayButton, Assets.howToPlayButtonHover) {
       @Override
       public void clicked(InputEvent event, float x, float y) {
@@ -113,7 +104,7 @@ public class MainMenuScreen extends ScreenMaster {
       }
     });
 
-    preferencesButton = drawAsset(Assets.preferencesButton, Config.GAME_WORLD_WIDTH - 427, 0);
+    Image preferencesButton = drawAsset(Assets.preferencesButton, Config.GAME_WORLD_WIDTH - 427, 0);
     addListener(preferencesButton, new BaseClickListener(preferencesButton, Assets.preferencesButton, Assets.preferencesButtonHover) {
       @Override
       public void clicked(InputEvent event, float x, float y) {
@@ -122,7 +113,7 @@ public class MainMenuScreen extends ScreenMaster {
       }
     });
 
-    exitButton = drawAsset(Assets.exitButton, 0, 0);
+    Image exitButton = drawAsset(Assets.exitButton, 0, 0);
     addListener(exitButton, new BaseClickListener(exitButton, Assets.exitButton, Assets.exitButtonHover) {
       @Override
       public void clicked(InputEvent event, float x, float y) {

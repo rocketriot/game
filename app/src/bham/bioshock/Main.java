@@ -9,6 +9,7 @@ import org.apache.logging.log4j.Logger;
 import com.badlogic.gdx.Files.FileType;
 import bham.bioshock.client.BoardGame;
 import bham.bioshock.client.Router;
+import bham.bioshock.client.assets.AssetContainer;
 import bham.bioshock.modules.GameModule;
 
 public class Main {
@@ -42,7 +43,9 @@ public class Main {
       return;
     }
     
+    // Save game dependencies
     game.addRouter(router);
+    game.addAssetContainer(injector.getInstance(AssetContainer.class));
     
     new LwjglApplication(game, config);
   }

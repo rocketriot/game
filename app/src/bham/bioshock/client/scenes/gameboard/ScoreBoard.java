@@ -1,7 +1,7 @@
 package bham.bioshock.client.scenes.gameboard;
 
-import bham.bioshock.client.FontGenerator;
 import bham.bioshock.client.Router;
+import bham.bioshock.client.assets.AssetContainer;
 import bham.bioshock.client.assets.Assets;
 import bham.bioshock.client.scenes.HudElement;
 import bham.bioshock.common.models.Player;
@@ -25,16 +25,12 @@ public class ScoreBoard extends HudElement {
   private LabelStyle scoreBoardStyle;
   private LabelStyle scoreBoardCpuStyle;
   private ArrayList<LabelStyle> scoreBoardPointsStyle;
-  
-  private FontGenerator fontGenerator;
 
-  public ScoreBoard(Stage stage, SpriteBatch batch, Skin skin, Store store, Router router) {
-    super(stage, batch, skin, store, router);
+  public ScoreBoard(Stage stage, SpriteBatch batch, AssetContainer assets, Store store, Router router) {
+    super(stage, batch, assets, store, router);
   }
 
   protected void setup() {
-    fontGenerator = new FontGenerator();
-
     VerticalGroup stats = new VerticalGroup();
     stats.setFillParent(true);
     stats.top();
@@ -43,7 +39,7 @@ public class ScoreBoard extends HudElement {
     stage.addActor(stats);
 
     LabelStyle style = new LabelStyle();
-    style.font = fontGenerator.generate(40);
+    style.font = assets.getFont(40);
 
     roundLabel = new Label("Round 1", style);
     stats.addActor(roundLabel);
@@ -55,16 +51,16 @@ public class ScoreBoard extends HudElement {
     turnPointer = new Image(new Texture(Assets.turnPointer));
 
     scoreBoardStyle = new LabelStyle();
-    scoreBoardStyle.font = fontGenerator.generate(25);
+    scoreBoardStyle.font = assets.getFont(25);
 
     scoreBoardCpuStyle = new LabelStyle();
-    scoreBoardCpuStyle.font = fontGenerator.generate(16);
+    scoreBoardCpuStyle.font = assets.getFont(16);
 
     scoreBoardPointsStyle = new ArrayList<>();
-    scoreBoardPointsStyle.add(new LabelStyle(fontGenerator.generate(25, new Color(0xFFD048FF)), new Color(0xFFD048FF)));
-    scoreBoardPointsStyle.add(new LabelStyle(fontGenerator.generate(25, new Color(0xC2C2C2FF)), new Color(0xC2C2C2FF)));
-    scoreBoardPointsStyle.add(new LabelStyle(fontGenerator.generate(25, new Color(0xD27114FF)), new Color(0xD27114FF)));
-    scoreBoardPointsStyle.add(new LabelStyle(fontGenerator.generate(25, new Color(0xCE2424FF)), new Color(0xCE2424FF)));
+    scoreBoardPointsStyle.add(new LabelStyle(assets.getFont(25, new Color(0xFFD048FF)), new Color(0xFFD048FF)));
+    scoreBoardPointsStyle.add(new LabelStyle(assets.getFont(25, new Color(0xC2C2C2FF)), new Color(0xC2C2C2FF)));
+    scoreBoardPointsStyle.add(new LabelStyle(assets.getFont(25, new Color(0xD27114FF)), new Color(0xD27114FF)));
+    scoreBoardPointsStyle.add(new LabelStyle(assets.getFont(25, new Color(0xCE2424FF)), new Color(0xCE2424FF)));
   }
 
   public void render(int round, ArrayList<Player> players, Player movingPlayer) {

@@ -3,8 +3,8 @@ package bham.bioshock.minigame;
 import bham.bioshock.Config;
 import bham.bioshock.client.Route;
 import bham.bioshock.client.Router;
+import bham.bioshock.client.assets.AssetContainer;
 import bham.bioshock.client.assets.Assets;
-import bham.bioshock.client.interfaces.AssetContainer;
 import bham.bioshock.common.models.store.MinigameStore;
 import bham.bioshock.common.models.store.Store;
 import bham.bioshock.minigame.models.*;
@@ -67,7 +67,7 @@ public class Renderer {
 
   private MinigameHud hud;
   private World world;
-  private AssetContainer manager;
+  private AssetContainer assets;
   private float time;
   
   /**
@@ -77,11 +77,11 @@ public class Renderer {
    * @param router
    * @param manager
    */
-  public Renderer(Store store, Router router, AssetContainer manager) {
+  public Renderer(Store store, Router router, AssetContainer assets) {
     this.store = store;
     this.minigameStore = store.getMinigameStore();
     this.router = router;
-    this.manager = manager;
+    this.assets = assets;
   }
   
   /**
@@ -102,8 +102,7 @@ public class Renderer {
     CollisionHandler collisionHandler = new CollisionHandler(minigameStore);
     minigameStore.setCollisionHandler(collisionHandler);
     
-    Skin skin = manager.get(Assets.skin, Skin.class);
-    hud = new MinigameHud(batch, skin, store, router, manager);
+    hud = new MinigameHud(batch, assets, store, router);
 
     loadSprites();
 
@@ -119,16 +118,16 @@ public class Renderer {
     viewport = new FitViewport(GAME_WORLD_WIDTH, GAME_WORLD_HEIGHT, cam);
     stage = new Stage(viewport);
     
-    Astronaut.createTextures(manager);
-    Rocket.createTextures(manager);
-    Gun.createTextures(manager);
-    Bullet.createTextures(manager);
-    Flag.createTextures(manager);
-    Heart.createTextures(manager);
-    World.createTextures(manager, world.getTextureId());
-    Platform.createTextures(manager, world.getTextureId());
+    Astronaut.createTextures(assets);
+    Rocket.createTextures(assets);
+    Gun.createTextures(assets);
+    Bullet.createTextures(assets);
+    Flag.createTextures(assets);
+    Heart.createTextures(assets);
+    World.createTextures(assets, world.getTextureId());
+    Platform.createTextures(assets, world.getTextureId());
 
-    background = new Sprite(manager.get(Assets.gameBackground, Texture.class));
+    background = new Sprite(assets.get(Assets.gameBackground, Texture.class));
 
     Objective objective = minigameStore.getObjective();
     

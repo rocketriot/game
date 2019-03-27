@@ -12,10 +12,10 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Intersector.MinimumTranslationVector;
+import bham.bioshock.client.assets.AssetContainer;
 import bham.bioshock.client.assets.Assets;
-import bham.bioshock.client.assets.Assets.GameType;
+import bham.bioshock.client.assets.Assets.GamePart;
 import bham.bioshock.client.controllers.SoundController;
-import bham.bioshock.client.interfaces.AssetContainer;
 import bham.bioshock.common.Direction;
 import bham.bioshock.common.Position;
 import bham.bioshock.minigame.PlanetPosition;
@@ -523,14 +523,14 @@ public class Astronaut extends Entity {
     String[] colours = new String[] { "orange", "red", "green", "blue" };
 
     for(int i=0; i<colours.length; i++) {
-      manager.load(Assets.astroBase + colours[i] + Assets.astroWalk, Texture.class, GameType.MINIGAME);
-      manager.load(Assets.astroBase + colours[i] + Assets.astroGun, Texture.class, GameType.MINIGAME);
-      manager.load(Assets.astroBase + colours[i] + Assets.astroShield, Texture.class, GameType.MINIGAME);
-      manager.load(Assets.astroBase + colours[i] + Assets.astroShieldGun, Texture.class, GameType.MINIGAME);
-      manager.load(Assets.astroBase + colours[i] + Assets.astroFFall, Texture.class, GameType.MINIGAME);
-      manager.load(Assets.astroBase + colours[i] + Assets.astroFall, Texture.class, GameType.MINIGAME);
+      manager.load(Assets.astroBase + colours[i] + Assets.astroWalk, Texture.class, GamePart.MINIGAME);
+      manager.load(Assets.astroBase + colours[i] + Assets.astroGun, Texture.class, GamePart.MINIGAME);
+      manager.load(Assets.astroBase + colours[i] + Assets.astroShield, Texture.class, GamePart.MINIGAME);
+      manager.load(Assets.astroBase + colours[i] + Assets.astroShieldGun, Texture.class, GamePart.MINIGAME);
+      manager.load(Assets.astroBase + colours[i] + Assets.astroFFall, Texture.class, GamePart.MINIGAME);
+      manager.load(Assets.astroBase + colours[i] + Assets.astroFall, Texture.class, GamePart.MINIGAME);
     }
-    manager.load(Assets.hearts, Texture.class, GameType.MINIGAME);
+    manager.load(Assets.hearts, Texture.class, GamePart.MINIGAME);
   }
   
   /**

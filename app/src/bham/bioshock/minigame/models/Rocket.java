@@ -2,9 +2,9 @@ package bham.bioshock.minigame.models;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import bham.bioshock.client.assets.AssetContainer;
 import bham.bioshock.client.assets.Assets;
-import bham.bioshock.client.assets.Assets.GameType;
-import bham.bioshock.client.interfaces.AssetContainer;
+import bham.bioshock.client.assets.Assets.GamePart;
 import bham.bioshock.minigame.worlds.World;
 import java.util.HashMap;
 
@@ -54,7 +54,7 @@ public class Rocket extends Entity {
    */
   public static void loadTextures(AssetContainer manager) {
     for (int i = 1; i <= 4; i++) {
-      manager.load(Assets.playersFolder + "/" + i + ".png", Texture.class, GameType.MINIGAME);
+      manager.load(Assets.playersFolder + "/" + i + ".png", Texture.class, GamePart.MINIGAME);
     }
   }
 
@@ -65,7 +65,7 @@ public class Rocket extends Entity {
    */
   public static void createTextures(AssetContainer manager) {
     for (int i = 1; i <= 4; i++) {
-      manager.load(Assets.playersFolder + "/" + i + ".png", Texture.class, GameType.MINIGAME);
+      manager.load(Assets.playersFolder + "/" + i + ".png", Texture.class, GamePart.MINIGAME);
       textures.put(i, manager.get(Assets.playersFolder + "/" + i + ".png", Texture.class));
     }
   }

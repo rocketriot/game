@@ -2,6 +2,7 @@ package bham.bioshock.client.screens;
 
 import bham.bioshock.client.Router;
 import bham.bioshock.client.XMLInteraction;
+import bham.bioshock.client.assets.AssetContainer;
 import bham.bioshock.client.assets.Assets;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
@@ -40,14 +41,13 @@ public class HowToScreen extends ScreenMaster {
   private Label fuelDescription;
 
 
-
   /**
    * Instantiates a new How to screen.
    *
    * @param router the router
    */
-  public HowToScreen(Router router) {
-    super(router);
+  public HowToScreen(Router router, AssetContainer assets) {
+    super(router, assets);
     descriptionFromFile = xmlInteraction.xmlToDescription();
     loadImages();
 

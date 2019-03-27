@@ -1,8 +1,8 @@
 package bham.bioshock.minigame.models;
 
-import bham.bioshock.client.assets.Assets.GameType;
+import bham.bioshock.client.assets.Assets.GamePart;
+import bham.bioshock.client.assets.AssetContainer;
 import bham.bioshock.client.assets.Assets;
-import bham.bioshock.client.interfaces.AssetContainer;
 import bham.bioshock.common.Position;
 import bham.bioshock.minigame.PlanetPosition;
 import bham.bioshock.minigame.worlds.World;
@@ -90,7 +90,7 @@ public class Flag extends StaticEntity {
    * @param manager the asset manager
    */
   public static void loadTextures(AssetContainer manager) {
-    manager.load(Assets.flag, Texture.class, GameType.MINIGAME);
+    manager.load(Assets.flag, Texture.class, GamePart.MINIGAME);
   }
 
   /**
