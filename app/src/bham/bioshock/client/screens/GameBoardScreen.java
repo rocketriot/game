@@ -7,7 +7,7 @@ import bham.bioshock.client.assets.AssetContainer;
 import bham.bioshock.client.assets.Assets;
 import bham.bioshock.client.assets.Assets.GamePart;
 import bham.bioshock.client.controllers.SoundController;
-import bham.bioshock.client.gameLogic.gameboard.*;
+import bham.bioshock.client.gameboard.*;
 import bham.bioshock.client.scenes.gameboard.GameBoardHud;
 import bham.bioshock.common.Direction;
 import bham.bioshock.common.consts.GridPoint;
@@ -89,6 +89,9 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
   
   private boolean loading = true;
   private boolean loaded = false;
+  
+  /** Loading screen */
+  private LoadingScreen loadingScreen;
 
   public GameBoardScreen(Router router, Store store, AssetContainer assets) {
     super(router, assets);
@@ -98,32 +101,48 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
     this.camera = new OrthographicCamera();
     this.batch = new SpriteBatch();
     this.sr = new ShapeRenderer();
+    this.loadingScreen = new LoadingScreen(router, assets);
 
     this.viewport = new FitViewport(Config.GAME_WORLD_WIDTH, Config.GAME_WORLD_HEIGHT, camera);
     this.viewport.apply();
 
     // Center the camera on the middle of the grid
     camera.position.set(Config.GAME_WORLD_WIDTH / 4, Config.GAME_WORLD_HEIGHT / 2.25f, 0);
-    
-    this.loadAssets();
   }
   
   private void loadAssets() {
     assets.load(Assets.pauseIcon, Texture.class, GamePart.BOARDGAME);
-    assets.load(Assets.gameBackground, Texture.class, GamePart.BOARDGAME);
+    assets.load(Assets.upgrade, Texture.class, GamePart.BOARDGAME);
+    assets.load(Assets.fuel, Texture.class, GamePart.BOARDGAME);
+    assets.load(Assets.blackhole, Texture.class, GamePart.BOARDGAME);
+    
+    for (int i=1; i<=5; i++) {
+      assets.load(Assets.asteroidsFolder + "/" + i + ".png", Texture.class, GamePart.BOARDGAME);
+    }
+    
+    for(int i=1; i<=4; i++) {
+      assets.load(Assets.playersFolder + "/" + i + ".png", Texture.class, GamePart.BOARDGAME);
+    }
+    
+    for(int i=1; i<=4; i++) {
+      assets.load(Assets.planetsFolder + "/" + i + ".png", Texture.class, GamePart.BOARDGAME);  
+    }
+    for(int i=1; i<=4; i++) {
+      assets.load(Assets.flagsFolder + "/" + i + ".png", Texture.class, GamePart.BOARDGAME);  
+    }
   }
   
   private void assetsLoaded() {
     if(loaded) return;
     loaded = true;
     background = new Sprite(assets.get(Assets.gameBackground, Texture.class));
-    drawPlayer = new DrawPlayer(batch);
-    drawPlanet = new DrawPlanet(batch);
-    drawFuel = new DrawFuel(batch);
-    drawUpgrade = new DrawUpgrade(batch);
-    drawAsteroid = new DrawAsteroid(batch);
-    drawBlackHole = new DrawBlackHole(batch);
-
+    drawPlayer = new DrawPlayer(batch, assets);
+    drawPlanet = new DrawPlanet(batch, assets);
+    drawFuel = new DrawFuel(batch, assets);
+    drawUpgrade = new DrawUpgrade(batch, assets);
+    drawAsteroid = new DrawAsteroid(batch, assets);
+    drawBlackHole = new DrawBlackHole(batch, assets);
+    
     pathRenderer =
         new PathRenderer(camera, store.getGameBoard(), store.getMainPlayer(), store.getPlayers());
 
@@ -327,12 +346,13 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
 
   @Override
   public void show() {
+    loadingScreen.show();
+    this.loadAssets();
     Gdx.input.setInputProcessor(inputMultiplexer);
   }
 
   @Override
   public void hide() {
-    Gdx.graphics.setWindowedMode(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
   }
 
   @Override
@@ -360,9 +380,13 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
     if(loading && assets.update()) {
       // assets loaded
       loading = false;
+      loadingScreen.hide();
       assetsLoaded();
     } else if(loading) {
-      // HERE LOADING SCREEN CAN BE DISPLAYED
+      // Update loading progress
+      float progress = assets.getProgress();
+      loadingScreen.setText( ((int) Math.floor(progress * 100))+"%" );
+      loadingScreen.render(delta);
       return;
     }
     

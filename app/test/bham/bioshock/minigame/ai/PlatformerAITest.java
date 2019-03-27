@@ -26,7 +26,6 @@ class PlatformerAITest {
   private PlanetPosition cpu2Pos;
   private PlanetPosition cpu3Pos;
 
-  private PlatformerAI.FindNextPlatform findNext;
   private PlatformerAI.MoveTowardsPlatform moveTowards;
 
   private World testWorld;

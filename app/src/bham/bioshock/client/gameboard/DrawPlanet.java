@@ -1,5 +1,6 @@
-package bham.bioshock.client.gameLogic.gameboard;
+package bham.bioshock.client.gameboard;
 
+import bham.bioshock.client.assets.AssetContainer;
 import bham.bioshock.client.assets.Assets;
 import bham.bioshock.common.models.Planet;
 import bham.bioshock.common.models.Player;
@@ -12,11 +13,15 @@ public class DrawPlanet extends DrawEntity {
   private ArrayList<Sprite> planetSprites = new ArrayList<>();
   private ArrayList<Sprite> flagSprites = new ArrayList<>();
 
-  public DrawPlanet(Batch batch) {
-    super(batch);
+  public DrawPlanet(Batch batch, AssetContainer assets) {
+    super(batch, assets);
 
-    planetSprites = generateSprites(Assets.planetsFolder);
-    flagSprites = generateSprites(Assets.flagsFolder);
+    for(int i=1; i<=4; i++) {
+      planetSprites.add(generateSprite(Assets.planetsFolder + "/" + i + ".png"));     
+    }
+    for(int i=1; i<=4; i++) {
+      flagSprites.add(generateSprite(Assets.flagsFolder + "/" + i + ".png"));     
+    }
   }
 
   public void draw(Planet planet, int PPS) {

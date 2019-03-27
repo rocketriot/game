@@ -61,4 +61,9 @@ public class LoadingScreen extends ScreenMaster {
     font.draw(batch, text, fontX, fontY);
     batch.end();
   }
+  
+  @Override
+  public void hide() {
+    stage.dispose();
+  }
 }

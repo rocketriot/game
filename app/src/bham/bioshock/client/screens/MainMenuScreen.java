@@ -5,6 +5,7 @@ import bham.bioshock.client.Route;
 import bham.bioshock.client.Router;
 import bham.bioshock.client.assets.AssetContainer;
 import bham.bioshock.client.assets.Assets;
+import bham.bioshock.client.assets.Assets.GamePart;
 import bham.bioshock.client.controllers.SoundController;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
@@ -26,6 +27,7 @@ public class MainMenuScreen extends ScreenMaster {
   @Override
   public void show() {
     super.show();
+    assets.dispose(GamePart.BOARDGAME);
 
     drawButtons();
   }

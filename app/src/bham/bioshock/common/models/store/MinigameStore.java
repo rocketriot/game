@@ -161,6 +161,11 @@ public class MinigameStore {
   public boolean isStarted(){
     return this.started;
   }
+  
+  public void dispose() {
+    players.values().forEach(p -> p.remove());
+    entities.forEach(e -> e.remove());
+  }
 
   public void setCollisionHandler(CollisionHandler collisionHandler) {
     this.collisionHandler = collisionHandler;

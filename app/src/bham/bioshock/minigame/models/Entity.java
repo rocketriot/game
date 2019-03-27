@@ -156,7 +156,9 @@ public abstract class Entity implements Serializable {
    */
   public void remove() {
     state = State.REMOVED;
-    stepsGenerator.stop();
+    if(stepsGenerator != null) {
+      stepsGenerator.stop();      
+    }
   }
 
   /**

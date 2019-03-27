@@ -62,6 +62,7 @@ public class MinigameScreen implements Screen {
     if(loading && assets.update()) {
       // Loading done
       loading = false;
+      loadingScreen.hide();
       renderer.show();
     }
     
@@ -93,6 +94,7 @@ public class MinigameScreen implements Screen {
     // Dispose minigame assets
     assets.dispose(GamePart.MINIGAME);
     renderer.dispose();
+    
   }
 
   @Override
