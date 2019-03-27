@@ -39,7 +39,10 @@ public class BoardAi extends Thread {
     UUID lastPlayer = null;
     try {
       while(!isInterrupted()) {
-          
+        if(store.getPlayers().size() == 0) {
+          sleep(500);
+          continue;
+        }
         Player player = store.getMovingPlayer();
         if(player.isCpu() && (lastPlayer == null || lastPlayer.equals(player.getId()))) {
           lastPlayer = player.getId();
@@ -54,6 +57,7 @@ public class BoardAi extends Thread {
           logger.error("Forced player skip");
           gameBoardHandler.endTurn();
           samePlayerNum = 0;
+          continue;
         }
         
         if(player.isCpu() && (lastMoved == null || !player.getId().equals(lastMoved))) {
