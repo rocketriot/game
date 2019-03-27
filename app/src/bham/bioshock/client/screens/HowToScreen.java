@@ -39,6 +39,7 @@ public class HowToScreen extends ScreenMaster {
   private Label howToCaptureA;
   private Label howToCaptureB;
   private Label fuelDescription;
+  private Label upgradeDescription;
 
 
   /**
@@ -55,16 +56,22 @@ public class HowToScreen extends ScreenMaster {
 
   private void loadImages(){
     title = new Image(new Texture(Assets.howToPlayButton));
+    title.setWidth(150);
+    title.setScaling(Scaling.fillX);
     cursor = new Image(new Texture(Assets.cursor));
-    cursor.setWidth(100);
+    cursor.setWidth(50);
     cursor.setScaling(Scaling.fillX);
     planet = new Image(new Texture(Assets.planetsFolder+"/1.png"));
     planet.setWidth(100);
     planet.setScaling(Scaling.fillX);
+    Container planetContainer = new Container();
+    planetContainer.setSize(100, 100);
     fuel = new Image(new Texture(Assets.fuel));
     fuel.setWidth(100);
     fuel.setScaling(Scaling.fillX);
-    //fuel.setWidth(50);
+    upgrade = new Image(new Texture(Assets.upgrade));
+    upgrade.setWidth(100);
+    upgrade.setScaling(Scaling.fillX);
 
     // game description text is read from the XML file
     description = new Label(descriptionFromFile.get("gameDescription"),skin);
@@ -80,6 +87,7 @@ public class HowToScreen extends ScreenMaster {
     howToCaptureA.setAlignment(Align.left);
     howToCaptureB.setAlignment(Align.left);
     fuelDescription = new Label(descriptionFromFile.get("fuel"),skin);
+    upgradeDescription = new Label(descriptionFromFile.get("upgrade"),skin);
     fuelDescription.setWrap(true);
 
     tableContainer = new Container<>();
@@ -107,7 +115,8 @@ public class HowToScreen extends ScreenMaster {
     textTable.row();
     textTable.add(description).colspan(2).expandX().padBottom(30);
     textTable.row().height(rowHeight);
-    textTable.columnDefaults(1).width(120).padRight(50).padBottom(20);
+    //textTable.columnDefaults(1).width(80).padRight(50).padBottom(20);
+    textTable.columnDefaults(1).expand().padRight(50).padBottom(20);
     textTable.columnDefaults(0).expand().left().padBottom(20);
     VerticalGroup group = new VerticalGroup();
     group.addActor(howToMoveA);
@@ -126,8 +135,9 @@ public class HowToScreen extends ScreenMaster {
     textTable.row().height(rowHeight);
     textTable.add(fuelDescription);
     textTable.add(fuel);
-
-
+    textTable.row().height(rowHeight);
+    textTable.add(upgradeDescription);
+    textTable.add(upgrade);
 
     stage.addActor(textTable);
   }
