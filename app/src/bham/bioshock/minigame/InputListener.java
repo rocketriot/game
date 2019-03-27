@@ -1,16 +1,16 @@
 package bham.bioshock.minigame;
 
-import com.badlogic.gdx.Input;
-import com.badlogic.gdx.InputAdapter;
-
 import bham.bioshock.client.Route;
 import bham.bioshock.client.Router;
 import bham.bioshock.client.controllers.SoundController;
 import bham.bioshock.client.scenes.minigame.MinigameHud;
 import bham.bioshock.common.models.store.MinigameStore;
-import bham.bioshock.minigame.models.*;
+import bham.bioshock.minigame.models.Astronaut;
+import bham.bioshock.minigame.models.Bullet;
 import bham.bioshock.minigame.physics.CollisionHandler;
 import bham.bioshock.minigame.worlds.World;
+import com.badlogic.gdx.Input;
+import com.badlogic.gdx.InputAdapter;
 
 public class InputListener extends InputAdapter {
 
@@ -21,6 +21,7 @@ public class InputListener extends InputAdapter {
   private Router router;
   private CollisionHandler collisionHandler;
   private MinigameHud hud;
+  private long MAX_FROZEN_TIME = 2;
 
   public InputListener(MinigameStore minigameStore, Router router, CollisionHandler collisionHandler, MinigameHud hud) {
     this.world = minigameStore.getWorld();

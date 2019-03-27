@@ -1,10 +1,5 @@
 package bham.bioshock.server.handlers;
 
-import bham.bioshock.minigame.ai.CaptureTheFlagAI;
-import java.util.Random;
-import java.util.UUID;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import bham.bioshock.Config;
 import bham.bioshock.common.models.store.MinigameStore;
 import bham.bioshock.common.models.store.Store;
@@ -12,17 +7,20 @@ import bham.bioshock.common.utils.Clock;
 import bham.bioshock.communication.messages.Message;
 import bham.bioshock.communication.messages.minigame.EndMinigameMessage;
 import bham.bioshock.communication.messages.minigame.MinigameStartMessage;
-import bham.bioshock.communication.messages.minigame.RequestMinigameStartMessage;
-import bham.bioshock.minigame.ai.KillThemAllAI;
 import bham.bioshock.minigame.ai.PlatformerAI;
-import bham.bioshock.minigame.objectives.CaptureTheFlag;
-import bham.bioshock.minigame.objectives.KillThemAll;
 import bham.bioshock.minigame.objectives.Objective;
 import bham.bioshock.minigame.objectives.Platformer;
 import bham.bioshock.minigame.worlds.RandomWorld;
 import bham.bioshock.minigame.worlds.World;
 import bham.bioshock.server.ServerHandler;
 import bham.bioshock.server.ai.MinigameAILoop;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.util.Random;
+import java.util.UUID;
 
 public class MinigameHandler {
 
@@ -46,10 +44,11 @@ public class MinigameHandler {
    * Creates and seed the world
    * Starts minigame timer to ending the game
    * 
-   * 
-   * @param data
+   *
    * @param playerId
-   * @param gameBoardHandler
+   * @param planetId
+   * @param gbHandler
+   * @param objectiveId
    */
   public void startMinigame(UUID playerId, UUID planetId, GameBoardHandler gbHandler, Integer objectiveId) {
     // Create a world for the minigame
@@ -67,7 +66,13 @@ public class MinigameHandler {
       objectiveId = rand.nextInt(10) % 3;
     }
 
-    switch (objectiveId) {
+
+
+    Random rand = new Random();
+
+
+    /*switch (objectiveId) {
+
       case 1:
         o = new Platformer(w);
         for (UUID id : store.getCpuPlayers()) {
@@ -86,6 +91,11 @@ public class MinigameHandler {
           aiLoop.registerHandler(new CaptureTheFlagAI(id, store, handler));
         }
         break;
+    }*/
+
+    o = new Platformer(w);
+    for (UUID id : store.getCpuPlayers()) {
+      aiLoop.registerHandler(new PlatformerAI(id, store, handler));
     }
 
     aiLoop.start();
@@ -143,7 +153,25 @@ public class MinigameHandler {
    * Sync player movement and position
    */
   public void playerMove(Message message, UUID playerId) {
-    handler.sendToAllExcept(message, playerId);
+    //for platform, check if the player is frozen
+    if(store.getMinigameStore().getObjective() instanceof Platformer) {
+      Platformer o = (Platformer) store.getMinigameStore().getObjective();
+      if(o.checkIfFrozen(playerId)) {
+        long now = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC);
+        long frozen = o.getFrozenFor(playerId);
+        if((now - frozen) > o.MAX_FROZEN_TIME) {
+          o.setFrozen(playerId,false, now);
+          handler.sendToAllExcept(message, playerId);
+        }
+        else {
+          return;
+        }
+      }
+    }
+    else {
+      handler.sendToAllExcept(message, playerId);
+    }
+
   }
 
   public void playerStep(Message message, UUID playerId) {
@@ -163,9 +191,10 @@ public class MinigameHandler {
    * 
    * @param gameBoardHandler
    */
-  private void endMinigame(UUID winnerId, GameBoardHandler gameBoardHandler, UUID playerId) {
+  public void endMinigame(UUID winnerId, GameBoardHandler gameBoardHandler, UUID playerId) {
     Message msg = new EndMinigameMessage(playerId, winnerId, planetId, Config.PLANET_POINTS);
     planetId = null;
+
 
     aiLoop.finish();
     handler.sendToAll(msg);

@@ -50,6 +50,7 @@ public class Assets {
   public static final String flag = "app/assets/minigame/flag.png";
   public static final String bullet = "app/assets/minigame/bullet.png";
   public static final String bulletAnim = "app/assets/minigame/bullet_animation.png";
+  public static final String blackHoleAnimationSheet = "app/assets/animations/blackHoleSheet.png";
   
   // Minigame Astronauts
   public static final String hearts = "app/assets/minigame/hearts.png";

@@ -1,18 +1,21 @@
 package bham.bioshock.minigame.models;
 
+import bham.bioshock.client.assets.AssetContainer;
+import bham.bioshock.client.assets.Assets;
+import bham.bioshock.client.assets.Assets.GamePart;
 import bham.bioshock.minigame.worlds.World;
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 /**
  * Goal object represents the final position for the platformer objective
  */
 public class Goal extends Entity {
+  private static Animation<TextureRegion> blackHoleAnimation;
+  private float animationTime;
 
   private static final long serialVersionUID = -8342563560891277870L;
-
-  private static TextureRegion texture;
 
   /**
    * Creates a new goal at specified position
@@ -26,20 +29,28 @@ public class Goal extends Entity {
   public Goal(World w, float x, float y) {
     super(w, x, y, true, EntityType.GOAL);
     setRotation(0);
+    animationTime = 0;
+    width = 180;
+    height = 180;
   }
 
-  /**
-   * Returns texture for rendering
-   */
   @Override
   public TextureRegion getTexture() {
-    return texture;
+    return blackHoleAnimation.getKeyFrame(animationTime, true);
   }
 
-  /**
-   * Load textures for drawing
-   */
-  public static void loadTextures() {
-    texture = new TextureRegion(new Texture(Gdx.files.internal("app/assets/minigame/flag.png")));
+  public static void createTextures(AssetContainer manager) {
+    TextureRegion[][] textureR = Assets.splittedTexture(manager, Assets.blackHoleAnimationSheet, 8);
+    blackHoleAnimation = Assets.textureToAnimation(textureR, 8, 0, 0.1f);
+  }
+
+  public static void loadTextures(AssetContainer manager) {
+    manager.load(Assets.blackHoleAnimationSheet, Texture.class, GamePart.MINIGAME);
+  }
+
+  @Override
+  public void update(float delta) {
+    super.update(delta);
+    animationTime += delta;
   }
 }

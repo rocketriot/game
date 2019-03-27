@@ -124,6 +124,7 @@ public class Renderer {
     Bullet.createTextures(assets);
     Flag.createTextures(assets);
     Heart.createTextures(assets);
+    Goal.createTextures(assets);
     World.createTextures(assets, world.getTextureId());
     Platform.createTextures(assets, world.getTextureId());
 
