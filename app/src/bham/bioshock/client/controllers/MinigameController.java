@@ -200,7 +200,8 @@ public class MinigameController extends Controller {
         UUID[] planetOwner = new UUID[] {data.winnerID, data.planetID};
         router.call(Route.SET_PLANET_OWNER, planetOwner);
       } else {
-        store.getPlayer(data.playerID).moveToSpawn();
+        p = store.getPlayer(data.playerID);
+        p.decreaseFuel(3 * p.getFuelGridCost());
       }
     } else {
         store.setMinigameWinner("No one");
