@@ -37,6 +37,8 @@ public class SoundController extends Controller {
   private static Sound laserSound;
   private static Sound healthPickupSound;
   private static Sound blackHoleSound;
+  private static Sound fuelSound;
+  private static Sound upgradeSound;
 
   /**
    * Variables controlling volumes and enabling sounds
@@ -92,6 +94,8 @@ public class SoundController extends Controller {
     laserSound = Gdx.audio.newSound(Gdx.files.internal("app/assets/music/LaserSound.mp3"));
     healthPickupSound = Gdx.audio.newSound(Gdx.files.internal("app/assets/music/HealthPickupSound.wav"));
     blackHoleSound = Gdx.audio.newSound(Gdx.files.internal("app/assets/music/BlackHoleSound.wav"));
+    fuelSound = Gdx.audio.newSound(Gdx.files.internal("app/assets/music/FuelSound.wav"));
+    upgradeSound = Gdx.audio.newSound(Gdx.files.internal("app/assets/music/UpgradeSound.wav"));
 
     preferences = xmlInteraction.xmlToPreferences();
 
@@ -302,5 +306,7 @@ public class SoundController extends Controller {
     sounds.put("laser", laserSound);
     sounds.put("health", healthPickupSound);
     sounds.put("blackHole", blackHoleSound);
+    sounds.put("fuel", fuelSound);
+    sounds.put("upgrade", upgradeSound);
   }
 }
