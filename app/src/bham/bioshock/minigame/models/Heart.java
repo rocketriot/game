@@ -48,7 +48,7 @@ public class Heart extends Entity {
    */
   public static void createTextures(AssetContainer manager) {
     Texture wholeImage = manager.get(Assets.hearts, Texture.class);
-    texture = new TextureRegion(wholeImage, 0, 0, 50, 50);
+    texture = new TextureRegion(wholeImage, 0, 50, 50, 50);
   }
 
   /**

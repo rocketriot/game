@@ -28,7 +28,7 @@ public abstract class Objective implements Serializable {
 
   private static final Logger logger = LogManager.getLogger(Objective.class);
   private static final long serialVersionUID = 7485771472370553399L;
-  private static int INITIAL_HEALTH = 4;
+  private static int INITIAL_HEALTH = 6;
 
   protected transient Store store;
   protected transient World world;
