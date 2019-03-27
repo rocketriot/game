@@ -90,8 +90,8 @@ public class MinigameHandler {
       Random rand = new Random();
       objectiveId = rand.nextInt(10) % 3;
     }
-
-    switch (objectiveId) {
+     // objectiveId
+    switch (1) {
       case 1:
         o = new Platformer(w);
         for (UUID id : store.getCpuPlayers()) {
