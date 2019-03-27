@@ -206,7 +206,11 @@ public class MinigameHandler {
     UUID initiatorId = store.getMovingPlayer().getId();
     Message msg = new EndMinigameMessage(initiatorId, winnerId, planetId, Config.PLANET_POINTS);
     planetId = null;
-
+    
+    if(minigameTimer != null) {
+      minigameTimer.interrupt();
+      clock.reset();
+    }
 
     aiLoop.finish();
     handler.sendToAll(msg);
