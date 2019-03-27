@@ -75,7 +75,7 @@ public class JoinScreenController extends Controller {
   }
 
   public void removePlayer(UUID id) {
-    if(JoinScreen.class.isInstance(game.getScreen())) {
+    if(game.getScreen() instanceof JoinScreen) {
       ((JoinScreen) game.getScreen()).removePlayer(id);      
     }
     store.removePlayer(id);
@@ -90,7 +90,7 @@ public class JoinScreenController extends Controller {
       Player player = new Player(p.playerId, p.username, p.isCpu);
       player.setTextureID(p.textureId);
       store.addPlayer(player);
-      if(JoinScreen.class.isInstance(game.getScreen())) {
+      if(game.getScreen() instanceof JoinScreen) {
         ((JoinScreen) game.getScreen()).addPlayer(player);
       } else {
         logger.fatal("Player can't be added because JoinScreen is not shown");

@@ -5,10 +5,10 @@ public interface StoppableServer {
   /**
    * Stop threads discovering new clients
    */
-  public void stopDiscovery();
+  void stopDiscovery();
   
   /**
    * Stop the server
    */
-  public void stop();
+  void stop();
 }

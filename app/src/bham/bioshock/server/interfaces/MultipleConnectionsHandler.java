@@ -12,7 +12,7 @@ public interface MultipleConnectionsHandler {
    * 
    * @param service
    */
-  public void add(ServerService service);
+  void add(ServerService service);
     
   /**
    * Registers new client as connected with provided ID and name
@@ -20,13 +20,13 @@ public interface MultipleConnectionsHandler {
    * @param id
    * @param service
    */
-  public void register(UUID id, String name, ServerService service);
+  void register(UUID id, String name, ServerService service);
   
   /**
    * Unregister client, remove the connection and send information to all clients
    * @param serverService
    */
-  public void unregister(ServerService serverService);
+  void unregister(ServerService serverService);
   
   /**
    * Sends the message to all clients
@@ -34,7 +34,7 @@ public interface MultipleConnectionsHandler {
    * @param clientId
    * @param action
    */
-  public void sendToAll(Message message);
+  void sendToAll(Message message);
   
   /**
    * Sends the message to all clients except the one specified
@@ -42,7 +42,7 @@ public interface MultipleConnectionsHandler {
    * @param clientId
    * @param action
    */
-  public void sendToAllExcept(Message message, UUID id);
+  void sendToAllExcept(Message message, UUID id);
   
   /**
    * Sends the message to the specific client
@@ -50,12 +50,12 @@ public interface MultipleConnectionsHandler {
    * @param clientId
    * @param action
    */
-  public void sendTo(UUID clientId, Message message);
+  void sendTo(UUID clientId, Message message);
   
   /**
    * Stop all running subservices
    */
-  public void abort();
+  void abort();
   
   /**
    * Handle received message from one of the clients
@@ -64,5 +64,5 @@ public interface MultipleConnectionsHandler {
    * @param service
    * @throws InvalidMessageSequence 
    */
-  public void handleRequest(Message message, ServerService service) throws InvalidMessageSequence;
+  void handleRequest(Message message, ServerService service) throws InvalidMessageSequence;
 }

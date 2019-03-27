@@ -205,7 +205,7 @@ public abstract class Entity implements Serializable {
   public void update(float delta) {
     Step step = null;
     if (loaded && !isStatic) {
-      step = stepsGenerator.getStep(delta);;
+      step = stepsGenerator.getStep(delta);
     }
 
     if (step != null) {
@@ -269,7 +269,7 @@ public abstract class Entity implements Serializable {
     sprite.draw(batch);
   }
 
-  public void afterDraw(SpriteBatch batch) {};
+  public void afterDraw(SpriteBatch batch) {}
 
   public enum State {
     CREATED, LOADED, REMOVED, REMOVING,

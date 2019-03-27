@@ -65,18 +65,10 @@ public class XMLInteraction {
               .getTextContent();
 
           // turn the strings into the types we want
-          if (musicEnabledString.equals("1")) {
-            musicEnabled = true;
-          } else {
-            musicEnabled = false;
-          }
+          musicEnabled = musicEnabledString.equals("1");
           musicVolume = Float.parseFloat(musicVolumeString) / 100;
 
-          if (soundsEnabledString.equals("1")) {
-            soundsEnabled = true;
-          } else {
-            soundsEnabled = false;
-          }
+          soundsEnabled = soundsEnabledString.equals("1");
           soundsVolume = Float.parseFloat(soundsVolumeString) / 100;
         }
       }

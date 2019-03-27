@@ -18,8 +18,8 @@ public class SpeedVector implements Serializable {
     mass = _mass;
   }
 
-  public SpeedVector() {};
-  
+  public SpeedVector() {}
+
   public SpeedVector(double d, double e) {
     this.dx = d;
     this.dy = e;

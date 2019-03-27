@@ -61,7 +61,7 @@ public class Router {
       } else {
         // No arguments, just run the method
         logger.trace("Executing " + route.getController().getName() + " : " + route.getMethod());
-        method.invoke(controller, new Object[0]);
+        method.invoke(controller);
       }
       
     } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {

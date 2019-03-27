@@ -9,5 +9,5 @@ public interface MessageService {
    * 
    * @param message
    */
-  public void send(Message message);
+  void send(Message message);
 }

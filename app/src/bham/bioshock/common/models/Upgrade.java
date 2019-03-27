@@ -22,7 +22,7 @@ public class Upgrade implements Serializable {
   /** Stores the display name of the upgrade */
   private String displayName;
 
-  public static enum Type {
+  public enum Type {
     FUEL_TANK_SIZE,
     ENGINE_EFFICIENCY,
     FUEL_PER_ROUND,

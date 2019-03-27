@@ -19,11 +19,7 @@ public class EndMinigameMessage extends Message {
     this.winnerID = winnerID;
     this.planetID = planetID;
     this.points = points;
-    
-    if (winnerID != null && winnerID.equals(playerID)) {
-      initiatorWon = true;
-    } else {
-      initiatorWon = false;
-    }
+
+      initiatorWon = winnerID != null && winnerID.equals(playerID);
   }
 }

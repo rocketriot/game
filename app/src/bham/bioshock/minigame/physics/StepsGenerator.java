@@ -209,7 +209,7 @@ public class StepsGenerator {
           if (steps.size() >= MAX_STEPS) {
             sleep(DELAY + 20);
             continue;
-          };
+          }
 
           synchronized (steps) {
             Step last;

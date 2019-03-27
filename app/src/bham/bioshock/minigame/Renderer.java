@@ -125,7 +125,7 @@ public class Renderer {
 
   public void render(float delta) {
     if(store.isReconnecting()) {
-      router.call(Route.LOADING, new String("Reconnecting..."));
+      router.call(Route.LOADING, "Reconnecting...");
       return;
     }
     

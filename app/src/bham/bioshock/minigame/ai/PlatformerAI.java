@@ -8,7 +8,7 @@ import bham.bioshock.minigame.models.Platform;
 import bham.bioshock.minigame.objectives.Platformer;
 import bham.bioshock.minigame.physics.CollisionHandler;
 import bham.bioshock.minigame.physics.StepsGenerator;
-import bham.bioshock.server.ServerHandler;
+import bham.bioshock.server.interfaces.MultipleConnectionsHandler;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -61,7 +61,7 @@ public class PlatformerAI extends MinigameAI {
     private StepsGenerator testStepsGenerator;
 
 
-    public PlatformerAI(UUID id, Store store, ServerHandler handler) {
+    public PlatformerAI(UUID id, Store store, MultipleConnectionsHandler handler) {
         super(id, store, handler);
 
     }
@@ -135,7 +135,7 @@ public class PlatformerAI extends MinigameAI {
     /**
      * State to determine the next goal platform
      */
-    private class FindNextPlatform extends CPUState {
+    public class FindNextPlatform extends CPUState {
         FindNextPlatform() {
             super("findNextPlatform");
         }
@@ -189,12 +189,12 @@ public class PlatformerAI extends MinigameAI {
         }
 
 
-    };
+    }
 
     /**
      * State to move the player towards its next goal platform
      */
-    private class MoveTowardsPlatform extends CPUState {
+    public class MoveTowardsPlatform extends CPUState {
         /*
         The direction that the player is currently travelling in
         1 = left, 2 = right
@@ -251,12 +251,12 @@ public class PlatformerAI extends MinigameAI {
         }
 
 
-    };
+    }
 
     /**
      * State to determine when a how to jump
      */
-    private class DetermineJumpingPosition extends CPUState{
+    public class DetermineJumpingPosition extends CPUState{
         /*
         The direction the player is currently travelling
          */
@@ -355,10 +355,7 @@ public class PlatformerAI extends MinigameAI {
 
 
 
-    };
-
-
-
+    }
 
 
     abstract public class CPUState {
