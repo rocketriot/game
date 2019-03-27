@@ -112,6 +112,7 @@ public class JoinScreenController extends Controller {
    * For reconnection
    */
   public void updateReconnect(ReconnectResponseMessage data) {
+    logger.info("Got recoonect info");
     store.overwritePlayers(data.players);
     store.setTurn(data.turnNum);
     store.setRound(data.roundNum);
@@ -119,7 +120,9 @@ public class JoinScreenController extends Controller {
     
     if(data.boardgameRunning) {
       router.call(Route.COORDINATES_SAVE, data.coordinates);  
-      router.call(Route.GAME_BOARD_SAVE, data.gameBoard); 
+      if(data.gameBoard != null) {
+        router.call(Route.GAME_BOARD_SAVE, data.gameBoard);         
+      }
       router.call(Route.GAME_BOARD_SHOW);      
     } else {
       ArrayList<JoiningPlayer> players = new ArrayList<>();

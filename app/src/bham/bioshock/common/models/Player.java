@@ -76,7 +76,9 @@ public class Player implements Serializable {
 
   /** Sets the players coordinates to their original spawn coordinates */
   public void moveToSpawn() {
-    setCoordinates(spawnPoint);
+    if(spawnPoint != null) {
+      setCoordinates(spawnPoint);      
+    }
   }
 
   public float getFuelGridCost() {

@@ -67,6 +67,7 @@ public class GameBoardController extends Controller {
     ArrayList<Player> players = store.getPlayers();
 
     for (int i = 0; i < coordinates.length; i++) {
+      players.get(i).setSpawnPoint(coordinates[i]);
       players.get(i).setCoordinates(coordinates[i]);
     }
   }
