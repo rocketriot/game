@@ -26,7 +26,7 @@ public class XMLInteraction {
   private static final Logger logger = LogManager.getLogger(XMLInteraction.class);
   
   private static final String PREFERENCES_PATH = "app/assets/Preferences/Preferences.XML";
-  private static final String GAME_DESC_PATH = "app/assets/Preferences/Preferences.XML";
+  private static final String GAME_DESC_PATH = "app/assets/XML/game_desc.XML";
   
   /**
    * Method to read the preferences from an XML file and return them as an AppPreferences object
