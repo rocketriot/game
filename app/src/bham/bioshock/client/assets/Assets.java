@@ -15,7 +15,7 @@ public class Assets {
   public static final String gameBackground = "app/assets/backgrounds/game.png";
   public static final String menuBackground = "app/assets/backgrounds/menu.png";
   
-  // Main Menu
+  // Menu assets
   public static final String logo = "app/assets/ui/main-menu/logo.png";
   public static final String hostButton = "app/assets/ui/main-menu/host-game.png";
   public static final String hostButtonHover = "app/assets/ui/main-menu/host-game-hover.png";
@@ -29,11 +29,14 @@ public class Assets {
   public static final String exitButtonHover = "app/assets/ui/main-menu/exit-hover.png";
   public static final String startButton = "app/assets/ui/main-menu/start.png";
   public static final String startButtonHover = "app/assets/ui/main-menu/start-hover.png";
+  public static final String finishButton = "app/assets/ui/main-menu/finish.png";
+  public static final String finishButtonHover = "app/assets/ui/main-menu/finish-hover.png";
 
   // Game Board assets
   public static final String planetsFolder = "app/assets/entities/planets";
   public static final String flagsFolder = "app/assets/entities/flags";
   public static final String playersFolder = "app/assets/entities/players";
+  public static final String playersSmallFolder = "app/assets/entities/players-small";
   public static final String asteroidsFolder = "app/assets/entities/asteroids";
   public static final String blackhole = "app/assets/entities/blackHole.png";
   public static final String fuel = "app/assets/entities/fuel.png";
