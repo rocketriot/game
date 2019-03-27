@@ -54,9 +54,11 @@ public class InputListener extends InputAdapter {
     
     if(localStore.getObjective() instanceof Platformer) {
       Platformer o = (Platformer) localStore.getObjective();
-      long now = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC);
-      long frozen = o.getFrozenFor(mainPlayer.getId());
-      if((now - frozen) < o.MAX_FROZEN_TIME) {
+      Long now = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC);
+      Long frozen = o.getFrozenFor(mainPlayer.getId());
+      System.out.println(frozen + " " + now);
+      
+      if(frozen == null || (now - frozen) > o.MAX_FROZEN_TIME) {
         mainPlayer.moveChange();
         router.call(Route.MINIGAME_MOVE);  
       }

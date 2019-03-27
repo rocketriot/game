@@ -51,7 +51,6 @@ public class BoardAi extends Thread {
           samePlayerNum = 0;
         }
         
-        System.out.println(samePlayerNum);
         
         if(samePlayerNum > 10) {
           logger.error("Forced player skip");
