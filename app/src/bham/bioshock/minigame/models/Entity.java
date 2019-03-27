@@ -413,7 +413,7 @@ public abstract class Entity implements Serializable {
   public void update(float delta) {
     Step step = null;
     if (loaded && !isStatic) {
-      step = stepsGenerator.getStep(delta);;
+      step = stepsGenerator.getStep(delta);
     }
 
     if (step != null) {
@@ -515,6 +515,7 @@ public abstract class Entity implements Serializable {
    * @param batch
    */
   public void afterDraw(SpriteBatch batch) {};
+
 
   /**
    * Returns step generator

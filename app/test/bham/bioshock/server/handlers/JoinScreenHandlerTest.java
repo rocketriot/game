@@ -1,10 +1,5 @@
 package bham.bioshock.server.handlers;
 
-import static org.junit.Assert.*;
-import java.util.UUID;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
 import bham.bioshock.common.Position;
 import bham.bioshock.common.models.Player;
 import bham.bioshock.common.models.store.Store;
@@ -20,6 +15,13 @@ import bham.bioshock.server.InvalidMessageSequence;
 import bham.bioshock.server.ServerHandler;
 import bham.bioshock.testutils.communication.FakeMessage;
 import bham.bioshock.testutils.communication.FakeServerService;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
+
+import java.util.UUID;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class JoinScreenHandlerTest {
@@ -64,7 +66,7 @@ public class JoinScreenHandlerTest {
     // And no new message has been received
     assertEquals(1, service.getSentMessages().size());
   }
-  
+
   @Test
   public void testHandleForUnregistered() {
     FakeServerService service = new FakeServerService();

@@ -1,6 +1,5 @@
 package bham.bioshock.minigame.ai;
 
-import java.util.UUID;
 import bham.bioshock.common.models.store.MinigameStore;
 import bham.bioshock.common.models.store.Store;
 import bham.bioshock.communication.messages.minigame.BulletShotMessage;
@@ -9,6 +8,9 @@ import bham.bioshock.communication.messages.minigame.MinigamePlayerStepMessage;
 import bham.bioshock.server.interfaces.MultipleConnectionsHandler;
 import bham.bioshock.minigame.models.Bullet;
 import bham.bioshock.minigame.models.astronaut.AstronautMove;
+import bham.bioshock.server.interfaces.MultipleConnectionsHandler;
+
+import java.util.UUID;
 
 /** The type Minigame ai. */
 public abstract class MinigameAI {
@@ -50,7 +52,7 @@ public abstract class MinigameAI {
     if(localStore == null) {
       localStore = store.getMinigameStore();
       if(localStore == null) return;
-    };
+    }
     if(astronaut == null) {
       astronaut = new CpuAstronaut(localStore.getPlayer(id), localStore.getWorld());
       if(astronaut == null) return;

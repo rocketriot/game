@@ -48,7 +48,7 @@ public class Platformer extends Objective {
       Astronaut bestP = null;
       Iterator<Astronaut> it = localStore.getPlayers().iterator();
       while (it.hasNext()) {
-        Astronaut player = (Astronaut) it.next();
+        Astronaut player = it.next();
         Position playerPos = player.getPos();
         float diff = playerPos.sqDistanceFrom(goalPos);
         if (diff < best) {

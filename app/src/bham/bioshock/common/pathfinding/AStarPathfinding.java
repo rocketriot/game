@@ -327,11 +327,7 @@ public class AStarPathfinding {
   private Boolean isValid(Coordinates point) {
     int x = point.getX();
     int y = point.getY();
-    if (x < maxX && x >= 0 && y < maxX && y >= 0 && aStarGrid[x][y].isPassable()) {
-      return true;
-    } else {
-      return false;
-    }
+      return x < maxX && x >= 0 && y < maxX && y >= 0 && aStarGrid[x][y].isPassable();
   }
 
   /**
