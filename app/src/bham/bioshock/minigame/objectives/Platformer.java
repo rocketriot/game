@@ -80,7 +80,7 @@ public class Platformer extends Objective {
   @Override
   public void handle(UpdateFrozenMessage m) {
     /* when the player is shot, they should freeze for a certain amount of time */
-    setFrozen(m.playerID, m.created);  
+    setFrozen(m.playerID, LocalDateTime.now().toEpochSecond(ZoneOffset.UTC));  
   }
 
   /**
