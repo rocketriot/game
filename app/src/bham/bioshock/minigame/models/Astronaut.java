@@ -532,9 +532,10 @@ public class Astronaut extends Entity {
     String[] colours = new String[] { "orange", "red", "green", "blue" };
 
     for(int i=0; i<colours.length; i++) {
+      // Should be already loaded by the join screen
+//      manager.load(Assets.astroBase + colours[i] + Assets.astroShield, Texture.class, GamePart.MINIGAME);
       manager.load(Assets.astroBase + colours[i] + Assets.astroWalk, Texture.class, GamePart.MINIGAME);
       manager.load(Assets.astroBase + colours[i] + Assets.astroGun, Texture.class, GamePart.MINIGAME);
-      manager.load(Assets.astroBase + colours[i] + Assets.astroShield, Texture.class, GamePart.MINIGAME);
       manager.load(Assets.astroBase + colours[i] + Assets.astroShieldGun, Texture.class, GamePart.MINIGAME);
       manager.load(Assets.astroBase + colours[i] + Assets.astroFFall, Texture.class, GamePart.MINIGAME);
       manager.load(Assets.astroBase + colours[i] + Assets.astroFall, Texture.class, GamePart.MINIGAME);
