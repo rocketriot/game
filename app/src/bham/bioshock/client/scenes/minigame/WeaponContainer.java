@@ -1,9 +1,9 @@
 package bham.bioshock.client.scenes.minigame;
 
 import bham.bioshock.Config;
-import bham.bioshock.client.Assets;
-import bham.bioshock.client.FontGenerator;
 import bham.bioshock.client.Router;
+import bham.bioshock.client.assets.AssetContainer;
+import bham.bioshock.client.assets.Assets;
 import bham.bioshock.client.scenes.HudElement;
 import bham.bioshock.common.models.store.Store;
 import bham.bioshock.minigame.models.Astronaut;
@@ -18,28 +18,24 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 
 public class WeaponContainer extends HudElement {
   private ShapeRenderer sr;
-  private FontGenerator fontGenerator;
   private BitmapFont font;
 
   private final int SIZE = 100;
   private final int RADIUS = 50;
   private Image weapon;
 
-  WeaponContainer(Stage stage, SpriteBatch batch, Skin skin, Store store, Router router) {
-    super(stage, batch, skin, store, router);
-    
+  WeaponContainer(Stage stage, SpriteBatch batch, Store store, Router router, AssetContainer assets) {
+    super(stage, batch, assets, store, router);
     sr = new ShapeRenderer();
   }
 
   protected void setup() {
-    fontGenerator = new FontGenerator();
-    font = fontGenerator.generate(24);
+    font = assets.getFont(24);
 
-    weapon = new Image(new Texture(Gdx.files.internal(Assets.gun)));
+    weapon = new Image(assets.get(Assets.gun, Texture.class));
     weapon.setSize(100, 100);
     stage.addActor(weapon);
   }

@@ -120,25 +120,18 @@ class KillThemAllAITests {
   private static PlanetPosition findNearestPlayer(PlanetPosition astroPos) {
     float astroAngle = normaliseAngle(astroPos.angle);
 
-//    System.out.println("Astronaut angle: " + astroAngle);
 
     PlanetPosition nearestPlayer = null;
     float nearestAngle = Integer.MAX_VALUE;
     for (PlanetPosition playerPos : playerPositions) { float playerAng = normaliseAngle(playerPos.angle);
 
-//      System.out.println("Checking if " + playerAng + " is closer than " + nearestAngle);
-//      System.out.println(Math.abs(playerAng - astroAngle));
 
       if (Math.abs(playerAng - astroAngle) < nearestAngle) {
-
-//        System.out.println(playerAng + " is closer than " + nearestAngle);
 
         nearestAngle = Math.abs(playerAng - astroAngle) ;
         nearestPlayer = playerPos;
       }
     }
-
-//    System.out.println(nearestPlayer.angle + " is the closest angle");
 
     return nearestPlayer;
   }

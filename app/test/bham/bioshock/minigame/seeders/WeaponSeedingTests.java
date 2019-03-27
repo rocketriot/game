@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import bham.bioshock.minigame.models.Gun;
 import bham.bioshock.minigame.worlds.World;
+import bham.bioshock.testutils.minigame.FakeWorld;
 import java.util.ArrayList;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -31,8 +32,8 @@ public class WeaponSeedingTests {
    */
   @BeforeAll
   public void setupTests() {
-    world = new TestingWorld();
-    ((TestingWorld) world).seedWeapons();
+    world = new FakeWorld();
+    ((FakeWorld) world).seedWeapons();
     guns = world.getGuns();
   }
 

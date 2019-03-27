@@ -1,11 +1,11 @@
 package bham.bioshock.client.scenes.gameboard;
 
 import bham.bioshock.client.Router;
+import bham.bioshock.client.assets.AssetContainer;
 import bham.bioshock.client.scenes.Hud;
 import bham.bioshock.common.models.Player;
 import bham.bioshock.common.models.store.Store;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.scenes.scene2d.ui.*;
 
 public class GameBoardHud extends Hud {
   private FuelBar fuelBar;
@@ -13,13 +13,13 @@ public class GameBoardHud extends Hud {
   private Notification notification;
   private SkipTurnButton skipTurnButton;
 
-  public GameBoardHud(SpriteBatch batch, Skin skin, Store store, Router router) {
-    super(batch, skin, store, router);
+  public GameBoardHud(SpriteBatch batch, AssetContainer assets, Store store, Router router) {
+    super(batch, assets, store, router);
 
     notification = new Notification(batch, store);
-    scoreBoard = new ScoreBoard(stage, batch, skin, store, router);
-    fuelBar = new FuelBar(stage, batch, skin, store, router);
-    skipTurnButton = new SkipTurnButton(stage, batch, skin, store, router);
+    scoreBoard = new ScoreBoard(stage, batch, assets, store, router);
+    fuelBar = new FuelBar(stage, batch, assets, store, router);
+    skipTurnButton = new SkipTurnButton(stage, batch, assets, store, router);
   }
 
   @Override

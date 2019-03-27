@@ -1,13 +1,14 @@
 package bham.bioshock.minigame.worlds;
 
-import bham.bioshock.client.Assets;
+import bham.bioshock.client.assets.AssetContainer;
+import bham.bioshock.client.assets.Assets;
+import bham.bioshock.client.assets.Assets.GamePart;
 import bham.bioshock.common.Position;
 import bham.bioshock.minigame.PlanetPosition;
 import bham.bioshock.minigame.models.Gun;
 import bham.bioshock.minigame.models.Platform;
 import bham.bioshock.minigame.models.Rocket;
 import bham.bioshock.minigame.physics.Vector;
-import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
@@ -24,8 +25,6 @@ abstract public class World implements Serializable {
   protected int textureId;
   static Texture texture;
   static Texture frontTexture;
-  
-
 
   /**
    * Draws planet texture on the screen
@@ -36,7 +35,11 @@ abstract public class World implements Serializable {
     batch.draw(texture, -radius, -radius, radius*2, radius*2);
   }
   
-
+  /**
+   * Called after main drawing, used to draw something on top of other objects
+   * 
+   * @param batch
+   */
   public void afterDraw(SpriteBatch batch) {
     if(textureId == 4) {   
       if(frontTexture == null) return;
@@ -204,10 +207,10 @@ abstract public class World implements Serializable {
    * @param manager
    * @param id
    */
-  public static void loadTextures(AssetManager manager, int id) {
-    manager.load(Assets.planetBase + id + ".png", Texture.class);
+  public static void loadTextures(AssetContainer manager, int id) {
+    manager.load(Assets.planetBase + id + ".png", Texture.class, GamePart.MINIGAME);
     if(id == 4) {
-      manager.load(Assets.planetBase + "4_front.png", Texture.class);
+      manager.load(Assets.planetBase + "4_front.png", Texture.class, GamePart.MINIGAME);
     }
   }
   
@@ -217,7 +220,7 @@ abstract public class World implements Serializable {
    * @param manager
    * @param id
    */
-  public static void createTextures(AssetManager manager, int id) {
+  public static void createTextures(AssetContainer manager, int id) {
     texture = manager.get(Assets.planetBase + id + ".png", Texture.class);
     if(id == 4) {
       textureOffset = 770;

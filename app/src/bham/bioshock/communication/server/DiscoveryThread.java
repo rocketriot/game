@@ -27,7 +27,7 @@ public class DiscoveryThread extends Thread {
     try {
       socket = new DatagramSocket(Config.PORT, InetAddress.getByName("0.0.0.0"));
       socket.setBroadcast(true);
-      socket.setSoTimeout(500);
+      socket.setSoTimeout(2000);
 
       while (!Thread.currentThread().isInterrupted()) {
         byte[] buffer = new byte[Command.COMM_DISCOVER_REQ.getBytes().length];

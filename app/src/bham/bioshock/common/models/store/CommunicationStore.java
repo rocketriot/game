@@ -1,6 +1,7 @@
 package bham.bioshock.common.models.store;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import bham.bioshock.communication.client.ServerStatus;
 
 public class CommunicationStore {
@@ -20,6 +21,15 @@ public class CommunicationStore {
   public void register(ServerStatus server) {
     servers.removeIf(s -> s.getIP().equals(server.getIP()));
     servers.add(server);
+
+    servers.sort(new Comparator<ServerStatus> () {
+
+      @Override
+      public int compare(ServerStatus arg0, ServerStatus arg1) {
+        return arg0.getIP().compareTo(arg1.getIP());
+      }
+    
+    });
   }
   
   public ArrayList<ServerStatus> getServers() {

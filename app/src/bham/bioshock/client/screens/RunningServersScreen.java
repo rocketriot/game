@@ -1,6 +1,5 @@
 package bham.bioshock.client.screens;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -13,9 +12,10 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
-import bham.bioshock.client.Assets;
 import bham.bioshock.client.Route;
 import bham.bioshock.client.Router;
+import bham.bioshock.client.assets.AssetContainer;
+import bham.bioshock.client.assets.Assets;
 import bham.bioshock.client.controllers.SoundController;
 import bham.bioshock.common.models.store.CommunicationStore;
 import bham.bioshock.communication.client.ServerStatus;
@@ -29,8 +29,8 @@ public class RunningServersScreen extends ScreenMaster {
   float animationTime = 0;
   float time = 0;
   
-  public RunningServersScreen(CommunicationStore store, Router router) {
-    super(router);
+  public RunningServersScreen(CommunicationStore store, Router router, AssetContainer assets) {
+    super(router, assets);
     this.store = store;
   }
   
@@ -51,7 +51,7 @@ public class RunningServersScreen extends ScreenMaster {
   }
   
   public void genAnimation() {
-    Texture t = new Texture(Gdx.files.internal("app/assets/animations/loading2.png"));
+    Texture t = assets.get(Assets.loading, Texture.class);
     TextureRegion[][] list = TextureRegion.split(t, t.getWidth() / 26, t.getHeight());
     loading = Assets.textureToAnimation(list, 26, 0, 0.05f);
   }

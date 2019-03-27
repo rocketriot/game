@@ -17,6 +17,8 @@ public class ClientConnectThread extends Thread {
   
   private CommunicationStore store;
   private HashMap<String, Long> keepAlive = new HashMap<>();
+  private DatagramSocket socket;
+  private Thread receiverThread;
   
   public ClientConnectThread(CommunicationStore store) {
     super("ClientConnectThread");
@@ -30,10 +32,10 @@ public class ClientConnectThread extends Thread {
    * @param data bytes to be sent
    * @param address
    */
-  private void sendPacket(DatagramSocket c, byte[] data, InetAddress address) {
+  private void sendPacket(byte[] data, InetAddress address) {
     try {
       DatagramPacket sendPacket = new DatagramPacket(data, data.length, address, Config.PORT);
-      c.send(sendPacket);
+      socket.send(sendPacket);
     } catch (IOException e) {
       logger.error("UDP discovery packet sending error " + e.getMessage());
     }
@@ -60,16 +62,19 @@ public class ClientConnectThread extends Thread {
    * Try to find the server
    */
   @Override
-  public void run() {
-    DatagramSocket c = null;
+  public void run() {    
     try {
-      c = new DatagramSocket();
-      c.setSoTimeout(1000);
-      c.setBroadcast(true);
+      socket = new DatagramSocket();
+      socket.setSoTimeout(1000);
+      socket.setBroadcast(true);
+      
+      receiverThread = new Thread(new ConnectReceiver(), "ClientConnectReceiver");
+      receiverThread.start();
       
       while(!isInterrupted()) {
+        System.out.println("Loop");
         byte[] data = Command.COMM_DISCOVER_REQ.getBytes();
-        sendPacket(c, data, InetAddress.getByName("255.255.255.255"));
+        sendPacket(data, InetAddress.getByName("255.255.255.255"));
   
         // Broadcast the message over all the network interfaces
         Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
@@ -88,33 +93,11 @@ public class ClientConnectThread extends Thread {
               continue;
   
             // Send the broadcast package
-            sendPacket(c, data, broadcast);
+            sendPacket(data, broadcast);
              
             logger.debug("Discovery packet sent to " + broadcast.getHostAddress() + " " + networkInterface.getDisplayName());
           }
         }
-  
-        // Wait for a response
-        byte[] buffer = new byte[255];
-        DatagramPacket receivePacket = new DatagramPacket(buffer, buffer.length);
-        
-        try {
-          c.receive(receivePacket);
-        
-          // Check if the message is correct
-          String message = new String(receivePacket.getData()).trim();
-          
-          if (message.startsWith(Command.COMM_DISCOVER_RES.toString())) {
-            String name = message.replaceFirst(Command.COMM_DISCOVER_RES.toString(), "");
-            // Save host address
-            String ipAddress = receivePacket.getAddress().getHostAddress();
-            ServerStatus server = new ServerStatus(name, ipAddress);
-            store.register(server);
-            keepAlive.put(server.getIP(), System.currentTimeMillis());
-          }
-        } catch(SocketTimeoutException e) {}
-        
-        checkKeepAlive();
         sleep(500);
       }
 
@@ -123,9 +106,56 @@ public class ClientConnectThread extends Thread {
     } catch (InterruptedException e) {
       logger.debug("ClientConnectThread interrupted");
     } finally {
-      if (c != null) {
-        c.close();
+      if(receiverThread != null) {
+        receiverThread.interrupt();
+      }
+      if (socket != null) {
+        socket.close();
       }
     }
+    try {
+      receiverThread.join();
+    } catch(InterruptedException e) {
+      logger.error("Unexpected interrupted");
+    }
+  }
+  
+  
+  class ConnectReceiver implements Runnable {
+
+    @Override
+    public void run() {
+      try {
+        while(!isInterrupted()) { 
+          System.out.println("Receive");
+          // Wait for a response
+          byte[] buffer = new byte[255];
+          DatagramPacket receivePacket = new DatagramPacket(buffer, buffer.length);
+          
+          try {
+            socket.receive(receivePacket);
+          
+            // Check if the message is correct
+            String message = new String(receivePacket.getData()).trim();
+            System.out.println(message);
+            
+            if (message.startsWith(Command.COMM_DISCOVER_RES.toString())) {
+              String name = message.replaceFirst(Command.COMM_DISCOVER_RES.toString(), "");
+              // Save host address
+              String ipAddress = receivePacket.getAddress().getHostAddress();
+              ServerStatus server = new ServerStatus(name, ipAddress);
+              store.register(server);
+              keepAlive.put(server.getIP(), System.currentTimeMillis());
+            }
+          } catch(SocketTimeoutException e) {}
+          
+          checkKeepAlive();
+        }
+      } catch(IOException e) {
+        logger.error("ClientConnectReceiver error " + e.getMessage());
+      }
+      logger.info("ClientConnectReceiver finished");
+    }
+    
   }
 }

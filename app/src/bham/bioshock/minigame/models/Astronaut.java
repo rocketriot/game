@@ -1,6 +1,20 @@
 package bham.bioshock.minigame.models;
 
-import bham.bioshock.client.Assets;
+import static java.util.stream.Collectors.toList;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Intersector.MinimumTranslationVector;
+import bham.bioshock.client.assets.AssetContainer;
+import bham.bioshock.client.assets.Assets;
+import bham.bioshock.client.assets.Assets.GamePart;
 import bham.bioshock.client.controllers.SoundController;
 import bham.bioshock.common.Direction;
 import bham.bioshock.common.Position;
@@ -9,6 +23,7 @@ import bham.bioshock.minigame.PlayerTexture;
 import bham.bioshock.minigame.models.astronaut.AstronautMove;
 import bham.bioshock.minigame.models.astronaut.Equipment;
 import bham.bioshock.minigame.objectives.Objective;
+import bham.bioshock.minigame.objectives.Platformer;
 import bham.bioshock.minigame.physics.CollisionBoundary;
 import bham.bioshock.minigame.physics.SpeedVector;
 import bham.bioshock.minigame.physics.Step;
@@ -30,31 +45,60 @@ import java.util.UUID;
 
 import static java.util.stream.Collectors.toList;
 
+/**
+ * Astronaut is the player in the minigame controllable by the user or the AI
+ * it can shoot and collide with objective entities
+ */
 public class Astronaut extends Entity {
 
   private static final long serialVersionUID = 3467047831018591965L;
   
+  /** All textures for astronauts, with different colours */
   private static AstronautTextures[] textures;
   private static TextureRegion[] hearts = new TextureRegion[5];
   
+  /** Texture for this astronaut */
   private AstronautTextures texture; 
+  /** Health sprite */
   private Sprite health;
+  /** Current animation time */
   float animationTime;
+  /** Direction the player is facing */
   private PlayerTexture dir = PlayerTexture.FRONT;
-  
+  /** Player equipment */
   private Equipment equipment = new Equipment();
   
+  /** Legs collision boundary */
   private CollisionBoundary legs;
+  /** Current player movement - jump / left / right */
   private AstronautMove move = new AstronautMove();
+  /** Respawn position after animation of dying */
   private Position respawn;
+  /** Player name */
   private RotatableText name;
   
+  /** Direction of dying */
   private boolean dieFront = true;
+
+  /** texture colour */
   private int colour;
+  /** dying animation time */
   private float dieTime;
+  /** Last direction from which the player was shot */
   private Direction shotDirection;
+  /** Reference to a platform the player is standing on */
   private transient Optional<Entity> currentPlatform = Optional.empty();
 
+  /**
+   * Creates a new astronaut with default position, defined id and colour.
+   * Created astronaut have zero speed vector
+   * 
+   * @param w
+   * @param x
+   * @param y
+   * @param id
+   * @param colour
+   */
   public Astronaut(World w, float x, float y, UUID id, int colour) {
     super(w, x, y, EntityType.ASTRONAUT);
     width = 150;
@@ -68,22 +112,49 @@ public class Astronaut extends Entity {
     this.id = id;
   }
 
+  /**
+   * @see #Astronaut(World, float, float, UUID, int)
+   * @param w
+   * @param p
+   * @param id
+   * @param colour
+   */
   public Astronaut(World w, Position p, UUID id, int colour) {
     this(w, p.x, p.y, id, colour);
   }
 
+  /**
+   * Saves player name
+   * 
+   * @param name
+   */
   public void setName(String name) {
     this.name = new RotatableText(name);
   }
 
+  /**
+   * Updates current movement
+   * 
+   * @param value
+   */
   public void moveLeft(boolean value) {
     move.movingLeft = value;
   }
-
+  
+  /**
+   * Updates current movement
+   * 
+   * @param value
+   */
   public void moveRight(boolean value) {
     move.movingRight = value;
   }
-
+  
+  /**
+   * Updates current movement
+   * 
+   * @param value
+   */
   public void jump(boolean value) {
     if (value) {
       SoundController.playSound("jump");
@@ -91,10 +162,19 @@ public class Astronaut extends Entity {
     move.jumping = value;
   }
 
+  /**
+   * Get list of generated future steps
+   * 
+   * @param value
+   */
   public List<Step> getFutureSteps() {
     return stepsGenerator.getFutureSteps().collect(toList());
   }
-
+  
+  /**
+   * Inform the generator that the move has changed
+   * and save the direction player is facing
+   */
   public void moveChange() {
     if(is(State.REMOVING)) return;
     if (move.movingLeft) {
@@ -110,32 +190,47 @@ public class Astronaut extends Entity {
     stepsGenerator.jump(move.jumping);
   }
 
+  /**
+   * Reset direction the player is facing
+   */
   public void resetDirection() {
     dir = PlayerTexture.FRONT;
   }
 
+  @Override
   public void update(float delta) {
     if (!loaded)
       return;
     super.update(delta);
     
+    // Rotate collision boundary if the player is dying
     if (is(State.REMOVING)) {
       collisionBoundary.update(respawn, delta);
       collisionBoundary.update(pos, getRotation() - (dieTime / 0.71f)*90);
       dieTime += delta;
     }
+    
+    // Adjust legs position
     legs.update(pos, getRotation());
     animationTime += delta;
 
     checkIfOnGround();
   }
 
+  /**
+   * Check and save if is touching the ground, and reset the platform
+   */
   private void checkIfOnGround() {
     if((world.fromGroundTo(legs.getX(),legs.getY())) <= 15) {
       removePlatform();
     }
   }
 
+  /**
+   * Get current astronaut movement
+   * 
+   * @return move
+   */
   public AstronautMove getMove() {
     return move;
   }
@@ -156,7 +251,6 @@ public class Astronaut extends Entity {
         setPosition(respawn);
         setState(State.LOADED); 
       }
-      
     } else {
       drawHealth(batch);
     }
@@ -168,8 +262,15 @@ public class Astronaut extends Entity {
     drawName(batch);
   }
   
+  /**
+   * Draw player health
+   * @param batch
+   */
   private void drawHealth(SpriteBatch batch) {
     if(!objective.isPresent()) return;
+    // Don't display health if the objective is a platformer
+    if(objective.get() instanceof Platformer) return;
+    
     Objective o = objective.get();
     int value = o.getHealth(getId());
     
@@ -182,6 +283,10 @@ public class Astronaut extends Entity {
     health.draw(batch);
   }
   
+  /**
+   * Draw player name
+   * @param batch
+   */
   private void drawName(SpriteBatch batch) {
     PlanetPosition pp = world.convert(pos);
     pp.fromCenter += height + 40;
@@ -190,6 +295,10 @@ public class Astronaut extends Entity {
     name.draw(batch);
   }
 
+  /**
+   * Update player position with the collision boundary
+   * @param p
+   */
   public void setPosition(Position p) {
     pos = p;
     if (collisionBoundary != null) {
@@ -200,7 +309,10 @@ public class Astronaut extends Entity {
     }
   }
 
-
+  /**
+   * Create supporting sprites
+   */
+  @Override
   public void load() {
     texture = textures[colour];
     super.load();    
@@ -236,15 +348,24 @@ public class Astronaut extends Entity {
     return region;
   }
 
+  /**
+   * Get walking texture
+   * 
+   * @return texture
+   */
   private TextureRegion getWalkTexture() {
     if(dir.equals(PlayerTexture.FRONT)) {
-      if (equipment.haveShield) {
+      if (equipment.haveShield && equipment.haveGun) {
+        return texture.frontShieldGunTexture;
+      } else if (equipment.haveShield) {
         return texture.frontShieldTexture;
       } else if (equipment.haveGun) {
         return texture.frontGunTexture;
       } else {
         return texture.frontTexture;
       }
+    } else if(equipment.haveShield && equipment.haveGun) {
+      return texture.walkShieldGunAnimation.getKeyFrame(animationTime, true);
     } else if(equipment.haveShield) {
       return texture.walkShieldAnimation.getKeyFrame(animationTime, true);
     } else if (equipment.haveGun) {
@@ -271,7 +392,9 @@ public class Astronaut extends Entity {
     }
   }
 
-  /** Collisions **/
+  /**
+   * Astronaut collision handler
+   */
   @Override
   public void handleCollision(Entity e) {
     if(e.is(State.REMOVING) || is(State.REMOVING) || !e.loaded) return;
@@ -320,10 +443,6 @@ public class Astronaut extends Entity {
   @Override
   public boolean handleCollisionMove(Step step, MinimumTranslationVector v, Entity e) {
     switch (e.type) {
-      case BULLET:
-        if (e.is(State.REMOVING)) return false;
-        collisionHandler.collide(step, 0.2f, v);
-        return false;
       case ASTRONAUT:
         collisionHandler.collide(step, .8f, v);
         return true;
@@ -352,11 +471,23 @@ public class Astronaut extends Entity {
     }
   }
 
+  /**
+   * Update player speed, position and equipement 
+   * 
+   * @param speed
+   * @param pos
+   * @param equipment
+   */
   public void updateFromServer(SpeedVector speed, Position pos, Equipment equipment) {
     this.equipment.haveGun = equipment.haveGun;
     stepsGenerator.updateFromServer(speed, pos);
   }
   
+  /**
+   * Overwrite player move
+   * 
+   * @param move
+   */
   public void updateMove(AstronautMove move) {
     this.move = move;
     this.moveChange();
@@ -398,20 +529,31 @@ public class Astronaut extends Entity {
     this.respawn = pos;
   }
   
-  public static void loadTextures(AssetManager manager) {
+  /**
+   * Queue textures for loading
+   * 
+   * @param manager
+   */
+  public static void loadTextures(AssetContainer manager) {
     String[] colours = new String[] { "orange", "red", "green", "blue" };
 
     for(int i=0; i<colours.length; i++) {
-      manager.load(Assets.astroBase + colours[i] + Assets.astroWalk, Texture.class);
-      manager.load(Assets.astroBase + colours[i] + Assets.astroGun, Texture.class);
-      manager.load(Assets.astroBase + colours[i] + Assets.astroShield, Texture.class);
-      manager.load(Assets.astroBase + colours[i] + Assets.astroFFall, Texture.class);
-      manager.load(Assets.astroBase + colours[i] + Assets.astroFall, Texture.class);
+      manager.load(Assets.astroBase + colours[i] + Assets.astroWalk, Texture.class, GamePart.MINIGAME);
+      manager.load(Assets.astroBase + colours[i] + Assets.astroGun, Texture.class, GamePart.MINIGAME);
+      manager.load(Assets.astroBase + colours[i] + Assets.astroShield, Texture.class, GamePart.MINIGAME);
+      manager.load(Assets.astroBase + colours[i] + Assets.astroShieldGun, Texture.class, GamePart.MINIGAME);
+      manager.load(Assets.astroBase + colours[i] + Assets.astroFFall, Texture.class, GamePart.MINIGAME);
+      manager.load(Assets.astroBase + colours[i] + Assets.astroFall, Texture.class, GamePart.MINIGAME);
     }
-    manager.load(Assets.hearts, Texture.class);
+    manager.load(Assets.hearts, Texture.class, GamePart.MINIGAME);
   }
   
-  public static void createTextures(AssetManager manager) {
+  /**
+   * Load textures for rendering
+   * 
+   * @param manager
+   */
+  public static void createTextures(AssetContainer manager) {
     String[] colours = new String[] { "orange", "red", "green", "blue" };
     textures = new AstronautTextures[colours.length];
     
@@ -420,16 +562,19 @@ public class Astronaut extends Entity {
       TextureRegion[][] walkSheet = Assets.splittedTexture(manager, Assets.astroBase + colours[i] + Assets.astroWalk, 11);
       TextureRegion[][] walkGunSheet = Assets.splittedTexture(manager, Assets.astroBase + colours[i] + Assets.astroGun, 11);
       TextureRegion[][] walkShieldSheet = Assets.splittedTexture(manager, Assets.astroBase + colours[i] + Assets.astroShield, 11);
+      TextureRegion[][] walkShieldGunSheet = Assets.splittedTexture(manager, Assets.astroBase + colours[i] + Assets.astroShieldGun, 11);
       TextureRegion[][] dieFront = Assets.splittedTexture(manager, Assets.astroBase + colours[i] + Assets.astroFFall, 10);
       TextureRegion[][] dieBack = Assets.splittedTexture(manager, Assets.astroBase + colours[i] + Assets.astroFall, 12);
       
       t.frontTexture = walkSheet[0][0];
       t.frontGunTexture = walkGunSheet[0][0];
       t.frontShieldTexture = walkShieldSheet[0][0];
+      t.frontShieldGunTexture = walkShieldGunSheet[0][0];
       
       t.walkAnimation = Assets.textureToAnimation(walkSheet, 11, 1, 0.1f);
       t.walkGunAnimation = Assets.textureToAnimation(walkGunSheet, 11, 1, 0.1f);
       t.walkShieldAnimation = Assets.textureToAnimation(walkShieldSheet, 11, 1, 0.1f);
+      t.walkShieldGunAnimation = Assets.textureToAnimation(walkShieldGunSheet, 11, 1, 0.1f);
       t.dyingFront = Assets.textureToAnimation(dieFront, 10, 0, 0.05f);
       t.dyingBack = Assets.textureToAnimation(dieBack, 12, 0, 0.05f);
       textures[i] = t;
@@ -441,30 +586,42 @@ public class Astronaut extends Entity {
     }
   }
   
+  /**
+   * Set the platform the player is on
+   * 
+   * @param platform
+   */
+  private void setOnPlatform(Platform platform) {
+    currentPlatform = Optional.of(platform);
+  }
+  /**
+   * Reset the platform the player is on
+   */
+  private void removePlatform() {
+    currentPlatform = Optional.empty();
+  }
+  /**
+   * Get the platform
+   * @return
+   */
+  public Optional<Entity> getOnPlatform() {
+    return currentPlatform;
+  }
+  
+  /**
+   * Set of astronaut textures for all possible colours 
+   */
   private static class AstronautTextures {
     Animation<TextureRegion> walkAnimation;
     Animation<TextureRegion> walkGunAnimation;
     Animation<TextureRegion> walkShieldAnimation;
+    Animation<TextureRegion> walkShieldGunAnimation;
     Animation<TextureRegion> dyingFront;
     Animation<TextureRegion> dyingBack;
     TextureRegion frontTexture;
     TextureRegion frontGunTexture;
     TextureRegion frontShieldTexture;
-  }
-
-
-  private void setOnPlatform(Platform platform) {
-    currentPlatform = Optional.of(platform);
-  }
-  private void removePlatform() {
-    currentPlatform = Optional.empty();
-  }
-  public Optional<Entity> getOnPlatform() {
-    return currentPlatform;
-  }
-
-  public String toString() {
-    return name.getText();
+    TextureRegion frontShieldGunTexture;
   }
 
 }

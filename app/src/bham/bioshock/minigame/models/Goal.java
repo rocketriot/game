@@ -1,62 +1,56 @@
 package bham.bioshock.minigame.models;
 
-import bham.bioshock.client.Assets;
+import bham.bioshock.client.assets.AssetContainer;
+import bham.bioshock.client.assets.Assets;
+import bham.bioshock.client.assets.Assets.GamePart;
 import bham.bioshock.minigame.worlds.World;
-import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
+/**
+ * Goal object represents the final position for the platformer objective
+ */
 public class Goal extends Entity {
-    //private static TextureRegion texture;
-    private static Animation<TextureRegion> blackHoleAnimation;
-    private float animationTime;
+  private static Animation<TextureRegion> blackHoleAnimation;
+  private float animationTime;
 
+  private static final long serialVersionUID = -8342563560891277870L;
 
-    public Goal(World w, float x, float y, boolean isStatic, EntityType type) {
+  /**
+   * Creates a new goal at specified position
+   * 
+   * @param w
+   * @param x
+   * @param y
+   * @param isStatic
+   * @param type
+   */
+  public Goal(World w, float x, float y) {
+    super(w, x, y, true, EntityType.GOAL);
+    setRotation(0);
+    animationTime = 0;
+    width = 180;
+    height = 180;
+  }
 
-        super(w, x, y, isStatic, EntityType.GOAL);
-        setRotation(0);
-        animationTime= 0;
-        width= 180;
-        height= 180;
+  @Override
+  public TextureRegion getTexture() {
+    return blackHoleAnimation.getKeyFrame(animationTime, true);
+  }
 
-    }
+  public static void createTextures(AssetContainer manager) {
+    TextureRegion[][] textureR = Assets.splittedTexture(manager, Assets.blackHoleAnimationSheet, 8);
+    blackHoleAnimation = Assets.textureToAnimation(textureR, 8, 0, 0.1f);
+  }
 
+  public static void loadTextures(AssetContainer manager) {
+    manager.load(Assets.blackHoleAnimationSheet, Texture.class, GamePart.MINIGAME);
+  }
 
-    @Override
-    public TextureRegion getTexture() {
-        return blackHoleAnimation.getKeyFrame(animationTime,true);
-    }
-
-    public static void createTextures(AssetManager manager) {
-        TextureRegion[][] textureR = Assets.splittedTexture(manager, Assets.blackHoleAnimationSheet, 8);
-        blackHoleAnimation = Assets.textureToAnimation(textureR, 8, 0, 0.1f);
-    }
-
-    public static void loadTextures(AssetManager manager) {
-        manager.load(Assets.blackHoleAnimationSheet, Texture.class);
-
-
-   /* Texture sheet = new Texture(Gdx.files.internal(Assets.blackHoleAnimationSheet));
-
-        TextureRegion[] textureRegion = new TextureRegion[8];
-        TextureRegion[][] tmp =
-                TextureRegion.split(sheet, sheet.getWidth() / 8, sheet.getHeight());
-
-        int index = 0;
-        for (int j = 0; j < 8; j++) {
-            textureRegion[index++] = tmp[0][j];
-        }
-
-
-        //blackHoleAnimation = new Animation<TextureRegion>(0.1f, textureRegion);
-*/
-    }
-
-    @Override
-    public void update(float delta) {
-        super.update(delta);
-        animationTime += delta;
-    }
+  @Override
+  public void update(float delta) {
+    super.update(delta);
+    animationTime += delta;
+  }
 }

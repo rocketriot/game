@@ -1,21 +1,29 @@
 package bham.bioshock.minigame.models;
 
 
-import bham.bioshock.client.Assets;
+import bham.bioshock.client.assets.AssetContainer;
+import bham.bioshock.client.assets.Assets;
+import bham.bioshock.client.assets.Assets.GamePart;
 import bham.bioshock.common.Position;
 import bham.bioshock.minigame.PlanetPosition;
 import bham.bioshock.minigame.worlds.World;
-import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
-/** The type Platform. */
+/**
+ * Platforms are static vertical objects on which the player can walk Texture of the platform
+ * matches the world texture. Seeder creates a path of platforms for AIs by saving the parent
+ * platform
+ */
 public class Platform extends StaticEntity {
 
   private static final long serialVersionUID = -2823962935775990161L;
 
   private static TextureRegion texture;
 
+  /**
+   * Platforms are connected
+   */
   private Platform parent;
 
   /**
@@ -61,15 +69,30 @@ public class Platform extends StaticEntity {
     this(w, w.convert(pp), width, height);
   }
 
+  /**
+   * Get texture for rendering
+   */
   public TextureRegion getTexture() {
     return texture;
   }
-  
-  public static void loadTextures(AssetManager manager, int id) {
-    manager.load(Assets.platformsBase + id + ".png", Texture.class);
+
+  /**
+   * Load platform textures
+   * 
+   * @param manager
+   * @param id
+   */
+  public static void loadTextures(AssetContainer manager, int id) {
+    manager.load(Assets.platformsBase + id + ".png", Texture.class, GamePart.MINIGAME);
   }
-  
-  public static void createTextures(AssetManager manager, int id) {
+
+  /**
+   * Create platform texture for rendering
+   * 
+   * @param manager
+   * @param id
+   */
+  public static void createTextures(AssetContainer manager, int id) {
     texture = new TextureRegion(manager.get(Assets.platformsBase + id + ".png", Texture.class));
   }
 
@@ -91,22 +114,21 @@ public class Platform extends StaticEntity {
     return parent;
   }
 
-  public String toString() {
-    return "Platform "+getPlanetPos().toString();
-  }
-
   /**
    * Get the planet position of the left edge of the platform
+   * 
    * @return the planet position of the left edge of the platform
    */
   public PlanetPosition getLeftEdge() {
-    return world.convert(new Position(getX()-(width/2f), getY()));
+    return world.convert(new Position(getX() - (width / 2f), getY()));
   }
+
   /**
    * Get the planet position of the right edge of the platform
+   * 
    * @return the planet position of the right edge of the platform
    */
   public PlanetPosition getRightEdge() {
-    return world.convert(new Position(getX()+(width/2f), getY()));
+    return world.convert(new Position(getX() + (width / 2f), getY()));
   }
 }

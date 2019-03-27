@@ -8,6 +8,7 @@ import com.google.inject.Inject;
 import bham.bioshock.client.BoardGame;
 import bham.bioshock.client.Route;
 import bham.bioshock.client.Router;
+import bham.bioshock.client.assets.AssetContainer;
 import bham.bioshock.client.screens.MainMenuScreen;
 import bham.bioshock.server.Server;
 
@@ -16,11 +17,13 @@ public class MainMenuController extends Controller {
   Server server;
   BoardGame game;
   CommunicationClient commClient;
+  AssetContainer assets;
 
   @Inject
-  public MainMenuController(Store store, Router router, BoardGame game, Server server, CommunicationClient commClient) {
+  public MainMenuController(Store store, Router router, BoardGame game, Server server, CommunicationClient commClient, AssetContainer assets) {
     super(store, router, game);
     this.server = server;
+    this.assets = assets;
     this.game = game;
     this.commClient = commClient;
   }
@@ -48,11 +51,11 @@ public class MainMenuController extends Controller {
     store.reconnecting(false);
     store.getCommStore().clearServers();
     
-    setScreen(new MainMenuScreen(router));
+    setScreen(new MainMenuScreen(router, assets));
   }
 
-  public void saveTurns(String number){
-    this.store.setMaxRounds(Integer.parseInt(number));
+  public void saveTurns(int number){
+    store.setMaxRounds(number);
   }
 
   public void alert(String message) {

@@ -4,12 +4,12 @@ import bham.bioshock.client.AppPreferences;
 import bham.bioshock.client.BoardGame;
 import bham.bioshock.client.Router;
 import bham.bioshock.client.XMLInteraction;
+import bham.bioshock.client.assets.AssetContainer;
+import bham.bioshock.client.assets.Assets;
 import bham.bioshock.common.models.store.Store;
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
 import java.util.HashMap;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Future;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -81,21 +81,21 @@ public class SoundController extends Controller {
    * @param game the current BoardGame
    */
   @Inject
-  public SoundController(Store store, Router router, BoardGame game) {
+  public SoundController(Store store, Router router, BoardGame game, AssetContainer assets) {
     super(store, router, game);
 
-    mainMenuMusic = Gdx.audio.newSound(Gdx.files.internal("app/assets/music/MainMenuMusic.mp3"));
-    boardGameMusic = Gdx.audio.newSound(Gdx.files.internal("app/assets/music/GameBoardMusic.mp3"));
-    minigameMusic = Gdx.audio.newSound(Gdx.files.internal("app/assets/music/MinigameMusic.mp3"));
-
-    menuSelectSound = Gdx.audio.newSound(Gdx.files.internal("app/assets/music/MenuSelect.wav"));
-    rocketSound = Gdx.audio.newSound(Gdx.files.internal("app/assets/music/RocketSound.wav"));
-    jumpSound = Gdx.audio.newSound(Gdx.files.internal("app/assets/music/JumpSound.wav"));
-    laserSound = Gdx.audio.newSound(Gdx.files.internal("app/assets/music/LaserSound.mp3"));
-    healthPickupSound = Gdx.audio.newSound(Gdx.files.internal("app/assets/music/HealthPickupSound.wav"));
-    blackHoleSound = Gdx.audio.newSound(Gdx.files.internal("app/assets/music/BlackHoleSound.wav"));
-    fuelSound = Gdx.audio.newSound(Gdx.files.internal("app/assets/music/FuelSound.wav"));
-    upgradeSound = Gdx.audio.newSound(Gdx.files.internal("app/assets/music/UpgradeSound.wav"));
+    mainMenuMusic = assets.get(Assets.mainMenuMusic, Sound.class);
+    boardGameMusic = assets.get(Assets.gameBoardMusic, Sound.class);
+    minigameMusic = assets.get(Assets.miniGameMusic, Sound.class);
+    
+    menuSelectSound = assets.get(Assets.menuSelectSound, Sound.class);
+    rocketSound = assets.get(Assets.rocketSound, Sound.class);
+    jumpSound = assets.get(Assets.jumpSound, Sound.class);
+    laserSound = assets.get(Assets.laserSound, Sound.class);
+    healthPickupSound = assets.get(Assets.healthPickupSound, Sound.class);
+    blackHoleSound = assets.get(Assets.blackHoleSound, Sound.class);
+    fuelSound = assets.get(Assets.blackHoleSound, Sound.class);
+    upgradeSound = assets.get(Assets.upgradeSound, Sound.class);
 
     preferences = xmlInteraction.xmlToPreferences();
 
@@ -242,7 +242,7 @@ public class SoundController extends Controller {
       long id = sounds.get(sound).loop(soundsVolume);
       soundsIds.put(sound, id);
 
-      if (soundsPlaying.keySet().contains(music)) {
+      if (soundsPlaying.keySet().contains(sound)) {
         soundsPlaying.replace(sound, true);
       } else {
         soundsPlaying.put(sound, true);

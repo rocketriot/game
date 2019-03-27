@@ -1,13 +1,13 @@
 package bham.bioshock.client.scenes;
 
 import bham.bioshock.Config;
-import bham.bioshock.client.Assets;
 import bham.bioshock.client.Route;
 import bham.bioshock.client.Router;
+import bham.bioshock.client.assets.AssetContainer;
+import bham.bioshock.client.assets.Assets;
 import bham.bioshock.common.models.store.Store;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL30;
 import com.badlogic.gdx.graphics.Texture;
@@ -19,7 +19,6 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
@@ -33,16 +32,13 @@ public class PauseMenu extends HudElement {
   private VerticalGroup menuOptions;
   private TextButton quitLabel;
 
-  PauseMenu(Stage stage, SpriteBatch batch, Skin skin, Store store, Router router) {
-    super(stage, batch, skin, store, router);
-    
+  PauseMenu(Stage stage, SpriteBatch batch, AssetContainer assets, Store store, Router router) {
+    super(stage, batch, assets, store, router);
     sr = new ShapeRenderer();
   }
 
   protected void setup() {
-    FileHandle file = Gdx.files.internal(Assets.pauseIcon);
-
-    Texture texture = new Texture(file);
+    Texture texture = assets.get(Assets.pauseIcon, Texture.class);
     texture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 
     pauseButton = new Sprite(texture);

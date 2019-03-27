@@ -102,7 +102,6 @@ public class ClientHandler implements MessageHandler {
             router.call(Route.DIRECT_END);
             break;
           }
-
           case RECONNECT_PLAYER: {
             ReconnectResponseMessage data = (ReconnectResponseMessage) message;
             

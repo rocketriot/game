@@ -1,9 +1,11 @@
 package bham.bioshock.client.screens;
 
 import bham.bioshock.Config;
-import bham.bioshock.client.Assets;
 import bham.bioshock.client.Route;
 import bham.bioshock.client.Router;
+import bham.bioshock.client.assets.AssetContainer;
+import bham.bioshock.client.assets.Assets;
+import bham.bioshock.client.assets.Assets.GamePart;
 import bham.bioshock.client.controllers.SoundController;
 import bham.bioshock.client.gameLogic.gameboard.*;
 import bham.bioshock.client.scenes.gameboard.GameBoardHud;
@@ -23,17 +25,14 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
-import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import java.util.ArrayList;
 import java.util.UUID;
 
 public class GameBoardScreen extends ScreenMaster implements InputProcessor {
-  private final InputMultiplexer inputMultiplexer;
+  private InputMultiplexer inputMultiplexer;
 
   /** The speed at which to move the board with the WASD keys */
   private final float CAMERA_MOVE_SPEED = 5f;
@@ -87,10 +86,11 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
 
   /** Current coordinates of the mouse on the game board */
   private Coordinates mouseCoordinates = null;
+  
+  private boolean loading = true;
 
-  public GameBoardScreen(Router router, Store store) {
-    super(router);
-
+  public GameBoardScreen(Router router, Store store, AssetContainer assets) {
+    super(router, assets);
     this.store = store;
     this.gridSize = store.getGameBoard().GRID_SIZE;
 
@@ -103,7 +103,17 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
 
     // Center the camera on the middle of the grid
     camera.position.set(Config.GAME_WORLD_WIDTH / 4, Config.GAME_WORLD_HEIGHT / 2.25f, 0);
-
+    
+    this.loadAssets();
+  }
+  
+  private void loadAssets() {
+    assets.load(Assets.pauseIcon, Texture.class, GamePart.BOARDGAME);
+    assets.load(Assets.gameBackground, Texture.class, GamePart.BOARDGAME);
+  }
+  
+  private void assetsLoaded() {
+    background = new Sprite(assets.get(Assets.gameBackground, Texture.class));
     drawPlayer = new DrawPlayer(batch);
     drawPlanet = new DrawPlanet(batch);
     drawFuel = new DrawFuel(batch);
@@ -114,13 +124,15 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
     pathRenderer =
         new PathRenderer(camera, store.getGameBoard(), store.getMainPlayer(), store.getPlayers());
 
-    hud = new GameBoardHud(batch, skin, store, router);
-    background = new Sprite(new Texture(Gdx.files.internal(Assets.gameBackground)));
-
+    hud = new GameBoardHud(batch, assets, store, router);
+    
     // Setup the input processing
     this.inputMultiplexer = new InputMultiplexer();
     this.inputMultiplexer.addProcessor(hud.getStage());
     this.inputMultiplexer.addProcessor(this);
+    Gdx.input.setInputProcessor(inputMultiplexer);
+    
+    this.resize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
   }
 
   private boolean checkIfNearPlanet(Player player) {
@@ -323,8 +335,10 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
   @Override
   public void resize(int width, int height) {
     viewport.update(width, height);
-    hud.getViewport().update(width, height, true);
-    resizeSprites();
+    if(hud != null) {
+      hud.getViewport().update(width, height, true);      
+      resizeSprites();
+    }
   }
 
   private void resizeSprites() {
@@ -340,6 +354,15 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
 
   @Override
   public void render(float delta) {
+    if(loading && assets.update()) {
+      // assets loaded
+      loading = false;
+      assetsLoaded();
+    } else if(loading) {
+      // HERE LOADING SCREEN CAN BE DISPLAYED
+      return;
+    }
+    
     if(store.isReconnecting()) {
       router.call(Route.LOADING, new String("Reconnecting..."));
       return;

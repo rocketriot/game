@@ -15,10 +15,10 @@ public class EndMinigameMessage extends Message {
 
   public EndMinigameMessage(UUID playerID, UUID winnerID, UUID planetID, int points) {
     super(Command.MINIGAME_END);
-    this.playerID = playerID;
     this.winnerID = winnerID;
     this.planetID = planetID;
     this.points = points;
+    this.playerID = winnerID;
     
     if (winnerID != null && winnerID.equals(playerID)) {
       initiatorWon = true;
