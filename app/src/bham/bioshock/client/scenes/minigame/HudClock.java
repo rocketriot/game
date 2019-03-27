@@ -1,8 +1,8 @@
 package bham.bioshock.client.scenes.minigame;
 
 import bham.bioshock.Config;
-import bham.bioshock.client.FontGenerator;
 import bham.bioshock.client.Router;
+import bham.bioshock.client.assets.AssetContainer;
 import bham.bioshock.client.scenes.HudElement;
 import bham.bioshock.common.models.store.Store;
 
@@ -14,10 +14,9 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 
-public class Clock extends HudElement {
-  private FontGenerator fontGenerator;
+public class HudClock extends HudElement {
+  
   private BitmapFont font;
   private BitmapFont fontRed;
   private SimpleDateFormat timeFormat;
@@ -25,14 +24,13 @@ public class Clock extends HudElement {
   /** The length of the minigame */
   private float seconds = 60;
 
-  Clock(Stage stage, SpriteBatch batch, Skin skin, Store store, Router router) {
-    super(stage, batch, skin, store, router);
+  HudClock(Stage stage, SpriteBatch batch, AssetContainer assets, Store store, Router router) {
+    super(stage, batch, assets, store, router);
   }
 
   protected void setup() {
-    fontGenerator = new FontGenerator();
-    font = fontGenerator.generate(72);
-    fontRed = fontGenerator.generate(72, new Color(0xFF3C48FF));
+    font = assets.getFont(72);
+    fontRed = assets.getFont(72, new Color(0xFF3C48FF));
 
     timeFormat = new SimpleDateFormat("mm:ss");
   }

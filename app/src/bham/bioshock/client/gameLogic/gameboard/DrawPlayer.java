@@ -1,7 +1,7 @@
 package bham.bioshock.client.gameLogic.gameboard;
 
-import bham.bioshock.client.Assets;
 import bham.bioshock.client.FontGenerator;
+import bham.bioshock.client.assets.Assets;
 import bham.bioshock.common.models.Player;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Batch;

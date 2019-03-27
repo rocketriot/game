@@ -7,7 +7,12 @@ import bham.bioshock.common.utils.Clock;
 import bham.bioshock.communication.messages.Message;
 import bham.bioshock.communication.messages.minigame.EndMinigameMessage;
 import bham.bioshock.communication.messages.minigame.MinigameStartMessage;
+import bham.bioshock.communication.messages.objectives.EndPlatformerMessage;
+import bham.bioshock.minigame.ai.CaptureTheFlagAI;
+import bham.bioshock.minigame.ai.KillThemAllAI;
 import bham.bioshock.minigame.ai.PlatformerAI;
+import bham.bioshock.minigame.objectives.CaptureTheFlag;
+import bham.bioshock.minigame.objectives.KillThemAll;
 import bham.bioshock.minigame.objectives.Objective;
 import bham.bioshock.minigame.objectives.Platformer;
 import bham.bioshock.minigame.worlds.RandomWorld;
@@ -66,13 +71,7 @@ public class MinigameHandler {
       objectiveId = rand.nextInt(10) % 3;
     }
 
-
-
-    Random rand = new Random();
-
-
-    /*switch (objectiveId) {
-
+    switch (objectiveId) {
       case 1:
         o = new Platformer(w);
         for (UUID id : store.getCpuPlayers()) {
@@ -91,16 +90,11 @@ public class MinigameHandler {
           aiLoop.registerHandler(new CaptureTheFlagAI(id, store, handler));
         }
         break;
-    }*/
-
-    o = new Platformer(w);
-    for (UUID id : store.getCpuPlayers()) {
-      aiLoop.registerHandler(new PlatformerAI(id, store, handler));
     }
 
     aiLoop.start();
     
-    setupMinigameEnd(gbHandler, playerId);
+    setupMinigameEnd(gbHandler);
     handler.sendToAll(new MinigameStartMessage(w, o, planetId));
   }
 
@@ -108,7 +102,7 @@ public class MinigameHandler {
   /**
    * Starts a clock ending the minigame
    */
-  private void setupMinigameEnd(GameBoardHandler gameBoardHandler, UUID playerId) {
+  private void setupMinigameEnd(GameBoardHandler gameBoardHandler) {
 
     clock.reset();
     clock.at(60f, new Clock.TimeListener() {
@@ -125,7 +119,7 @@ public class MinigameHandler {
         if(localStore != null && localStore.getObjective() != null) {
           winner = localStore.getObjective().getWinner();
         }
-        endMinigame(winner, gameBoardHandler, playerId);
+        endMinigame(winner, gameBoardHandler);
       }
     });
 
@@ -191,8 +185,9 @@ public class MinigameHandler {
    * 
    * @param gameBoardHandler
    */
-  public void endMinigame(UUID winnerId, GameBoardHandler gameBoardHandler, UUID playerId) {
-    Message msg = new EndMinigameMessage(playerId, winnerId, planetId, Config.PLANET_POINTS);
+  public void endMinigame(UUID winnerId, GameBoardHandler gameBoardHandler) {
+    UUID initiatorId = store.getMovingPlayer().getId();
+    Message msg = new EndMinigameMessage(initiatorId, winnerId, planetId, Config.PLANET_POINTS);
     planetId = null;
 
 
@@ -206,7 +201,13 @@ public class MinigameHandler {
    * 
    * @param message
    */
-  public void updateObjective(Message message) {
+  public void updateObjective(Message message, GameBoardHandler gbHandler) {
+    if(message instanceof EndPlatformerMessage) {
+      EndPlatformerMessage data = (EndPlatformerMessage) message;
+      endMinigame(data.winnerID, gbHandler);
+      return;
+    }
+    
     handler.sendToAll(message);
   }
 

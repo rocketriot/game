@@ -20,6 +20,7 @@ public class ReconnectResponseMessage extends Message {
   public final boolean boardgameRunning;
   public final int turnNum;
   public final int roundNum;
+  public final int maxRoundsNum;
   
   public ReconnectResponseMessage(Store store) {
     super(Command.RECONNECT_PLAYER);
@@ -29,6 +30,7 @@ public class ReconnectResponseMessage extends Message {
     minigameRunning = store.getMinigameStore() != null;
     turnNum = store.getTurn();
     roundNum = store.getRound();
+    maxRoundsNum = store.getMaxRounds();
     isValid = true;
     
     if(gameBoard == null) {
@@ -51,6 +53,7 @@ public class ReconnectResponseMessage extends Message {
     this.boardgameRunning = false;
     this.turnNum = 0;
     this.roundNum = 0;
+    this.maxRoundsNum = 0;
   }
 
 }

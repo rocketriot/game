@@ -1,8 +1,10 @@
 package bham.bioshock.minigame.models;
 
-import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import bham.bioshock.client.assets.AssetContainer;
+import bham.bioshock.client.assets.Assets;
+import bham.bioshock.client.assets.Assets.GamePart;
 import bham.bioshock.minigame.worlds.World;
 import java.util.HashMap;
 
@@ -50,11 +52,10 @@ public class Rocket extends Entity {
    *
    * @param manager the asset manager
    */
-  public static void loadTextures(AssetManager manager) {
-    manager.load("app/assets/entities/players/1.png", Texture.class);
-    manager.load("app/assets/entities/players/2.png", Texture.class);
-    manager.load("app/assets/entities/players/3.png", Texture.class);
-    manager.load("app/assets/entities/players/4.png", Texture.class);
+  public static void loadTextures(AssetContainer manager) {
+    for (int i = 1; i <= 4; i++) {
+      manager.load(Assets.playersFolder + "/" + i + ".png", Texture.class, GamePart.MINIGAME);
+    }
   }
 
   /**
@@ -62,11 +63,11 @@ public class Rocket extends Entity {
    *
    * @param manager the asset manager
    */
-  public static void createTextures(AssetManager manager) {
-    textures.put(1, manager.get("app/assets/entities/players/1.png", Texture.class));
-    textures.put(2, manager.get("app/assets/entities/players/2.png", Texture.class));
-    textures.put(3, manager.get("app/assets/entities/players/3.png", Texture.class));
-    textures.put(4, manager.get("app/assets/entities/players/4.png", Texture.class));
+  public static void createTextures(AssetContainer manager) {
+    for (int i = 1; i <= 4; i++) {
+      manager.load(Assets.playersFolder + "/" + i + ".png", Texture.class, GamePart.MINIGAME);
+      textures.put(i, manager.get(Assets.playersFolder + "/" + i + ".png", Texture.class));
+    }
   }
 
   /**

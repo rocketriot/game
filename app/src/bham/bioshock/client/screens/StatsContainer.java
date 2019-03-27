@@ -1,6 +1,6 @@
 package bham.bioshock.client.screens;
 
-import bham.bioshock.client.Assets;
+import bham.bioshock.client.assets.Assets;
 import bham.bioshock.common.models.Player;
 import bham.bioshock.common.models.store.MinigameStore;
 import bham.bioshock.common.models.store.Store;

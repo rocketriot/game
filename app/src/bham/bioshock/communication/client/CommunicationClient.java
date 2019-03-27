@@ -121,14 +121,18 @@ public class CommunicationClient {
   }
   
   public void discover(CommunicationStore store, Router router) {
-
     ServerStatus server = fromFile();
     if(server != null) {
       store.setRecoveredServer(server);
     }
-    
     discoverThread = new ClientConnectThread(store);
     discoverThread.start();
+  }
+  
+  public void stopDiscovery() {
+    if(discoverThread != null) {
+      discoverThread.interrupt();      
+    }
   }
   
   public boolean reconnect(String ip) {

@@ -5,6 +5,8 @@ import bham.bioshock.client.Router;
 import bham.bioshock.common.Position;
 import bham.bioshock.common.models.store.MinigameStore;
 import bham.bioshock.common.models.store.Store;
+import bham.bioshock.communication.messages.minigame.EndMinigameMessage;
+import bham.bioshock.communication.messages.objectives.EndPlatformerMessage;
 import bham.bioshock.communication.messages.objectives.UpdateFrozenMessage;
 import bham.bioshock.minigame.models.*;
 import bham.bioshock.minigame.worlds.World;
@@ -65,7 +67,6 @@ public class Platformer extends Objective {
    */
   @Override
   public void gotShot(Astronaut player, UUID killer) {
-    //super.gotShot(player,killer);
     if(!store.isHost()) {
       return;
     }
@@ -123,10 +124,8 @@ public class Platformer extends Objective {
     if (!store.isHost()){
       return;
     }
-
-    //Player initiator = store.getMovingPlayer();
-    //router.call(Route.MINIGAME_END, new EndMinigameMessage(initiator.getId(), winner.get(), localStore.getPlanetID(), 75));
-
+    
+    router.call(Route.SEND_OBJECTIVE_UPDATE, new EndPlatformerMessage(a.getId()));
     return;
   }
 
@@ -159,7 +158,7 @@ public class Platformer extends Objective {
     }
     /* set the goal to the highest platform */
     goalPlatform = highestPlatform;
-    goal = new Goal(world, highestPlatform.getX(), highestPlatform.getY(), true, EntityType.GOAL);
+    goal = new Goal(world, highestPlatform.getX(), highestPlatform.getY());
   }
 
   /**

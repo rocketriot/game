@@ -4,6 +4,7 @@ import bham.bioshock.client.AppPreferences;
 import bham.bioshock.client.Route;
 import bham.bioshock.client.Router;
 import bham.bioshock.client.XMLInteraction;
+import bham.bioshock.client.assets.AssetContainer;
 import bham.bioshock.client.controllers.SoundController;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -53,8 +54,8 @@ public class PreferencesScreen extends ScreenMaster {
    * @param router the router
    * @param preferences the passed current user preferences
    */
-  public PreferencesScreen(Router router, AppPreferences preferences) {
-    super(router);
+  public PreferencesScreen(Router router, AppPreferences preferences, AssetContainer assets) {
+    super(router, assets);
     this.preferences = preferences;
 
     musicEnabled = preferences.getMusicEnabled();
@@ -63,8 +64,8 @@ public class PreferencesScreen extends ScreenMaster {
     soundsVolume = preferences.getSoundsVolume();
   }
 
-  public PreferencesScreen(Router router, AppPreferences preferences, Route backRoute) {
-    this(router, preferences);
+  public PreferencesScreen(Router router, AppPreferences preferences, Route backRoute, AssetContainer assets) {
+    this(router, preferences, assets);
     this.backRoute = backRoute;
   }
 

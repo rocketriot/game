@@ -2,48 +2,75 @@ package bham.bioshock.client;
 
 public class AppPreferences {
 
-  private boolean music_enabled;
-  private float music_volume;
-  private float sounds_volume;
-  private boolean sounds_enabled;
+  private boolean musicEnabled;
+  private float musicVolume;
+  private float soundsVolume;
+  private boolean soundsEnabled;
 
-  public AppPreferences(boolean music_enabled, float music_volume, boolean sounds_enabled,
-      float sounds_volume) {
-    this.music_enabled = music_enabled;
-    this.music_volume = music_volume;
-    this.sounds_enabled = sounds_enabled;
-    this.sounds_volume = sounds_volume;
+  /**
+   * Creates app preferences class with saved values
+   * 
+   * @param musicEnabled
+   * @param musicVolume
+   * @param soundsEnabled
+   * @param soundsVolume
+   */
+  public AppPreferences(boolean musicEnabled, float musicVolume, boolean soundsEnabled,
+      float soundsVolume) {
+    this.musicEnabled = musicEnabled;
+    this.musicVolume = musicVolume;
+    this.soundsEnabled = soundsEnabled;
+    this.soundsVolume = soundsVolume;
   }
 
+  /**
+   * Returns true if sound is enabled
+   * 
+   * @return
+   */
   public boolean getSoundsEnabled() {
-    return sounds_enabled;
+    return soundsEnabled;
   }
 
+  /**
+   * Returns true if music is enabled
+   * @return
+   */
   public boolean getMusicEnabled() {
-    return music_enabled;
+    return musicEnabled;
   }
 
+  /**
+   * Returns music volume
+   * 
+   * @return
+   */
   public float getMusicVolume() {
-    return music_volume;
+    return musicVolume;
   }
 
+  /**
+   * Returns sound volume 
+   * 
+   * @return
+   */
   public float getSoundsVolume() {
-    return sounds_volume;
+    return soundsVolume;
   }
 
   public void setMusicEnabled(boolean enabled) {
-    music_enabled = enabled;
+    musicEnabled = enabled;
   }
 
   public void setMusicVolume(float volume) {
-    music_volume = volume;
+    musicVolume = volume;
   }
 
   public void setSoundsEnabled(boolean enabled) {
-    sounds_enabled = enabled;
+    soundsEnabled = enabled;
   }
 
   public void setSoundsVolume(float volume) {
-    sounds_volume = volume;
+    soundsVolume = volume;
   }
 }

@@ -7,6 +7,7 @@ import com.google.inject.Inject;
 import bham.bioshock.client.BoardGame;
 import bham.bioshock.client.Route;
 import bham.bioshock.client.Router;
+import bham.bioshock.client.assets.AssetContainer;
 import bham.bioshock.client.screens.MinigameScreen;
 import bham.bioshock.common.Position;
 import bham.bioshock.common.models.Player;
@@ -31,13 +32,15 @@ public class MinigameController extends Controller {
 
   private ClientService clientService;
   private MinigameStore localStore;
+  private AssetContainer assets;
 
   @Inject
   public MinigameController(Store store, Router router, BoardGame game,
-      ClientService clientService) {
+      ClientService clientService, AssetContainer assets) {
     super(store, router, game);
     this.clientService = clientService;
     localStore = store.getMinigameStore();
+    this.assets = assets;
   }
 
 
@@ -167,7 +170,7 @@ public class MinigameController extends Controller {
 
     router.call(Route.FADE_OUT, "boardGame");
     router.call(Route.START_MUSIC, "minigame");
-    setScreen(new MinigameScreen(store, router));
+    setScreen(new MinigameScreen(store, router, assets));
     localStore.started();
   }
 

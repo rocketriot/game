@@ -3,6 +3,7 @@ package bham.bioshock.client.scenes.gameboard;
 import bham.bioshock.Config;
 import bham.bioshock.client.FontGenerator;
 import bham.bioshock.client.Router;
+import bham.bioshock.client.assets.AssetContainer;
 import bham.bioshock.client.scenes.HudElement;
 import bham.bioshock.common.models.store.Store;
 
@@ -14,7 +15,6 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup;
 import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.utils.Align;
@@ -31,10 +31,8 @@ public class FuelBar extends HudElement {
   private float fuelMaxHeight;
   private float fuelXCoordinate;
 
-  private FontGenerator fontGenerator;
-
-  FuelBar(Stage stage, SpriteBatch batch, Skin skin, Store store, Router router) {
-    super(stage, batch, skin, store, router);
+  FuelBar(Stage stage, SpriteBatch batch, AssetContainer assets, Store store, Router router) {
+    super(stage, batch, assets, store, router);
     
     sr = new ShapeRenderer();
 
@@ -42,9 +40,7 @@ public class FuelBar extends HudElement {
     fuelXCoordinate = Config.GAME_WORLD_WIDTH - (fuelWidth + fuelPadding);
   }
 
-  protected void setup() {
-    fontGenerator = new FontGenerator();
-    
+  protected void setup() {    
     VerticalGroup fuelInfo = new VerticalGroup();
     fuelInfo.setFillParent(true);
     fuelInfo.bottom();
@@ -54,10 +50,10 @@ public class FuelBar extends HudElement {
     stage.addActor(fuelInfo);
 
     LabelStyle style = new LabelStyle();
-    style.font = fontGenerator.generate(20);
+    style.font = assets.getFont(20);
     
     LabelStyle style1 = new LabelStyle();
-    style1.font = fontGenerator.generate(25);
+    style1.font = assets.getFont(25);
     
     fuelValueLabel = new Label(String.format("%.0f", store.getMainPlayer().getMaxFuel()), style1);
     fuelValueLabel.setFontScale(1.2f);
