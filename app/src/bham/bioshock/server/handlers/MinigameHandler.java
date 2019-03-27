@@ -2,6 +2,8 @@ package bham.bioshock.server.handlers;
 
 import bham.bioshock.Config;
 import bham.bioshock.common.Position;
+import bham.bioshock.common.models.GameBoard;
+import bham.bioshock.common.models.Planet;
 import bham.bioshock.common.models.store.MinigameStore;
 import bham.bioshock.common.models.store.Store;
 import bham.bioshock.common.utils.Clock;
@@ -64,6 +66,17 @@ public class MinigameHandler {
   public void startMinigame(UUID playerId, UUID planetId, GameBoardHandler gbHandler, Integer objectiveId) {
     // Create a world for the minigame
     World w = new RandomWorld();
+    
+    GameBoard board = store.getGameBoard();
+    if(board != null) {
+      Planet planet = board.getPlanet(planetId);
+      if(planet != null) {
+        w.setPlanetRadius(planet.getMinigameRadius());
+        w.setPlanetTexture(planet.getMinigameTextureId());
+      }
+    }
+    w.init();
+    
     if (planetId == null) {
       logger.error("Starting minigame without a planet ID (That's OK. for tests)!");
     } else {
@@ -137,6 +150,10 @@ public class MinigameHandler {
       }
     });
     
+    if(minigameTimer != null && minigameTimer.isAlive()) {
+      minigameTimer.interrupt();
+    }
+    
     minigameTimer = new Thread("MinigameTimer") {
       private long time;
 
@@ -178,8 +195,10 @@ public class MinigameHandler {
    * Sync player movement and position
    */
   public void playerMove(Message message, UUID playerId) {
+    MinigameStore localStore = store.getMinigameStore();
+    if(localStore == null) return;
     //for platform, check if the player is frozen
-    if(store.getMinigameStore().getObjective() instanceof Platformer) {
+    if(localStore.getObjective() instanceof Platformer) {
       Platformer o = (Platformer) store.getMinigameStore().getObjective();
       if(o.checkIfFrozen(playerId)) {
         long now = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC);
@@ -217,14 +236,15 @@ public class MinigameHandler {
    * @param gameBoardHandler
    */
   public void endMinigame(UUID winnerId, GameBoardHandler gameBoardHandler) {
-    UUID initiatorId = store.getMovingPlayer().getId();
-    Message msg = new EndMinigameMessage(initiatorId, winnerId, planetId, Config.PLANET_POINTS);
-    planetId = null;
-    
     if(minigameTimer != null) {
       minigameTimer.interrupt();
       clock.reset();
     }
+    
+    UUID initiatorId = store.getMovingPlayer().getId();
+    Message msg = new EndMinigameMessage(initiatorId, winnerId, planetId, Config.PLANET_POINTS);
+    planetId = null;
+    
 
     aiLoop.finish();
     handler.sendToAll(msg);

@@ -7,6 +7,7 @@ import java.net.Socket;
 import java.net.SocketException;
 import java.net.SocketImpl;
 import java.net.SocketImplFactory;
+import java.util.UUID;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -59,7 +60,7 @@ public class CommunicationMakerTest {
   
   @Test
   public void abortTest() throws InterruptedException {
-    connector.startSearch(handler, serverSocket, false);
+    connector.startSearch(handler, serverSocket, UUID.randomUUID(), false);
     // Init new connection
     socket.queue.add(new Object());
     
@@ -89,7 +90,7 @@ public class CommunicationMakerTest {
   
   @Test
   public void fullStopTest() throws InterruptedException {
-    connector.startSearch(handler, serverSocket, true);
+    connector.startSearch(handler, serverSocket, UUID.randomUUID(), true);
     
     Thread.sleep(1000);
     // That should stop both the main thread and the discovery thread

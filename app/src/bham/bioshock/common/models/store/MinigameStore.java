@@ -2,6 +2,7 @@ package bham.bioshock.common.models.store;
 
 import bham.bioshock.common.Position;
 import bham.bioshock.common.models.Player;
+import bham.bioshock.common.models.Upgrade;
 import bham.bioshock.minigame.models.Astronaut;
 import bham.bioshock.minigame.models.Entity;
 import bham.bioshock.minigame.models.EntityType;
@@ -60,6 +61,7 @@ public class MinigameStore {
   public void seed(Store store, World world, Objective o, UUID planetId) {
     this.planetID = planetId;
     this.currentWorld = world;
+    
     mainPlayerId = store.getMainPlayerId();
     Position[] playerPos = world.getPlayerPositions();
 
@@ -67,6 +69,10 @@ public class MinigameStore {
     for (Player player : store.getPlayers()) {
       Astronaut p = new Astronaut(world, playerPos[i], player.getId(), i);
       p.setName(player.getUsername());
+      
+     if( player.hasUpgrade(Upgrade.Type.MINIGAME_SHIELD) ) {
+        p.getEquipment().haveShield = true;
+      }
       
       addUpgrades(store, player, p, planetId);
       

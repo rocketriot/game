@@ -110,4 +110,8 @@ public class FakeWorld extends World {
   @Override
   public void afterDraw(SpriteBatch batch) {
   }
+
+  @Override
+  public void init() {
+  }
 }

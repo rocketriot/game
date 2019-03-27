@@ -72,7 +72,6 @@ public class ClientConnectThread extends Thread {
       receiverThread.start();
       
       while(!isInterrupted()) {
-        System.out.println("Loop");
         byte[] data = Command.COMM_DISCOVER_REQ.getBytes();
         sendPacket(data, InetAddress.getByName("255.255.255.255"));
   
@@ -127,9 +126,8 @@ public class ClientConnectThread extends Thread {
     public void run() {
       try {
         while(!isInterrupted()) { 
-          System.out.println("Receive");
           // Wait for a response
-          byte[] buffer = new byte[255];
+          byte[] buffer = new byte[1000];
           DatagramPacket receivePacket = new DatagramPacket(buffer, buffer.length);
           
           try {
@@ -140,10 +138,13 @@ public class ClientConnectThread extends Thread {
             System.out.println(message);
             
             if (message.startsWith(Command.COMM_DISCOVER_RES.toString())) {
-              String name = message.replaceFirst(Command.COMM_DISCOVER_RES.toString(), "");
+              String response = message.replaceFirst(Command.COMM_DISCOVER_RES.toString(), "");
+              String name = response.split(";")[0];
+              String serverId = response.split(";")[1];
+              
               // Save host address
               String ipAddress = receivePacket.getAddress().getHostAddress();
-              ServerStatus server = new ServerStatus(name, ipAddress);
+              ServerStatus server = new ServerStatus(name, ipAddress, serverId);
               store.register(server);
               keepAlive.put(server.getIP(), System.currentTimeMillis());
             }

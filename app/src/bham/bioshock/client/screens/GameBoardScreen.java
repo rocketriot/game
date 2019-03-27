@@ -88,6 +88,7 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
   private Coordinates mouseCoordinates = null;
   
   private boolean loading = true;
+  private boolean loaded = false;
 
   public GameBoardScreen(Router router, Store store, AssetContainer assets) {
     super(router, assets);
@@ -113,6 +114,8 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
   }
   
   private void assetsLoaded() {
+    if(loaded) return;
+    loaded = true;
     background = new Sprite(assets.get(Assets.gameBackground, Texture.class));
     drawPlayer = new DrawPlayer(batch);
     drawPlanet = new DrawPlanet(batch);
@@ -396,8 +399,8 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
     // Draw the HUD
     batch.setProjectionMatrix(hud.getStage().getCamera().combined);
     hud.getStage().act(Gdx.graphics.getDeltaTime());
-    hud.update();
     hud.draw();
+    hud.update();
   }
 
   protected void drawBackground() {
@@ -701,9 +704,13 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
       }
     };
 
-    dialog.text(new Label("Do you want to attempt to capture this planet?", skin, "window"));
-    dialog.button("Yes", true);
-    dialog.button("No", false);
+    dialog.text(new Label("Do you want to attempt to capture this planet? \n                    This action costs 30 fuel", skin, "window"));
+    if (store.getMainPlayer().getFuel() >= (3 * store.getMainPlayer().getFuelGridCost())) {
+      dialog.button("Yes", true);
+      dialog.button("No", false);
+    } else {
+      dialog.button("Insufficient Fuel", false);
+    }
 
     dialog.show(hud.getStage());
   }

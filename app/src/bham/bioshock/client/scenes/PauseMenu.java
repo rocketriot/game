@@ -80,6 +80,8 @@ public class PauseMenu extends HudElement {
 
     batch.begin();
     pauseButton.draw(batch);
+    if (isPaused)
+      menuOptions.draw(batch, 1);
     batch.end();
   }
 

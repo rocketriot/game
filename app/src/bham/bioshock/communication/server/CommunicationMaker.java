@@ -6,6 +6,7 @@ import java.io.ObjectOutput;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
+import java.util.UUID;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import bham.bioshock.communication.interfaces.ObjectStreamFactory;
@@ -48,8 +49,8 @@ public class CommunicationMaker extends Thread {
    * Starts discovery thread which sends UDP packets to all
    * available interfaces
    */
-  private void discoverClients() {
-    discoveryThread = new DiscoveryThread(hostName);
+  private void discoverClients(UUID serverId) {
+    discoveryThread = new DiscoveryThread(hostName, serverId);
     discoveryThread.start();
   }
   
@@ -61,13 +62,13 @@ public class CommunicationMaker extends Thread {
    * @param serverSocket
    * @param discoverClients
    */
-  public void startSearch(MultipleConnectionsHandler handler, ServerSocket serverSocket, boolean discoverClients) {
+  public void startSearch(MultipleConnectionsHandler handler, ServerSocket serverSocket, UUID serverId, boolean discoverClients) {
     this.handler = handler;
     this.serverSocket = serverSocket;
     connecting = true;
     
     if(discoverClients) {
-      discoverClients();      
+      discoverClients(serverId);      
     }
     
     start();

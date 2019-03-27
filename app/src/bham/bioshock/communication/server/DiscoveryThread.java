@@ -4,6 +4,7 @@ import bham.bioshock.Config;
 import bham.bioshock.communication.Command;
 import java.io.IOException;
 import java.net.*;
+import java.util.UUID;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -11,11 +12,13 @@ public class DiscoveryThread extends Thread {
   
   private static final Logger logger = LogManager.getLogger(DiscoveryThread.class);
   
+  UUID serverId;
   String name = "Server";
   
-  public DiscoveryThread(String hostName) {
+  public DiscoveryThread(String hostName, UUID serverId) {
     super("ServerDiscoveryThread");
     this.name = hostName;
+    this.serverId = serverId;
   }
   
   /**
@@ -38,7 +41,7 @@ public class DiscoveryThread extends Thread {
           String message = new String(packet.getData()).trim();
           if (message.equals(Command.COMM_DISCOVER_REQ.toString())) {
 
-            String response = Command.COMM_DISCOVER_RES.toString() + name;
+            String response = Command.COMM_DISCOVER_RES.toString() + name + ";" + serverId;
             byte[] sendData = response.getBytes();
             // Send a response
             DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length,

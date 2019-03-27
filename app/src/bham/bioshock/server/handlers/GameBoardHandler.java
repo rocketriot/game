@@ -72,7 +72,7 @@ public class GameBoardHandler {
     GameBoard gameBoard = new GameBoard();
     generateGrid(gameBoard, players);
 
-    handler.sendToAll(new GameBoardMessage(gameBoard, players, additionalPlayers, startGame));
+    handler.sendToAll(new GameBoardMessage(gameBoard, players, additionalPlayers, startGame, store.getMaxRounds()));
   }
 
   /**
@@ -102,27 +102,23 @@ public class GameBoardHandler {
     if (pathCost <= currentPlayer.getFuel() && goalType.isValidForPlayer()) {
       handler.sendToAll(new MovePlayerOnBoardMessage(goalCoords, playerID));
     }
-
-    if ((store.getRound() > store.getMaxRounds())) {
-      handler.sendToAll(new EndGameMessage());
-    }
   }
 
   public void endTurn() {
     handler.sendToAll(new UpdateTurnMessage());
 
-   if ((store.getRound() > store.getMaxRounds())) {
+   if ((store.getTurn() + 1) == 4 && store.getRound() == store.getMaxRounds()) {
       handler.sendToAll(new EndGameMessage());
     }
   }
 
-    public void addBlackHole (Coordinates coordinates){
-      GameBoard gameBoard = store.getGameBoard();
-      gameBoard.addBlackHole(new BlackHole(coordinates));
+  public void addBlackHole (Coordinates coordinates){
+    GameBoard gameBoard = store.getGameBoard();
+    gameBoard.addBlackHole(new BlackHole(coordinates));
 
-      handler.sendToAll(new AddBlackHoleMessage(coordinates));
-    }
+    handler.sendToAll(new AddBlackHoleMessage(coordinates));
   }
+}
 
 
 
