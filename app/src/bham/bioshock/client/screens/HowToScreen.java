@@ -62,7 +62,7 @@ public class HowToScreen extends ScreenMaster {
 
   private void loadImages(){
     title = new Image(new Texture(Assets.howToPlayButton));
-    title.setWidth(150);
+    title.setWidth(100);
     title.setScaling(Scaling.fillX);
     cursor = new Image(new Texture(Assets.cursor));
     cursor.setWidth(50);
@@ -121,12 +121,12 @@ public class HowToScreen extends ScreenMaster {
     textTable.padLeft(50).padRight(50);
     textTable.padBottom(20);
 
-    textTable.add(title).colspan(2).expandX().padBottom(50);
+    textTable.add(title).colspan(2).expandX().padBottom(50).width(200).height(200);
     textTable.row();
     textTable.add(description).colspan(2).expandX().padBottom(10);
     textTable.row().height(rowHeight);
     textTable.columnDefaults(1).padRight(50).padBottom(10);
-    textTable.columnDefaults(0).expand().left();
+    textTable.columnDefaults(0).expand().left().padLeft(30);
     VerticalGroup group = new VerticalGroup();
     group.addActor(howToMoveA);
     group.addActor(howToMoveB);
@@ -143,7 +143,7 @@ public class HowToScreen extends ScreenMaster {
     textTable.add(planetContainer).width(100).height(100);
     textTable.row();
     textTable.add(fuelDescription);
-    textTable.add(fuel).width(100).height(50);
+    textTable.add(fuel).width(75).height(75);
     textTable.row();
     Table group3 = new Table();
     group3.row().align(Align.left);
@@ -153,7 +153,7 @@ public class HowToScreen extends ScreenMaster {
       group3.add(l);
     }
     textTable.add(group3).align(Align.left);
-    textTable.add(upgrade).width(100).height(50);
+    textTable.add(upgrade).width(75).height(75);
 
     stage.addActor(textTable);
   }
