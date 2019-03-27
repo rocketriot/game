@@ -65,6 +65,16 @@ public class Assets {
   public static final String planetBase = "app/assets/minigame/planets/";
   public static final String platformsBase = "app/assets/minigame/platforms/";
   
+  /* Music */
+  public static final String mainMenuMusic = "app/assets/music/MainMenuMusic.mp3";
+  public static final String gameBoardMusic = "app/assets/music/GameBoardMusic.mp3";
+  public static final String miniGameMusic = "app/assets/music/MinigameMusic.mp3";
+  
+  public static final String menuSelectSound = "app/assets/music/MenuSelect.wav";
+  public static final String rocketSound = "app/assets/music/RocketSound.wav";
+  public static final String jumpSound = "app/assets/music/JumpSound.wav";
+  public static final String lasterSound = "app/assets/music/LaserSound.mp3";
+
   /**
    * Split texture to regions
    * 

@@ -4,7 +4,7 @@
     <music_enabled>0</music_enabled>
     <music_volume>10</music_volume>
 
-    <sounds_enabled>0</sounds_enabled>
+    <sounds_enabled>1</sounds_enabled>
     <sounds_volume>10</sounds_volume>
   </sound>
 </preferences>

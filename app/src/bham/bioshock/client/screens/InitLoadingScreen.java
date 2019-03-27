@@ -2,6 +2,7 @@ package bham.bioshock.client.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Pixmap;
@@ -69,6 +70,16 @@ public class InitLoadingScreen implements Screen {
     
     assets.load(Assets.exitButton, Texture.class, GamePart.MENU);
     assets.load(Assets.exitButtonHover, Texture.class, GamePart.MENU);
+    
+    // Music
+    
+    assets.load(Assets.mainMenuMusic, Sound.class, GamePart.MENU);
+    assets.load(Assets.gameBoardMusic, Sound.class, GamePart.MENU);
+    assets.load(Assets.miniGameMusic, Sound.class, GamePart.MENU);
+    assets.load(Assets.menuSelectSound, Sound.class, GamePart.MENU);
+    assets.load(Assets.rocketSound, Sound.class, GamePart.MENU);
+    assets.load(Assets.jumpSound, Sound.class, GamePart.MENU);
+    assets.load(Assets.lasterSound, Sound.class, GamePart.MENU);
   }
   
   public void loaded() {
