@@ -7,13 +7,11 @@ import bham.bioshock.communication.interfaces.ServerService;
 import bham.bioshock.communication.messages.Message;
 import bham.bioshock.communication.messages.boardgame.AddBlackHoleMessage;
 import bham.bioshock.communication.messages.joinscreen.JoinScreenMoveMessage;
-import bham.bioshock.communication.messages.minigame.EndMinigameMessage;
 import bham.bioshock.communication.messages.minigame.RequestMinigameStartMessage;
 import bham.bioshock.server.handlers.GameBoardHandler;
 import bham.bioshock.server.handlers.JoinScreenHandler;
 import bham.bioshock.server.handlers.MinigameHandler;
 import bham.bioshock.server.interfaces.MultipleConnectionsHandler;
-import bham.bioshock.server.interfaces.StoppableServer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -208,10 +206,6 @@ public class ServerHandler implements MultipleConnectionsHandler {
         RequestMinigameStartMessage request = (RequestMinigameStartMessage) message;
         minigameHandler.startMinigame(clientId, request.planetId, gameBoardHandler, request.objectiveId);
         break;
-      case MINIGAME_END:
-        EndMinigameMessage r = (EndMinigameMessage) message;
-        minigameHandler.endMinigame(r.winnerID, gameBoardHandler, r.playerID);
-        break;
       case MINIGAME_PLAYER_MOVE:
         minigameHandler.playerMove(message, clientId);
         break;
@@ -222,7 +216,7 @@ public class ServerHandler implements MultipleConnectionsHandler {
         minigameHandler.bulletShot(message, clientId);
         break;
       case MINIGAME_OBJECTIVE:
-        minigameHandler.updateObjective(message);
+        minigameHandler.updateObjective(message, gameBoardHandler);
         break;
       case MINIGAME_DIRECT_START:
         joinHandler.minigameDirectStart(clientId, gameBoardHandler, minigameHandler);

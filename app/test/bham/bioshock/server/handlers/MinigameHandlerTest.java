@@ -69,7 +69,6 @@ public class MinigameHandlerTest {
     
     EndMinigameMessage endMessage = (EndMinigameMessage) service.getSentMessages().get(1);
     assertEquals(planetId, endMessage.planetID);
-    assertEquals(service.Id().get(), endMessage.playerID);
   }
   
 }
