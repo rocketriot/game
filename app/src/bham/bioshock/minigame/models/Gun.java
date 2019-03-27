@@ -50,5 +50,7 @@ public class Gun extends Entity {
   public static void loadTextures(AssetContainer manager) {
     manager.load(Assets.gun, Texture.class, GamePart.MINIGAME);
   }
+  
+  
 
 }

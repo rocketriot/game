@@ -10,7 +10,6 @@ import bham.bioshock.communication.messages.objectives.*;
 import bham.bioshock.minigame.models.Astronaut;
 import bham.bioshock.minigame.models.Entity;
 import bham.bioshock.minigame.models.Entity.State;
-import bham.bioshock.minigame.models.Gun;
 import bham.bioshock.minigame.models.astronaut.Equipment;
 import bham.bioshock.minigame.worlds.World;
 import org.apache.logging.log4j.LogManager;
@@ -166,17 +165,7 @@ public abstract class Objective implements Serializable {
    */
   protected void killAndRespawnPlayer(UUID playerId, Position randomRespawn) {
     Astronaut player = localStore.getPlayer(playerId);
-    boolean hadGun = player.getEquipment().haveGun;
-    Position oldPosition = player.getPos().copy();
-    
     player.killAndRespawn(randomRespawn);
-
-    if (hadGun) {
-      Gun gun = new Gun(world, oldPosition.x, oldPosition.y);
-      gun.load();
-      gun.setCollisionHandler(localStore.getCollisionHandler());
-      localStore.addEntity(gun);
-    }
     synchronized(health) {
       health.put(player.getId(), INITIAL_HEALTH);
     }

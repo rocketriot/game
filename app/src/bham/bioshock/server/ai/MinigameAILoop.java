@@ -46,9 +46,15 @@ public class MinigameAILoop extends Thread {
 
   /** Finish the loop. */
   public void finish() {
+    reset();
     this.interrupt();
   }
 
+  /** Clear list of handlers */
+  public void reset() {
+    aiHandlers.clear();
+  }
+  
   /**
    * Register the handler.
    *

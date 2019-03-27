@@ -42,7 +42,7 @@ public abstract class Entity implements Serializable {
   /** If has been loaded and is ready to draw */
   protected boolean loaded = false;
   /** Sprite used for drawing and rotation */
-  protected Sprite sprite;
+  protected transient Sprite sprite;
   /** Relative rotation to the ground, is not changed by the position */
   protected float rotation;
 

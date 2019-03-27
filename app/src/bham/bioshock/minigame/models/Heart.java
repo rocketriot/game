@@ -4,9 +4,7 @@ import bham.bioshock.client.assets.AssetContainer;
 import bham.bioshock.client.assets.Assets;
 import bham.bioshock.client.assets.Assets.GamePart;
 import bham.bioshock.common.Position;
-import bham.bioshock.minigame.PlanetPosition;
 import bham.bioshock.minigame.worlds.World;
-import java.util.Random;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
@@ -63,12 +61,7 @@ public class Heart extends Entity {
   }
 
   public static Heart getRandom(World world) {
-    Random r = new Random();
-    int angle = r.nextInt(360);
-    float distance = (float) (world.getPlanetRadius() + 2000);
-    
-    PlanetPosition pp = new PlanetPosition(angle, distance);
-    Position p = world.convert(pp);
+    Position p = world.getRandomPosition();
     return new Heart(world, p.x, p.y);
   }
 
