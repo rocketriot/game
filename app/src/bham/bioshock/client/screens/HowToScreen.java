@@ -123,7 +123,7 @@ public class HowToScreen extends ScreenMaster {
 
     textTable.add(title).colspan(2).expandX().padBottom(50);
     textTable.row();
-    textTable.add(description).colspan(2).expandX().padBottom(30);
+    textTable.add(description).colspan(2).expandX().padBottom(10);
     textTable.row().height(rowHeight);
     textTable.columnDefaults(1).padRight(50).padBottom(10);
     textTable.columnDefaults(0).expand().left();
@@ -143,7 +143,7 @@ public class HowToScreen extends ScreenMaster {
     textTable.add(planetContainer).width(100).height(100);
     textTable.row();
     textTable.add(fuelDescription);
-    textTable.add(fuel).width(100).height(100);
+    textTable.add(fuel).width(100).height(50);
     textTable.row();
     Table group3 = new Table();
     group3.row().align(Align.left);
@@ -153,7 +153,7 @@ public class HowToScreen extends ScreenMaster {
       group3.add(l);
     }
     textTable.add(group3).align(Align.left);
-    textTable.add(upgrade).width(100).height(100);
+    textTable.add(upgrade).width(100).height(50);
 
     stage.addActor(textTable);
   }
