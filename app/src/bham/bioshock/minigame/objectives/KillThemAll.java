@@ -56,8 +56,8 @@ public class KillThemAll extends Objective {
 
   @Override
   public String instructions() {
-    String instructions = "You have 1 minute to kill as many astronauts as possible! \n"
-        + "To kill an astronaut shot him until he loses health";
+    String instructions = "You have 1 minute to kill as many players as possible,\n"
+        + "kill an astronaut by shooting them!";
     return instructions;
   }
 
