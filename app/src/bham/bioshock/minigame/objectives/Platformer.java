@@ -167,8 +167,11 @@ public class Platformer extends Objective {
   public boolean checkIfFrozen(UUID playerId) {
     Long now = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC);
     Long frozen = getFrozenFor(playerId);
-
-    if (!(frozen == 0 || (now - frozen) > MAX_FROZEN_TIME)) {
+    if(frozen == 0) {
+      return false;
+    }
+    
+    if ((now - frozen) < MAX_FROZEN_TIME) {
       return true;
     }
     

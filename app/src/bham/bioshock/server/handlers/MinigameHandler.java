@@ -192,19 +192,7 @@ public class MinigameHandler {
    * Sync player movement and position
    */
   public void playerMove(Message message, UUID playerId) {
-    MinigameStore localStore = store.getMinigameStore();
-    if (localStore == null)
-      return;
-    // for platform, check if the player is frozen
-    if (localStore.getObjective() instanceof Platformer) {
-      Platformer o = (Platformer) store.getMinigameStore().getObjective();
-      if (!o.checkIfFrozen(playerId)) {
-        handler.sendToAllExcept(message, playerId);
-      }
-    } else {
-      handler.sendToAllExcept(message, playerId);
-    }
-
+    handler.sendToAllExcept(message, playerId);
   }
 
   public void playerStep(Message message, UUID playerId) {

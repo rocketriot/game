@@ -43,6 +43,8 @@ public class InputListener extends InputAdapter {
       Platformer o = (Platformer) localStore.getObjective();
       if(o.checkIfFrozen(mainPlayer.getId()) ) {
         canAct = false;
+      } else {
+        canAct = true;
       }
     }
 

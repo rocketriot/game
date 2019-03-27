@@ -9,6 +9,7 @@ import bham.bioshock.communication.messages.minigame.MinigamePlayerStepMessage;
 import bham.bioshock.server.interfaces.MultipleConnectionsHandler;
 import bham.bioshock.minigame.models.Bullet;
 import bham.bioshock.minigame.models.astronaut.AstronautMove;
+import bham.bioshock.minigame.objectives.Platformer;
 
 /** The type Minigame ai. */
 public abstract class MinigameAI {
@@ -69,6 +70,14 @@ public abstract class MinigameAI {
 
   /** After update. */
   public void afterUpdate() {
+    if (localStore.getObjective() instanceof Platformer) {
+      Platformer o = (Platformer) store.getMinigameStore().getObjective();
+      if (o.checkIfFrozen(astronaut.get().getId())) {
+        handler.sendToAll(new MinigamePlayerMoveMessage(astronaut, new AstronautMove()));
+        return;
+      }
+    }
+    
     AstronautMove move = astronaut.endMove();
 
     // Send to all new move, position and speed vector
