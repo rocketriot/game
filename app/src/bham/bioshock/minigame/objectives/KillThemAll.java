@@ -21,11 +21,20 @@ public class KillThemAll extends Objective {
    */
   private HashMap<UUID, Integer> kills = new HashMap<>();
 
+  public int getPlayerScore(UUID playerID) {
+    return kills.get(playerID);
+  }
+
   @Override
   public UUID getWinner() {
     UUID id = Collections.max(kills.entrySet(), Comparator.comparingInt(HashMap.Entry::getValue))
         .getKey();
     return id;
+  }
+
+  @Override
+  public MinigameType getMinigameType() {
+    return MinigameType.KILL_THEM_ALL;
   }
 
   @Override
