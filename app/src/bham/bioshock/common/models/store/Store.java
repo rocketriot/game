@@ -1,18 +1,21 @@
 package bham.bioshock.common.models.store;
 
 import java.util.*;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import com.badlogic.gdx.Screen;
 import com.google.inject.Singleton;
 import bham.bioshock.client.AppPreferences;
 import bham.bioshock.common.models.GameBoard;
 import bham.bioshock.common.models.Planet;
 import bham.bioshock.common.models.Player;
-import bham.bioshock.minigame.models.Entity;
 
 /** Stores all of the models */
 @Singleton
 public class Store {
 
+  private static final Logger logger = LogManager.getLogger(Store.class);
+      
   /** Max number of players in a game */
   // FOR TESTING
   public final int MAX_PLAYERS = 4;
@@ -145,6 +148,14 @@ public class Store {
   public void setPlanetOwner(UUID playerId, UUID planetId) {
     Planet planet = gameBoard.getPlanet(planetId);
     Player p = getPlayer(playerId);
+    if(planet == null) {
+      logger.fatal("Unknown planet " + planetId);
+      return;
+    }
+    if(p == null) {
+      logger.fatal("Unknown player " + playerId);
+      return;
+    }
     planet.setPlayerCaptured(p);
   }
 
@@ -205,7 +216,6 @@ public class Store {
 
     // will return the winner or the winners if its a tie;
     return winners;
-
   }
 
 
