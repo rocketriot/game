@@ -574,9 +574,12 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
     // Loop all spaces the black hole will take up
     for (int i = 0; i < BlackHole.WIDTH; i++) {
       for (int j = 0; j < BlackHole.HEIGHT; j++) {
+        if(mouseCoordinates == null) continue;
         // Get the grid point
         GridPoint gridPoint = grid[mouseCoordinates.getX() + i][mouseCoordinates.getY() + j];
 
+        if(gridPoint == null) continue;
+        
         // Check the black hole will not be in the way of players
         for (Player player : store.getPlayers())
         if (player.getCoordinates().isEqual(mouseCoordinates))

@@ -398,7 +398,10 @@ public class Astronaut extends Entity {
         break;
       case BULLET:
         if(objective.isPresent()) {
-          objective.get().gotShot(this, ((Bullet) e).getShooter());            
+          Bullet bullet = ((Bullet) e);
+          if(bullet.notDetected()) {
+            objective.get().gotShot(this,bullet.getShooter());            
+          }
         }
         e.setState(State.REMOVING);
         break;
@@ -529,9 +532,10 @@ public class Astronaut extends Entity {
     String[] colours = new String[] { "orange", "red", "green", "blue" };
 
     for(int i=0; i<colours.length; i++) {
+      // Should be already loaded by the join screen
+//      manager.load(Assets.astroBase + colours[i] + Assets.astroShield, Texture.class, GamePart.MINIGAME);
       manager.load(Assets.astroBase + colours[i] + Assets.astroWalk, Texture.class, GamePart.MINIGAME);
       manager.load(Assets.astroBase + colours[i] + Assets.astroGun, Texture.class, GamePart.MINIGAME);
-      manager.load(Assets.astroBase + colours[i] + Assets.astroShield, Texture.class, GamePart.MINIGAME);
       manager.load(Assets.astroBase + colours[i] + Assets.astroShieldGun, Texture.class, GamePart.MINIGAME);
       manager.load(Assets.astroBase + colours[i] + Assets.astroFFall, Texture.class, GamePart.MINIGAME);
       manager.load(Assets.astroBase + colours[i] + Assets.astroFall, Texture.class, GamePart.MINIGAME);

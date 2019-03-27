@@ -45,6 +45,7 @@ public class GameBoardController extends Controller {
     Player player = store.getMainPlayer();
     commClient.saveToFile(player.getUsername(), player.getId());
     setScreen(new GameBoardScreen(router, store, assets));
+    store.resetMinigameStore();
   }
 
   /** Handles when the server sends the game board to the client */
@@ -91,7 +92,7 @@ public class GameBoardController extends Controller {
       return;
 
     // Send move request to the server
-    clientService.send(new MovePlayerOnBoardMessage(destination, mainPlayer.getId()));
+    clientService.send(new MovePlayerOnBoardMessage(destination, mainPlayer.getId(), null));
   }
 
   /** Ends the players turn */
@@ -137,18 +138,11 @@ public class GameBoardController extends Controller {
 
     ArrayList<Coordinates> path = pathFinder.pathfind(goalCoords);
     movingPlayer.createBoardMove(path);
+    movingPlayer.setTeleportCoords(data.randomCoords);
   }
 
   public void movePlayerToRandomPoint(Player player) {
-    GridPoint[][] grid = store.getGameBoard().getGrid();
-
-    int x, y;
-    do {
-      x = new Random().nextInt(store.getGameBoard().GRID_SIZE);
-      y = new Random().nextInt(store.getGameBoard().GRID_SIZE);
-    } while (grid[x][y].getType() != GridPoint.Type.EMPTY);
-
-    player.setCoordinates(new Coordinates(x, y));
+    player.setCoordinates(player.getRandomCoords());
   }
 
   public boolean hasReceivedGrid() {

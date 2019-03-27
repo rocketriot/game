@@ -31,6 +31,8 @@ public class Bullet extends Entity {
   /** Number of frames of the animation */
   private static int FRAMES = 5;
   
+  private boolean detected = false;
+  
   /** Current animation time */
   private float animationTime = 0;
   /** time of life */
@@ -233,6 +235,19 @@ public class Bullet extends Entity {
     b.setSpeedVector(speed);
 
     return b;
+  }
+
+  /**
+   * Check if the bullets where detected
+   * 
+   * @return
+   */
+  public boolean notDetected() {
+    if(!detected) {
+      detected = true;
+      return true;
+    }
+    return false;
   }
 
 }

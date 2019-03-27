@@ -10,7 +10,7 @@ import org.apache.logging.log4j.Logger;
 import bham.bioshock.common.models.store.Store;
 import bham.bioshock.minigame.PlanetPosition;
 import bham.bioshock.minigame.models.Astronaut;
-import bham.bioshock.server.ServerHandler;
+import bham.bioshock.server.interfaces.MultipleConnectionsHandler;
 
 /**
  * The KillThemAllAI.
@@ -31,7 +31,7 @@ public class KillThemAllAI extends MinigameAI {
    * @param store the store
    * @param handler the handler
    */
-  public KillThemAllAI(UUID id, Store store, ServerHandler handler) {
+  public KillThemAllAI(UUID id, Store store, MultipleConnectionsHandler handler) {
     super(id, store, handler);
   }
 

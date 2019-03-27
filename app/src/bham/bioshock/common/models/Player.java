@@ -47,6 +47,9 @@ public class Player implements Serializable {
   /** The textual description of the last upgrade to be picked up by the player */
   private String lastUpgradeText = null;
 
+  /** The coordinates the player will teleport to if they go through a black hole */
+  private Coordinates randomCoords;
+
   /** The maximum amount of fuel a player hold at one time */
   public static final float BASE_MAX_FUEL = 100f;
 
@@ -255,6 +258,14 @@ public class Player implements Serializable {
 
   public void setLastUpgradeText(String lastUpgradeText) {
     this.lastUpgradeText = lastUpgradeText;
+  }
+
+  public void setTeleportCoords(Coordinates randomCoords) {
+    this.randomCoords = randomCoords;
+  }
+
+  public Coordinates getRandomCoords() {
+    return randomCoords;
   }
 
   public class Move implements Serializable {

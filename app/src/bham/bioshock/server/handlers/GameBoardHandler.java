@@ -1,6 +1,7 @@
 package bham.bioshock.server.handlers;
 
 import bham.bioshock.common.consts.GridPoint;
+import bham.bioshock.common.consts.GridPoint.Type;
 import bham.bioshock.common.pathfinding.AStarPathfinding;
 import java.util.ArrayList;
 
@@ -16,8 +17,9 @@ import bham.bioshock.communication.messages.boardgame.GameBoardMessage;
 import bham.bioshock.communication.messages.boardgame.MovePlayerOnBoardMessage;
 import bham.bioshock.communication.messages.boardgame.UpdateTurnMessage;
 import bham.bioshock.server.ai.BoardAi;
-import bham.bioshock.server.ServerHandler;
+import bham.bioshock.server.interfaces.MultipleConnectionsHandler;
 
+import java.util.Random;
 import java.util.UUID;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -28,11 +30,11 @@ public class GameBoardHandler {
   private static final Logger logger = LogManager.getLogger(GameBoardHandler.class);
 
   Store store;
-  ServerHandler handler;
+  MultipleConnectionsHandler handler;
   MinigameHandler minigameHandler;
   BoardAi boardAi;
 
-  public GameBoardHandler(Store store, ServerHandler handler,
+  public GameBoardHandler(Store store, MultipleConnectionsHandler handler,
                           MinigameHandler minigameHandler) {
     this.store = store;
     this.handler = handler;
@@ -95,16 +97,32 @@ public class GameBoardHandler {
                     grid, startCoords, gridSize, gridSize, store.getPlayers());
 
     ArrayList<Coordinates> path = pathFinder.pathfind(goalCoords);
+    Coordinates randomCoords = null;
+    for (Coordinates p : path) {
+      if (grid[p.getX()][p.getY()].getType().equals(Type.BLACKHOLE)) {
+        randomCoords = getRanCoords(grid);
+      }
+    }
     float pathCost = (path.size() - 1) * currentPlayer.getFuelGridCost();
 
     GridPoint.Type goalType = gameBoard.getGridPoint(goalCoords).getType();
 
     if (pathCost <= currentPlayer.getFuel() && goalType.isValidForPlayer()) {
-      handler.sendToAll(new MovePlayerOnBoardMessage(goalCoords, playerID));
+      handler.sendToAll(new MovePlayerOnBoardMessage(goalCoords, playerID, randomCoords));
     }
   }
 
+  private Coordinates getRanCoords(GridPoint[][] grid) {
+    int x, y;
+    do {
+      x = new Random().nextInt(store.getGameBoard().GRID_SIZE);
+      y = new Random().nextInt(store.getGameBoard().GRID_SIZE);
+    } while (grid[x][y].getType() != GridPoint.Type.EMPTY);
+    return new Coordinates(x, y);
+  }
+
   public void endTurn() {
+    logger.debug("Turn ended");
     handler.sendToAll(new UpdateTurnMessage());
 
    if ((store.getTurn() + 1) == 4 && store.getRound() == store.getMaxRounds()) {

@@ -199,7 +199,6 @@ public class Platformer extends Objective {
   }
 
 
-
   /**
    * Get the sequence of platforms by following which a player can travel from the ground to the goal
    * This is used by the CPU players
@@ -209,8 +208,6 @@ public class Platformer extends Objective {
     ArrayList<Platform> path = world.getPlatformPath(goalPlatform);
     return path;
   }
-
-
 
 
 }

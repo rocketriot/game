@@ -42,6 +42,13 @@ public abstract class Objective implements Serializable {
 
   public abstract UUID getWinner();
 
+  /**
+   * Init the objective
+   * 
+   * @param world
+   * @param router
+   * @param store
+   */
   public void init(World world, Router router, Store store) {
     this.world = world;
     this.router = router;
@@ -91,6 +98,11 @@ public abstract class Objective implements Serializable {
   public final void pickupHeart(Astronaut player, UUID heartID){
     if(player.is(State.REMOVING)) return;
     if(!store.isHost()) return;
+    Entity entity = store.getMinigameStore().getEntity(heartID);
+    if(entity == null) 
+      return;
+    if(entity.isRemoved()) return;
+    entity.remove();
     router.call(Route.SEND_OBJECTIVE_UPDATE, new IncreaseHealthMessage(player.getId(), heartID));
   }
 

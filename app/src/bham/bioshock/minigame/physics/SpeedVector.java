@@ -45,7 +45,7 @@ public class SpeedVector implements Serializable {
 
   public double getValue() {
     double value = dx * dx + dy * dy;
-    if(value == 0) return 0.000001;
+    if(value == 0) return 0.0001;
     return Math.sqrt(value);
   }
 
@@ -81,9 +81,6 @@ public class SpeedVector implements Serializable {
   private Vector stopVector(double angleDegrees) {
     double angle = Math.toRadians(angleDegrees);
     double length = getValue();
-    if(length == 0) {
-      return new Vector(0,0);
-    }
     double speedAngle = (getSpeedAngle() + 360) % 360;
     double normalizedDegrees = (angleDegrees + 360) % 360;
     if (length == 0) return new Vector(0, 0);
@@ -102,11 +99,11 @@ public class SpeedVector implements Serializable {
     return new Vector(round(dx1), round(dy1));
   }
 
-  public double dX() {
+  public Double dX() {
     return dx;
   }
 
-  public double dY() {
+  public Double dY() {
     return dy;
   }
   

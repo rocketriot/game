@@ -9,6 +9,7 @@ import bham.bioshock.minigame.objectives.Platformer;
 import bham.bioshock.minigame.physics.CollisionHandler;
 import bham.bioshock.minigame.physics.StepsGenerator;
 import bham.bioshock.server.ServerHandler;
+import bham.bioshock.server.interfaces.MultipleConnectionsHandler;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -61,7 +62,7 @@ public class PlatformerAI extends MinigameAI {
     private StepsGenerator testStepsGenerator;
 
 
-    public PlatformerAI(UUID id, Store store, ServerHandler handler) {
+    public PlatformerAI(UUID id, Store store, MultipleConnectionsHandler handler) {
         super(id, store, handler);
 
     }
@@ -152,7 +153,11 @@ public class PlatformerAI extends MinigameAI {
             Most of the time, the player will move to the next platform in the pre-configured path.
              */
             if (r < 95) {
+              try {
                 nextPlatform = pathToGoal.get(currentPlatformIndex);
+              } catch(IndexOutOfBoundsException e) {
+                return;
+              }
             }
             /*
             Sometimes the player will move to a nearby platform

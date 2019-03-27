@@ -172,4 +172,13 @@ public class MinigameStore {
 
     public UUID getPlanetID() { return planetID;
     }
+
+    public Entity getEntity(UUID entityId) {
+      for(Entity e : entities) {
+        if(e.getId().equals(entityId)) {
+          return e;
+        }
+      }
+      return null;
+    }
 }

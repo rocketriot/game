@@ -37,6 +37,20 @@ public class GameBoard implements Serializable {
 
     return grid;
   }
+  
+  public GridPoint[][] generateEmptyGrid() {
+    // initialize grid
+    grid = new GridPoint[GRID_SIZE][GRID_SIZE];
+
+    // Go through each point and generate it's type
+    for (int x = 0; x < grid.length; x++) {
+      for (int y = 0; y < grid[x].length; y++) {
+        grid[x][y] = new GridPoint(GridPoint.Type.EMPTY);
+      }
+    }
+
+    return grid;
+  }
 
   /** Checks is a set of coordinates are a set number of spaces away from a player */
   private boolean isGridPointNearPlayer(int x, int y) {
