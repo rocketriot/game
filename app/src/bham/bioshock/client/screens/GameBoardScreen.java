@@ -704,8 +704,9 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
       }
     };
 
-    dialog.text(new Label("Do you want to attempt to capture this planet?", skin, "window"));
-    dialog.button("Yes", true);
+    dialog.text(new Label("Do you want to attempt to capture this planet? \n           This action costs 30 fuel", skin, "window"));
+    if (store.getMainPlayer().getFuel() >= (3 * store.getMainPlayer().getFuelGridCost()))
+      dialog.button("Yes", true);
     dialog.button("No", false);
 
     dialog.show(hud.getStage());

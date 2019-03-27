@@ -51,7 +51,7 @@ public class BoardAi extends Thread {
           Planet planet = gameBoard.getAdjacentPlanet(player.getCoordinates(), player);
           
           // Make a decision after a move
-          if (planet != null) {
+          if (planet != null && player.getFuel() >= (3 * player.getFuelGridCost())) {
             minigameHandler.startMinigame(player.getId(), planet.getId(), gameBoardHandler, null);
           } else {
             gameBoardHandler.endTurn();
@@ -182,10 +182,13 @@ public class BoardAi extends Thread {
     ArrayList<Planet> planetChecklist = new ArrayList<>();
 
     // Add 100 points if finishing next to a capturable planet
+    // Add a further 150 if the player has enough fuel remaining to capture it
     Planet planet;
     if ((planet = gameBoard.getAdjacentPlanet(moveVal.getMoveCoords(), player)) != null) {
       reward += 100;
       moveVal.setCapturablePlanet(planet);
+      if ((player.getFuel() - moveVal.getPathCost()) > 3 * player.getFuelGridCost())
+        reward += 150;
     }
 
     // Add 50 / distance to the planet for each capturable planet and upgrade to the reward

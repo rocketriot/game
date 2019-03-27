@@ -139,29 +139,6 @@ public class GameBoardController extends Controller {
     movingPlayer.createBoardMove(path);
   }
 
-  public void miniGameWon(Player player, Planet planet) {
-    // winner gets the planet, previous owner loses it
-    if (planet.getPlayerCaptured() != null) {
-      Player loser = planet.getPlayerCaptured();
-      loser.setPlanetsCaptured(loser.getPlanetsCaptured() - 1);
-    }
-    planet.setPlayerCaptured(player);
-    player.setPlanetsCaptured(player.getPlanetsCaptured() + 1);
-    player.setPoints(player.getPoints() + 100);
-
-    if (store.isMainPlayersTurn()) {
-      router.call(Route.END_TURN);
-    }
-  }
-
-  public void miniGameLost(Player player) {
-    movePlayerToRandomPoint(player);
-
-    if (store.isMainPlayersTurn()) {
-      router.call(Route.END_TURN);
-    }
-  }
-
   public void movePlayerToRandomPoint(Player player) {
     GridPoint[][] grid = store.getGameBoard().getGrid();
 
