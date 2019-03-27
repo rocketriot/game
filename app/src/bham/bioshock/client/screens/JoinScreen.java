@@ -226,9 +226,8 @@ public class JoinScreen extends ScreenMaster {
     private Optional<UUID> playerId = Optional.empty();
 
     public PlayerContainer(String n, WaitText status, Texture sheet) {
-      // this.setDebug(true);
       name = new Label(n, skin);
-      waitText = new Label(status.toString(), skin);
+      waitText = new Label(status.equals(WaitText.CONNECTED) ? "Connected" : "Waiting...", skin);
       animation = new StaticAnimation(sheet, 26, 1, 200, 200, 0.8f, -1);
 
       this.pad(topPadding, sidePadding, topPadding, sidePadding);
@@ -253,7 +252,7 @@ public class JoinScreen extends ScreenMaster {
     }
 
     public void setWaitText(WaitText text) {
-      waitText.setText(text.toString());
+      waitText.setText(text.equals(WaitText.CONNECTED) ? "Connected!" : "Waiting...");
     }
 
     public void changeAnimation(Texture sheet, int cols, int rows, int width, int height,
