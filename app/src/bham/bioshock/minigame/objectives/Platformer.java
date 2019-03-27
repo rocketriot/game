@@ -5,12 +5,12 @@ import bham.bioshock.client.Router;
 import bham.bioshock.common.Position;
 import bham.bioshock.common.models.store.MinigameStore;
 import bham.bioshock.common.models.store.Store;
-import bham.bioshock.communication.messages.minigame.EndMinigameMessage;
 import bham.bioshock.communication.messages.objectives.EndPlatformerMessage;
 import bham.bioshock.communication.messages.objectives.UpdateFrozenMessage;
 import bham.bioshock.minigame.models.*;
 import bham.bioshock.minigame.worlds.World;
-
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.*;
 
 public class Platformer extends Objective {
@@ -20,7 +20,6 @@ public class Platformer extends Objective {
   /**
    * Maps players to whether or not they are frozen.
    */
-  private HashMap<UUID, Boolean> frozen = new HashMap<>();
   private HashMap<UUID, Long> frozenFor = new HashMap<>();
   public float MAX_FROZEN_TIME = 5;
   private transient Optional<UUID> winner = Optional.empty();
@@ -81,9 +80,7 @@ public class Platformer extends Objective {
   @Override
   public void handle(UpdateFrozenMessage m) {
     /* when the player is shot, they should freeze for a certain amount of time */
-    if (!checkIfFrozen(m.playerID)) {
-      setFrozen(m.playerID, true, m.created);
-    }
+    setFrozen(m.playerID, m.created);  
   }
 
   /**
@@ -97,9 +94,6 @@ public class Platformer extends Objective {
   @Override
   public void init(World world, Router router, Store store) {
     super.init(world, router, store);
-     store.getPlayers().forEach(player -> {
-       frozen.put(player.getId(), false);
-     });
      winner = Optional.empty();
   }
 
@@ -171,22 +165,24 @@ public class Platformer extends Objective {
    * @return if the player is frozen or not
    */
   public boolean checkIfFrozen(UUID playerId) {
-    return frozen.get(playerId);
+    Long now = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC);
+    Long frozen = getFrozenFor(playerId);
+
+    if (!(frozen == 0 || (now - frozen) > MAX_FROZEN_TIME)) {
+      return true;
+    }
+    
+    return false;
   }
+  
 
   /**
-   * Freeze or unfreeze a player
+   * Save the time the player was frozen
    * @param playerId
    * @param status
    */
-  public void setFrozen(UUID playerId, boolean status, long time) {
-    frozen.put(playerId, status);
-    if (status) {
-      frozenFor.put(playerId, time);
-    }
-    else {
-      frozenFor.remove(playerId);
-    }
+  public void setFrozen(UUID playerId, long time) {
+    frozenFor.put(playerId, time);
   }
 
   public long getFrozenFor(UUID playerId) {

@@ -78,25 +78,26 @@ public class PlatformerAI extends MinigameAI {
      * Determine if the player is frozen. The platformer objective contains a hash map of players
      * mapped to frozen status If a player is frozen, it should 'skip' a turn
      */
-    Platformer o = (Platformer) store.getMinigameStore().getObjective();
-    if (o.checkIfFrozen(astronaut.get().getId())) {
-      long now = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC);
-      long frozen = o.getFrozenFor(astronaut.get().getId());
-      /*
-       * Compare the current time to the time at which the player was frozen
-       */
-      if ((now - frozen) > (o.MAX_FROZEN_TIME)) {
-        /*
-         * Enough time has elapsed so the player should now be unfrozen
-         */
-        o.setFrozen(astronaut.get().getId(), false, now);
-      } else {
-        /*
-         * player is frozen, return without updating the stack
-         */
-        return;
-      }
-    }
+//    Platformer o = (Platformer) store.getMinigameStore().getObjective();
+//    if (o.checkIfFrozen(astronaut.get().getId())) {
+//      
+//      long now = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC);
+//      long frozen = o.getFrozenFor(astronaut.get().getId());
+//      /*
+//       * Compare the current time to the time at which the player was frozen
+//       */
+//      if ((now - frozen) > (o.MAX_FROZEN_TIME)) {
+//        /*
+//         * Enough time has elapsed so the player should now be unfrozen
+//         */
+//        o.setFrozen(astronaut.get().getId(), now);
+//      } else {
+//        /*
+//         * player is frozen, return without updating the stack
+//         */
+//        return;
+//      }
+//    }
 
 
     /*

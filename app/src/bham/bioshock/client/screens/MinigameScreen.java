@@ -2,12 +2,14 @@ package bham.bioshock.client.screens;
 
 import bham.bioshock.client.Router;
 import bham.bioshock.client.assets.AssetContainer;
+import bham.bioshock.client.assets.Assets;
 import bham.bioshock.client.assets.Assets.GamePart;
 import bham.bioshock.common.models.store.Store;
 import bham.bioshock.minigame.Renderer;
 import bham.bioshock.minigame.models.*;
 import bham.bioshock.minigame.worlds.World;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.Texture;
 
 /**
  * Minigame screen loading the assets and running the minigame renderer

@@ -43,10 +43,7 @@ public class InputListener extends InputAdapter {
 
     if (localStore.getObjective() instanceof Platformer) {
       Platformer o = (Platformer) localStore.getObjective();
-      Long now = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC);
-      Long frozen = o.getFrozenFor(mainPlayer.getId());
-
-      if (!(frozen == 0 || (now - frozen) > o.MAX_FROZEN_TIME)) {
+      if(o.checkIfFrozen(mainPlayer.getId()) ) {
         canAct = false;
       }
     }
