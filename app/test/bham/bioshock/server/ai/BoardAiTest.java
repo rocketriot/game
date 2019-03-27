@@ -1,8 +1,5 @@
 package bham.bioshock.server.ai;
 
-import static org.junit.Assert.*;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import bham.bioshock.common.models.Coordinates;
 import bham.bioshock.common.models.GameBoard;
 import bham.bioshock.common.models.Player;
@@ -13,6 +10,10 @@ import bham.bioshock.communication.messages.boardgame.UpdateTurnMessage;
 import bham.bioshock.server.handlers.GameBoardHandler;
 import bham.bioshock.server.handlers.MinigameHandler;
 import bham.bioshock.testutils.server.FakeServerHandler;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class BoardAiTest {
 

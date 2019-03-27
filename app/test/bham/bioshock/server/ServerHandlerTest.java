@@ -1,19 +1,20 @@
 package bham.bioshock.server;
 
-import static org.junit.Assert.*;
-import java.util.UUID;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
 import bham.bioshock.common.models.Player;
 import bham.bioshock.common.models.store.Store;
 import bham.bioshock.common.utils.Clock;
-import bham.bioshock.communication.messages.joinscreen.*;
-import bham.bioshock.server.InvalidMessageSequence;
-import bham.bioshock.server.ServerHandler;
+import bham.bioshock.communication.messages.joinscreen.DisconnectPlayerMessage;
+import bham.bioshock.communication.messages.joinscreen.RegisterMessage;
 import bham.bioshock.testutils.communication.FakeMessage;
 import bham.bioshock.testutils.communication.FakeServerService;
-import bham.bioshock.testutils.server.*;
+import bham.bioshock.testutils.server.FakeServer;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
+
+import java.util.UUID;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class ServerHandlerTest {
