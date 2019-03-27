@@ -14,7 +14,7 @@ public class Fuel implements Serializable {
   private Coordinates coordinates;
 
   /** The amount of fuel that the fuel box holds */
-  private float value = 20.0f;
+  private float value = 40.0f;
 
   public Fuel(Coordinates coordinates) {
     this.id = UUID.randomUUID();
