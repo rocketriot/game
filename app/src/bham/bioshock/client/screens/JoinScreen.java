@@ -336,16 +336,18 @@ public class JoinScreen extends ScreenMaster {
   }
 
   public void addStartGameButton() {
-    Image startButton = drawAsset(Assets.startButton, Config.GAME_WORLD_WIDTH - 320, 0);
-    addListener(startButton, new BaseClickListener(startButton, Assets.startButton, Assets.startButtonHover) {
-      @Override
-      public void clicked(InputEvent event, float x, float y) {
-        SoundController.playSound("menuSelect");
-        router.call(Route.START_GAME);
-      }
-    });
-    
-    stage.addActor(startButton);
+    if(store.isHost()) {
+      Image startButton = drawAsset(Assets.startButton, Config.GAME_WORLD_WIDTH - 320, 0);
+      addListener(startButton, new BaseClickListener(startButton, Assets.startButton, Assets.startButtonHover) {
+        @Override
+        public void clicked(InputEvent event, float x, float y) {
+          SoundController.playSound("menuSelect");
+          router.call(Route.START_GAME);
+        }
+      });
+      
+      stage.addActor(startButton);
+    }
   }
 
   @Override
