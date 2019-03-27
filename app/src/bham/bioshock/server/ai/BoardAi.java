@@ -119,7 +119,7 @@ public class BoardAi extends Thread {
 
     if (bestMove != null) {
       MovePlayerOnBoardMessage msg =
-          new MovePlayerOnBoardMessage(bestMove.getMoveCoords(), player.getId());
+          new MovePlayerOnBoardMessage(bestMove.getMoveCoords(), player.getId(), null);
       gameBoardHandler.movePlayer(msg, player.getId());
       return bestMove.getPath();
     }
@@ -224,12 +224,16 @@ public class BoardAi extends Thread {
             && !planetChecklist.contains(gridPoint.getValue())) {
           planet = (Planet) gridPoint.getValue();
           if (planet.getPlayerCaptured() == null || !planet.getPlayerCaptured().equals(player)) {
-            reward += 50f / moveVal.getMoveCoords().calcDistance(planet.getCoordinates());
+            float value = 30 - moveVal.getMoveCoords().calcDistance(planet.getCoordinates());
+            if (value > 0)
+              reward += value;
             planetChecklist.add(planet);
           }
         } else if (gridPoint.getType().equals(Type.UPGRADE)) {
           Upgrade upgrade = (Upgrade) gridPoint.getValue();
-          reward += 50f / moveVal.getMoveCoords().calcDistance(upgrade.getCoordinates());
+          float value = 30 - moveVal.getMoveCoords().calcDistance(upgrade.getCoordinates());
+          if (value > 0)
+            reward += value;
         }
       }
     }
