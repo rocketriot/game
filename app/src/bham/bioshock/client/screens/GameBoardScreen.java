@@ -7,7 +7,7 @@ import bham.bioshock.client.assets.AssetContainer;
 import bham.bioshock.client.assets.Assets;
 import bham.bioshock.client.assets.Assets.GamePart;
 import bham.bioshock.client.controllers.SoundController;
-import bham.bioshock.client.gameLogic.gameboard.*;
+import bham.bioshock.client.gameboard.*;
 import bham.bioshock.client.scenes.gameboard.GameBoardHud;
 import bham.bioshock.common.Direction;
 import bham.bioshock.common.consts.GridPoint;
@@ -110,7 +110,7 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
   
   private void loadAssets() {
     assets.load(Assets.pauseIcon, Texture.class, GamePart.BOARDGAME);
-    assets.load(Assets.gameBackground, Texture.class, GamePart.BOARDGAME);
+    assets.load(Assets.blackHoleAnimationSheet, Texture.class, GamePart.BOARDGAME);
   }
   
   private void assetsLoaded() {
@@ -122,7 +122,7 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
     drawFuel = new DrawFuel(batch);
     drawUpgrade = new DrawUpgrade(batch);
     drawAsteroid = new DrawAsteroid(batch);
-    drawBlackHole = new DrawBlackHole(batch);
+    drawBlackHole = new DrawBlackHole(batch, assets);
 
     pathRenderer =
         new PathRenderer(camera, store.getGameBoard(), store.getMainPlayer(), store.getPlayers());

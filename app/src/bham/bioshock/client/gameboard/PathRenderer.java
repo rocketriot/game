@@ -1,4 +1,4 @@
-package bham.bioshock.client.gameLogic.gameboard;
+package bham.bioshock.client.gameboard;
 
 import bham.bioshock.common.models.Coordinates;
 import bham.bioshock.common.models.GameBoard;
