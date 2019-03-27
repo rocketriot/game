@@ -6,10 +6,14 @@ import bham.bioshock.common.models.Player;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /** The A-Star pathfinding algorithm. */
 public class AStarPathfinding {
 
+  private static final Logger logger = LogManager.getLogger(AStarPathfinding.class);
+  
   /**
    * The cost to go from one point to another
    */
@@ -147,7 +151,11 @@ public class AStarPathfinding {
     // get the position of each player and add them into the grid
     for (Player player : players) {
       Coordinates playerCoords = player.getCoordinates();
-      gameGrid[playerCoords.getX()][playerCoords.getY()] = new GridPoint(GridPoint.Type.PLAYER, 0);
+      if(playerCoords == null) {
+        logger.fatal("Player " + player.getUsername() + " coordinates are null!");
+        continue;
+      }
+      gameGrid[playerCoords.getX()][playerCoords.getY()] = new GridPoint(GridPoint.Type.PLAYER, 0);        
     }
   }
 

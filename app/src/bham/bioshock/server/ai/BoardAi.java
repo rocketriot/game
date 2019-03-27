@@ -46,7 +46,6 @@ public class BoardAi extends Thread {
         Player player = store.getMovingPlayer();
         if (player.isCpu() && lastPlayer != null && lastPlayer.equals(player.getId())
             && store.getMinigameStore() == null) {
-          lastPlayer = player.getId();
           samePlayerNum++;
         } else {
           samePlayerNum = 0;
@@ -59,9 +58,8 @@ public class BoardAi extends Thread {
           samePlayerNum = 0;
           continue;
         }
-
+        
         if (player.isCpu() && (lastMoved == null || !player.getId().equals(lastMoved))) {
-
           // Make a move
           ArrayList<Coordinates> path = moveCpuPlayer();
           int waitTime = calculateMoveTime(player, path);
@@ -70,19 +68,21 @@ public class BoardAi extends Thread {
           GameBoard gameBoard = store.getGameBoard();
           Planet planet = gameBoard.getAdjacentPlanet(player.getCoordinates(), player);
 
+          lastMoved = player.getId();
           // Make a decision after a move
           if (planet != null && player.getFuel() >= (3 * player.getFuelGridCost())) {
             minigameHandler.startMinigame(player.getId(), planet.getId(), gameBoardHandler, null);
           } else {
             gameBoardHandler.endTurn();
           }
-          lastMoved = player.getId();
         }
+        lastPlayer = player.getId();
         sleep(1000);
       }
     } catch (InterruptedException e) {
       logger.info("Board AI interrupted");
     }
+    logger.fatal("AI finished");
   }
 
   private int calculateMoveTime(Player player, ArrayList<Coordinates> path) {

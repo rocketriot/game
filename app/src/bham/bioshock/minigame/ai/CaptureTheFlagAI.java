@@ -7,7 +7,7 @@ import bham.bioshock.minigame.models.Gun;
 import bham.bioshock.minigame.models.Platform;
 import bham.bioshock.minigame.objectives.CaptureTheFlag;
 import bham.bioshock.minigame.worlds.World;
-import bham.bioshock.server.ServerHandler;
+import bham.bioshock.server.interfaces.MultipleConnectionsHandler;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.UUID;
@@ -33,7 +33,7 @@ public class CaptureTheFlagAI extends MinigameAI {
    * @param store the store
    * @param handler the handler
    */
-  public CaptureTheFlagAI(UUID id, Store store, ServerHandler handler) {
+  public CaptureTheFlagAI(UUID id, Store store, MultipleConnectionsHandler handler) {
     super(id, store, handler);
   }
 

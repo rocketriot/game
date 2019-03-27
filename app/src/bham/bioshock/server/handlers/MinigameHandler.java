@@ -27,6 +27,7 @@ import bham.bioshock.minigame.worlds.RandomWorld;
 import bham.bioshock.minigame.worlds.World;
 import bham.bioshock.server.ServerHandler;
 import bham.bioshock.server.ai.MinigameAILoop;
+import bham.bioshock.server.interfaces.MultipleConnectionsHandler;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -40,13 +41,13 @@ public class MinigameHandler {
   private static final Logger logger = LogManager.getLogger(MinigameHandler.class);
 
   Store store;
-  ServerHandler handler;
+  MultipleConnectionsHandler handler;
   MinigameAILoop aiLoop;
   Thread minigameTimer;
   Clock clock;
   UUID planetId;
 
-  public MinigameHandler(Store store, ServerHandler handler, Clock clock) {
+  public MinigameHandler(Store store, MultipleConnectionsHandler handler, Clock clock) {
     this.store = store;
     this.handler = handler;
     this.clock = clock;
@@ -90,8 +91,8 @@ public class MinigameHandler {
       Random rand = new Random();
       objectiveId = rand.nextInt(10) % 3;
     }
-     // objectiveId
-    switch (1) {
+
+    switch (objectiveId) {
       case 1:
         o = new Platformer(w);
         for (UUID id : store.getCpuPlayers()) {
@@ -244,7 +245,6 @@ public class MinigameHandler {
     UUID initiatorId = store.getMovingPlayer().getId();
     Message msg = new EndMinigameMessage(initiatorId, winnerId, planetId, Config.PLANET_POINTS);
     planetId = null;
-    
 
     aiLoop.finish();
     handler.sendToAll(msg);

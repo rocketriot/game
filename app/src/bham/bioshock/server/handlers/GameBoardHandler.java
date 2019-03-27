@@ -17,7 +17,7 @@ import bham.bioshock.communication.messages.boardgame.GameBoardMessage;
 import bham.bioshock.communication.messages.boardgame.MovePlayerOnBoardMessage;
 import bham.bioshock.communication.messages.boardgame.UpdateTurnMessage;
 import bham.bioshock.server.ai.BoardAi;
-import bham.bioshock.server.ServerHandler;
+import bham.bioshock.server.interfaces.MultipleConnectionsHandler;
 
 import java.util.Random;
 import java.util.UUID;
@@ -30,11 +30,11 @@ public class GameBoardHandler {
   private static final Logger logger = LogManager.getLogger(GameBoardHandler.class);
 
   Store store;
-  ServerHandler handler;
+  MultipleConnectionsHandler handler;
   MinigameHandler minigameHandler;
   BoardAi boardAi;
 
-  public GameBoardHandler(Store store, ServerHandler handler,
+  public GameBoardHandler(Store store, MultipleConnectionsHandler handler,
                           MinigameHandler minigameHandler) {
     this.store = store;
     this.handler = handler;
