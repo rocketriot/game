@@ -107,6 +107,11 @@ public class CaptureTheFlag extends Objective {
 
     return instructions;
   }
+  
+  @Override
+  public String name() {
+    return "Capture the Flag!";
+  }
 
   
   /**

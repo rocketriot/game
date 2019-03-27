@@ -232,4 +232,10 @@ public abstract class Objective implements Serializable {
    */
   public abstract String instructions();
 
+  /**
+   * The name of each objective
+   *
+   * @return the name String
+   */
+  public abstract String name();
 }

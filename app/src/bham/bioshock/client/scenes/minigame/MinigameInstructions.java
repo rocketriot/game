@@ -1,6 +1,7 @@
 package bham.bioshock.client.scenes.minigame;
 
 import bham.bioshock.Config;
+import bham.bioshock.client.FontGenerator;
 import bham.bioshock.client.assets.AssetContainer;
 import bham.bioshock.common.models.store.Store;
 import com.badlogic.gdx.Gdx;
@@ -20,6 +21,7 @@ public class MinigameInstructions {
   private boolean displayed;
   private int fontSize = 72;
   private AssetContainer assets;
+  private FontGenerator fontGenerator;
 
   /**
    * Create minigame instructions container
@@ -31,11 +33,8 @@ public class MinigameInstructions {
     this.assets = assets;
     this.batch = batch;
     this.store = store;
-    this.setup();
-  }
 
-  /** Generate the font */
-  private void setup() {
+    fontGenerator = new FontGenerator();
     font = assets.getFont(fontSize);
   }
 
