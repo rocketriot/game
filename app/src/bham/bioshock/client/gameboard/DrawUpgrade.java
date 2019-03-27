@@ -1,5 +1,6 @@
 package bham.bioshock.client.gameboard;
 
+import bham.bioshock.client.assets.AssetContainer;
 import bham.bioshock.client.assets.Assets;
 import bham.bioshock.common.models.Upgrade;
 import com.badlogic.gdx.graphics.g2d.Batch;
@@ -8,8 +9,8 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 public class DrawUpgrade extends DrawEntity {
   private Sprite sprite;
 
-  public DrawUpgrade(Batch batch) {
-    super(batch);
+  public DrawUpgrade(Batch batch, AssetContainer assets) {
+    super(batch, assets);
 
     sprite = generateSprite(Assets.upgrade);
   }

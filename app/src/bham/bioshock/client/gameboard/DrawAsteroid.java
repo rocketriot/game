@@ -1,5 +1,6 @@
 package bham.bioshock.client.gameboard;
 
+import bham.bioshock.client.assets.AssetContainer;
 import bham.bioshock.client.assets.Assets;
 import bham.bioshock.common.models.Asteroid;
 import com.badlogic.gdx.graphics.g2d.Batch;
@@ -10,10 +11,12 @@ import java.util.ArrayList;
 public class DrawAsteroid extends DrawEntity {
   private ArrayList<Sprite> sprites = new ArrayList<>();
 
-  public DrawAsteroid(Batch batch) {
-    super(batch);
-
-    sprites = generateSprites(Assets.asteroidsFolder);
+  public DrawAsteroid(Batch batch, AssetContainer assets) {
+    super(batch, assets);
+    
+    for(int i=1; i<=5; i++) {
+      sprites.add(generateSprite(Assets.asteroidsFolder + "/" + i + ".png"));     
+    }
   }
 
   public void draw(Asteroid asteroid, int PPS) {

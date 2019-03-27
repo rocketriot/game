@@ -50,6 +50,8 @@ public class MainMenuController extends Controller {
     store.setHost(false);
     store.reconnecting(false);
     store.getCommStore().clearServers();
+    commClient.stopDiscovery();
+    commClient.disconnect();
     
     setScreen(new MainMenuScreen(router, assets));
   }

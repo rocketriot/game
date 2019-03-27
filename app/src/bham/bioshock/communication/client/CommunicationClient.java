@@ -163,6 +163,9 @@ public class CommunicationClient {
 
   public void disconnect() {
     this.currentServer = null;
+    if(discoverThread != null) {
+      discoverThread.interrupt();
+    }
     if(reconnect != null) {
       reconnect.interrupt();
       reconnect = null;
@@ -170,6 +173,15 @@ public class CommunicationClient {
     if(service != null) {
       service.abort();
     }
+    
+    try {
+      if(discoverThread != null) {
+        discoverThread.join();        
+      }
+      if(reconnect != null) {
+        reconnect.join();        
+      }
+    } catch(InterruptedException e) {}
   }
 
 }

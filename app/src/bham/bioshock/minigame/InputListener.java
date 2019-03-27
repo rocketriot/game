@@ -27,7 +27,8 @@ public class InputListener extends InputAdapter {
   private MinigameHud hud;
   private final int SHOOT_DELAY = 150;
 
-  public InputListener(MinigameStore minigameStore, Router router, CollisionHandler collisionHandler, MinigameHud hud) {
+  public InputListener(MinigameStore minigameStore, Router router,
+      CollisionHandler collisionHandler, MinigameHud hud) {
     this.world = minigameStore.getWorld();
     this.mainPlayer = minigameStore.getMainPlayer();
     this.localStore = minigameStore;
@@ -38,10 +39,25 @@ public class InputListener extends InputAdapter {
 
   @Override
   public boolean keyDown(int keyCode) {
-    if (Input.Keys.SPACE == keyCode && (System.currentTimeMillis() - lastShot >= SHOOT_DELAY) && mainPlayer.getEquipment().haveGun) {
-      createBullet();
-      SoundController.playSound("laser");
-      lastShot = System.currentTimeMillis();
+    boolean canAct = true;
+
+    if (localStore.getObjective() instanceof Platformer) {
+      Platformer o = (Platformer) localStore.getObjective();
+      Long now = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC);
+      Long frozen = o.getFrozenFor(mainPlayer.getId());
+
+      if (!(frozen == 0 || (now - frozen) > o.MAX_FROZEN_TIME)) {
+        canAct = false;
+      }
+    }
+
+    if (Input.Keys.SPACE == keyCode && (System.currentTimeMillis() - lastShot >= SHOOT_DELAY)
+        && mainPlayer.getEquipment().haveGun) {
+      if(canAct) {
+        createBullet();
+        SoundController.playSound("laser");
+        lastShot = System.currentTimeMillis();        
+      }
     }
     if (keyCode == Input.Keys.LEFT || keyCode == Input.Keys.A) {
       mainPlayer.moveLeft(true);
@@ -52,23 +68,14 @@ public class InputListener extends InputAdapter {
     if (keyCode == Input.Keys.UP || keyCode == Input.Keys.W) {
       mainPlayer.jump(true);
     }
-    
-    if(localStore.getObjective() instanceof Platformer) {
-      Platformer o = (Platformer) localStore.getObjective();
-      Long now = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC);
-      Long frozen = o.getFrozenFor(mainPlayer.getId());
-      
-      if(frozen == 0 || (now - frozen) > o.MAX_FROZEN_TIME) {
-        mainPlayer.moveChange();
-        router.call(Route.MINIGAME_MOVE);  
-      } else {
-        mainPlayer.updateMove(new AstronautMove());
-      }
-    } else {
-      mainPlayer.moveChange();
-      router.call(Route.MINIGAME_MOVE);      
-    }
 
+    if(canAct) {
+      mainPlayer.moveChange();
+      router.call(Route.MINIGAME_MOVE);
+    } else {
+      mainPlayer.updateMove(new AstronautMove());
+    }
+    
     return false;
   }
 

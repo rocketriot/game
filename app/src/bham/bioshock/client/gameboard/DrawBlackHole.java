@@ -10,7 +10,7 @@ public class DrawBlackHole extends DrawEntity {
   private Sprite sprite;
 
   public DrawBlackHole(Batch batch, AssetContainer assets) {
-    super(batch);
+    super(batch, assets);
     sprite = generateSprite(Assets.blackhole);
   }
 
