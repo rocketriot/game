@@ -16,6 +16,7 @@ import bham.bioshock.communication.messages.joinscreen.ReconnectResponseMessage;
 import bham.bioshock.communication.messages.minigame.MinigamePlayerMoveMessage;
 import bham.bioshock.communication.messages.minigame.MinigamePlayerStepMessage;
 import bham.bioshock.communication.messages.minigame.MinigameStartMessage;
+import bham.bioshock.communication.messages.minigame.SpawnEntityMessage;
 
 public class ClientHandler implements MessageHandler {
   
@@ -98,14 +99,26 @@ public class ClientHandler implements MessageHandler {
             router.call(Route.OBJECTIVE_UPDATE, message);
             break;
           }
+          case DIRECT_END: {
+            router.call(Route.DIRECT_END);
+            break;
+          }
+          case MINIGAME_SPAWN: {
+            SpawnEntityMessage data = (SpawnEntityMessage) message;
+            router.call(Route.SPAWN_ENTITY, data.entity);
+            
+            break;
+          }
           case RECONNECT_PLAYER: {
             ReconnectResponseMessage data = (ReconnectResponseMessage) message;
             
             router.call(Route.RECONNECT, false);
-            router.call(Route.ADD_PLAYER, data.players.players);
-            router.call(Route.COORDINATES_SAVE, data.coordinates);  
-            router.call(Route.GAME_BOARD_SAVE, data.gameBoard);  
-            router.call(Route.GAME_BOARD_SHOW);
+            if(data.isValid) {
+              router.call(Route.UPDATE_FROM_RECONNECT, data);              
+            } else {
+              router.back();
+              router.call(Route.ALERT, new String("Reconnection unsuccessful"));
+            }
             break;
           }
           default: {

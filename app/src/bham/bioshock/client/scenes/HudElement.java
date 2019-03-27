@@ -1,6 +1,7 @@
 package bham.bioshock.client.scenes;
 
 import bham.bioshock.client.Router;
+import bham.bioshock.client.assets.AssetContainer;
 import bham.bioshock.common.models.store.Store;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -13,11 +14,13 @@ public abstract class HudElement {
   protected final Skin skin;
   protected Store store;
   protected Router router;
+  protected AssetContainer assets;
 
-  public HudElement(Stage stage, SpriteBatch batch, Skin skin, Store store, Router router) {
+  public HudElement(Stage stage, SpriteBatch batch, AssetContainer assets, Store store, Router router) {
     this.stage = stage;
     this.batch = batch;
-    this.skin = skin;
+    this.assets = assets;
+    this.skin = assets.getSkin();
     this.store = store;
     this.router = router;
 

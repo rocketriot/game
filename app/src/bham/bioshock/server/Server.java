@@ -2,6 +2,7 @@ package bham.bioshock.server;
 
 import java.io.IOException;
 import java.net.ServerSocket;
+import java.util.UUID;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import bham.bioshock.Config;
@@ -17,30 +18,31 @@ public class Server implements StoppableServer {
   private CommunicationMaker connMaker;
   private ServerSocket serverSocket;
   private Store store;
+  private UUID serverId;
 
   @Inject
   public Server(Store store) {
     this.store = store;
   }
 
-  public Boolean start() {
+  public Boolean start(String hostName) {
     Clock clock = new Clock();
-    this.handler = new ServerHandler(store, this, Config.DEBUG_SERVER, clock);
+    this.handler = new ServerHandler(store, Config.DEBUG_SERVER, clock);
+    this.serverId = UUID.randomUUID();
     try {
       serverSocket = new ServerSocket(Config.PORT);
     } catch (IOException e1) {
       return false;
     }
     connMaker = new CommunicationMaker(new StreamFactory());
-    connMaker.startSearch(handler, serverSocket, true);
+    connMaker.setHostName(hostName);
+    connMaker.startSearch(handler, serverSocket, serverId, true);
 
     return true;
   }
-
-  public void stopDiscovery() {
-    if (connMaker != null) {
-      connMaker.stopDiscovery();
-    }
+  
+  public UUID getId() {
+    return serverId;
   }
 
   public void stop() {

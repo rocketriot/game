@@ -11,10 +11,13 @@ public class MovePlayerOnBoardMessage extends Message {
   
   public final UUID id;
   public final Coordinates coordinates;
-  
-  public MovePlayerOnBoardMessage(Coordinates coordinates, UUID playerId) {
+  public final Coordinates randomCoords;
+
+  public MovePlayerOnBoardMessage(Coordinates coordinates, UUID playerId,
+      Coordinates randomCoords) {
     super(Command.MOVE_PLAYER_ON_BOARD);
     this.id = playerId;
     this.coordinates = coordinates.copy();
+    this.randomCoords = randomCoords;
   }
 }

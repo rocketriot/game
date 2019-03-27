@@ -22,7 +22,13 @@ public enum Command {
   UPDATE_TURN,
   MOVE_PLAYER_ON_BOARD,
   END_TURN,
+
+  SET_PLANET_OWNER,
+
+  DIRECT_END,
+
   ADD_BLACK_HOLE,
+
   
   // Minigame
   MINIGAME_START,
@@ -33,6 +39,7 @@ public enum Command {
   MINIGAME_BULLET,
   MINIGAME_UPDATE_OBJECTIVE,
   MINIGAME_OBJECTIVE,
+  MINIGAME_SPAWN,
 
   //JoinScreen
   JOIN_SCREEN_MOVE;

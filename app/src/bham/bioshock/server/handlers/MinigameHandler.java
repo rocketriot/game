@@ -1,19 +1,33 @@
 package bham.bioshock.server.handlers;
 
 import bham.bioshock.Config;
+import bham.bioshock.common.Position;
+import bham.bioshock.common.models.GameBoard;
+import bham.bioshock.common.models.Planet;
 import bham.bioshock.common.models.store.MinigameStore;
 import bham.bioshock.common.models.store.Store;
 import bham.bioshock.common.utils.Clock;
 import bham.bioshock.communication.messages.Message;
 import bham.bioshock.communication.messages.minigame.EndMinigameMessage;
 import bham.bioshock.communication.messages.minigame.MinigameStartMessage;
+import bham.bioshock.communication.messages.minigame.SpawnEntityMessage;
+import bham.bioshock.communication.messages.objectives.EndPlatformerMessage;
+import bham.bioshock.communication.messages.objectives.KillAndRespawnMessage;
+import bham.bioshock.minigame.ai.CaptureTheFlagAI;
+import bham.bioshock.minigame.ai.KillThemAllAI;
 import bham.bioshock.minigame.ai.PlatformerAI;
+import bham.bioshock.minigame.models.Astronaut;
+import bham.bioshock.minigame.models.Gun;
+import bham.bioshock.minigame.models.Heart;
+import bham.bioshock.minigame.objectives.CaptureTheFlag;
+import bham.bioshock.minigame.objectives.KillThemAll;
 import bham.bioshock.minigame.objectives.Objective;
 import bham.bioshock.minigame.objectives.Platformer;
 import bham.bioshock.minigame.worlds.RandomWorld;
 import bham.bioshock.minigame.worlds.World;
 import bham.bioshock.server.ServerHandler;
 import bham.bioshock.server.ai.MinigameAILoop;
+import bham.bioshock.server.interfaces.MultipleConnectionsHandler;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -27,13 +41,13 @@ public class MinigameHandler {
   private static final Logger logger = LogManager.getLogger(MinigameHandler.class);
 
   Store store;
-  ServerHandler handler;
+  MultipleConnectionsHandler handler;
   MinigameAILoop aiLoop;
   Thread minigameTimer;
   Clock clock;
   UUID planetId;
 
-  public MinigameHandler(Store store, ServerHandler handler, Clock clock) {
+  public MinigameHandler(Store store, MultipleConnectionsHandler handler, Clock clock) {
     this.store = store;
     this.handler = handler;
     this.clock = clock;
@@ -53,6 +67,17 @@ public class MinigameHandler {
   public void startMinigame(UUID playerId, UUID planetId, GameBoardHandler gbHandler, Integer objectiveId) {
     // Create a world for the minigame
     World w = new RandomWorld();
+    
+    GameBoard board = store.getGameBoard();
+    if(board != null) {
+      Planet planet = board.getPlanet(planetId);
+      if(planet != null) {
+        w.setPlanetRadius(planet.getMinigameRadius());
+        w.setPlanetTexture(planet.getMinigameTextureId());
+      }
+    }
+    w.init();
+    
     if (planetId == null) {
       logger.error("Starting minigame without a planet ID (That's OK. for tests)!");
     } else {
@@ -60,19 +85,14 @@ public class MinigameHandler {
     }
     Objective o;
     aiLoop = new MinigameAILoop();
+    aiLoop.reset();
     
     if(objectiveId == null) {
       Random rand = new Random();
       objectiveId = rand.nextInt(10) % 3;
     }
 
-
-
-    Random rand = new Random();
-
-
-    /*switch (objectiveId) {
-
+    switch (objectiveId) {
       case 1:
         o = new Platformer(w);
         for (UUID id : store.getCpuPlayers()) {
@@ -91,24 +111,18 @@ public class MinigameHandler {
           aiLoop.registerHandler(new CaptureTheFlagAI(id, store, handler));
         }
         break;
-    }*/
-
-    o = new Platformer(w);
-    for (UUID id : store.getCpuPlayers()) {
-      aiLoop.registerHandler(new PlatformerAI(id, store, handler));
     }
 
     aiLoop.start();
     
-    setupMinigameEnd(gbHandler, playerId);
+    setupMinigameEnd(gbHandler);
     handler.sendToAll(new MinigameStartMessage(w, o, planetId));
   }
-
-
+  
   /**
    * Starts a clock ending the minigame
    */
-  private void setupMinigameEnd(GameBoardHandler gameBoardHandler, UUID playerId) {
+  private void setupMinigameEnd(GameBoardHandler gameBoardHandler) {
 
     clock.reset();
     clock.at(60f, new Clock.TimeListener() {
@@ -125,10 +139,22 @@ public class MinigameHandler {
         if(localStore != null && localStore.getObjective() != null) {
           winner = localStore.getObjective().getWinner();
         }
-        endMinigame(winner, gameBoardHandler, playerId);
+        endMinigame(winner, gameBoardHandler);
       }
     });
-
+    
+    // Spawn entities every 3 seconds
+    clock.every(8f, new Clock.TimeListener() {
+      @Override
+      public void handle(Clock.TimeUpdateEvent event) {
+        spawnEntities();
+      }
+    });
+    
+    if(minigameTimer != null && minigameTimer.isAlive()) {
+      minigameTimer.interrupt();
+    }
+    
     minigameTimer = new Thread("MinigameTimer") {
       private long time;
 
@@ -148,19 +174,38 @@ public class MinigameHandler {
     };
     minigameTimer.start();
   }
+  
+  private void spawnEntities() {
+    MinigameStore localStore = store.getMinigameStore();
+    if(!(localStore.getObjective() instanceof Platformer)) {
+      Heart heart = Heart.getRandom(localStore.getWorld());
+      handler.sendToAll(new SpawnEntityMessage(heart));      
+    }
+  }
+  
+  private void spawnGun() {
+    MinigameStore localStore = store.getMinigameStore();
+    if(!(localStore.getObjective() instanceof Platformer)) {
+      Position pos = localStore.getWorld().getRandomPosition();
+      Gun gun = new Gun(localStore.getWorld(), pos.x, pos.y);
+      handler.sendToAll(new SpawnEntityMessage(gun));      
+    }
+  }
 
   /**
    * Sync player movement and position
    */
   public void playerMove(Message message, UUID playerId) {
+    MinigameStore localStore = store.getMinigameStore();
+    if(localStore == null) return;
     //for platform, check if the player is frozen
-    if(store.getMinigameStore().getObjective() instanceof Platformer) {
+    if(localStore.getObjective() instanceof Platformer) {
       Platformer o = (Platformer) store.getMinigameStore().getObjective();
       if(o.checkIfFrozen(playerId)) {
         long now = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC);
         long frozen = o.getFrozenFor(playerId);
         if((now - frozen) > o.MAX_FROZEN_TIME) {
-          o.setFrozen(playerId,false, now);
+//          o.setFrozen(playerId,false, now);
           handler.sendToAllExcept(message, playerId);
         }
         else {
@@ -191,10 +236,15 @@ public class MinigameHandler {
    * 
    * @param gameBoardHandler
    */
-  public void endMinigame(UUID winnerId, GameBoardHandler gameBoardHandler, UUID playerId) {
-    Message msg = new EndMinigameMessage(playerId, winnerId, planetId, Config.PLANET_POINTS);
+  public void endMinigame(UUID winnerId, GameBoardHandler gameBoardHandler) {
+    if(minigameTimer != null) {
+      minigameTimer.interrupt();
+      clock.reset();
+    }
+    
+    UUID initiatorId = store.getMovingPlayer().getId();
+    Message msg = new EndMinigameMessage(initiatorId, winnerId, planetId, Config.PLANET_POINTS);
     planetId = null;
-
 
     aiLoop.finish();
     handler.sendToAll(msg);
@@ -206,7 +256,19 @@ public class MinigameHandler {
    * 
    * @param message
    */
-  public void updateObjective(Message message) {
+  public void updateObjective(Message message, GameBoardHandler gbHandler) {
+    if(message instanceof EndPlatformerMessage) {
+      EndPlatformerMessage data = (EndPlatformerMessage) message;
+      endMinigame(data.winnerID, gbHandler);
+      return;
+    } else if(message instanceof KillAndRespawnMessage) {
+      KillAndRespawnMessage data = (KillAndRespawnMessage) message;
+      Astronaut player = store.getMinigameStore().getPlayer(data.playerId);
+      if(player != null && player.getEquipment().haveGun) {
+        this.spawnGun();
+      }
+    }
+    
     handler.sendToAll(message);
   }
 

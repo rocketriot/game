@@ -7,8 +7,12 @@ import bham.bioshock.client.scenes.minigame.MinigameHud;
 import bham.bioshock.common.models.store.MinigameStore;
 import bham.bioshock.minigame.models.Astronaut;
 import bham.bioshock.minigame.models.Bullet;
+import bham.bioshock.minigame.models.astronaut.AstronautMove;
+import bham.bioshock.minigame.objectives.Platformer;
 import bham.bioshock.minigame.physics.CollisionHandler;
 import bham.bioshock.minigame.worlds.World;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputAdapter;
 
@@ -21,7 +25,7 @@ public class InputListener extends InputAdapter {
   private Router router;
   private CollisionHandler collisionHandler;
   private MinigameHud hud;
-  private long MAX_FROZEN_TIME = 2;
+  private final int SHOOT_DELAY = 150;
 
   public InputListener(MinigameStore minigameStore, Router router, CollisionHandler collisionHandler, MinigameHud hud) {
     this.world = minigameStore.getWorld();
@@ -34,7 +38,7 @@ public class InputListener extends InputAdapter {
 
   @Override
   public boolean keyDown(int keyCode) {
-    if (Input.Keys.SPACE == keyCode && (System.currentTimeMillis() - lastShot >= 500) && mainPlayer.getEquipment().haveGun) {
+    if (Input.Keys.SPACE == keyCode && (System.currentTimeMillis() - lastShot >= SHOOT_DELAY) && mainPlayer.getEquipment().haveGun) {
       createBullet();
       SoundController.playSound("laser");
       lastShot = System.currentTimeMillis();
@@ -48,8 +52,22 @@ public class InputListener extends InputAdapter {
     if (keyCode == Input.Keys.UP || keyCode == Input.Keys.W) {
       mainPlayer.jump(true);
     }
-    mainPlayer.moveChange();
-    router.call(Route.MINIGAME_MOVE);
+    
+    if(localStore.getObjective() instanceof Platformer) {
+      Platformer o = (Platformer) localStore.getObjective();
+      Long now = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC);
+      Long frozen = o.getFrozenFor(mainPlayer.getId());
+      
+      if(frozen == 0 || (now - frozen) > o.MAX_FROZEN_TIME) {
+        mainPlayer.moveChange();
+        router.call(Route.MINIGAME_MOVE);  
+      } else {
+        mainPlayer.updateMove(new AstronautMove());
+      }
+    } else {
+      mainPlayer.moveChange();
+      router.call(Route.MINIGAME_MOVE);      
+    }
 
     return false;
   }

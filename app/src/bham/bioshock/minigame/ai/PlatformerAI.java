@@ -152,7 +152,11 @@ public class PlatformerAI extends MinigameAI {
             Most of the time, the player will move to the next platform in the pre-configured path.
              */
             if (r < 95) {
+              try {
                 nextPlatform = pathToGoal.get(currentPlatformIndex);
+              } catch(IndexOutOfBoundsException e) {
+                return;
+              }
             }
             /*
             Sometimes the player will move to a nearby platform

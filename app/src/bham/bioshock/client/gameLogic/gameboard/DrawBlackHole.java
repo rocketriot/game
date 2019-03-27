@@ -1,6 +1,6 @@
 package bham.bioshock.client.gameLogic.gameboard;
 
-import bham.bioshock.client.Assets;
+import bham.bioshock.client.assets.Assets;
 import bham.bioshock.common.models.BlackHole;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;

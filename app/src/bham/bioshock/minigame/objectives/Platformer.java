@@ -5,6 +5,8 @@ import bham.bioshock.client.Router;
 import bham.bioshock.common.Position;
 import bham.bioshock.common.models.store.MinigameStore;
 import bham.bioshock.common.models.store.Store;
+import bham.bioshock.communication.messages.minigame.EndMinigameMessage;
+import bham.bioshock.communication.messages.objectives.EndPlatformerMessage;
 import bham.bioshock.communication.messages.objectives.UpdateFrozenMessage;
 import bham.bioshock.minigame.models.*;
 import bham.bioshock.minigame.worlds.World;
@@ -65,7 +67,6 @@ public class Platformer extends Objective {
    */
   @Override
   public void gotShot(Astronaut player, UUID killer) {
-    //super.gotShot(player,killer);
     if(!store.isHost()) {
       return;
     }
@@ -123,19 +124,21 @@ public class Platformer extends Objective {
     if (!store.isHost()){
       return;
     }
-
-    //Player initiator = store.getMovingPlayer();
-    //router.call(Route.MINIGAME_END, new EndMinigameMessage(initiator.getId(), winner.get(), localStore.getPlanetID(), 75));
-
+    
+    router.call(Route.SEND_OBJECTIVE_UPDATE, new EndPlatformerMessage(a.getId()));
     return;
   }
 
   @Override
   public String instructions() {
-    return "You have 3 minutes to find the goal! \n " +
-            "The first astronaut to reach it wins!";
+    return "You have 1 minute to find the goal,\n" +
+            "the first player that reaches it wins!";
   }
 
+  @Override
+  public String name() {
+    return "Find the Goal!";
+  }
 
   public Platform getGoalPlatform() {
     return goalPlatform;
@@ -159,7 +162,7 @@ public class Platformer extends Objective {
     }
     /* set the goal to the highest platform */
     goalPlatform = highestPlatform;
-    goal = new Goal(world, highestPlatform.getX(), highestPlatform.getY(), true, EntityType.GOAL);
+    goal = new Goal(world, highestPlatform.getX(), highestPlatform.getY());
   }
 
   /**
@@ -196,7 +199,6 @@ public class Platformer extends Objective {
   }
 
 
-
   /**
    * Get the sequence of platforms by following which a player can travel from the ground to the goal
    * This is used by the CPU players
@@ -206,8 +208,6 @@ public class Platformer extends Objective {
     ArrayList<Platform> path = world.getPlatformPath(goalPlatform);
     return path;
   }
-
-
 
 
 }

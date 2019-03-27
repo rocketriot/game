@@ -1,9 +1,10 @@
 package bham.bioshock.minigame;
 
 import bham.bioshock.Config;
-import bham.bioshock.client.Assets;
 import bham.bioshock.client.Route;
 import bham.bioshock.client.Router;
+import bham.bioshock.client.assets.AssetContainer;
+import bham.bioshock.client.assets.Assets;
 import bham.bioshock.common.models.store.MinigameStore;
 import bham.bioshock.common.models.store.Store;
 import bham.bioshock.minigame.models.*;
@@ -12,7 +13,6 @@ import bham.bioshock.minigame.physics.CollisionHandler;
 import bham.bioshock.minigame.worlds.World;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
-import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -29,38 +29,64 @@ import bham.bioshock.client.scenes.minigame.MinigameHud;
 import java.util.ArrayList;
 import java.util.Collection;
 
+/**
+ * Main minigame renderer
+ */
 public class Renderer {
+  
+  /** Main player */
   private Astronaut mainPlayer;
 
-  ShapeRenderer shapeRenderer;
-  private OrthographicCamera cam;
-  Vector3 lerpTarget = new Vector3();
+  /**
+   * Rendering components
+   */
+  private ShapeRenderer shapeRenderer;
   private Sprite background;
   private Stage stage;
   private SpriteBatch batch;
   private SpriteBatch backgroundBatch;
   private SpriteBatch textBatch;
   private Viewport viewport;
+
+  /**
+   * Camera properties
+   */
+  private OrthographicCamera cam;
+  private Vector3 lerpTarget = new Vector3();
   private double camRotation;
+  
   private final int GAME_WORLD_WIDTH = Config.GAME_WORLD_WIDTH;
   private final int GAME_WORLD_HEIGHT = Config.GAME_WORLD_HEIGHT;
+  
+  /**
+   * Stores and router
+   */
   private Store store;
   private Router router;
-  private static boolean DEBUG_MODE = false;
   private MinigameStore minigameStore;
 
   private MinigameHud hud;
   private World world;
-  private AssetManager manager;
+  private AssetContainer assets;
   private float time;
   
-  public Renderer(Store store, Router router, AssetManager manager) {
+  /**
+   * Create a renderer, store minigame store
+   * 
+   * @param store
+   * @param router
+   * @param manager
+   */
+  public Renderer(Store store, Router router, AssetContainer assets) {
     this.store = store;
     this.minigameStore = store.getMinigameStore();
     this.router = router;
-    this.manager = manager;
+    this.assets = assets;
   }
   
+  /**
+   * Initialise rendering components 
+   */
   public void show() {
     mainPlayer = minigameStore.getMainPlayer();
     shapeRenderer = new ShapeRenderer();
@@ -76,8 +102,7 @@ public class Renderer {
     CollisionHandler collisionHandler = new CollisionHandler(minigameStore);
     minigameStore.setCollisionHandler(collisionHandler);
     
-    Skin skin = new Skin(Gdx.files.internal(Assets.skin));
-    hud = new MinigameHud(batch, skin, store, router);
+    hud = new MinigameHud(batch, assets, store, router);
 
     loadSprites();
 
@@ -93,17 +118,17 @@ public class Renderer {
     viewport = new FitViewport(GAME_WORLD_WIDTH, GAME_WORLD_HEIGHT, cam);
     stage = new Stage(viewport);
     
-    Astronaut.createTextures(manager);
-    Rocket.createTextures(manager);
-    Gun.createTextures(manager);
-    Bullet.createTextures(manager);
-    Flag.createTextures(manager);
-    Goal.createTextures(manager);
-    Heart.createTextures(manager);
-    World.createTextures(manager, world.getTextureId());
-    Platform.createTextures(manager, world.getTextureId());
+    Astronaut.createTextures(assets);
+    Rocket.createTextures(assets);
+    Gun.createTextures(assets);
+    Bullet.createTextures(assets);
+    Flag.createTextures(assets);
+    Heart.createTextures(assets);
+    Goal.createTextures(assets);
+    World.createTextures(assets, world.getTextureId());
+    Platform.createTextures(assets, world.getTextureId());
 
-    background = new Sprite(new Texture(Gdx.files.internal("app/assets/backgrounds/game.png")));
+    background = new Sprite(assets.get(Assets.gameBackground, Texture.class));
 
     Objective objective = minigameStore.getObjective();
     
@@ -116,6 +141,11 @@ public class Renderer {
     }
   }
 
+  /**
+   * Get all entities, both dynamic and static
+   * 
+   * @return list of all entities to render
+   */
   public Collection<Entity> getEntities() {
     Collection<Entity> entities = new ArrayList<>(minigameStore.countEntities());
     entities.addAll(minigameStore.getEntities());
@@ -123,7 +153,13 @@ public class Renderer {
     return entities;
   }
 
+  /**
+   * Main render function
+   * 
+   * @param delta
+   */
   public void render(float delta) {
+    // If client disconnected show reconnecting screen
     if(store.isReconnecting()) {
       router.call(Route.LOADING, "Reconnecting...");
       return;
@@ -134,19 +170,23 @@ public class Renderer {
     textBatch.setProjectionMatrix(cam.combined);
     shapeRenderer.setProjectionMatrix(cam.combined);
 
+    // Update the camera rotation
     cam.position.lerp(lerpTarget.set(mainPlayer.getX(), mainPlayer.getY(), 0), 3f * delta);
     double rotation = -world.getAngleTo(cam.position.x, cam.position.y);
     cam.rotate((float) (camRotation - rotation));
     camRotation = rotation;
     cam.update();
 
+    // Clear the screen
     Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
+    // Get all entities
     Collection<Entity> entities = getEntities();
-
+    
+    // Draw background
     drawBackground();
 
-    if (DEBUG_MODE) {
+    if (Config.DEBUG_RENDERER) {
       entities.forEach(e -> e.drawDebug(shapeRenderer));
     }
 
@@ -159,18 +199,23 @@ public class Renderer {
     world.afterDraw(batch);
     
     // Draw the ui
-    this.batch.setProjectionMatrix(hud.getStage().getCamera().combined);
+    batch.setProjectionMatrix(hud.getStage().getCamera().combined);
     hud.getStage().act(delta);
     hud.update();
     hud.getStage().draw();
     minigameStore.getEntities().removeIf(e -> e.isRemoved());
     minigameStore.getStaticEntities().removeIf(e -> e.isRemoved());
+    
+    // Send to server updated player position every second
     if(time > 1f) {
       time -= 1f;
       router.call(Route.MINIGAME_STEP);
     }
   }
 
+  /**
+   * Draw background
+   */
   public void drawBackground() {
     backgroundBatch.begin();
     backgroundBatch.disableBlending();
@@ -178,17 +223,25 @@ public class Renderer {
     backgroundBatch.end();
   }
 
+  /**
+   * Resize the viewport
+   * 
+   * @param width
+   * @param height
+   */
   public void resize(int width, int height) {
     if(stage != null) {
       stage.getViewport().update(width, height, true);      
     }
   }
 
+  /**
+   * Dispose all rendering components
+   */
   public void dispose() {
     batch.dispose();
     backgroundBatch.dispose();
     textBatch.dispose();
-    background.getTexture().dispose();
     hud.dispose();
   }
 }

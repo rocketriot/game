@@ -8,7 +8,7 @@ public class Equipment implements Serializable {
   
   public boolean haveGun = false;
   public boolean haveShield = false;
-  public int shieldHealth = 4;
+  public int shieldHealth = 6;
   
   public Equipment copy() {
     Equipment e = new Equipment();

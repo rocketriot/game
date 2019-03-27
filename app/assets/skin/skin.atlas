@@ -96,6 +96,20 @@ button-pressed
   orig: 46, 42
   offset: 0, 0
   index: -1
+checkbox
+  rotate: false
+  xy: 145, 232
+  size: 76, 76
+  orig: 76, 76
+  offset: 0, 0
+  index: -1
+checkbox-selected
+  rotate: false
+  xy: 515, 600
+  size: 76, 76
+  orig: 76, 76
+  offset: 0, 0
+  index: -1
 font-30-bold
   rotate: false
   xy: 1, 310
@@ -133,29 +147,6 @@ popup
   orig: 70, 70
   offset: 0, 0
   index: -1
-textfield
-  rotate: false
-  xy: 515, 556
-  size: 46, 42
-  split: 8, 8, 10, 10
-  pad: 22, 22, 20, 20
-  orig: 46, 42
-  offset: 0, 0
-  index: -1
-checkbox
-  rotate: false
-  xy: 515, 600
-  size: 76, 76
-  orig: 76, 76
-  offset: 0, 0
-  index: -1
-checkbox-selected
-  rotate: false
-  xy: 145, 232
-  size: 76, 76
-  orig: 76, 76
-  offset: 0, 0
-  index: -1
 slider-after
   rotate: false
   xy: 659, 722
@@ -182,5 +173,14 @@ slider-knob
   xy: 593, 648
   size: 16, 28
   orig: 16, 28
+  offset: 0, 0
+  index: -1
+textfield
+  rotate: false
+  xy: 515, 556
+  size: 46, 42
+  split: 8, 8, 10, 10
+  pad: 22, 22, 20, 20
+  orig: 46, 42
   offset: 0, 0
   index: -1

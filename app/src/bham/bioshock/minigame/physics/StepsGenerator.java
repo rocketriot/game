@@ -39,7 +39,9 @@ public class StepsGenerator {
   }
 
   public void generate() {
-    generator.start();
+    if(!generator.isAlive()) {
+      generator.start();      
+    }
   }
   
   public void moveLeft() {
@@ -235,9 +237,10 @@ public class StepsGenerator {
               speed.stop(angle);
             }
             
-            p.y += s.vector.dY() * UNIT;
-            p.x += s.vector.dX() * UNIT;
-  
+            if(!s.vector.dY().isNaN() && !s.vector.dX().isNaN()) {
+              p.y += s.vector.dY() * UNIT;
+              p.x += s.vector.dX() * UNIT;
+            }
             steps.add(s);
             lastStep = s;
           }

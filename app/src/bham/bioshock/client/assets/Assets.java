@@ -1,6 +1,5 @@
-package bham.bioshock.client;
+package bham.bioshock.client.assets;
 
-import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -12,6 +11,7 @@ public class Assets {
   public static final String cursor = "app/assets/ui/cursor.png";
 
   // Backgrounds
+  public static final String loading = "app/assets/animations/loading2.png";
   public static final String gameBackground = "app/assets/backgrounds/game.png";
   public static final String menuBackground = "app/assets/backgrounds/menu.png";
   
@@ -27,6 +27,8 @@ public class Assets {
   public static final String howToPlayButtonHover = "app/assets/ui/main-menu/how-to-play-hover.png";
   public static final String exitButton = "app/assets/ui/main-menu/exit.png";
   public static final String exitButtonHover = "app/assets/ui/main-menu/exit-hover.png";
+  public static final String startButton = "app/assets/ui/main-menu/start.png";
+  public static final String startButtonHover = "app/assets/ui/main-menu/start-hover.png";
 
   // Game Board assets
   public static final String planetsFolder = "app/assets/entities/planets";
@@ -45,9 +47,13 @@ public class Assets {
   // Gameboard HUD assets
   public static final String turnPointer = "app/assets/ui/turn-pointer.png";
 
-  // Minigame HUD assets
+  // Minigame entities
   public static final String gun = "app/assets/minigame/gun.png";
-
+  public static final String flag = "app/assets/minigame/flag.png";
+  public static final String bullet = "app/assets/minigame/bullet.png";
+  public static final String bulletAnim = "app/assets/minigame/bullet_animation.png";
+  public static final String blackHoleAnimationSheet = "app/assets/animations/blackHoleSheet.png";
+  
   // Minigame Astronauts
   public static final String hearts = "app/assets/minigame/hearts.png";
   public static final String astroBase = "app/assets/minigame/astronauts/";
@@ -56,16 +62,52 @@ public class Assets {
   public static final String astroFall = "/fall.png";
   public static final String astroFFall = "/ffall.png";
   public static final String astroShield = "/shield.png";
+  public static final String astroShieldGun = "/shield_gun.png";
+  
+  // Minigame world
+  public static final String planetBase = "app/assets/minigame/planets/";
+  public static final String platformsBase = "app/assets/minigame/platforms/";
+  
+  /* Music */
+  public static final String mainMenuMusic = "app/assets/music/MainMenuMusic.mp3";
+  public static final String gameBoardMusic = "app/assets/music/GameBoardMusic.mp3";
+  public static final String miniGameMusic = "app/assets/music/MinigameMusic.mp3";
+  
+  public static final String menuSelectSound = "app/assets/music/MenuSelect.wav";
+  public static final String rocketSound = "app/assets/music/RocketSound.wav";
+  public static final String jumpSound = "app/assets/music/JumpSound.wav";
+  public static final String laserSound = "app/assets/music/LaserSound.mp3";
+  public static final String healthPickupSound = "app/assets/music/HealthPickupSound.wav";
+  public static final String blackHoleSound = "app/assets/music/BlackHoleSound.wav";
+  public static final String fuelSound = "app/assets/music/FuelSound.wav";
+  public static final String upgradeSound = "app/assets/music/UpgradeSound.wav";
 
-  //Animations
-  public static final String blackHoleAnimationSheet = "app/assets/animations/blackHoleSheet.png";
+  // Join Screen
+  public static final String loadingBase = "app/assets/animations/loading";
+  public static final String connectedBase = "app/assets/animations/connectedAnimSheet";
   
-  
-  public static TextureRegion[][] splittedTexture(AssetManager manager, String path, int fnum) {
+  /**
+   * Split texture to regions
+   * 
+   * @param manager
+   * @param path
+   * @param fnum
+   * @return
+   */
+  public static TextureRegion[][] splittedTexture(AssetContainer manager, String path, int fnum) {
     Texture t = manager.get(path, Texture.class);
     return TextureRegion.split(t, t.getWidth() / fnum, t.getHeight());
   }
 
+  /**
+   * Convert texture to animation
+   * 
+   * @param list
+   * @param fnum
+   * @param skip
+   * @param duration
+   * @return
+   */
   public static Animation<TextureRegion> textureToAnimation(TextureRegion[][] list, int fnum, int skip, float duration) {
     TextureRegion[] frames = new TextureRegion[fnum - skip];
     for (int i = skip; i < fnum; i++) {
@@ -74,7 +116,7 @@ public class Assets {
     return new Animation<TextureRegion>(duration, frames);
   }
   
-  // Minigame world
-  public static final String planetBase = "app/assets/minigame/planets/";
-  public static final String platformsBase = "app/assets/minigame/platforms/";
+  public enum GamePart {
+    MENU, MINIGAME, BOARDGAME
+  }
 }

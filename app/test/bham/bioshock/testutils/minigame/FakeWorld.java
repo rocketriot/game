@@ -1,4 +1,4 @@
-package bham.bioshock.minigame.seeders;
+package bham.bioshock.testutils.minigame;
 
 import bham.bioshock.minigame.PlanetPosition;
 import bham.bioshock.minigame.worlds.World;
@@ -8,9 +8,11 @@ import bham.bioshock.common.Position;
 import bham.bioshock.minigame.models.Gun;
 import bham.bioshock.minigame.models.Platform;
 import bham.bioshock.minigame.models.Rocket;
+import bham.bioshock.minigame.seeders.PlatformSeeder;
+import bham.bioshock.minigame.seeders.WeaponSeeder;
 import java.util.Collections;
 
-public class TestingWorld extends World {
+public class FakeWorld extends World {
 
   private static final long serialVersionUID = -5432716795106522826L;
 
@@ -26,7 +28,7 @@ public class TestingWorld extends World {
   PlatformSeeder seeder;
   WeaponSeeder wSeeder;
 
-  public TestingWorld() {
+  public FakeWorld() {
 
     seeder = new PlatformSeeder(this);
     wSeeder = new WeaponSeeder(this);
@@ -107,5 +109,9 @@ public class TestingWorld extends World {
 
   @Override
   public void afterDraw(SpriteBatch batch) {
+  }
+
+  @Override
+  public void init() {
   }
 }

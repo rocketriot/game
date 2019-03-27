@@ -5,6 +5,7 @@ import bham.bioshock.common.models.store.Store;
 import bham.bioshock.communication.messages.minigame.BulletShotMessage;
 import bham.bioshock.communication.messages.minigame.MinigamePlayerMoveMessage;
 import bham.bioshock.communication.messages.minigame.MinigamePlayerStepMessage;
+import bham.bioshock.server.interfaces.MultipleConnectionsHandler;
 import bham.bioshock.minigame.models.Bullet;
 import bham.bioshock.minigame.models.astronaut.AstronautMove;
 import bham.bioshock.server.interfaces.MultipleConnectionsHandler;

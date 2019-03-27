@@ -1,12 +1,11 @@
 package bham.bioshock.client.screens;
 
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
-import bham.bioshock.client.FontGenerator;
 import bham.bioshock.client.Router;
+import bham.bioshock.client.assets.AssetContainer;
 
 /** The Loading screen. */
 public class LoadingScreen extends ScreenMaster {
@@ -18,15 +17,15 @@ public class LoadingScreen extends ScreenMaster {
   private String text;
 
   /** The Layout. */
-  GlyphLayout layout;
+  private GlyphLayout layout;
 
   /**
    * Instantiates a new Loading screen.
    *
    * @param router the router
    */
-  public LoadingScreen(Router router) {
-    super(router);
+  public LoadingScreen(Router router, AssetContainer assets) {
+    super(router, assets);
     stage = new Stage(new ScreenViewport());
     batch = stage.getBatch();
     text = "";
@@ -44,9 +43,9 @@ public class LoadingScreen extends ScreenMaster {
 
   @Override
   public void show() {
-    FontGenerator fontGenerator = new FontGenerator();
-    font = fontGenerator.generate(60, Color.WHITE);
+    font = assets.getFont(60);
     super.show();
+    drawBackButton();
   }
 
   @Override

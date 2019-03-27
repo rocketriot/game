@@ -40,15 +40,20 @@ public class SpeedVector implements Serializable {
   }
 
   private double round(double value) {
-    return Math.round(value * 10000) / 10000;
+    return value;
   }
 
   public double getValue() {
-    return Math.sqrt(dx * dx + dy * dy);
+    double value = dx * dx + dy * dy;
+    if(value == 0) return 0.0001;
+    return Math.sqrt(value);
   }
 
   public double getSpeedAngle() {
     double length = getValue();
+    if(length == 0) {
+      return 0;
+    }
     double speedAngle = Math.asin(dx / length);
     if (dy < 0) {
       speedAngle = Math.PI - speedAngle;
@@ -64,8 +69,8 @@ public class SpeedVector implements Serializable {
 
   public void friction(double u) {
     Vector v = stopVector(getSpeedAngle());
-    dx -= round(v.dx * u);
-    dy -= round(v.dy * u);
+    dx -= v.dx * u;
+    dy -= v.dy * u;
   }
   
   public double getValueFor(double angle) {
@@ -94,11 +99,11 @@ public class SpeedVector implements Serializable {
     return new Vector(round(dx1), round(dy1));
   }
 
-  public double dX() {
+  public Double dX() {
     return dx;
   }
 
-  public double dY() {
+  public Double dY() {
     return dy;
   }
   

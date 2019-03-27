@@ -174,7 +174,11 @@ public class CollisionHandler {
     }
   
     double angleNorm = world.getAngleTo(step.position.x, step.position.y);
-    double speedVBefore = step.vector.getValue();
+    Double speedVBefore = step.vector.getValue();
+    
+    if(speedVBefore.isNaN()) {
+      return colPlace;
+    }
 
     switch (colPlace) {
       case RIGHT:

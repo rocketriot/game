@@ -4,12 +4,22 @@ import bham.bioshock.Config;
 import bham.bioshock.communication.Command;
 import java.io.IOException;
 import java.net.*;
+import java.util.UUID;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class DiscoveryThread implements Runnable {
+public class DiscoveryThread extends Thread {
   
   private static final Logger logger = LogManager.getLogger(DiscoveryThread.class);
+  
+  UUID serverId;
+  String name = "Server";
+  
+  public DiscoveryThread(String hostName, UUID serverId) {
+    super("ServerDiscoveryThread");
+    this.name = hostName;
+    this.serverId = serverId;
+  }
   
   /**
    * Wait for a request packet from the client and respond
@@ -20,7 +30,7 @@ public class DiscoveryThread implements Runnable {
     try {
       socket = new DatagramSocket(Config.PORT, InetAddress.getByName("0.0.0.0"));
       socket.setBroadcast(true);
-      socket.setSoTimeout(500);
+      socket.setSoTimeout(2000);
 
       while (!Thread.currentThread().isInterrupted()) {
         byte[] buffer = new byte[Command.COMM_DISCOVER_REQ.getBytes().length];
@@ -31,7 +41,8 @@ public class DiscoveryThread implements Runnable {
           String message = new String(packet.getData()).trim();
           if (message.equals(Command.COMM_DISCOVER_REQ.toString())) {
 
-            byte[] sendData = Command.COMM_DISCOVER_RES.getBytes();
+            String response = Command.COMM_DISCOVER_RES.toString() + name + ";" + serverId;
+            byte[] sendData = response.getBytes();
             // Send a response
             DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length,
                 packet.getAddress(), packet.getPort());
@@ -39,9 +50,12 @@ public class DiscoveryThread implements Runnable {
           }
         } catch (SocketTimeoutException e) {
         }
+        sleep(500);
       }
     } catch (IOException ex) {
       logger.catching(ex);
+    } catch (InterruptedException e) {
+
     } finally {
       if(socket != null) {
         socket.close();

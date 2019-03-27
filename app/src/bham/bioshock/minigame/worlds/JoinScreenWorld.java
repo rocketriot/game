@@ -71,4 +71,8 @@ public class JoinScreenWorld extends World {
   
   @Override
   public void afterDraw(SpriteBatch batch) {}
+
+  @Override
+  public void init() {
+  }
 }

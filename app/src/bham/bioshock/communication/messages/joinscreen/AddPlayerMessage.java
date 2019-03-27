@@ -25,7 +25,7 @@ public class AddPlayerMessage extends Message {
     }
   }
   
-  public class JoiningPlayer implements Serializable {
+  public static class JoiningPlayer implements Serializable {
     
     private static final long serialVersionUID = -8374083025011157818L;
     public final UUID playerId;

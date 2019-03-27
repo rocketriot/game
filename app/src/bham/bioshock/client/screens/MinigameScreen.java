@@ -1,48 +1,65 @@
 package bham.bioshock.client.screens;
 
 import bham.bioshock.client.Router;
+import bham.bioshock.client.assets.AssetContainer;
+import bham.bioshock.client.assets.Assets.GamePart;
 import bham.bioshock.common.models.store.Store;
 import bham.bioshock.minigame.Renderer;
 import bham.bioshock.minigame.models.*;
 import bham.bioshock.minigame.worlds.World;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.assets.AssetManager;
 
+/**
+ * Minigame screen loading the assets and running the minigame renderer
+ */
 public class MinigameScreen implements Screen {
 
+  /** Minigame renderer */
   private Renderer renderer;
+  /** Is loading */
   private boolean loading = true;
-  private AssetManager manager;
+  /** Assets container */
+  private AssetContainer assets;
+  /** Minigame world */
   private World world;
-
+  /** Loading screen */
   private LoadingScreen loadingScreen;
   
-  public MinigameScreen(Store store, Router router) {
-    this.loadingScreen = new LoadingScreen(router);
-    manager = new AssetManager();
+  /**
+   * Create minigame screen
+   * 
+   * @param store
+   * @param router
+   * @param assets
+   */
+  public MinigameScreen(Store store, Router router, AssetContainer assets) {
+    this.loadingScreen = new LoadingScreen(router, assets);
+    this.assets = assets;
     world = store.getMinigameStore().getWorld();
-    this.renderer = new Renderer(store, router, manager);
+    this.renderer = new Renderer(store, router, assets);
   }
 
 
+  /**
+   * Load all needed assets
+   */
   @Override
   public void show() {
     loadingScreen.show();
     
-    Astronaut.loadTextures(manager);
-    Rocket.loadTextures(manager);
-    Gun.loadTextures(manager);
-    Bullet.loadTextures(manager);
-    Flag.loadTextures(manager);
-    Goal.loadTextures(manager);
-    World.loadTextures(manager, world.getTextureId());
-    Platform.loadTextures(manager, world.getTextureId());
+    Astronaut.loadTextures(assets);
+    Rocket.loadTextures(assets);
+    Gun.loadTextures(assets);
+    Bullet.loadTextures(assets);
+    Flag.loadTextures(assets);
+    Goal.loadTextures(assets);
+    World.loadTextures(assets, world.getTextureId());
+    Platform.loadTextures(assets, world.getTextureId());
   }
-
 
   @Override
   public void render(float delta) {
-    if(loading && manager.update()) {
+    if(loading && assets.update()) {
       // Loading done
       loading = false;
       renderer.show();
@@ -50,7 +67,7 @@ public class MinigameScreen implements Screen {
     
     if(loading) {
       // Update loading progress
-      float progress = manager.getProgress();
+      float progress = assets.getProgress();
       loadingScreen.setText( ((int) Math.floor(progress * 100))+"%" );
       loadingScreen.render(delta);
     } else {
@@ -66,18 +83,15 @@ public class MinigameScreen implements Screen {
   }
 
   @Override
-  public void pause() {
-
-  }
+  public void pause() {}
 
   @Override
-  public void resume() {
-
-  }
+  public void resume() {}
 
   @Override
   public void hide() {
-    manager.clear();
+    // Dispose minigame assets
+    assets.dispose(GamePart.MINIGAME);
     renderer.dispose();
   }
 

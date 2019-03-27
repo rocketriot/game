@@ -3,14 +3,17 @@ package bham.bioshock.common.pathfinding;
 import bham.bioshock.common.consts.GridPoint;
 import bham.bioshock.common.models.Coordinates;
 import bham.bioshock.common.models.Player;
-import bham.bioshock.common.models.store.Store;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
+/** The A-Star pathfinding algorithm. */
 public class AStarPathfinding {
 
+  private static final Logger logger = LogManager.getLogger(AStarPathfinding.class);
+  
   /**
    * The cost to go from one point to another
    */
@@ -55,7 +58,11 @@ public class AStarPathfinding {
    * @param maxY The maximum y value of the grid, i.e. the y limit of the game map
    * @param players The list of players that are playing
    */
-  public AStarPathfinding(GridPoint[][] grid, Coordinates startPosition, int maxX, int maxY,
+  public AStarPathfinding(
+      GridPoint[][] grid,
+      Coordinates startPosition,
+      int maxX,
+      int maxY,
       ArrayList<Player> players) {
     setStartPosition(startPosition);
     this.maxX = maxX;
@@ -144,7 +151,11 @@ public class AStarPathfinding {
     // get the position of each player and add them into the grid
     for (Player player : players) {
       Coordinates playerCoords = player.getCoordinates();
-      gameGrid[playerCoords.getX()][playerCoords.getY()] = new GridPoint(GridPoint.Type.PLAYER, 0);
+      if(playerCoords == null) {
+        logger.fatal("Player " + player.getUsername() + " coordinates are null!");
+        continue;
+      }
+      gameGrid[playerCoords.getX()][playerCoords.getY()] = new GridPoint(GridPoint.Type.PLAYER, 0);        
     }
   }
 
@@ -181,19 +192,19 @@ public class AStarPathfinding {
       int currentY = goalPosition.getY();
 
       // go to the centre of the planet
-      if (isValid(new Coordinates(currentX, currentY + 1), false) &&
+      if (isValid(new Coordinates(currentX, currentY + 1)) &&
           !gameGrid[currentX][currentY + 1].isType(GridPoint.Type.PLANET)) { // check if in top row
         currentY -= 1;
-      } else if (isValid(new Coordinates(currentX, currentY - 1), false) &&
+      } else if (isValid(new Coordinates(currentX, currentY - 1)) &&
           !gameGrid[currentX][currentY - 1]
               .isType(GridPoint.Type.PLANET)) { // check if in bottom row
         currentY += 1;
       }
-      if (isValid(new Coordinates(currentX + 1, currentY), false) &&
+      if (isValid(new Coordinates(currentX + 1, currentY)) &&
           !gameGrid[currentX + 1][currentY]
               .isType(GridPoint.Type.PLANET)) { // check if in right column
         currentX -= 1;
-      } else if (isValid(new Coordinates(currentX - 1, currentY), false) &&
+      } else if (isValid(new Coordinates(currentX - 1, currentY)) &&
           !gameGrid[currentX - 1][currentY]
               .isType(GridPoint.Type.PLANET)) { // check if in left column
         currentX += 1;
@@ -204,7 +215,7 @@ public class AStarPathfinding {
       currentY += 1;
       for (int x = currentX; x < currentX + 3; x++) {
         for (int y = currentY; y > currentY - 3; y--) {
-          if (isValid(new Coordinates(x, y), false)) {
+          if (isValid(new Coordinates(x, y))) {
             aStarGrid[x][y].setPassable(true);
           }
 
@@ -281,25 +292,25 @@ public class AStarPathfinding {
 
     // check point directly above current point
     Coordinates upPoint = new Coordinates(currentPoint.getX(), currentPoint.getY() + 1);
-    if (isValid(upPoint, true) && !checkList(upPoint, closedList)) {
+    if (isValid(upPoint) && !checkList(upPoint, closedList)) {
       successors.add(upPoint);
     }
 
     // check point directly below currently point
     Coordinates downPoint = new Coordinates(currentPoint.getX(), currentPoint.getY() - 1);
-    if (isValid(downPoint, true) && !checkList(downPoint, closedList)) {
+    if (isValid(downPoint) && !checkList(downPoint, closedList)) {
       successors.add(downPoint);
     }
 
     // check point to the left of the current point
     Coordinates leftPoint = new Coordinates(currentPoint.getX() - 1, currentPoint.getY());
-    if (isValid(leftPoint, true) && !checkList(leftPoint, closedList)) {
+    if (isValid(leftPoint) && !checkList(leftPoint, closedList)) {
       successors.add(leftPoint);
     }
 
     // check point to the right of the current point
     Coordinates rightPoint = new Coordinates(currentPoint.getX() + 1, currentPoint.getY());
-    if (isValid(rightPoint, true) && !checkList(rightPoint, closedList)) {
+    if (isValid(rightPoint) && !checkList(rightPoint, closedList)) {
       successors.add(rightPoint);
     }
 
@@ -311,10 +322,9 @@ public class AStarPathfinding {
    * passable
    *
    * @param point The coordinates of the point to check
-   * @param passability Whether we want to check whether the point is passable or not
    * @return Whether the point is valid or not
    */
-  private Boolean isValid(Coordinates point, Boolean passability) {
+  private Boolean isValid(Coordinates point) {
     int x = point.getX();
     int y = point.getY();
       return x < maxX && x >= 0 && y < maxX && y >= 0 && aStarGrid[x][y].isPassable();

@@ -7,6 +7,7 @@ import java.net.Socket;
 import java.net.SocketException;
 import java.net.SocketImpl;
 import java.net.SocketImplFactory;
+import java.util.UUID;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -15,7 +16,7 @@ import bham.bioshock.testutils.communication.streams.*;
 import bham.bioshock.testutils.server.FakeServerHandler;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class ReconnectionTest {
+public class CommunicationMakerTest {
 
   CommunicationMaker connector;
   FakeServerHandler handler;
@@ -59,7 +60,7 @@ public class ReconnectionTest {
   
   @Test
   public void abortTest() throws InterruptedException {
-    connector.startSearch(handler, serverSocket, false);
+    connector.startSearch(handler, serverSocket, UUID.randomUUID(), false);
     // Init new connection
     socket.queue.add(new Object());
     
@@ -88,20 +89,8 @@ public class ReconnectionTest {
   }
   
   @Test
-  public void discoveryThreadTest() throws InterruptedException {
-    connector.startSearch(handler, serverSocket, true);
-    
-    connector.stopDiscovery();
-    
-    // Stopping discovery shouldn't stop the connector
-    assertFalse(connector.aborted());
-    
-    connector.join(100);
-  }
-  
-  @Test
   public void fullStopTest() throws InterruptedException {
-    connector.startSearch(handler, serverSocket, true);
+    connector.startSearch(handler, serverSocket, UUID.randomUUID(), true);
     
     Thread.sleep(1000);
     // That should stop both the main thread and the discovery thread

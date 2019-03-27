@@ -8,7 +8,6 @@ import org.junit.jupiter.api.TestInstance;
 import bham.bioshock.common.models.Player;
 import bham.bioshock.common.models.store.Store;
 import bham.bioshock.common.utils.Clock;
-import bham.bioshock.communication.messages.boardgame.StartGameMessage;
 import bham.bioshock.communication.messages.joinscreen.*;
 import bham.bioshock.server.InvalidMessageSequence;
 import bham.bioshock.server.ServerHandler;
@@ -29,7 +28,7 @@ public class ServerHandlerTest {
     store = new Store();
     server = new FakeServer();
     clock = new Clock();
-    handler = new ServerHandler(store, server, false, clock);
+    handler = new ServerHandler(store, false, clock);
   }
   
   @Test
@@ -66,20 +65,6 @@ public class ServerHandlerTest {
     // Shouldn't receive a message
     handler.sendTo(UUID.randomUUID(), new FakeMessage());
     assertEquals(3, service.getSentMessages().size()); 
-  }
- 
-  @Test
-  public void testStopDiscoveryThread() throws InvalidMessageSequence {
-    // Add one player
-    FakeServerService service = new FakeServerService();
-    handler.add(service);
-    Player player = new Player("Tester");
-    handler.handleRequest(new RegisterMessage(player), service);
-    service.clearMessages();
-    handler.handleRequest(new StartGameMessage(), service);
-    
-    // Server stopDiscovery() should be called
-    assertFalse(server.discoveryRunning);
   }
   
   @Test

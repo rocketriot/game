@@ -11,7 +11,7 @@ public class FakeServerHandler implements MultipleConnectionsHandler {
   public LinkedList<ServerService> connecting = new LinkedList<>();
   public LinkedList<ServerService> unregistered = new LinkedList<>();
   public LinkedList<Message> messages = new LinkedList<>();
-  
+  public LinkedList<Message> sentMessages = new LinkedList<>();
   
   
   public FakeServerHandler() {
@@ -30,20 +30,17 @@ public class FakeServerHandler implements MultipleConnectionsHandler {
 
   @Override
   public void sendToAll(Message message) {
-    // TODO Auto-generated method stub
-    
+    sentMessages.add(message);
   }
 
   @Override
   public void sendToAllExcept(Message message, UUID id) {
-    // TODO Auto-generated method stub
-    
+    sentMessages.add(message);
   }
 
   @Override
   public void sendTo(UUID clientId, Message message) {
-    // TODO Auto-generated method stub
-    
+    sentMessages.add(message);
   }
 
   @Override

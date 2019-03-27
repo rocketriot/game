@@ -17,7 +17,7 @@ import static org.junit.Assert.assertEquals;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class PlatformerAITest {
-
+  
   private static ArrayList<PlanetPosition> playerPositions = new ArrayList<>();
   private PlanetPosition cpu1Pos;
   private PlanetPosition cpu2Pos;
@@ -105,6 +105,7 @@ class PlatformerAITest {
       assertEquals(direction, 2);
   }
 
+
   @Test
   void sqDistanceTest() {
     Position cpu1pos = new Position(100,200);
@@ -124,10 +125,9 @@ class PlatformerAITest {
     assertEquals(distance3,510000, 2);
 
   }
+
   @Test
   void jumpTest() {
-
-
     /*
             Get how far the player is from the platform
              */

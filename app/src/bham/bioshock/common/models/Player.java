@@ -47,6 +47,9 @@ public class Player implements Serializable {
   /** The textual description of the last upgrade to be picked up by the player */
   private String lastUpgradeText = null;
 
+  /** The coordinates the player will teleport to if they go through a black hole */
+  private Coordinates randomCoords;
+
   /** The maximum amount of fuel a player hold at one time */
   public static final float BASE_MAX_FUEL = 100f;
 
@@ -57,7 +60,7 @@ public class Player implements Serializable {
   public static final int POINTS_PER_PLANET = 100;
 
   /** Fuel gained per round */
-  public static final float FUEL_PER_ROUND = 30f;
+  public static final float FUEL_PER_ROUND = 50f;
 
   private boolean isAddingBlackHole = false;
 
@@ -76,7 +79,9 @@ public class Player implements Serializable {
 
   /** Sets the players coordinates to their original spawn coordinates */
   public void moveToSpawn() {
-    setCoordinates(spawnPoint);
+    if(spawnPoint != null) {
+      setCoordinates(spawnPoint);      
+    }
   }
 
   public float getFuelGridCost() {
@@ -253,6 +258,14 @@ public class Player implements Serializable {
 
   public void setLastUpgradeText(String lastUpgradeText) {
     this.lastUpgradeText = lastUpgradeText;
+  }
+
+  public void setTeleportCoords(Coordinates randomCoords) {
+    this.randomCoords = randomCoords;
+  }
+
+  public Coordinates getRandomCoords() {
+    return randomCoords;
   }
 
   public class Move implements Serializable {

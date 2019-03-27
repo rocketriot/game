@@ -111,6 +111,8 @@ public class PlatformSeeder {
     ArrayList<Platform> lvl3Platforms = new ArrayList<>();
     int lvl4Count = totalPlatforms - lvl1Count - lvl2Count - lvl3Count;
     ArrayList<Platform> lvl4Platforms = new ArrayList<>();
+    
+    int radius = (int) world.getPlanetRadius();
 
     // generate the lvl1 platforms
     for (int i = 0; i < lvl1Count; i++) {
@@ -126,7 +128,7 @@ public class PlatformSeeder {
         angle = minAngle + generator.nextFloat() * (maxAngle - minAngle);
       }
 
-      int distance = 2150;
+      int distance = radius + 150;
       int width = generator.nextInt((250 - 100) + 1) + 100;
       int height = 30;
       Platform platform = new Platform(world, new PlanetPosition(angle, distance), width, height);
@@ -141,7 +143,7 @@ public class PlatformSeeder {
       }
       Platform chosenPlatform = lvl1Platforms.get(generator.nextInt(lvl1Platforms.size()));
       float angle = generateAngle(chosenPlatform, lvl2Platforms, 12, 6);
-      int distance = generator.nextInt((2450 - 2300) + 1) + 2300;
+      int distance = generator.nextInt(151) + 300 + radius;
       int width = generator.nextInt((150 - 125) + 1) + 100;
       int height = 25;
       Platform platform = new Platform(world, new PlanetPosition(angle, distance), width, height);
@@ -158,7 +160,7 @@ public class PlatformSeeder {
       }
       Platform chosenPlatform = lvl2Platforms.get(generator.nextInt(lvl2Platforms.size()));
       float angle = generateAngle(chosenPlatform, lvl3Platforms, 12, 6);
-      int distance = generator.nextInt((2500 - 2450) + 1) + 2450;
+      int distance = generator.nextInt((500 - 450) + 1) + 450 + radius;
       int width = generator.nextInt((125 - 100) + 1) + 100;
       int height = 20;
       Platform platform = new Platform(world, new PlanetPosition(angle, distance), width, height);
@@ -176,7 +178,7 @@ public class PlatformSeeder {
       Platform chosenPlatform =
           lvl3Platforms.get(Math.abs(generator.nextInt(lvl3Platforms.size())));
       float angle = generateAngle(chosenPlatform, lvl4Platforms, 12, 6);
-      int distance = generator.nextInt((2750 - 2700) + 1) + 2700;
+      int distance = generator.nextInt((750 - 700) + 1) + 700 + radius;
       int width = generator.nextInt((125 - 100) + 1) + 100;
       int height = 15;
       Platform platform = new Platform(world, new PlanetPosition(angle, distance), width, height);

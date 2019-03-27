@@ -2,11 +2,13 @@ package bham.bioshock.client.controllers;
 
 import bham.bioshock.client.screens.ScreenMaster;
 import bham.bioshock.common.models.store.Store;
-import com.badlogic.gdx.audio.Sound;
+import bham.bioshock.communication.client.CommunicationClient;
+import bham.bioshock.communication.client.ServerStatus;
 import com.google.inject.Inject;
 import bham.bioshock.client.BoardGame;
 import bham.bioshock.client.Route;
 import bham.bioshock.client.Router;
+import bham.bioshock.client.assets.AssetContainer;
 import bham.bioshock.client.screens.MainMenuScreen;
 import bham.bioshock.server.Server;
 
@@ -14,12 +16,16 @@ public class MainMenuController extends Controller {
 
   Server server;
   BoardGame game;
+  CommunicationClient commClient;
+  AssetContainer assets;
 
   @Inject
-  public MainMenuController(Store store, Router router, BoardGame game, Server server) {
+  public MainMenuController(Store store, Router router, BoardGame game, Server server, CommunicationClient commClient, AssetContainer assets) {
     super(store, router, game);
     this.server = server;
+    this.assets = assets;
     this.game = game;
+    this.commClient = commClient;
   }
 
   /**
@@ -28,8 +34,10 @@ public class MainMenuController extends Controller {
    * @param hostName
    */
   public void hostGame(String hostName) {
-    if (server.start()) {
+    if (server.start(hostName)) {
       store.setHost(true);
+      ServerStatus s = new ServerStatus(hostName, "localhost", server.getId().toString());
+      router.call(Route.CONNECT, s);
       router.call(Route.JOIN_SCREEN, hostName);
     } else {
       alert("Server cannot be created.\nCheck if one is not already running");
@@ -41,9 +49,14 @@ public class MainMenuController extends Controller {
     server.stop();
     store.setHost(false);
     store.reconnecting(false);
-    setScreen(new MainMenuScreen(router));
+    store.getCommStore().clearServers();
+    
+    setScreen(new MainMenuScreen(router, assets));
   }
 
+  public void saveTurns(int number){
+    store.setMaxRounds(number);
+  }
 
   public void alert(String message) {
     ((ScreenMaster) store.getScreen()).alert(message);

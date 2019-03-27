@@ -9,7 +9,8 @@ import org.apache.logging.log4j.Logger;
 import com.badlogic.gdx.Files.FileType;
 import bham.bioshock.client.BoardGame;
 import bham.bioshock.client.Router;
-import bham.bioshock.modules.BoardGameModule;
+import bham.bioshock.client.assets.AssetContainer;
+import bham.bioshock.modules.GameModule;
 
 public class Main {
   
@@ -17,7 +18,7 @@ public class Main {
 
   public static void main(String[] args) {
     // Create app injector. It will use dependency injection to create our classes
-    Injector injector = Guice.createInjector(new BoardGameModule());
+    Injector injector = Guice.createInjector(new GameModule());
 
     // Setup Lwjgl configuration
     LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
@@ -42,7 +43,9 @@ public class Main {
       return;
     }
     
+    // Save game dependencies
     game.addRouter(router);
+    game.addAssetContainer(injector.getInstance(AssetContainer.class));
     
     new LwjglApplication(game, config);
   }

@@ -1,5 +1,7 @@
 package bham.bioshock.client;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -21,6 +23,11 @@ import java.util.HashMap;
  */
 public class XMLInteraction {
 
+  private static final Logger logger = LogManager.getLogger(XMLInteraction.class);
+  
+  private static final String PREFERENCES_PATH = "app/assets/Preferences/Preferences.XML";
+  private static final String GAME_DESC_PATH = "app/assets/XML/game_desc.XML";
+  
   /**
    * Method to read the preferences from an XML file and return them as an AppPreferences object
    *
@@ -33,7 +40,7 @@ public class XMLInteraction {
     boolean soundsEnabled = false;
     float soundsVolume = 0f;
 
-    File xmlFile = new File("app/assets/Preferences/Preferences.XML");
+    File xmlFile = new File(PREFERENCES_PATH);
     DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
     DocumentBuilder documentBuilder;
 
@@ -75,7 +82,7 @@ public class XMLInteraction {
     } catch (Exception e) {
       e.printStackTrace();
     }
-    System.out.println("XML file read successfully");
+    logger.debug("XML file read successfully");
     return new AppPreferences(musicEnabled, musicVolume, soundsEnabled, soundsVolume);
   }
 
@@ -89,8 +96,7 @@ public class XMLInteraction {
    */
   public void preferencesToXML(boolean musicEnabled, float musicVolume, boolean soundsEnabled,
       float soundsVolume) {
-    String filePath = "app/assets/Preferences/Preferences.XML";
-    File xmlFile = new File(filePath);
+    File xmlFile = new File(PREFERENCES_PATH);
 
     String musicEnabledString;
     String musicVolumeString;
@@ -144,10 +150,10 @@ public class XMLInteraction {
       TransformerFactory transformerFactory = TransformerFactory.newInstance();
       Transformer transformer = transformerFactory.newTransformer();
       DOMSource source = new DOMSource(document);
-      StreamResult result = new StreamResult(new File(filePath));
+      StreamResult result = new StreamResult(new File(PREFERENCES_PATH));
       transformer.setOutputProperty(OutputKeys.INDENT, "yes");
       transformer.transform(source, result);
-      System.out.println("XML file updated successfully");
+      logger.debug("XML file updated successfully");
 
     } catch (Exception e) {
       e.printStackTrace();
@@ -162,7 +168,7 @@ public class XMLInteraction {
    */
   public HashMap<String, String> xmlToDescription() {
     HashMap<String, String> readText = new HashMap<>();
-    File xmlFile = new File("app/assets/XML/game_desc.xml");
+    File xmlFile = new File(GAME_DESC_PATH);
     DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
     DocumentBuilder documentBuilder;
 

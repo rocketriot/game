@@ -5,48 +5,37 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import bham.bioshock.minigame.models.Gun;
 import bham.bioshock.minigame.worlds.World;
+import bham.bioshock.testutils.minigame.FakeWorld;
 import java.util.ArrayList;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 
-/**
- * The Weapon seeding tests.
- */
+/** The Weapon seeding tests. */
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class WeaponSeedingTests {
 
-  /**
-   * The World.
-   */
+  /** The World. */
   World world;
 
-  /**
-   * The Guns.
-   */
+  /** The Guns. */
   ArrayList<Gun> guns = new ArrayList<>();
 
-  /**
-   * Sets up the world and gets the guns from it.
-   */
+  /** Sets up the world and gets the guns from it. */
   @BeforeAll
   public void setupTests() {
-    world = new TestingWorld();
-    ((TestingWorld) world).seedWeapons();
+    world = new FakeWorld();
+    ((FakeWorld) world).seedWeapons();
     guns = world.getGuns();
   }
 
-  /**
-   * Checks if the correct number of guns has been spawned.
-   */
+  /** Checks if the correct number of guns has been spawned. */
   @Test
   public void correctNumber() {
     assertEquals(4, guns.size());
   }
 
-  /**
-   * Checks if the guns have been spawned in the correct palces in the world.
-   */
+  /** Checks if the guns have been spawned in the correct places in the world. */
   @Test
   public void correctQuarters() {
     boolean quarter1 = false;
@@ -68,5 +57,4 @@ public class WeaponSeedingTests {
     }
     assertTrue(quarter1 && quarter2 && quarter3 && quarter4);
   }
-
 }

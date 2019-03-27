@@ -1,6 +1,6 @@
 package bham.bioshock.client.screens;
 
-import bham.bioshock.client.Assets;
+import bham.bioshock.client.assets.Assets;
 import bham.bioshock.common.models.Player;
 import bham.bioshock.common.models.store.MinigameStore;
 import bham.bioshock.common.models.store.Store;
@@ -41,7 +41,7 @@ public class StatsContainer extends Container {
         int i = 0;
         while(iterator.hasNext()) {
             Player p = iterator.next();
-            if(!p.getId().equals(store.getMainPlayer().getId()) ) {
+            if(!p.getId().equals(store.getMainPlayerId()) ) {
                 playerTables.add(new PlayerContainer(p.getId(), p.getUsername()));
                 update(playerTables.get(i));
                 table.add(playerTables.get(i)).padRight(30);

@@ -7,13 +7,11 @@ import bham.bioshock.communication.interfaces.ServerService;
 import bham.bioshock.communication.messages.Message;
 import bham.bioshock.communication.messages.boardgame.AddBlackHoleMessage;
 import bham.bioshock.communication.messages.joinscreen.JoinScreenMoveMessage;
-import bham.bioshock.communication.messages.minigame.EndMinigameMessage;
 import bham.bioshock.communication.messages.minigame.RequestMinigameStartMessage;
 import bham.bioshock.server.handlers.GameBoardHandler;
 import bham.bioshock.server.handlers.JoinScreenHandler;
 import bham.bioshock.server.handlers.MinigameHandler;
 import bham.bioshock.server.interfaces.MultipleConnectionsHandler;
-import bham.bioshock.server.interfaces.StoppableServer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -30,14 +28,12 @@ public class ServerHandler implements MultipleConnectionsHandler {
   private ArrayList<ServerService> connecting = new ArrayList<>();
   private ConcurrentHashMap<UUID, ServerService> connected = new ConcurrentHashMap<>();
 
-  private StoppableServer server;
   private JoinScreenHandler joinHandler;
   private GameBoardHandler gameBoardHandler;
   private MinigameHandler minigameHandler;
   private DevServer devServer;
   
-  public ServerHandler(Store store, StoppableServer server, boolean runDebugServer, Clock clock) {
-    this.server = server;
+  public ServerHandler(Store store, boolean runDebugServer, Clock clock) {
     joinHandler = new JoinScreenHandler(store, this);
     minigameHandler = new MinigameHandler(store, this, clock);
     gameBoardHandler = new GameBoardHandler(store, this, minigameHandler);
@@ -194,7 +190,6 @@ public class ServerHandler implements MultipleConnectionsHandler {
         joinHandler.moveRocket((JoinScreenMoveMessage) message, clientId);
         break;
       case START_GAME:
-        server.stopDiscovery();
         joinHandler.startGame(gameBoardHandler);
         break;
       case MOVE_PLAYER_ON_BOARD:
@@ -211,10 +206,6 @@ public class ServerHandler implements MultipleConnectionsHandler {
         RequestMinigameStartMessage request = (RequestMinigameStartMessage) message;
         minigameHandler.startMinigame(clientId, request.planetId, gameBoardHandler, request.objectiveId);
         break;
-      case MINIGAME_END:
-        EndMinigameMessage r = (EndMinigameMessage) message;
-        minigameHandler.endMinigame(r.winnerID, gameBoardHandler, r.playerID);
-        break;
       case MINIGAME_PLAYER_MOVE:
         minigameHandler.playerMove(message, clientId);
         break;
@@ -225,10 +216,9 @@ public class ServerHandler implements MultipleConnectionsHandler {
         minigameHandler.bulletShot(message, clientId);
         break;
       case MINIGAME_OBJECTIVE:
-        minigameHandler.updateObjective(message);
+        minigameHandler.updateObjective(message, gameBoardHandler);
         break;
       case MINIGAME_DIRECT_START:
-        server.stopDiscovery();
         joinHandler.minigameDirectStart(clientId, gameBoardHandler, minigameHandler);
         break;
       case RECONNECT_PLAYER:

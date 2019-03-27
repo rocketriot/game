@@ -8,9 +8,7 @@ import java.util.ArrayList;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 
-/**
- * The type Kill them all ai tests.
- */
+/** The type Kill them all ai tests. */
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class KillThemAllAITests {
 
@@ -21,39 +19,31 @@ class KillThemAllAITests {
   private PlanetPosition astronautPosition;
   private PlanetPosition closestPosition;
 
-  /**
-   * Normalise not needed test.
-   */
+  /** Normalise not needed test. */
   @Test
-  void normaliseNotNeededTest(){
+  void normaliseNotNeededTest() {
     float angle = normaliseAngle(45f);
     assertEquals(angle, 45f);
   }
 
-  /**
-   * Normalise not needed edge case test.
-   */
+  /** Normalise not needed edge case test. */
   @Test
-  void normaliseNotNeededEdgeCaseTest(){
+  void normaliseNotNeededEdgeCaseTest() {
     float lowEdge = normaliseAngle(0f);
     float upperEdge = normaliseAngle(180f);
     assertTrue(lowEdge == 0f && upperEdge == 180f);
   }
 
-  /**
-   * Normalise needed test.
-   */
+  /** Normalise needed test. */
   @Test
-  void normaliseNeededTest(){
+  void normaliseNeededTest() {
     float angle = normaliseAngle(245f);
     assertEquals(angle, -115f);
   }
 
-  /**
-   * All players on the same side of the planet test - angles do not need normalisation.
-   */
+  /** All players on the same side of the planet test - angles do not need normalisation. */
   @Test
-  void onSameSideNoNormalisationTest(){
+  void onSameSideNoNormalisationTest() {
     playerPositions.clear();
     cpu1Pos = new PlanetPosition(30, 2250);
     playerPositions.add(cpu1Pos);
@@ -66,11 +56,9 @@ class KillThemAllAITests {
     assertEquals(closestPosition, cpu1Pos);
   }
 
-  /**
-   * All players on the same side of the planet test - angles need normalisation.
-   */
+  /** All players on the same side of the planet test - angles need normalisation. */
   @Test
-  void onSameSideNormalisationTest(){
+  void onSameSideNormalisationTest() {
     playerPositions.clear();
     cpu1Pos = new PlanetPosition(230, 2250);
     playerPositions.add(cpu1Pos);
@@ -83,11 +71,9 @@ class KillThemAllAITests {
     assertEquals(closestPosition, cpu3Pos);
   }
 
-  /**
-   * CPU astro is on the left side of the planet and the goal is on the right test.
-   */
+  /** CPU astro is on the left side of the planet and the goal is on the right test. */
   @Test
-  void astroLeftGoalRightTest(){
+  void astroLeftGoalRightTest() {
     playerPositions.clear();
     cpu1Pos = new PlanetPosition(30, 2250);
     playerPositions.add(cpu1Pos);
@@ -100,11 +86,9 @@ class KillThemAllAITests {
     assertEquals(closestPosition, cpu1Pos);
   }
 
-  /**
-   * CPU astro is on the right side of the planet and the goal is on the left test.
-   */
+  /** CPU astro is on the right side of the planet and the goal is on the left test. */
   @Test
-  void astroRightGoalLeftTest(){
+  void astroRightGoalLeftTest() {
     playerPositions.clear();
     cpu1Pos = new PlanetPosition(60, 2250);
     playerPositions.add(cpu1Pos);
@@ -120,25 +104,17 @@ class KillThemAllAITests {
   private static PlanetPosition findNearestPlayer(PlanetPosition astroPos) {
     float astroAngle = normaliseAngle(astroPos.angle);
 
-//    System.out.println("Astronaut angle: " + astroAngle);
-
     PlanetPosition nearestPlayer = null;
     float nearestAngle = Integer.MAX_VALUE;
-    for (PlanetPosition playerPos : playerPositions) { float playerAng = normaliseAngle(playerPos.angle);
-
-//      System.out.println("Checking if " + playerAng + " is closer than " + nearestAngle);
-//      System.out.println(Math.abs(playerAng - astroAngle));
+    for (PlanetPosition playerPos : playerPositions) {
+      float playerAng = normaliseAngle(playerPos.angle);
 
       if (Math.abs(playerAng - astroAngle) < nearestAngle) {
 
-//        System.out.println(playerAng + " is closer than " + nearestAngle);
-
-        nearestAngle = Math.abs(playerAng - astroAngle) ;
+        nearestAngle = Math.abs(playerAng - astroAngle);
         nearestPlayer = playerPos;
       }
     }
-
-//    System.out.println(nearestPlayer.angle + " is the closest angle");
 
     return nearestPlayer;
   }
@@ -150,5 +126,4 @@ class KillThemAllAITests {
       return (angle - 360);
     }
   }
-
 }
