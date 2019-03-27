@@ -45,7 +45,7 @@ public class SpeedVector implements Serializable {
 
   public double getValue() {
     double value = dx * dx + dy * dy;
-    if(value == 0) return 0.000001;
+    if(value == 0) return 0.0001;
     return Math.sqrt(value);
   }
 

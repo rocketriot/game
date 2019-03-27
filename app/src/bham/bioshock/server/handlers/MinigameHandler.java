@@ -204,7 +204,7 @@ public class MinigameHandler {
         long now = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC);
         long frozen = o.getFrozenFor(playerId);
         if((now - frozen) > o.MAX_FROZEN_TIME) {
-          o.setFrozen(playerId,false, now);
+//          o.setFrozen(playerId,false, now);
           handler.sendToAllExcept(message, playerId);
         }
         else {

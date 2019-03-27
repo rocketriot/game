@@ -105,6 +105,7 @@ public class GameBoardHandler {
   }
 
   public void endTurn() {
+    logger.debug("Turn ended");
     handler.sendToAll(new UpdateTurnMessage());
 
    if ((store.getTurn() + 1) == 4 && store.getRound() == store.getMaxRounds()) {

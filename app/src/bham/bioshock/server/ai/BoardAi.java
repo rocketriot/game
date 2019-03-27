@@ -35,11 +35,27 @@ public class BoardAi extends Thread {
 
   @Override
   public void run() {
-    
+    int samePlayerNum = 0;
+    UUID lastPlayer = null;
     try {
       while(!isInterrupted()) {
           
         Player player = store.getMovingPlayer();
+        if(player.isCpu() && (lastPlayer == null || lastPlayer.equals(player.getId()))) {
+          lastPlayer = player.getId();
+          samePlayerNum++;
+        } else {
+          samePlayerNum = 0;
+        }
+        
+        System.out.println(samePlayerNum);
+        
+        if(samePlayerNum > 10) {
+          logger.error("Forced player skip");
+          gameBoardHandler.endTurn();
+          samePlayerNum = 0;
+        }
+        
         if(player.isCpu() && (lastMoved == null || !player.getId().equals(lastMoved))) {
           
           // Make a move

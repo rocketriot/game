@@ -398,7 +398,10 @@ public class Astronaut extends Entity {
         break;
       case BULLET:
         if(objective.isPresent()) {
-          objective.get().gotShot(this, ((Bullet) e).getShooter());            
+          Bullet bullet = ((Bullet) e);
+          if(bullet.notDetected()) {
+            objective.get().gotShot(this,bullet.getShooter());            
+          }
         }
         e.setState(State.REMOVING);
         break;
