@@ -50,7 +50,6 @@ public class EndScreen extends ScreenMaster {
 
     this.table = new Table();
 
-    System.out.println(screenWidth + " " + screenHeight);
     table.setX(screenWidth - screenWidth/3);
     table.setY(screenHeight-screenHeight/4);
 

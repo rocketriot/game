@@ -2,9 +2,22 @@ package bham.bioshock.client.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
+import com.badlogic.gdx.utils.viewport.FitViewport;
+import bham.bioshock.Config;
 import bham.bioshock.client.Route;
 import bham.bioshock.client.Router;
 import bham.bioshock.client.assets.AssetContainer;
@@ -15,6 +28,16 @@ public class InitLoadingScreen implements Screen {
 
   private AssetContainer assets;
   private Router router;
+  private Image loadingImage;
+  private Table table;
+  private Animation<TextureRegion> loading;
+  private float animationTime = 0;
+  private boolean loadingShown = false;
+  private FitViewport viewport;
+  private Stage stage;
+  private SpriteBatch batch;
+  private Label progressLabel;
+  protected Texture background;
   
   public InitLoadingScreen(Router router, AssetContainer assets) {
     this.assets = assets;
@@ -22,10 +45,12 @@ public class InitLoadingScreen implements Screen {
   }
   
   public void load() {
-    assets.load(Assets.skin, Skin.class, GamePart.MENU);
-    assets.load(Assets.menuBackground, Texture.class, GamePart.MENU);
-    assets.load(Assets.gameBackground, Texture.class, GamePart.MENU);
+    // First for loading
     assets.load(Assets.loading, Texture.class, GamePart.MENU);
+    assets.load(Assets.menuBackground, Texture.class, GamePart.MENU);
+    
+    assets.load(Assets.skin, Skin.class, GamePart.MENU);
+    assets.load(Assets.gameBackground, Texture.class, GamePart.MENU);
     assets.load(Assets.cursor, Pixmap.class, GamePart.MENU);
     assets.load(Assets.logo, Texture.class, GamePart.MENU);
     
@@ -51,31 +76,94 @@ public class InitLoadingScreen implements Screen {
     Pixmap pm = assets.get(Assets.cursor, Pixmap.class);
     Gdx.graphics.setCursor(Gdx.graphics.newCursor(pm, 0, 0));
     assets.unload(Assets.cursor);
-    
-    
+
     router.call(Route.MAIN_MENU);
   }
-  
   
   @Override
   public void show() {
     this.load();
+    
+    loadingImage = new Image();
+    loadingImage.setSize(200, 200);
+    
+    
+    table = new Table();
+    table.setFillParent(true);
+  }
+  
+  public void genAnimation() {
+    Texture t = assets.get(Assets.loading, Texture.class);
+    TextureRegion[][] list = TextureRegion.split(t, t.getWidth() / 26, t.getHeight());
+    loading = Assets.textureToAnimation(list, 26, 0, 0.05f);
+    
+    viewport = new FitViewport(Config.GAME_WORLD_WIDTH, Config.GAME_WORLD_HEIGHT);
+    stage = new Stage(viewport);
+    batch = new SpriteBatch();
   }
 
+  public void renderTable() {
+    Table container = new Table();
+    container.addActor(loadingImage);
+    table.add(container).width(200).height(200).pad(20);
+    table.row();
+    stage.addActor(table);
+    progressLabel = new Label(getProgress(), new LabelStyle(assets.getFont(50), Color.WHITE));
+    table.add(progressLabel).width(progressLabel.getPrefWidth()).center();
+    table.row();
+  }
+  
+  public String getProgress() {
+    return ((int) Math.floor(assets.getProgress() * 100)) + "%";
+  }
+  
   @Override
   public void render(float delta) {
     boolean finished = assets.update();
-    System.out.println(assets.getProgress());
+    
     if(finished) {
       this.loaded();
       return;
     }
+    
+    if(assets.isLoaded(Assets.loading) && assets.isLoaded(Assets.menuBackground) && !loadingShown) {
+      background = assets.get(Assets.menuBackground, Texture.class);
+      genAnimation();
+      renderTable();
+      loadingShown = true;
+    }
+    
+    if(loadingShown) {
+      Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+      batch.getProjectionMatrix().setToOrtho2D(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+      
+      progressLabel.setText(getProgress());
+      
+      drawBackground();
+      stage.act(delta);
+      stage.draw();
+      animationTime += delta;
+      
+      TextureRegion currentFrame = loading.getKeyFrame(animationTime, true);
+      TextureRegionDrawable drawable = new TextureRegionDrawable(currentFrame);
+      loadingImage.setDrawable(drawable);
+    }
+  }
+  
+  protected void drawBackground() {
+    batch.begin();
+    batch.disableBlending();
+    batch.draw(background, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+    batch.enableBlending();
+    batch.end();
   }
 
   @Override
   public void resize(int width, int height) {
-    // TODO Auto-generated method stub
-    
+    if(stage != null) {
+      stage.getViewport().update(width, height, true);
+      stage.act(Gdx.graphics.getDeltaTime());      
+    }
   }
 
   @Override

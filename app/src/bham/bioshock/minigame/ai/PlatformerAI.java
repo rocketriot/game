@@ -127,8 +127,6 @@ public class PlatformerAI extends MinigameAI {
 
             double distanceDelta = platformPos.fromCenter - currentPos.fromCenter;
 
-            //System.out.println("angle center: "+platformPos.angle+ " | angle left "+toLeft+" | angle right:: "+toRight);
-
 
                 if(angle < 0) {
                     astronaut.moveLeft();

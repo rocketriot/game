@@ -355,7 +355,6 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
     if(loading && assets.update()) {
       // assets loaded
       loading = false;
-      System.out.println("LOADED");
       assetsLoaded();
     } else if(loading) {
       // HERE LOADING SCREEN CAN BE DISPLAYED
