@@ -21,7 +21,7 @@ public class InputListener extends InputAdapter {
   private Router router;
   private CollisionHandler collisionHandler;
   private MinigameHud hud;
-  private long MAX_FROZEN_TIME = 2;
+  private final int SHOOT_DELAY = 200;
 
   public InputListener(MinigameStore minigameStore, Router router, CollisionHandler collisionHandler, MinigameHud hud) {
     this.world = minigameStore.getWorld();
@@ -34,7 +34,7 @@ public class InputListener extends InputAdapter {
 
   @Override
   public boolean keyDown(int keyCode) {
-    if (Input.Keys.SPACE == keyCode && (System.currentTimeMillis() - lastShot >= 500) && mainPlayer.getEquipment().haveGun) {
+    if (Input.Keys.SPACE == keyCode && (System.currentTimeMillis() - lastShot >= SHOOT_DELAY) && mainPlayer.getEquipment().haveGun) {
       createBullet();
       SoundController.playSound("laser");
       lastShot = System.currentTimeMillis();

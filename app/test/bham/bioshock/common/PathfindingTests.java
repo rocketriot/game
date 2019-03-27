@@ -11,9 +11,7 @@ import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-/**
- * The pathfinding tests.
- */
+/** The pathfinding tests. */
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class PathfindingTests {
 
@@ -21,12 +19,10 @@ public class PathfindingTests {
   private Coordinates startPosition = new Coordinates(18, 18);
   private AStarPathfinding pathfinder;
 
-  /**
-   * Set up the variables needed for the tests.
-   */
+  /** Set up the variables needed for the tests. */
   @BeforeAll
   public void setupTests() {
-    //set up the empty grid
+    // set up the empty grid
     for (int x = 0; x < 36; x++) {
       for (int y = 0; y < 36; y++) {
         GridPoint point = new GridPoint(GridPoint.Type.EMPTY, 0);
@@ -36,9 +32,7 @@ public class PathfindingTests {
     pathfinder = new AStarPathfinding(emptyGrid, startPosition, 36, 36, new ArrayList<Player>());
   }
 
-  /**
-   * Left movement test.
-   */
+  /** Left movement test. */
   @Test
   public void leftTest() {
     Coordinates startPosition = new Coordinates(18, 18);
@@ -56,9 +50,7 @@ public class PathfindingTests {
     assertTrue(checkPaths(truePath, foundPath));
   }
 
-  /**
-   * Right movement test.
-   */
+  /** Right movement test. */
   @Test
   public void rightTest() {
     Coordinates startPosition = new Coordinates(18, 18);
@@ -76,9 +68,7 @@ public class PathfindingTests {
     assertTrue(checkPaths(truePath, foundPath));
   }
 
-  /**
-   * Up movement test.
-   */
+  /** Up movement test. */
   @Test
   public void upTest() {
     Coordinates startPosition = new Coordinates(18, 18);
@@ -96,9 +86,7 @@ public class PathfindingTests {
     assertTrue(checkPaths(truePath, foundPath));
   }
 
-  /**
-   * Down movement test.
-   */
+  /** Down movement test. */
   @Test
   public void downTest() {
     Coordinates startPosition = new Coordinates(18, 18);
@@ -116,9 +104,7 @@ public class PathfindingTests {
     assertTrue(checkPaths(truePath, foundPath));
   }
 
-  /**
-   * Down left movement test.
-   */
+  /** Down left movement test. */
   @Test
   public void downLeftTest() {
     Coordinates startPosition = new Coordinates(18, 18);
@@ -140,9 +126,7 @@ public class PathfindingTests {
     assertTrue(checkPaths(truePath, foundPath));
   }
 
-  /**
-   * Down right movement test.
-   */
+  /** Down right movement test. */
   @Test
   public void downRightTest() {
     Coordinates startPosition = new Coordinates(18, 18);
@@ -164,9 +148,7 @@ public class PathfindingTests {
     assertTrue(checkPaths(truePath, foundPath));
   }
 
-  /**
-   * Up left movement test.
-   */
+  /** Up left movement test. */
   @Test
   public void upLeftTest() {
     Coordinates startPosition = new Coordinates(18, 18);
@@ -188,9 +170,7 @@ public class PathfindingTests {
     assertTrue(checkPaths(truePath, foundPath));
   }
 
-  /**
-   * Up right movement test.
-   */
+  /** Up right movement test. */
   @Test
   public void upRightTest() {
     Coordinates startPosition = new Coordinates(18, 18);
@@ -212,9 +192,7 @@ public class PathfindingTests {
     assertTrue(checkPaths(truePath, foundPath));
   }
 
-  /**
-   * Diagonal obstacle movement test.
-   */
+  /** Diagonal obstacle movement test. */
   @Test
   public void diagObstacleTest() {
     Coordinates startPosition = new Coordinates(18, 18);
@@ -248,9 +226,7 @@ public class PathfindingTests {
     pathfinder.setGameGrid(emptyGrid, new ArrayList<>());
   }
 
-  /**
-   * Linear obstacle movement test.
-   */
+  /** Linear obstacle movement test. */
   @Test
   public void linearObstacleTest() {
     Coordinates startPosition = new Coordinates(18, 18);
@@ -282,9 +258,7 @@ public class PathfindingTests {
     assertTrue(checkPaths(truePath, foundPath));
   }
 
-  /**
-   * No path test.
-   */
+  /** No path test. */
   @Test
   public void noPathTest() {
     Coordinates startPosition = new Coordinates(18, 18);

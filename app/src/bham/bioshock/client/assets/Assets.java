@@ -27,6 +27,8 @@ public class Assets {
   public static final String howToPlayButtonHover = "app/assets/ui/main-menu/how-to-play-hover.png";
   public static final String exitButton = "app/assets/ui/main-menu/exit.png";
   public static final String exitButtonHover = "app/assets/ui/main-menu/exit-hover.png";
+  public static final String startButton = "app/assets/ui/main-menu/start.png";
+  public static final String startButtonHover = "app/assets/ui/main-menu/start-hover.png";
 
   // Game Board assets
   public static final String planetsFolder = "app/assets/entities/planets";
@@ -74,7 +76,11 @@ public class Assets {
   public static final String menuSelectSound = "app/assets/music/MenuSelect.wav";
   public static final String rocketSound = "app/assets/music/RocketSound.wav";
   public static final String jumpSound = "app/assets/music/JumpSound.wav";
-  public static final String lasterSound = "app/assets/music/LaserSound.mp3";
+  public static final String laserSound = "app/assets/music/LaserSound.mp3";
+  public static final String healthPickupSound = "app/assets/music/HealthPickupSound.wav";
+  public static final String blackHoleSound = "app/assets/music/BlackHoleSound.wav";
+  public static final String fuelSound = "app/assets/music/FuelSound.wav";
+  public static final String upgradeSound = "app/assets/music/UpgradeSound.wav";
 
   // Join Screen
   public static final String loadingBase = "app/assets/animations/loading";

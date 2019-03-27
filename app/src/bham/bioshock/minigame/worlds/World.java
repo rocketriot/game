@@ -14,6 +14,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Random;
 
 /**
  * The type World.
@@ -200,6 +201,21 @@ abstract public class World implements Serializable {
   public int getTextureId() {
     return textureId;
   }
+  
+  /**
+   * Get random position near the planet
+   * 
+   * @return position
+   */
+  public Position getRandomPosition() {
+    Random r = new Random();
+    int angle = r.nextInt(360);
+    float distance = (float) (getPlanetRadius() + 2000);
+    
+    PlanetPosition pp = new PlanetPosition(angle, distance);
+    return convert(pp);
+  }
+
 
   /**
    * Load textures from the asset manager

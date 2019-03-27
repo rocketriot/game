@@ -131,10 +131,14 @@ public class Platformer extends Objective {
 
   @Override
   public String instructions() {
-    return "You have 1 minute to find the goal! \n " +
-            "The first astronaut to reach it wins!";
+    return "You have 1 minute to find the goal,\n" +
+            "the first player that reaches it wins!";
   }
 
+  @Override
+  public String name() {
+    return "Find the Goal!";
+  }
 
   public Platform getGoalPlatform() {
     return goalPlatform;

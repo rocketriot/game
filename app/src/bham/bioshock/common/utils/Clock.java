@@ -66,12 +66,12 @@ public class Clock {
   
   abstract public static class TimeListener {
  
-    int lastCall = 0; 
+    long lastCall = 0; 
     int every = 0;
     int at = 0;
     
-    void update(float time) {
-      lastCall = (int) (time * 1000);
+    void update(long time) {
+      lastCall = time;
     }
     
     void setEvery(float second) {

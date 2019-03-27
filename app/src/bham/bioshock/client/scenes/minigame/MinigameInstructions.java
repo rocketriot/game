@@ -1,6 +1,7 @@
 package bham.bioshock.client.scenes.minigame;
 
 import bham.bioshock.Config;
+import bham.bioshock.client.FontGenerator;
 import bham.bioshock.client.assets.AssetContainer;
 import bham.bioshock.common.models.store.Store;
 import com.badlogic.gdx.Gdx;
@@ -20,6 +21,7 @@ public class MinigameInstructions {
   private boolean displayed;
   private int fontSize = 72;
   private AssetContainer assets;
+  private FontGenerator fontGenerator;
 
   /**
    * Create minigame instructions container
@@ -31,11 +33,8 @@ public class MinigameInstructions {
     this.assets = assets;
     this.batch = batch;
     this.store = store;
-    this.setup();
-  }
 
-  /** Generate the font */
-  private void setup() {
+    fontGenerator = new FontGenerator();
     font = assets.getFont(fontSize);
   }
 
@@ -46,20 +45,22 @@ public class MinigameInstructions {
   public void render() {
     checkIfDisplayed();
 
-    if (showPrompt) {
-      batch.begin();
-      int x = Config.GAME_WORLD_WIDTH / 8;
-      int y = Config.GAME_WORLD_HEIGHT / 2;
+    if (!showPrompt) return;
 
-      String instructions = store.getMinigameStore().getObjective().instructions();
-      font.draw(batch, instructions, x, y);
-      batch.end();
+    duration -= Gdx.graphics.getDeltaTime();
 
-      duration -= Gdx.graphics.getDeltaTime();
-
-      if (duration <= 0)
-        showPrompt = false;
-    }
+    if (duration <= 0)
+      showPrompt = false;
+  
+    String instructions = store.getMinigameStore().getObjective().instructions();
+    
+    int xOffset = (int) fontGenerator.getOffset(font, instructions);
+    int x = Config.GAME_WORLD_WIDTH / 2 - xOffset;
+    int y = Config.GAME_WORLD_HEIGHT / 2;
+  
+    batch.begin();
+    font.draw(batch, instructions, x, y);
+    batch.end();
   }
 
 

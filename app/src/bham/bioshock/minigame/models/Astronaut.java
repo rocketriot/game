@@ -29,21 +29,6 @@ import bham.bioshock.minigame.physics.SpeedVector;
 import bham.bioshock.minigame.physics.Step;
 import bham.bioshock.minigame.utils.RotatableText;
 import bham.bioshock.minigame.worlds.World;
-import com.badlogic.gdx.assets.AssetManager;
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Animation;
-import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.math.Intersector.MinimumTranslationVector;
-
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
-
-import static java.util.stream.Collectors.toList;
 
 /**
  * Astronaut is the player in the minigame controllable by the user or the AI
@@ -55,7 +40,8 @@ public class Astronaut extends Entity {
   
   /** All textures for astronauts, with different colours */
   private static AstronautTextures[] textures;
-  private static TextureRegion[] hearts = new TextureRegion[5];
+  private static TextureRegion[][] hearts = new TextureRegion[2][5];
+  private static int HEALTH_WIDTH = 70;
   
   /** Texture for this astronaut */
   private AstronautTextures texture; 
@@ -277,7 +263,12 @@ public class Astronaut extends Entity {
     PlanetPosition pp = world.convert(pos);
     pp.fromCenter += height;
     Position lifePos = world.convert(pp);
-    health.setRegion(hearts[Math.min(4, Math.max(0, 4-value))]);
+    if(this.getEquipment().haveShield) {
+      health.setRegion(hearts[0][Math.min(6, Math.max(0, 6-getEquipment().shieldHealth))]);      
+    } else {
+      health.setRegion(hearts[1][Math.min(6, Math.max(0, 6-value))]);  
+    }
+    
     health.setPosition(lifePos.x - (health.getWidth() / 2), lifePos.y);
     health.setRotation((float) getRotation());
     health.draw(batch);
@@ -319,8 +310,8 @@ public class Astronaut extends Entity {
     legs = new CollisionBoundary(collisionWidth + 10, collisionHeight / 10);
     legs.update(pos, getRotation());
     
-    health = new Sprite(hearts[0]);
-    float healthWidth = 50;
+    health = new Sprite(hearts[0][1]);
+    float healthWidth = HEALTH_WIDTH;
     health.setSize(healthWidth, (health.getHeight()/health.getWidth()) * healthWidth);
     health.setOrigin(health.getWidth()/2, 0);
   }
@@ -580,10 +571,8 @@ public class Astronaut extends Entity {
       textures[i] = t;
     }
     
-    TextureRegion[][] h = Assets.splittedTexture(manager, Assets.hearts, 5);
-    for(int i=0; i<h[0].length; i++) {
-      hearts[i] = h[0][i];
-    }
+    Texture t = manager.get(Assets.hearts, Texture.class);
+    hearts = TextureRegion.split(t, t.getWidth() / 7, t.getHeight() / 2);
   }
   
   /**

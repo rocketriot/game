@@ -1,16 +1,22 @@
 package bham.bioshock.server.handlers;
 
 import bham.bioshock.Config;
+import bham.bioshock.common.Position;
 import bham.bioshock.common.models.store.MinigameStore;
 import bham.bioshock.common.models.store.Store;
 import bham.bioshock.common.utils.Clock;
 import bham.bioshock.communication.messages.Message;
 import bham.bioshock.communication.messages.minigame.EndMinigameMessage;
 import bham.bioshock.communication.messages.minigame.MinigameStartMessage;
+import bham.bioshock.communication.messages.minigame.SpawnEntityMessage;
 import bham.bioshock.communication.messages.objectives.EndPlatformerMessage;
+import bham.bioshock.communication.messages.objectives.KillAndRespawnMessage;
 import bham.bioshock.minigame.ai.CaptureTheFlagAI;
 import bham.bioshock.minigame.ai.KillThemAllAI;
 import bham.bioshock.minigame.ai.PlatformerAI;
+import bham.bioshock.minigame.models.Astronaut;
+import bham.bioshock.minigame.models.Gun;
+import bham.bioshock.minigame.models.Heart;
 import bham.bioshock.minigame.objectives.CaptureTheFlag;
 import bham.bioshock.minigame.objectives.KillThemAll;
 import bham.bioshock.minigame.objectives.Objective;
@@ -65,6 +71,7 @@ public class MinigameHandler {
     }
     Objective o;
     aiLoop = new MinigameAILoop();
+    aiLoop.reset();
     
     if(objectiveId == null) {
       Random rand = new Random();
@@ -97,8 +104,7 @@ public class MinigameHandler {
     setupMinigameEnd(gbHandler);
     handler.sendToAll(new MinigameStartMessage(w, o, planetId));
   }
-
-
+  
   /**
    * Starts a clock ending the minigame
    */
@@ -122,7 +128,15 @@ public class MinigameHandler {
         endMinigame(winner, gameBoardHandler);
       }
     });
-
+    
+    // Spawn entities every 3 seconds
+    clock.every(8f, new Clock.TimeListener() {
+      @Override
+      public void handle(Clock.TimeUpdateEvent event) {
+        spawnEntities();
+      }
+    });
+    
     minigameTimer = new Thread("MinigameTimer") {
       private long time;
 
@@ -141,6 +155,23 @@ public class MinigameHandler {
       }
     };
     minigameTimer.start();
+  }
+  
+  private void spawnEntities() {
+    MinigameStore localStore = store.getMinigameStore();
+    if(!(localStore.getObjective() instanceof Platformer)) {
+      Heart heart = Heart.getRandom(localStore.getWorld());
+      handler.sendToAll(new SpawnEntityMessage(heart));      
+    }
+  }
+  
+  private void spawnGun() {
+    MinigameStore localStore = store.getMinigameStore();
+    if(!(localStore.getObjective() instanceof Platformer)) {
+      Position pos = localStore.getWorld().getRandomPosition();
+      Gun gun = new Gun(localStore.getWorld(), pos.x, pos.y);
+      handler.sendToAll(new SpawnEntityMessage(gun));      
+    }
   }
 
   /**
@@ -189,7 +220,11 @@ public class MinigameHandler {
     UUID initiatorId = store.getMovingPlayer().getId();
     Message msg = new EndMinigameMessage(initiatorId, winnerId, planetId, Config.PLANET_POINTS);
     planetId = null;
-
+    
+    if(minigameTimer != null) {
+      minigameTimer.interrupt();
+      clock.reset();
+    }
 
     aiLoop.finish();
     handler.sendToAll(msg);
@@ -206,6 +241,12 @@ public class MinigameHandler {
       EndPlatformerMessage data = (EndPlatformerMessage) message;
       endMinigame(data.winnerID, gbHandler);
       return;
+    } else if(message instanceof KillAndRespawnMessage) {
+      KillAndRespawnMessage data = (KillAndRespawnMessage) message;
+      Astronaut player = store.getMinigameStore().getPlayer(data.playerId);
+      if(player != null && player.getEquipment().haveGun) {
+        this.spawnGun();
+      }
     }
     
     handler.sendToAll(message);

@@ -211,6 +211,7 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
       // Increase the players fuel
       Fuel fuel = (Fuel) gridPoint.getValue();
       player.increaseFuel(fuel.getValue());
+      SoundController.playSound("fuel");
 
       // Remove fuel from the grid
       gameBoard.removeGridPoint(player.getCoordinates());
@@ -221,6 +222,7 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
       // Add the upgrade to the player's upgrades
       Upgrade upgrade = (Upgrade) gridPoint.getValue();
       player.addUpgrade(upgrade);
+      SoundController.playSound("upgrade");
 
       // Remove upgrade from the grid
       gameBoard.removeGridPoint(player.getCoordinates());

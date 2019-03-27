@@ -58,6 +58,7 @@ public enum Route {
   MINIGAME_BULLET_SEND        (MinigameController.class,      "bulletShot"),
   OBJECTIVE_UPDATE            (MinigameController.class,      "updateObjective"),
   SEND_OBJECTIVE_UPDATE       (MinigameController.class,      "sendObjectiveUpdate"),
+  SPAWN_ENTITY                (MinigameController.class,      "spawnEntity"),
 
   START_MUSIC                 (SoundController.class,         "startMusic"),
   FADE_OUT                    (SoundController.class,         "fadeOut"),

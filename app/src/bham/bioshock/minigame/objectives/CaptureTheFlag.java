@@ -102,10 +102,15 @@ public class CaptureTheFlag extends Objective {
   
   @Override
   public String instructions() {
-    String instructions = "You have 1 minute to capture the flag! \n "
-        + "If an astronaut has it, shot him to steal the flag!";
+    String instructions = "You have 1 minute to capture the flag,\n"
+        + "steal the flag by shooting other players!";
 
     return instructions;
+  }
+  
+  @Override
+  public String name() {
+    return "Capture the Flag!";
   }
 
   

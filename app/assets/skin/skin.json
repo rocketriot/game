@@ -94,6 +94,8 @@ com.badlogic.gdx.scenes.scene2d.ui.TextField$TextFieldStyle: {
 		font: font-30-bold
 		fontColor: black
 		background: textfield
+		cursor: slider-before
+		selection: slider-knob
 	}
 }
 com.badlogic.gdx.scenes.scene2d.ui.TextTooltip$TextTooltipStyle: {

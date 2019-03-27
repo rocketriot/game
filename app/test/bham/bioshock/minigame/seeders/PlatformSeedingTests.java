@@ -10,25 +10,17 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 
-/**
- * The Platform seeding tests.
- */
+/** The Platform seeding tests. */
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class PlatformSeedingTests {
 
-  /**
-   * The World.
-   */
+  /** The World. */
   World world;
 
-  /**
-   * The Platforms.
-   */
+  /** The Platforms. */
   ArrayList<Platform> platforms = new ArrayList<>();
 
-  /**
-   * Sets up the world and gets the platforms from it.
-   */
+  /** Sets up the world and gets the platforms from it. */
   @BeforeAll
   public void setupTests() {
     world = new FakeWorld();
@@ -36,12 +28,9 @@ public class PlatformSeedingTests {
     platforms = world.getPlatforms();
   }
 
-  /**
-   * Platforms generated.
-   */
+  /** Platforms generated. */
   @Test
   public void platformsGenerated() {
     assertTrue(platforms.size() > 0);
   }
-
 }

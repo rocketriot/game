@@ -39,7 +39,9 @@ public class StepsGenerator {
   }
 
   public void generate() {
-    generator.start();
+    if(!generator.isAlive()) {
+      generator.start();      
+    }
   }
   
   public void moveLeft() {
