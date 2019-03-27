@@ -47,7 +47,7 @@ public class PreferencesController extends Controller {
   @Inject
   public PreferencesController(Store store, Router router, BoardGame game, AssetContainer assets) {
     super(store, router, game);
-
+    this.assets = assets;
     this.game = game;
     this.router = router;
     xmlInteraction = new XMLInteraction();

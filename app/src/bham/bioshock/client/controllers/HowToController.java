@@ -14,6 +14,7 @@ public class HowToController extends Controller {
   @Inject
   public HowToController(Store store, Router router, BoardGame game, AssetContainer assets) {
     super(store, router, game);
+    this.assets = assets;
   }
 
   public void show() {
