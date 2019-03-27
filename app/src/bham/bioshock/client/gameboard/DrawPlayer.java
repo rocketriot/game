@@ -1,6 +1,7 @@
 package bham.bioshock.client.gameboard;
 
 import bham.bioshock.client.FontGenerator;
+import bham.bioshock.client.assets.AssetContainer;
 import bham.bioshock.client.assets.Assets;
 import bham.bioshock.common.models.Player;
 import com.badlogic.gdx.Gdx;
@@ -25,15 +26,16 @@ public class DrawPlayer extends DrawEntity {
   private FontGenerator fontGenerator;
   private BitmapFont font;
 
-  public DrawPlayer(Batch batch) {
-    super(batch);
+  public DrawPlayer(Batch batch, AssetContainer assets) {
+    super(batch, assets);
 
-    sprites = generateSprites(Assets.playersFolder);
-    outlinedSprites = generateSprites(Assets.playersFolder);
+    for(int i=1; i<=4; i++) {
+      sprites.add(generateSprite(Assets.playersFolder + "/" + i + ".png"));     
+    }
     generateEffects();
 
     fontGenerator = new FontGenerator();
-    font = fontGenerator.generate(25);
+    font = assets.getFont(25);
   }
 
   private void generateEffects() {
@@ -45,8 +47,7 @@ public class DrawPlayer extends DrawEntity {
   }
 
   public void draw(Player player, int PPS, boolean selected) {
-    Sprite sprite =
-        selected ? outlinedSprites.get(player.getTextureID()) : sprites.get(player.getTextureID());
+    Sprite sprite = sprites.get(player.getTextureID());
 
     int x = player.getCoordinates().getX() * PPS;
     int y = player.getCoordinates().getY() * PPS;

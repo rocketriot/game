@@ -86,7 +86,6 @@ public class Planet implements Serializable {
   }
   
   public int getMinigameTextureId() {
-    System.out.println(textureID);
     return textureID+1;
   }
   
