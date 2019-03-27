@@ -18,7 +18,7 @@ public class EndMinigameMessage extends Message {
     this.winnerID = winnerID;
     this.planetID = planetID;
     this.points = points;
-    this.playerID = winnerID;
+    this.playerID = playerID;
     
     if (winnerID != null && winnerID.equals(playerID)) {
       initiatorWon = true;

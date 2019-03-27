@@ -116,13 +116,13 @@ public class GameBoardHandler {
     }
   }
 
-    public void addBlackHole (Coordinates coordinates){
-      GameBoard gameBoard = store.getGameBoard();
-      gameBoard.addBlackHole(new BlackHole(coordinates));
+  public void addBlackHole (Coordinates coordinates){
+    GameBoard gameBoard = store.getGameBoard();
+    gameBoard.addBlackHole(new BlackHole(coordinates));
 
-      handler.sendToAll(new AddBlackHoleMessage(coordinates));
-    }
+    handler.sendToAll(new AddBlackHoleMessage(coordinates));
   }
+}
 
 
 

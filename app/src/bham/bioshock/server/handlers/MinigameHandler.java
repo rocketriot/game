@@ -219,14 +219,15 @@ public class MinigameHandler {
    * @param gameBoardHandler
    */
   public void endMinigame(UUID winnerId, GameBoardHandler gameBoardHandler) {
-    UUID initiatorId = store.getMovingPlayer().getId();
-    Message msg = new EndMinigameMessage(initiatorId, winnerId, planetId, Config.PLANET_POINTS);
-    planetId = null;
-    
     if(minigameTimer != null) {
       minigameTimer.interrupt();
       clock.reset();
     }
+    
+    UUID initiatorId = store.getMovingPlayer().getId();
+    Message msg = new EndMinigameMessage(initiatorId, winnerId, planetId, Config.PLANET_POINTS);
+    planetId = null;
+    
 
     aiLoop.finish();
     handler.sendToAll(msg);
