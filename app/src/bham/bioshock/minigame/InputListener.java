@@ -7,6 +7,7 @@ import bham.bioshock.client.scenes.minigame.MinigameHud;
 import bham.bioshock.common.models.store.MinigameStore;
 import bham.bioshock.minigame.models.Astronaut;
 import bham.bioshock.minigame.models.Bullet;
+import bham.bioshock.minigame.models.astronaut.AstronautMove;
 import bham.bioshock.minigame.objectives.Platformer;
 import bham.bioshock.minigame.physics.CollisionHandler;
 import bham.bioshock.minigame.worlds.World;
@@ -61,6 +62,8 @@ public class InputListener extends InputAdapter {
       if(frozen == 0 || (now - frozen) > o.MAX_FROZEN_TIME) {
         mainPlayer.moveChange();
         router.call(Route.MINIGAME_MOVE);  
+      } else {
+        mainPlayer.updateMove(new AstronautMove());
       }
     } else {
       mainPlayer.moveChange();
