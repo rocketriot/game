@@ -39,7 +39,7 @@ public class Upgrade implements Serializable {
     } else if(type.equals(Type.FUEL_PER_ROUND)) {
       desc = "Receive 10 extra fuel per round";
     } else if(type.equals(Type.BLACK_HOLE)) {
-      desc = "Placeable blackhole which teleports players to a random board location";
+      desc = "Placeable black hole which teleports players to a random board location";
     } else if(type.equals(Type.MINIGAME_SHIELD)) {
       desc = "Gain shield at the start of each minigame which blocks 4 hearts of damage";
     }
@@ -55,7 +55,7 @@ public class Upgrade implements Serializable {
     } else if(type.equals(Type.FUEL_PER_ROUND)) {
       name = "Fuel gain upgrade";
     } else if(type.equals(Type.BLACK_HOLE)) {
-      name = "Placeable black hole";
+      name = "Black hole";
     } else if(type.equals(Type.MINIGAME_SHIELD)) {
       name = "Minigame shield";
     }
