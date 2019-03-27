@@ -57,7 +57,6 @@ public class InputListener extends InputAdapter {
       Platformer o = (Platformer) localStore.getObjective();
       Long now = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC);
       Long frozen = o.getFrozenFor(mainPlayer.getId());
-      System.out.println(frozen + " " + now + " " + (now-frozen));
       
       if(frozen == 0 || (now - frozen) > o.MAX_FROZEN_TIME) {
         mainPlayer.moveChange();

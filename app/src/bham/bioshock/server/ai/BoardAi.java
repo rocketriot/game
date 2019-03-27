@@ -20,12 +20,12 @@ import org.apache.logging.log4j.Logger;
 public class BoardAi extends Thread {
 
   private static final Logger logger = LogManager.getLogger(BoardAi.class);
-      
+
   private final Store store;
   private final GameBoardHandler gameBoardHandler;
   private final MinigameHandler minigameHandler;
   private UUID lastMoved = null;
-  
+
   public BoardAi(Store store, GameBoardHandler gameBoardHandler, MinigameHandler minigameHandler) {
     super("BoardAi");
     this.store = store;
@@ -38,37 +38,38 @@ public class BoardAi extends Thread {
     int samePlayerNum = 0;
     UUID lastPlayer = null;
     try {
-      while(!isInterrupted()) {
-        if(store.getPlayers().size() == 0) {
+      while (!isInterrupted()) {
+        if (store.getPlayers().size() == 0) {
           sleep(500);
           continue;
         }
         Player player = store.getMovingPlayer();
-        if(player.isCpu() && (lastPlayer == null || lastPlayer.equals(player.getId()))) {
+        if (player.isCpu() && lastPlayer != null && lastPlayer.equals(player.getId())
+            && store.getMinigameStore() == null) {
           lastPlayer = player.getId();
           samePlayerNum++;
         } else {
           samePlayerNum = 0;
         }
-        
-        
-        if(samePlayerNum > 10) {
+
+
+        if (samePlayerNum > 10) {
           logger.error("Forced player skip");
           gameBoardHandler.endTurn();
           samePlayerNum = 0;
           continue;
         }
-        
-        if(player.isCpu() && (lastMoved == null || !player.getId().equals(lastMoved))) {
-          
+
+        if (player.isCpu() && (lastMoved == null || !player.getId().equals(lastMoved))) {
+
           // Make a move
           ArrayList<Coordinates> path = moveCpuPlayer();
           int waitTime = calculateMoveTime(player, path);
           Thread.sleep(waitTime);
-        
+
           GameBoard gameBoard = store.getGameBoard();
           Planet planet = gameBoard.getAdjacentPlanet(player.getCoordinates(), player);
-          
+
           // Make a decision after a move
           if (planet != null && player.getFuel() >= (3 * player.getFuelGridCost())) {
             minigameHandler.startMinigame(player.getId(), planet.getId(), gameBoardHandler, null);
@@ -79,21 +80,24 @@ public class BoardAi extends Thread {
         }
         sleep(1000);
       }
-    } catch(InterruptedException e) {
+    } catch (InterruptedException e) {
       logger.info("Board AI interrupted");
     }
   }
-  
+
   private int calculateMoveTime(Player player, ArrayList<Coordinates> path) {
     // Players move 3 tiles per second + 500 to prevent race condition
     if (path != null)
-      return (path.size() * 1000)/3 + 500;
+      return (path.size() * 1000) / 3 + 500;
     else
       return 0;
   }
 
-  /** Handle movement if the next player is a CPU 
-   * @return */
+  /**
+   * Handle movement if the next player is a CPU
+   * 
+   * @return
+   */
   private ArrayList<Coordinates> moveCpuPlayer() {
     // Get values from store
     GameBoard gameBoard = store.getGameBoard();
@@ -105,7 +109,7 @@ public class BoardAi extends Thread {
 
     // Picks the best move from the list
     MoveVal bestMove = null;
-    for (MoveVal mv: possibleMoves) {
+    for (MoveVal mv : possibleMoves) {
       if (bestMove == null) {
         bestMove = mv;
       } else if (mv.getReward() > bestMove.getReward()) {
@@ -114,7 +118,8 @@ public class BoardAi extends Thread {
     }
 
     if (bestMove != null) {
-      MovePlayerOnBoardMessage msg = new MovePlayerOnBoardMessage(bestMove.getMoveCoords(), player.getId());
+      MovePlayerOnBoardMessage msg =
+          new MovePlayerOnBoardMessage(bestMove.getMoveCoords(), player.getId());
       gameBoardHandler.movePlayer(msg, player.getId());
       return bestMove.getPath();
     }
@@ -145,8 +150,8 @@ public class BoardAi extends Thread {
             || type == Type.PLANET) {
           continue;
           // Skips points the CPU doesn't have fuel to move to
-        } else if ((Math.abs(x - player.getCoordinates().getX()) + Math
-            .abs(y - player.getCoordinates().getY())) >= (player.getFuel() / 10)) {
+        } else if ((Math.abs(x - player.getCoordinates().getX())
+            + Math.abs(y - player.getCoordinates().getY())) >= (player.getFuel() / 10)) {
           continue;
         }
 
@@ -175,6 +180,7 @@ public class BoardAi extends Thread {
 
   /**
    * Calculates and sets the reward for a grid move for the ai
+   * 
    * @param moveVal
    * @param player
    * @param gameBoard
@@ -186,7 +192,7 @@ public class BoardAi extends Thread {
     // Add two to the reward for each fuel box in the path
     // Add 75 points per upgrade in the path
     // Set the reward to 50 + fuel cost if pathing through a black hole
-    for (Coordinates c: moveVal.getPath()) {
+    for (Coordinates c : moveVal.getPath()) {
       if (gameBoard.getGridPoint(c).getType().equals(Type.FUEL)) {
         reward += (2 * player.getFuelGridCost()) / 10f;
       } else if (gameBoard.getGridPoint(c).getType().equals(Type.UPGRADE)) {
@@ -214,7 +220,8 @@ public class BoardAi extends Thread {
     for (int x = 0; x < gameBoard.GRID_SIZE; x++) {
       for (int y = 0; y < gameBoard.GRID_SIZE; y++) {
         GridPoint gridPoint = grid[x][y];
-        if (gridPoint.getType().equals(Type.PLANET) && !planetChecklist.contains(gridPoint.getValue())) {
+        if (gridPoint.getType().equals(Type.PLANET)
+            && !planetChecklist.contains(gridPoint.getValue())) {
           planet = (Planet) gridPoint.getValue();
           if (planet.getPlayerCaptured() == null || !planet.getPlayerCaptured().equals(player)) {
             reward += 50f / moveVal.getMoveCoords().calcDistance(planet.getCoordinates());

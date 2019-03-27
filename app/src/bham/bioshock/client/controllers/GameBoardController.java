@@ -45,6 +45,7 @@ public class GameBoardController extends Controller {
     Player player = store.getMainPlayer();
     commClient.saveToFile(player.getUsername(), player.getId());
     setScreen(new GameBoardScreen(router, store, assets));
+    store.resetMinigameStore();
   }
 
   /** Handles when the server sends the game board to the client */
