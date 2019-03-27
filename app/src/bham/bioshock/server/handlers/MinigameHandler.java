@@ -7,10 +7,12 @@ import bham.bioshock.common.utils.Clock;
 import bham.bioshock.communication.messages.Message;
 import bham.bioshock.communication.messages.minigame.EndMinigameMessage;
 import bham.bioshock.communication.messages.minigame.MinigameStartMessage;
+import bham.bioshock.communication.messages.minigame.SpawnEntityMessage;
 import bham.bioshock.communication.messages.objectives.EndPlatformerMessage;
 import bham.bioshock.minigame.ai.CaptureTheFlagAI;
 import bham.bioshock.minigame.ai.KillThemAllAI;
 import bham.bioshock.minigame.ai.PlatformerAI;
+import bham.bioshock.minigame.models.Heart;
 import bham.bioshock.minigame.objectives.CaptureTheFlag;
 import bham.bioshock.minigame.objectives.KillThemAll;
 import bham.bioshock.minigame.objectives.Objective;
@@ -97,8 +99,7 @@ public class MinigameHandler {
     setupMinigameEnd(gbHandler);
     handler.sendToAll(new MinigameStartMessage(w, o, planetId));
   }
-
-
+  
   /**
    * Starts a clock ending the minigame
    */
@@ -122,7 +123,15 @@ public class MinigameHandler {
         endMinigame(winner, gameBoardHandler);
       }
     });
-
+    
+    // Spawn entities every 3 seconds
+    clock.every(3f, new Clock.TimeListener() {
+      @Override
+      public void handle(Clock.TimeUpdateEvent event) {
+        spawnEntities();
+      }
+    });
+    
     minigameTimer = new Thread("MinigameTimer") {
       private long time;
 
@@ -141,6 +150,14 @@ public class MinigameHandler {
       }
     };
     minigameTimer.start();
+  }
+  
+  private void spawnEntities() {
+    MinigameStore localStore = store.getMinigameStore();
+    if(!(localStore.getObjective() instanceof Platformer)) {
+      Heart heart = Heart.getRandom(localStore.getWorld());
+      handler.sendToAll(new SpawnEntityMessage(heart));      
+    }
   }
 
   /**

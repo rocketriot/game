@@ -126,7 +126,7 @@ public abstract class Objective implements Serializable {
         health.computeIfPresent(m.playerID, (k, v) -> v + 1);
         Collection<Entity> entities = localStore.getEntities();
         for (Entity entity : entities){
-          if (entity.getId() == m.heartID){
+          if (entity.getId().equals(m.heartID)){
             entity.remove();
           }
         }
