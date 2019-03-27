@@ -338,10 +338,7 @@ public class JoinScreen extends ScreenMaster {
       pad(20);
 
       TextButton startButton = new TextButton("Start Game", skin);
-      TextButton miniGameButton = new TextButton("TEST Mini Game", skin);
       add(startButton);
-      row();
-      add(miniGameButton);
 
       startButton.addListener(new ChangeListener() {
         @Override
@@ -349,14 +346,6 @@ public class JoinScreen extends ScreenMaster {
           router.call(Route.START_GAME);
         }
       });
-
-      miniGameButton.addListener(new ChangeListener() {
-        @Override
-        public void changed(ChangeEvent event, Actor actor) {
-          router.call(Route.DIRECT_MINIGAME_START);
-        }
-      });
-
     }
 
     @Override
@@ -364,8 +353,6 @@ public class JoinScreen extends ScreenMaster {
       setWidth(stage.getWidth());
       super.act(delta);
     }
-
-
   }
 
   public void addStartGameButton() {
