@@ -35,7 +35,7 @@ public class WeaponSeedingTests {
     assertEquals(4, guns.size());
   }
 
-  /** Checks if the guns have been spawned in the correct palces in the world. */
+  /** Checks if the guns have been spawned in the correct places in the world. */
   @Test
   public void correctQuarters() {
     boolean quarter1 = false;
