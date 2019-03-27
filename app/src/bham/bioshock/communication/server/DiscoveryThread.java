@@ -41,7 +41,7 @@ public class DiscoveryThread extends Thread {
           String message = new String(packet.getData()).trim();
           if (message.equals(Command.COMM_DISCOVER_REQ.toString())) {
 
-            String response = Command.COMM_DISCOVER_RES.toString() + name;
+            String response = Command.COMM_DISCOVER_RES.toString() + name + ";" + serverId;
             byte[] sendData = response.getBytes();
             // Send a response
             DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length,

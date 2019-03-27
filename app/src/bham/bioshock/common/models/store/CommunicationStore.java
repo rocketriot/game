@@ -19,14 +19,14 @@ public class CommunicationStore {
   }
 
   public void register(ServerStatus server) {
-    servers.removeIf(s -> s.getIP().equals(server.getIP()));
+    servers.removeIf(s -> s.getId().equals(server.getId()));
     servers.add(server);
 
     servers.sort(new Comparator<ServerStatus> () {
 
       @Override
       public int compare(ServerStatus arg0, ServerStatus arg1) {
-        return arg0.getIP().compareTo(arg1.getIP());
+        return arg0.getId().compareTo(arg1.getId());
       }
     
     });

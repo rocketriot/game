@@ -91,14 +91,15 @@ public class RunningServersScreen extends ScreenMaster {
     for(ServerStatus server : store.getServers()) {
       Label pl = new Label(server.getName(), skin);
       TextButton btn;
-      if(recovered != null && recovered.getIP().equals(server.getIP())) {
+      if(recovered != null && recovered.getId().equals(server.getId())) {
          btn = new TextButton("Reconnect", skin);
          
          btn.addListener(new ChangeListener() {
            @Override
            public void changed(ChangeEvent event, Actor actor) {
              SoundController.playSound("menuSelect");
-             router.call(Route.RECONNECT_RECOVERED);
+             server.setPlayerId(recovered.getPlayerId());
+             router.call(Route.RECONNECT_RECOVERED, server);
            }
          });
          
