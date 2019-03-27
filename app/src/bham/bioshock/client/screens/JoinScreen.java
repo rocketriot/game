@@ -48,7 +48,8 @@ public class JoinScreen extends ScreenMaster {
   private int rocketWidth = 50;
   private int rocketHeight = 110;
   private float rocketRotation = 0;
-
+  private float time = 0;
+  
   private Player mainPlayer;
 
   private RocketAnimation mainPlayerAnimation;
@@ -147,7 +148,7 @@ public class JoinScreen extends ScreenMaster {
     drawRockets();
     
     if(mainPlayerAnimation != null) {
-      updateRocketPosition();      
+      updateRocketPosition(delta);      
     }
   }
 
@@ -395,7 +396,7 @@ public class JoinScreen extends ScreenMaster {
     sprite.draw(batch);
   }
 
-  public void updateRocketPosition() {
+  public void updateRocketPosition(float delta) {
     boolean moveMade = false;
 
     if (Gdx.input.isKeyPressed(Input.Keys.LEFT) || Gdx.input.isKeyPressed(Input.Keys.A)) {
@@ -420,10 +421,14 @@ public class JoinScreen extends ScreenMaster {
 
     mainPlayerAnimation.update();
 
-    if (moveMade) {
+    
+    time += delta;
+    if(time > 1f || moveMade) {
+      time = 0;
       // Send a move to the controller
-      router.call(Route.JOIN_SCREEN_MOVE, mainPlayer.getId());
+      router.call(Route.JOIN_SCREEN_MOVE, mainPlayer.getId());      
     }
+
   }
 
   public Position checkBounds(Position pos) {
@@ -547,8 +552,12 @@ public class JoinScreen extends ScreenMaster {
         speed.apply(-180, collideForce);
       }
       
-      float angle = 360 - (float) speed.getSpeedAngle();
-      setRotation(angle);
+      Float angle = 360 - (float) speed.getSpeedAngle();
+      if(angle.isNaN()) {
+        setRotation(0);
+      } else {
+        setRotation(angle);        
+      }
     }
 
     @Override

@@ -70,6 +70,7 @@ public class JoinScreenController extends Controller {
   }
   
   public void connect(ServerStatus server) {
+    commClient.stopDiscovery();
     try {
       connectToServer(server);
     } catch (ConnectException e) {
@@ -88,7 +89,7 @@ public class JoinScreenController extends Controller {
     ServerStatus server = store.getCommStore().getRecoveredServer();
     // Save player to the store
     store.setMainPlayer(server.getPlayerId());
-
+    commClient.stopDiscovery();
     boolean successful = commClient.reconnect(server.getIP());
     if(successful) {
       router.call(Route.LOADING, new String("Reconnecting"));
@@ -114,6 +115,7 @@ public class JoinScreenController extends Controller {
     store.overwritePlayers(data.players);
     store.setTurn(data.turnNum);
     store.setRound(data.roundNum);
+    store.setMaxRounds(data.maxRoundsNum);
     
     if(data.boardgameRunning) {
       router.call(Route.COORDINATES_SAVE, data.coordinates);  
