@@ -60,6 +60,11 @@ public class Platformer extends Objective {
     }
   }
 
+  @Override
+  public MinigameType getMinigameType() {
+    return MinigameType.PLATFORMER;
+  }
+
   /**
    * Send a message to the server to freeze a player, if they get shot.
    * @param player: the player who got shot

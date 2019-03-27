@@ -51,6 +51,11 @@ public class CaptureTheFlag extends Objective {
   }
 
   @Override
+  public MinigameType getMinigameType() {
+    return MinigameType.CAPTURE_THE_FLAG;
+  }
+
+  @Override
   public void init(World world, Router router, Store store) {
     super.init(world, router, store);
     flagOwner = null;

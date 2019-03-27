@@ -11,7 +11,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
  */
 public class MinigameHud extends Hud {
   /** Instructions to be displayed */
-  private MinigameObjective minigameObjective;
+  private MinigameScoreBoard minigameScoreBoard;
   private MinigameInstructions minigameInstructions;
   private WeaponContainer weaponContainer;
   private HudClock clock;
@@ -27,7 +27,7 @@ public class MinigameHud extends Hud {
   public MinigameHud(SpriteBatch batch, AssetContainer assets, Store store, Router router) {
     super(batch, assets, store, router);
 
-    minigameObjective = new MinigameObjective(stage, batch, store, router, assets);
+    minigameScoreBoard = new MinigameScoreBoard(stage, batch, store, router, assets);
     minigameInstructions = new MinigameInstructions(batch, store, assets);
     weaponContainer = new WeaponContainer(stage, batch, store, router, assets);
     clock = new HudClock(stage, batch, assets, store, router);
@@ -37,7 +37,7 @@ public class MinigameHud extends Hud {
   public void update() {
     super.update();
 
-    minigameObjective.render();
+    minigameScoreBoard.render();
     minigameInstructions.render();
     weaponContainer.render();
     clock.render();

@@ -41,6 +41,13 @@ public abstract class Objective implements Serializable {
   protected HashMap<UUID, Integer> health = new HashMap<>();
 
   public abstract UUID getWinner();
+  public abstract MinigameType getMinigameType();
+
+  public static enum MinigameType {
+    CAPTURE_THE_FLAG,
+    KILL_THEM_ALL,
+    PLATFORMER
+  }
 
   /**
    * Init the objective
