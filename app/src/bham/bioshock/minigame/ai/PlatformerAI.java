@@ -11,8 +11,6 @@ import bham.bioshock.minigame.physics.StepsGenerator;
 import bham.bioshock.server.interfaces.MultipleConnectionsHandler;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Optional;
 import java.util.Random;
@@ -77,31 +75,6 @@ public class PlatformerAI extends MinigameAI {
     }
 
     /*
-     * Determine if the player is frozen. The platformer objective contains a hash map of players
-     * mapped to frozen status If a player is frozen, it should 'skip' a turn
-     */
-    Platformer o = (Platformer) store.getMinigameStore().getObjective();
-    if (o.checkIfFrozen(astronaut.get().getId())) {
-      long now = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC);
-      long frozen = o.getFrozenFor(astronaut.get().getId());
-      /*
-       * Compare the current time to the time at which the player was frozen
-       */
-      if ((now - frozen) > (o.MAX_FROZEN_TIME)) {
-        /*
-         * Enough time has elapsed so the player should now be unfrozen
-         */
-        o.setFrozen(astronaut.get().getId(), false, now);
-      } else {
-        /*
-         * player is frozen, return without updating the stack
-         */
-        return;
-      }
-    }
-
-
-    /*
      * Initiate a new stack
      */
     if (statesStack.isEmpty()) {
@@ -113,8 +86,6 @@ public class PlatformerAI extends MinigameAI {
     statesStack.get(0).broadcast();
     statesStack.get(0).execute();
     statesStack.get(0).updateStack();
-
-
   }
 
   /**

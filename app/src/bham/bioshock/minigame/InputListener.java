@@ -11,8 +11,6 @@ import bham.bioshock.minigame.models.astronaut.AstronautMove;
 import bham.bioshock.minigame.objectives.Platformer;
 import bham.bioshock.minigame.physics.CollisionHandler;
 import bham.bioshock.minigame.worlds.World;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputAdapter;
 
@@ -43,11 +41,10 @@ public class InputListener extends InputAdapter {
 
     if (localStore.getObjective() instanceof Platformer) {
       Platformer o = (Platformer) localStore.getObjective();
-      Long now = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC);
-      Long frozen = o.getFrozenFor(mainPlayer.getId());
-
-      if (!(frozen == 0 || (now - frozen) > o.MAX_FROZEN_TIME)) {
+      if(o.checkIfFrozen(mainPlayer.getId()) ) {
         canAct = false;
+      } else {
+        canAct = true;
       }
     }
 

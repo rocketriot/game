@@ -238,8 +238,12 @@ public class Renderer {
    * Dispose all rendering components
    */
   public void dispose() {
-    batch.dispose();
-    backgroundBatch.dispose();
+    if(batch != null) {
+      batch.dispose();      
+    }
+    if(backgroundBatch != null) {
+      backgroundBatch.dispose();      
+    }
     textBatch.dispose();
     hud.dispose();
   }

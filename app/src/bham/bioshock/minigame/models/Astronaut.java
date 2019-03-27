@@ -42,6 +42,7 @@ public class Astronaut extends Entity {
   private static AstronautTextures[] textures;
   private static TextureRegion[][] hearts = new TextureRegion[2][5];
   private static int HEALTH_WIDTH = 70;
+  private static Texture snowflake;
   
   /** Texture for this astronaut */
   private AstronautTextures texture; 
@@ -241,6 +242,15 @@ public class Astronaut extends Entity {
       drawHealth(batch);
     }
     super.draw(batch);
+    
+    if(objective.isPresent() && (objective.get() instanceof Platformer)) {
+      Platformer platformer = (Platformer) objective.get();
+      Position p = getPos().move(world).up(height).pos();
+      
+      if(platformer.checkIfFrozen(this.getId())) {
+        batch.draw(snowflake, p.x, p.y);        
+      }
+    }
   }
 
   @Override
@@ -541,6 +551,7 @@ public class Astronaut extends Entity {
       manager.load(Assets.astroBase + colours[i] + Assets.astroFall, Texture.class, GamePart.MINIGAME);
     }
     manager.load(Assets.hearts, Texture.class, GamePart.MINIGAME);
+    manager.load(Assets.snowflake, Texture.class, GamePart.MINIGAME);
   }
   
   /**
@@ -560,6 +571,8 @@ public class Astronaut extends Entity {
       TextureRegion[][] walkShieldGunSheet = Assets.splittedTexture(manager, Assets.astroBase + colours[i] + Assets.astroShieldGun, 11);
       TextureRegion[][] dieFront = Assets.splittedTexture(manager, Assets.astroBase + colours[i] + Assets.astroFFall, 10);
       TextureRegion[][] dieBack = Assets.splittedTexture(manager, Assets.astroBase + colours[i] + Assets.astroFall, 12);
+      
+      snowflake = manager.get(Assets.snowflake, Texture.class);
       
       t.frontTexture = walkSheet[0][0];
       t.frontGunTexture = walkGunSheet[0][0];

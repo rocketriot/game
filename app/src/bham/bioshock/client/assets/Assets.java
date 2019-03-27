@@ -51,6 +51,7 @@ public class Assets {
   public static final String turnPointer = "app/assets/ui/turn-pointer.png";
 
   // Minigame entities
+  public static final String snowflake = "app/assets/minigame/snowflake.png";
   public static final String gun = "app/assets/minigame/gun.png";
   public static final String flag = "app/assets/minigame/flag.png";
   public static final String bullet = "app/assets/minigame/bullet.png";

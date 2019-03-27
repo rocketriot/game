@@ -94,7 +94,6 @@ public class MinigameScreen implements Screen {
     // Dispose minigame assets
     assets.dispose(GamePart.MINIGAME);
     renderer.dispose();
-    
   }
 
   @Override
