@@ -399,8 +399,8 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
     // Draw the HUD
     batch.setProjectionMatrix(hud.getStage().getCamera().combined);
     hud.getStage().act(Gdx.graphics.getDeltaTime());
-    hud.update();
     hud.draw();
+    hud.update();
   }
 
   protected void drawBackground() {
