@@ -13,10 +13,10 @@ import bham.bioshock.communication.client.CommunicationClient;
 import bham.bioshock.communication.interfaces.MessageService;
 import bham.bioshock.communication.messages.boardgame.AddBlackHoleMessage;
 import bham.bioshock.communication.messages.boardgame.EndTurnMessage;
+import bham.bioshock.communication.messages.boardgame.GameBoardMessage;
 import bham.bioshock.communication.messages.boardgame.MovePlayerOnBoardMessage;
 import com.google.inject.Inject;
 import java.util.ArrayList;
-import java.util.Random;
 import java.util.UUID;
 
 /**
@@ -55,6 +55,10 @@ public class GameBoardController extends Controller {
 
   public void savePlayers(ArrayList<Player> players) {
     store.savePlayers(players);
+  }
+  
+  public void gameInit(GameBoardMessage data) {
+    store.setMaxRounds(data.maxRounds);
   }
 
   public void setOwner(UUID[] planetOwner) {

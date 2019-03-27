@@ -48,6 +48,7 @@ public class ClientHandler implements MessageHandler {
             router.call(Route.PLAYERS_SAVE, data.cpuPlayers);  
             router.call(Route.COORDINATES_SAVE, data.coordinates);  
             router.call(Route.GAME_BOARD_SAVE, data.gameBoard);
+            router.call(Route.GAME_INIT, data);
             if(data.startGame) {
               router.call(Route.GAME_BOARD_SHOW);              
             }
