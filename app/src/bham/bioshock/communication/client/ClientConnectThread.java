@@ -135,7 +135,6 @@ public class ClientConnectThread extends Thread {
           
             // Check if the message is correct
             String message = new String(receivePacket.getData()).trim();
-            System.out.println(message);
             
             if (message.startsWith(Command.COMM_DISCOVER_RES.toString())) {
               String response = message.replaceFirst(Command.COMM_DISCOVER_RES.toString(), "");
