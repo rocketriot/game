@@ -50,6 +50,7 @@ public class GameAssetManager extends AssetManager implements AssetContainer {
    */
   public void dispose(GamePart minigame) {
     ArrayList<String> assets = loaded.get(minigame);
+    if(assets == null) return;
     
     for(String asset : assets) {
       if(this.isLoaded(asset)) {

@@ -64,7 +64,7 @@ public class HowToScreen extends ScreenMaster {
     title = new Image(new Texture(Assets.howToPlayButton));
     title.setWidth(100);
     title.setScaling(Scaling.fillX);
-    cursor = new Image(new Texture(Assets.cursor));
+    cursor = new Image(assets.get(Assets.cursor, Texture.class));
     cursor.setWidth(50);
     cursor.setScaling(Scaling.fillX);
     planet = new Image(new Texture(Assets.planetsFolder+"/1.png"));
