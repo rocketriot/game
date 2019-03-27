@@ -64,7 +64,7 @@ public abstract class ScreenMaster implements Screen {
   protected void drawBackground() {
     batch.begin();
     batch.disableBlending();
-    batch.draw(background, 0, 0, screenWidth, screenHeight);
+    batch.draw(background, 0, 0, Config.GAME_WORLD_WIDTH, Config.GAME_WORLD_HEIGHT);
     batch.enableBlending();
     batch.end();
   }
@@ -90,7 +90,7 @@ public abstract class ScreenMaster implements Screen {
   @Override
   public void render(float delta) {
     Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-    batch.getProjectionMatrix().setToOrtho2D(0, 0, screenWidth, screenHeight);
+    batch.getProjectionMatrix().setToOrtho2D(0, 0, Config.GAME_WORLD_WIDTH, Config.GAME_WORLD_HEIGHT);
     
     drawBackground();
     stage.act(delta);

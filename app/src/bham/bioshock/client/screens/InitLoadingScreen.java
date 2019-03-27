@@ -72,7 +72,6 @@ public class InitLoadingScreen implements Screen {
     assets.load(Assets.exitButtonHover, Texture.class, GamePart.MENU);
     
     // Music
-    
     assets.load(Assets.mainMenuMusic, Sound.class, GamePart.MENU);
     assets.load(Assets.gameBoardMusic, Sound.class, GamePart.MENU);
     assets.load(Assets.miniGameMusic, Sound.class, GamePart.MENU);
@@ -80,6 +79,18 @@ public class InitLoadingScreen implements Screen {
     assets.load(Assets.rocketSound, Sound.class, GamePart.MENU);
     assets.load(Assets.jumpSound, Sound.class, GamePart.MENU);
     assets.load(Assets.lasterSound, Sound.class, GamePart.MENU);
+    
+    // Join Screen
+    for(int i=0; i<4; i++) {
+      assets.load(Assets.loadingBase + (i+1) + ".png", Texture.class, GamePart.MENU);
+    }
+    for(int i=0; i<4; i++) {
+      assets.load(Assets.connectedBase + (i+1) + ".png", Texture.class, GamePart.MENU);      
+    }
+    String[] colours = new String[] { "orange", "red", "green", "blue" };
+    for(int i=0; i<4; i++) {
+      assets.load(Assets.astroBase + colours[i] + Assets.astroShield, Texture.class, GamePart.MENU);
+    }
   }
   
   public void loaded() {

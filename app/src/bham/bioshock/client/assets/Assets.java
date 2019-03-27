@@ -76,6 +76,10 @@ public class Assets {
   public static final String jumpSound = "app/assets/music/JumpSound.wav";
   public static final String lasterSound = "app/assets/music/LaserSound.mp3";
 
+  // Join Screen
+  public static final String loadingBase = "app/assets/animations/loading";
+  public static final String connectedBase = "app/assets/animations/connectedAnimSheet";
+  
   /**
    * Split texture to regions
    * 
