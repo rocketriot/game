@@ -191,7 +191,7 @@ public class BoardAi extends Thread {
         reward += 150;
     }
 
-    // Add 50 / distance to the planet for each capturable planet and upgrade to the reward
+    // Add 50 / distance to the planet for each capturable planet and upgrade
     for (int x = 0; x < gameBoard.GRID_SIZE; x++) {
       for (int y = 0; y < gameBoard.GRID_SIZE; y++) {
         GridPoint gridPoint = grid[x][y];
