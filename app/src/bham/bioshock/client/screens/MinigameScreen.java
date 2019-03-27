@@ -3,13 +3,7 @@ package bham.bioshock.client.screens;
 import bham.bioshock.client.Router;
 import bham.bioshock.common.models.store.Store;
 import bham.bioshock.minigame.Renderer;
-import bham.bioshock.minigame.models.Astronaut;
-import bham.bioshock.minigame.models.Bullet;
-import bham.bioshock.minigame.models.Flag;
-import bham.bioshock.minigame.models.Gun;
-import bham.bioshock.minigame.models.Heart;
-import bham.bioshock.minigame.models.Platform;
-import bham.bioshock.minigame.models.Rocket;
+import bham.bioshock.minigame.models.*;
 import bham.bioshock.minigame.worlds.World;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.assets.AssetManager;
@@ -40,6 +34,7 @@ public class MinigameScreen implements Screen {
     Gun.loadTextures(manager);
     Bullet.loadTextures(manager);
     Flag.loadTextures(manager);
+    Goal.loadTextures(manager);
     World.loadTextures(manager, world.getTextureId());
     Platform.loadTextures(manager, world.getTextureId());
   }
