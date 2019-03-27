@@ -178,8 +178,10 @@ public class MinigameHandler {
    * Sync player movement and position
    */
   public void playerMove(Message message, UUID playerId) {
+    MinigameStore localStore = store.getMinigameStore();
+    if(localStore == null) return;
     //for platform, check if the player is frozen
-    if(store.getMinigameStore().getObjective() instanceof Platformer) {
+    if(localStore.getObjective() instanceof Platformer) {
       Platformer o = (Platformer) store.getMinigameStore().getObjective();
       if(o.checkIfFrozen(playerId)) {
         long now = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC);

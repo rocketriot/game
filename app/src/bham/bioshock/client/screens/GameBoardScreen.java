@@ -88,6 +88,7 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
   private Coordinates mouseCoordinates = null;
   
   private boolean loading = true;
+  private boolean loaded = false;
 
   public GameBoardScreen(Router router, Store store, AssetContainer assets) {
     super(router, assets);
@@ -113,6 +114,8 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
   }
   
   private void assetsLoaded() {
+    if(loaded) return;
+    loaded = true;
     background = new Sprite(assets.get(Assets.gameBackground, Texture.class));
     drawPlayer = new DrawPlayer(batch);
     drawPlanet = new DrawPlanet(batch);
