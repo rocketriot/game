@@ -85,8 +85,7 @@ public class JoinScreenController extends Controller {
     setScreen(new RunningServersScreen(store.getCommStore(), router, assets));
   }  
   
-  public void reconnectRecovered() {
-    ServerStatus server = store.getCommStore().getRecoveredServer();
+  public void reconnectRecovered(ServerStatus server) {
     // Save player to the store
     store.setMainPlayer(server.getPlayerId());
     commClient.stopDiscovery();

@@ -72,7 +72,7 @@ public class GameBoardHandler {
     GameBoard gameBoard = new GameBoard();
     generateGrid(gameBoard, players);
 
-    handler.sendToAll(new GameBoardMessage(gameBoard, players, additionalPlayers, startGame));
+    handler.sendToAll(new GameBoardMessage(gameBoard, players, additionalPlayers, startGame, store.getMaxRounds()));
   }
 
   /**

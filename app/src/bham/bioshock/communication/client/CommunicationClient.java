@@ -91,7 +91,7 @@ public class CommunicationClient {
   public void saveToFile(String name, UUID playerId) {
     if(currentServer == null) return;
     try (PrintStream out = new PrintStream(new FileOutputStream("app/hostInfo.txt"))) {
-      out.print(name + "\n" + playerId.toString() + "\n" + currentServer.getIP());
+      out.print(playerId.toString() + "\n" + currentServer.getId());
       out.flush();
     } catch(FileNotFoundException e) {}
   }
@@ -101,11 +101,10 @@ public class CommunicationClient {
     try {
       
       reader = new BufferedReader(new FileReader("app/hostInfo.txt"));
-      String name = reader.readLine();
       String playerId = reader.readLine();
-      String address = reader.readLine();
+      String serverId = reader.readLine();
       
-      ServerStatus server = new ServerStatus(name, address);
+      ServerStatus server = new ServerStatus("?", "?", serverId);
       server.setPlayerId(UUID.fromString(playerId));
       return server;
       

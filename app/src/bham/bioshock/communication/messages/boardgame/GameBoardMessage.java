@@ -15,15 +15,18 @@ public class GameBoardMessage extends Message {
   public final Coordinates[] coordinates;
   public final GameBoard gameBoard;
   public final boolean startGame;
-  
-  public GameBoardMessage(GameBoard gameBoard, ArrayList<Player> players, ArrayList<Player> cpuPlayers, boolean startGame) {
+  public final int maxRounds;
+
+  public GameBoardMessage(GameBoard gameBoard, ArrayList<Player> players,
+      ArrayList<Player> cpuPlayers, boolean startGame, int maxRounds) {
     super(Command.GET_GAME_BOARD);
     coordinates = new Coordinates[4];
-    for(int i=0; i<players.size(); i++) {
+    for (int i = 0; i < players.size(); i++) {
       coordinates[i] = players.get(i).getCoordinates();
     }
     this.cpuPlayers = cpuPlayers;
     this.gameBoard = gameBoard;
     this.startGame = startGame;
+    this.maxRounds = maxRounds;
   }
 }

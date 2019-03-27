@@ -137,6 +137,10 @@ public class MinigameHandler {
       }
     });
     
+    if(minigameTimer != null && minigameTimer.isAlive()) {
+      minigameTimer.interrupt();
+    }
+    
     minigameTimer = new Thread("MinigameTimer") {
       private long time;
 

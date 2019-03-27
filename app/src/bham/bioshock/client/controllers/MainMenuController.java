@@ -36,8 +36,8 @@ public class MainMenuController extends Controller {
   public void hostGame(String hostName) {
     if (server.start(hostName)) {
       store.setHost(true);
-      ServerStatus server = new ServerStatus(hostName, "localhost");
-      router.call(Route.CONNECT, server);
+      ServerStatus s = new ServerStatus(hostName, "localhost", server.getId().toString());
+      router.call(Route.CONNECT, s);
       router.call(Route.JOIN_SCREEN, hostName);
     } else {
       alert("Server cannot be created.\nCheck if one is not already running");

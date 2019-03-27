@@ -40,6 +40,10 @@ public class Server implements StoppableServer {
 
     return true;
   }
+  
+  public UUID getId() {
+    return serverId;
+  }
 
   public void stop() {
     if(connMaker != null) {

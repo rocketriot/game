@@ -138,10 +138,13 @@ public class ClientConnectThread extends Thread {
             System.out.println(message);
             
             if (message.startsWith(Command.COMM_DISCOVER_RES.toString())) {
-              String name = message.replaceFirst(Command.COMM_DISCOVER_RES.toString(), "");
+              String response = message.replaceFirst(Command.COMM_DISCOVER_RES.toString(), "");
+              String name = response.split(";")[0];
+              String serverId = response.split(";")[1];
+              
               // Save host address
               String ipAddress = receivePacket.getAddress().getHostAddress();
-              ServerStatus server = new ServerStatus(name, ipAddress);
+              ServerStatus server = new ServerStatus(name, ipAddress, serverId);
               store.register(server);
               keepAlive.put(server.getIP(), System.currentTimeMillis());
             }
