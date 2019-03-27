@@ -15,7 +15,7 @@ public class MinigameAILoop extends Thread {
   private ArrayList<MinigameAI> aiHandlers = new ArrayList<>();
 
   /** The loop time */
-  private final int LOOP_TIME = 300;
+  private final int LOOP_TIME = 500;
 
   public MinigameAILoop() {
     super("MinigameAILoop");
@@ -46,9 +46,15 @@ public class MinigameAILoop extends Thread {
 
   /** Finish the loop. */
   public void finish() {
+    reset();
     this.interrupt();
   }
 
+  /** Clear list of handlers */
+  public void reset() {
+    aiHandlers.clear();
+  }
+  
   /**
    * Register the handler.
    *

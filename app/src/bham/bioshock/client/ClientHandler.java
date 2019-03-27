@@ -16,6 +16,7 @@ import bham.bioshock.communication.messages.joinscreen.ReconnectResponseMessage;
 import bham.bioshock.communication.messages.minigame.MinigamePlayerMoveMessage;
 import bham.bioshock.communication.messages.minigame.MinigamePlayerStepMessage;
 import bham.bioshock.communication.messages.minigame.MinigameStartMessage;
+import bham.bioshock.communication.messages.minigame.SpawnEntityMessage;
 
 public class ClientHandler implements MessageHandler {
   
@@ -100,6 +101,12 @@ public class ClientHandler implements MessageHandler {
           }
           case DIRECT_END: {
             router.call(Route.DIRECT_END);
+            break;
+          }
+          case MINIGAME_SPAWN: {
+            SpawnEntityMessage data = (SpawnEntityMessage) message;
+            router.call(Route.SPAWN_ENTITY, data.entity);
+            
             break;
           }
           case RECONNECT_PLAYER: {

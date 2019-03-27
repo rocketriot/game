@@ -23,6 +23,7 @@ import bham.bioshock.communication.messages.minigame.MinigamePlayerStepMessage;
 import bham.bioshock.communication.messages.minigame.MinigameStartMessage;
 import bham.bioshock.communication.messages.minigame.RequestMinigameStartMessage;
 import bham.bioshock.minigame.models.Bullet;
+import bham.bioshock.minigame.models.Entity;
 import bham.bioshock.minigame.objectives.Objective;
 import bham.bioshock.minigame.worlds.World;
 
@@ -149,6 +150,16 @@ public class MinigameController extends Controller {
     }
   }
 
+  /**
+   * Spawn entity
+   */
+  public void spawnEntity(Entity entity) {
+    entity.load();
+    MinigameStore localStore = store.getMinigameStore();
+    entity.setCollisionHandler(localStore.getCollisionHandler());
+    localStore.addEntity(entity);
+  }
+  
   /**
    * Start minigame with provided world and objective Seed the minigameStore and initialise
    * objective

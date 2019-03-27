@@ -11,7 +11,6 @@ import bham.bioshock.communication.messages.objectives.*;
 import bham.bioshock.minigame.models.Astronaut;
 import bham.bioshock.minigame.models.Entity;
 import bham.bioshock.minigame.models.Entity.State;
-import bham.bioshock.minigame.models.Gun;
 import bham.bioshock.minigame.models.astronaut.Equipment;
 import bham.bioshock.minigame.worlds.World;
 import org.apache.logging.log4j.LogManager;
@@ -30,7 +29,7 @@ public abstract class Objective implements Serializable {
 
   private static final Logger logger = LogManager.getLogger(Objective.class);
   private static final long serialVersionUID = 7485771472370553399L;
-  private static int INITIAL_HEALTH = 4;
+  private static int INITIAL_HEALTH = 6;
 
   protected transient Store store;
   protected transient World world;
@@ -132,7 +131,7 @@ public abstract class Objective implements Serializable {
 
         Collection<Entity> entities = localStore.getEntities();
         for (Entity entity : entities){
-          if (entity.getId() == m.heartID){
+          if (entity.getId().equals(m.heartID)){
             entity.remove();
           }
         }
@@ -172,17 +171,7 @@ public abstract class Objective implements Serializable {
    */
   protected void killAndRespawnPlayer(UUID playerId, Position randomRespawn) {
     Astronaut player = localStore.getPlayer(playerId);
-    boolean hadGun = player.getEquipment().haveGun;
-    Position oldPosition = player.getPos().copy();
-    
     player.killAndRespawn(randomRespawn);
-
-    if (hadGun) {
-      Gun gun = new Gun(world, oldPosition.x, oldPosition.y);
-      gun.load();
-      gun.setCollisionHandler(localStore.getCollisionHandler());
-      localStore.addEntity(gun);
-    }
     synchronized(health) {
       health.put(player.getId(), INITIAL_HEALTH);
     }
