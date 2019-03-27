@@ -5,6 +5,7 @@ import bham.bioshock.client.Route;
 import bham.bioshock.client.Router;
 import bham.bioshock.client.assets.AssetContainer;
 import bham.bioshock.client.assets.Assets;
+import bham.bioshock.client.controllers.SoundController;
 import bham.bioshock.common.Position;
 import bham.bioshock.common.models.Player;
 import bham.bioshock.common.models.store.JoinScreenStore;
@@ -15,11 +16,13 @@ import bham.bioshock.minigame.worlds.World;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
@@ -162,11 +165,18 @@ public class JoinScreen extends ScreenMaster {
   }
 
   public enum WaitText {
-    WAITING("Waiting..."), CONNECTED("Connected");
-    final String text;
+    WAITING,
+    CONNECTED;
 
-    WaitText(String text) {
-      this.text = text;
+    public static String getString(WaitText waitText) {
+      switch (waitText) {
+        case WAITING:
+          return "Waiting...";
+          case CONNECTED:
+          return "Connected!";
+        default:
+          return null;
+      }
     }
   }
 
@@ -179,10 +189,6 @@ public class JoinScreen extends ScreenMaster {
       this.setFillParent(true);
       this.pad(padding);
       playerContainers = new ArrayList<>();
-
-      Label pl = new Label(mainPlayer.getUsername(), skin);
-      add(pl).colspan(4).padBottom(20);
-      row();
     }
 
     public void addPlayerContainer(int index, PlayerContainer pc) {
@@ -221,14 +227,13 @@ public class JoinScreen extends ScreenMaster {
     private Label name;
     private Label waitText;
     private StaticAnimation animation;
-    private int sidePadding = 30;
+    private int sidePadding = 70;
     private int topPadding = 30;
     private Optional<UUID> playerId = Optional.empty();
 
     public PlayerContainer(String n, WaitText status, Texture sheet) {
-      // this.setDebug(true);
       name = new Label(n, skin);
-      waitText = new Label(status.toString(), skin);
+      waitText = new Label(WaitText.getString(status), skin);
       animation = new StaticAnimation(sheet, 26, 1, 200, 200, 0.8f, -1);
 
       this.pad(topPadding, sidePadding, topPadding, sidePadding);
@@ -253,7 +258,7 @@ public class JoinScreen extends ScreenMaster {
     }
 
     public void setWaitText(WaitText text) {
-      waitText.setText(text.toString());
+      waitText.setText(WaitText.getString(text));
     }
 
     public void changeAnimation(Texture sheet, int cols, int rows, int width, int height,
@@ -296,6 +301,7 @@ public class JoinScreen extends ScreenMaster {
         textureRegion = new TextureRegion[(cols - 1) * rows];
       }
 
+      sheet.setFilter(TextureFilter.Linear, TextureFilter.Linear);
       TextureRegion[][] tmp =
           TextureRegion.split(sheet, sheet.getWidth() / cols, sheet.getHeight() / rows);
 
@@ -329,48 +335,17 @@ public class JoinScreen extends ScreenMaster {
 
   }
 
-
-  public class ButtonsContainer extends Table {
-    ButtonsContainer() {
-      bottom();
-      right();
-      setWidth(stage.getWidth());
-      pad(20);
-
-      TextButton startButton = new TextButton("Start Game", skin);
-      TextButton miniGameButton = new TextButton("TEST Mini Game", skin);
-      add(startButton);
-      row();
-      add(miniGameButton);
-
-      startButton.addListener(new ChangeListener() {
-        @Override
-        public void changed(ChangeEvent event, Actor actor) {
-          router.call(Route.START_GAME);
-        }
-      });
-
-      miniGameButton.addListener(new ChangeListener() {
-        @Override
-        public void changed(ChangeEvent event, Actor actor) {
-          router.call(Route.DIRECT_MINIGAME_START);
-        }
-      });
-
-    }
-
-    @Override
-    public void act(float delta) {
-      setWidth(stage.getWidth());
-      super.act(delta);
-    }
-
-
-  }
-
   public void addStartGameButton() {
-    ButtonsContainer buttons = new ButtonsContainer();
-    stage.addActor(buttons);
+    Image startButton = drawAsset(Assets.startButton, Config.GAME_WORLD_WIDTH - 320, 0);
+    addListener(startButton, new BaseClickListener(startButton, Assets.startButton, Assets.startButtonHover) {
+      @Override
+      public void clicked(InputEvent event, float x, float y) {
+        SoundController.playSound("menuSelect");
+        router.call(Route.START_GAME);
+      }
+    });
+    
+    stage.addActor(startButton);
   }
 
   @Override

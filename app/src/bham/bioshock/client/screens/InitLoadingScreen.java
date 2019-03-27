@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -71,6 +72,10 @@ public class InitLoadingScreen implements Screen {
     assets.load(Assets.exitButton, Texture.class, GamePart.MENU);
     assets.load(Assets.exitButtonHover, Texture.class, GamePart.MENU);
     
+    
+    assets.load(Assets.startButton, Texture.class, GamePart.MENU);
+    assets.load(Assets.startButtonHover, Texture.class, GamePart.MENU);
+    
     // Music
     assets.load(Assets.mainMenuMusic, Sound.class, GamePart.MENU);
     assets.load(Assets.gameBoardMusic, Sound.class, GamePart.MENU);
@@ -120,6 +125,7 @@ public class InitLoadingScreen implements Screen {
   
   public void genAnimation() {
     Texture t = assets.get(Assets.loading, Texture.class);
+    t.setFilter(TextureFilter.Linear, TextureFilter.Linear);
     TextureRegion[][] list = TextureRegion.split(t, t.getWidth() / 26, t.getHeight());
     loading = Assets.textureToAnimation(list, 26, 0, 0.05f);
     

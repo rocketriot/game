@@ -35,40 +35,6 @@ public class MainMenuScreen extends ScreenMaster {
     super.render(delta);
   }
 
-
-  private void addListener(Image image, BaseClickListener listener) {
-    image.addListener(listener);
-  }
-
-  class BaseClickListener extends ClickListener {
-    private Image image;
-    private SpriteDrawable normal;
-    private SpriteDrawable hover;
-
-    public BaseClickListener(Image image, String normal, String hover) {
-      Texture normalTexture = assets.get(normal, Texture.class);
-      normalTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
-
-      Texture hoverTexture = assets.get(hover, Texture.class);
-      hoverTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
-
-      this.image = image;
-      this.normal = new SpriteDrawable(new Sprite(normalTexture));
-      this.hover = new SpriteDrawable(new Sprite(hoverTexture));
-    }
-
-    @Override
-    public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
-      image.setDrawable(hover);
-    }
-
-    @Override
-    public void exit(InputEvent event, float x, float y, int pointer, Actor toActor) {
-      image.setDrawable(normal);
-    }
-  }
-
-
   private void drawButtons() {
     drawAsset(Assets.logo, (Config.GAME_WORLD_WIDTH / 2) - 258, Config.GAME_WORLD_HEIGHT - 550);
 
