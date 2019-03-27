@@ -162,11 +162,18 @@ public class JoinScreen extends ScreenMaster {
   }
 
   public enum WaitText {
-    WAITING("Waiting..."), CONNECTED("Connected");
-    final String text;
+    WAITING,
+    CONNECTED;
 
-    WaitText(String text) {
-      this.text = text;
+    public static String getString(WaitText waitText) {
+      switch (waitText) {
+        case WAITING:
+          return "Waiting...";
+          case CONNECTED:
+          return "Connected!";
+        default:
+          return null;
+      }
     }
   }
 
@@ -179,10 +186,6 @@ public class JoinScreen extends ScreenMaster {
       this.setFillParent(true);
       this.pad(padding);
       playerContainers = new ArrayList<>();
-
-      Label pl = new Label(mainPlayer.getUsername(), skin);
-      add(pl).colspan(4).padBottom(20);
-      row();
     }
 
     public void addPlayerContainer(int index, PlayerContainer pc) {
@@ -221,13 +224,13 @@ public class JoinScreen extends ScreenMaster {
     private Label name;
     private Label waitText;
     private StaticAnimation animation;
-    private int sidePadding = 30;
+    private int sidePadding = 70;
     private int topPadding = 30;
     private Optional<UUID> playerId = Optional.empty();
 
     public PlayerContainer(String n, WaitText status, Texture sheet) {
       name = new Label(n, skin);
-      waitText = new Label(status.equals(WaitText.CONNECTED) ? "Connected" : "Waiting...", skin);
+      waitText = new Label(WaitText.getString(status), skin);
       animation = new StaticAnimation(sheet, 26, 1, 200, 200, 0.8f, -1);
 
       this.pad(topPadding, sidePadding, topPadding, sidePadding);
@@ -252,7 +255,7 @@ public class JoinScreen extends ScreenMaster {
     }
 
     public void setWaitText(WaitText text) {
-      waitText.setText(text.equals(WaitText.CONNECTED) ? "Connected!" : "Waiting...");
+      waitText.setText(WaitText.getString(text));
     }
 
     public void changeAnimation(Texture sheet, int cols, int rows, int width, int height,
