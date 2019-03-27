@@ -239,6 +239,8 @@ public class Renderer {
    * Dispose all rendering components
    */
   public void dispose() {
+    getEntities().forEach(e -> e.remove());
+    
     batch.dispose();
     backgroundBatch.dispose();
     textBatch.dispose();
