@@ -192,5 +192,11 @@ public abstract class ScreenMaster implements Screen {
     public void exit(InputEvent event, float x, float y, int pointer, Actor toActor) {
       image.setDrawable(normal);
     }
+
+    public void dispose() {
+      normal.getSprite().getTexture().dispose();
+      hover.getSprite().getTexture().dispose();
+    }
+
   }
 }
