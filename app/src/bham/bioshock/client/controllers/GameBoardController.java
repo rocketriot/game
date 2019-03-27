@@ -116,6 +116,7 @@ public class GameBoardController extends Controller {
 
   public void movePlayerToBlackHole(Player player) {
     player.clearBoardMove();
+    SoundController.playSound("blackHole");
     movePlayerToRandomPoint(player);
   }
 

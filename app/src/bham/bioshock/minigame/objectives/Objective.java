@@ -2,6 +2,7 @@ package bham.bioshock.minigame.objectives;
 
 import bham.bioshock.client.Route;
 import bham.bioshock.client.Router;
+import bham.bioshock.client.controllers.SoundController;
 import bham.bioshock.common.Position;
 import bham.bioshock.common.models.store.MinigameStore;
 import bham.bioshock.common.models.store.Store;
@@ -124,6 +125,11 @@ public abstract class Objective implements Serializable {
       Integer hp = health.get(m.playerID);
       if(hp != null && hp < INITIAL_HEALTH) {
         health.computeIfPresent(m.playerID, (k, v) -> v + 1);
+
+        if (m.playerID == store.getMainPlayerId()){
+          SoundController.playSound("health");
+        }
+
         Collection<Entity> entities = localStore.getEntities();
         for (Entity entity : entities){
           if (entity.getId() == m.heartID){

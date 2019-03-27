@@ -35,6 +35,10 @@ public class SoundController extends Controller {
   private static Sound menuSelectSound;
   private static Sound jumpSound;
   private static Sound laserSound;
+  private static Sound healthPickupSound;
+  private static Sound blackHoleSound;
+  private static Sound fuelSound;
+  private static Sound upgradeSound;
 
   /**
    * Variables controlling volumes and enabling sounds
@@ -83,11 +87,15 @@ public class SoundController extends Controller {
     mainMenuMusic = assets.get(Assets.mainMenuMusic, Sound.class);
     boardGameMusic = assets.get(Assets.gameBoardMusic, Sound.class);
     minigameMusic = assets.get(Assets.miniGameMusic, Sound.class);
-
+    
     menuSelectSound = assets.get(Assets.menuSelectSound, Sound.class);
     rocketSound = assets.get(Assets.rocketSound, Sound.class);
     jumpSound = assets.get(Assets.jumpSound, Sound.class);
-    laserSound = assets.get(Assets.lasterSound, Sound.class);
+    laserSound = assets.get(Assets.laserSound, Sound.class);
+    healthPickupSound = assets.get(Assets.healthPickupSound, Sound.class);
+    blackHoleSound = assets.get(Assets.blackHoleSound, Sound.class);
+    fuelSound = assets.get(Assets.blackHoleSound, Sound.class);
+    upgradeSound = assets.get(Assets.upgradeSound, Sound.class);
 
     preferences = xmlInteraction.xmlToPreferences();
 
@@ -296,5 +304,9 @@ public class SoundController extends Controller {
     soundsPlaying.put("rocket", false);
     sounds.put("jump", jumpSound);
     sounds.put("laser", laserSound);
+    sounds.put("health", healthPickupSound);
+    sounds.put("blackHole", blackHoleSound);
+    sounds.put("fuel", fuelSound);
+    sounds.put("upgrade", upgradeSound);
   }
 }

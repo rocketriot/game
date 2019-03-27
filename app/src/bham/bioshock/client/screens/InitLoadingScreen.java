@@ -78,7 +78,11 @@ public class InitLoadingScreen implements Screen {
     assets.load(Assets.menuSelectSound, Sound.class, GamePart.MENU);
     assets.load(Assets.rocketSound, Sound.class, GamePart.MENU);
     assets.load(Assets.jumpSound, Sound.class, GamePart.MENU);
-    assets.load(Assets.lasterSound, Sound.class, GamePart.MENU);
+    assets.load(Assets.laserSound, Sound.class, GamePart.MENU);
+    assets.load(Assets.healthPickupSound, Sound.class, GamePart.MENU);
+    assets.load(Assets.blackHoleSound, Sound.class, GamePart.MENU);
+    assets.load(Assets.fuelSound, Sound.class, GamePart.MENU);
+    assets.load(Assets.upgradeSound, Sound.class, GamePart.MENU);
     
     // Join Screen
     for(int i=0; i<4; i++) {
