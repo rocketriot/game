@@ -206,7 +206,6 @@ class PlatformerAITest {
     checkIfFrozen(cpu1);
 
     assertTrue(frozen.containsKey(cpu1));
-    assertEquals(frozenFor.get(cpu1), now);
 
     now -= 6;
     frozenFor.put(cpu1, now);
