@@ -27,6 +27,8 @@ public class Assets {
   public static final String howToPlayButtonHover = "app/assets/ui/main-menu/how-to-play-hover.png";
   public static final String exitButton = "app/assets/ui/main-menu/exit.png";
   public static final String exitButtonHover = "app/assets/ui/main-menu/exit-hover.png";
+  public static final String startButton = "app/assets/ui/main-menu/start.png";
+  public static final String startButtonHover = "app/assets/ui/main-menu/start-hover.png";
 
   // Game Board assets
   public static final String planetsFolder = "app/assets/entities/planets";

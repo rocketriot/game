@@ -72,6 +72,10 @@ public class InitLoadingScreen implements Screen {
     assets.load(Assets.exitButton, Texture.class, GamePart.MENU);
     assets.load(Assets.exitButtonHover, Texture.class, GamePart.MENU);
     
+    
+    assets.load(Assets.startButton, Texture.class, GamePart.MENU);
+    assets.load(Assets.startButtonHover, Texture.class, GamePart.MENU);
+    
     // Music
     assets.load(Assets.mainMenuMusic, Sound.class, GamePart.MENU);
     assets.load(Assets.gameBoardMusic, Sound.class, GamePart.MENU);

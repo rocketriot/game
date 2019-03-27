@@ -5,6 +5,7 @@ import bham.bioshock.client.Route;
 import bham.bioshock.client.Router;
 import bham.bioshock.client.assets.AssetContainer;
 import bham.bioshock.client.assets.Assets;
+import bham.bioshock.client.controllers.SoundController;
 import bham.bioshock.common.Position;
 import bham.bioshock.common.models.Player;
 import bham.bioshock.common.models.store.JoinScreenStore;
@@ -21,6 +22,7 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
@@ -333,35 +335,17 @@ public class JoinScreen extends ScreenMaster {
 
   }
 
-
-  public class ButtonsContainer extends Table {
-    ButtonsContainer() {
-      bottom();
-      right();
-      setWidth(stage.getWidth());
-      pad(20);
-
-      TextButton startButton = new TextButton("Start Game", skin);
-      add(startButton);
-
-      startButton.addListener(new ChangeListener() {
-        @Override
-        public void changed(ChangeEvent event, Actor actor) {
-          router.call(Route.START_GAME);
-        }
-      });
-    }
-
-    @Override
-    public void act(float delta) {
-      setWidth(stage.getWidth());
-      super.act(delta);
-    }
-  }
-
   public void addStartGameButton() {
-    ButtonsContainer buttons = new ButtonsContainer();
-    stage.addActor(buttons);
+    Image startButton = drawAsset(Assets.startButton, Config.GAME_WORLD_WIDTH - 320, 0);
+    addListener(startButton, new BaseClickListener(startButton, Assets.startButton, Assets.startButtonHover) {
+      @Override
+      public void clicked(InputEvent event, float x, float y) {
+        SoundController.playSound("menuSelect");
+        router.call(Route.START_GAME);
+      }
+    });
+    
+    stage.addActor(startButton);
   }
 
   @Override
