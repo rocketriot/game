@@ -12,6 +12,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -59,6 +60,7 @@ public abstract class ScreenMaster implements Screen {
     
     // Create background
     background = assets.get(Assets.menuBackground, Texture.class);
+    background.setFilter(TextureFilter.Linear, TextureFilter.Linear);
   }
 
   protected void drawBackground() {
