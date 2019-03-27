@@ -65,7 +65,7 @@ public class MinigameHandler {
     World w = new RandomWorld();
 
     GameBoard board = store.getGameBoard();
-    if (board != null) {
+    if (board != null && planetId != null) {
       Planet planet = board.getPlanet(planetId);
       if (planet != null) {
         w.setPlanetRadius(planet.getMinigameRadius());
@@ -88,7 +88,7 @@ public class MinigameHandler {
       objectiveId = rand.nextInt(10) % 3;
     }
 
-    switch (1) {
+    switch (objectiveId) {
       case 1:
         o = new Platformer(w);
         for (UUID id : store.getCpuPlayers()) {
