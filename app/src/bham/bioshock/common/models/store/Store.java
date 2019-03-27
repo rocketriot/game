@@ -7,6 +7,7 @@ import bham.bioshock.client.AppPreferences;
 import bham.bioshock.common.models.GameBoard;
 import bham.bioshock.common.models.Planet;
 import bham.bioshock.common.models.Player;
+import bham.bioshock.minigame.models.Entity;
 
 /** Stores all of the models */
 @Singleton
@@ -220,6 +221,10 @@ public class Store {
   }
 
   public void resetMinigameStore() {
+    if(minigameStore != null) {
+      minigameStore.dispose();      
+    }
+
     minigameStore = null;
   }
 

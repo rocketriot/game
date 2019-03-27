@@ -45,6 +45,7 @@ public enum Route {
   ADD_BLACK_HOLE              (GameBoardController.class,     "addBlackHole"),
   BLACK_HOLE_RECEIVED         (GameBoardController.class,     "blackHoleReceived"),
   MOVE_PLAYER_TO_BLACK_HOLE   (GameBoardController.class,     "movePlayerToBlackHole"),
+  GAME_INIT                   (GameBoardController.class,     "gameInit"),
 
   DIRECT_MINIGAME_START       (MinigameController.class,      "directStart"), // FOR TESTS ONLY
   SEND_MINIGAME_START         (MinigameController.class,      "sendStart"),

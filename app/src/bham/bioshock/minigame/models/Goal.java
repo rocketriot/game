@@ -45,7 +45,8 @@ public class Goal extends Entity {
   }
 
   public static void loadTextures(AssetContainer manager) {
-    manager.load(Assets.blackHoleAnimationSheet, Texture.class, GamePart.MINIGAME);
+    // loaded by the game board
+    // manager.load(Assets.blackHoleAnimationSheet, Texture.class, GamePart.MINIGAME);
   }
 
   @Override
