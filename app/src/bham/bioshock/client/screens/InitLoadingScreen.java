@@ -108,7 +108,6 @@ public class InitLoadingScreen implements Screen {
     // Setup cursor
     Pixmap pm = assets.get(Assets.cursor, Pixmap.class);
     Gdx.graphics.setCursor(Gdx.graphics.newCursor(pm, 0, 0));
-    assets.unload(Assets.cursor);
 
     router.call(Route.MAIN_MENU);
   }
