@@ -75,8 +75,7 @@ public class MinigameScoreBoard extends HudElement {
     scoreBoard.clearChildren();
     ArrayList<Player> players = store.getPlayers();
 
-    // Get players in order of score
-    // ArrayList<Player> sortedPlayers = store.getSortedPlayers();
+    String nameStr;
 
     Objective minigameObjective = store.getMinigameStore().getObjective();
     MinigameType minigameType = minigameObjective.getMinigameType();
@@ -108,19 +107,28 @@ public class MinigameScoreBoard extends HudElement {
       }
     } else if (minigameType.equals(MinigameType.CAPTURE_THE_FLAG)) {
       Player player = store.getPlayer(minigameObjective.getWinner());
+      if (player == null) {
+        nameStr = "No one is carrying the flag";
+      } else {
+        nameStr = player.getUsername();
+      }
+
       // Add name of the user
-      Label usernameLabel = new Label(player.getUsername(), scoreBoardStyle);
+      Label usernameLabel = new Label(nameStr, scoreBoardStyle);
       scoreBoard.add(usernameLabel).padTop(8).fillX().align(Align.left);
 
-      // Specify if the player is a CPU
-      Label cpuLabel = new Label("CPU", scoreBoardCpuStyle);
-      scoreBoard.add(player.isCpu() ? cpuLabel : null).padLeft(8).bottom();
+      if (player != null) {
+        // Specify if the player is a CPU
+        Label cpuLabel = new Label("CPU", scoreBoardCpuStyle);
+        scoreBoard.add(player.isCpu() ? cpuLabel : null).padLeft(8).bottom();
 
       LabelStyle pointsStyle = generatePointsStyle(player);
 
       // Add the player's points
       Label pointsLabel = new Label("Carrying Flag" + "", pointsStyle);
       scoreBoard.add(pointsLabel).padTop(8).padLeft(64).fillX().align(Align.left);
+      }
+
 
       scoreBoard.row();
     } else {
