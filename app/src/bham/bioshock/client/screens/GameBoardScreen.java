@@ -391,7 +391,7 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
     }
     
     if(store.isReconnecting()) {
-      router.call(Route.LOADING, new String("Reconnecting..."));
+      router.call(Route.LOADING, "Reconnecting...");
       return;
     }
     
@@ -499,10 +499,7 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
 
     if (cameraX + x < 80 || cameraY + y < 300) {
       return false;
-    } else if (cameraX + x > PPS / 0.03f || cameraY + y > (PPS - 10) / 0.025f) {
-      return false;
-    }
-    return true;
+    } else return !(cameraX + x > PPS / 0.03f) && !(cameraY + y > (PPS - 10) / 0.025f);
   }
 
   @Override

@@ -6,6 +6,8 @@ import bham.bioshock.minigame.PlanetPosition;
 import bham.bioshock.minigame.models.Entity;
 import bham.bioshock.minigame.models.Platform;
 import bham.bioshock.minigame.objectives.Platformer;
+import bham.bioshock.minigame.physics.CollisionHandler;
+import bham.bioshock.minigame.physics.StepsGenerator;
 import bham.bioshock.server.interfaces.MultipleConnectionsHandler;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -96,8 +98,8 @@ public class PlatformerAI extends MinigameAI {
 
     @Override
     void execute() {
-      logger
-          .trace("ASTRO " + astronaut.get().toString() + " current index: " + currentPlatformIndex);
+      logger.trace(
+          "ASTRO " + astronaut.get().toString() + " current index: " + currentPlatformIndex);
       /*
        * An element of randomness:
        */
@@ -138,27 +140,29 @@ public class PlatformerAI extends MinigameAI {
       }
     }
 
-    @Override
-    void updateStack() {
-      /*
-       * Replace the current state with a new state to move the player to its next goal platform.
-       */
-      statesStack.remove(this);
-      statesStack.add(new MoveTowardsPlatform());
+        @Override
+        void updateStack() {
+            /*
+            Replace the current state with a new state to move the player to its next goal platform.
+             */
+            statesStack.remove(this);
+            statesStack.add(new MoveTowardsPlatform());
+
 
     }
-
 
   };
 
   /**
    * State to move the player towards its next goal platform
    */
-  private class MoveTowardsPlatform extends CPUState {
-    /*
-     * The direction that the player is currently travelling in 1 = left, 2 = right
-     */
-    private int direction;
+    public class MoveTowardsPlatform extends CPUState {
+        /*
+        The direction that the player is currently travelling in
+        1 = left, 2 = right
+         */
+        private int direction;
+
 
     MoveTowardsPlatform() {
       super("moveTowardsPlatformm");
@@ -201,7 +205,6 @@ public class PlatformerAI extends MinigameAI {
       statesStack.add(0, new DetermineJumpingPosition(direction));
 
     }
-
 
   };
 
@@ -299,10 +302,7 @@ public class PlatformerAI extends MinigameAI {
       }
     }
 
-
-
   };
-
 
 
   abstract public class CPUState {

@@ -13,21 +13,21 @@ public interface ServerService {
    * @param id
    * @param username
    */
-  public void saveId(UUID id, String name);
+  void saveId(UUID id, String name);
 
   /**
    * Returns service Id
    * 
    * @return
    */
-  public Optional<UUID> Id();
+  Optional<UUID> Id();
 
   /**
    * Send a message
    * 
    * @param message to be sent
    */
-  public void send(Message message);
+  void send(Message message);
 
   
   /**
@@ -35,28 +35,28 @@ public interface ServerService {
    * 
    * @return number of messages waiting
    */
-  public int getSenderQueueSize();
+  int getSenderQueueSize();
 
   /**
    * Get the number of messages sent by the underlying sender
    * 
    * @return number of messages sent
    */
-  public long getSenderCounter();
+  long getSenderCounter();
 
   /**
    * Resets message counter in underlying sender
    */
-  public void resetSenderCounter();
+  void resetSenderCounter();
 
   /**
    * Stop the service with underlying threads
    */
-  public void abort();
+  void abort();
 
   /**
    * Starts the service
    */
-  public void start();
+  void start();
 
 }

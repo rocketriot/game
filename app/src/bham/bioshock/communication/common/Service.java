@@ -91,9 +91,9 @@ public abstract class Service extends Thread implements MessageHandler {
     // Close outgoing stream
     try {
       output.close();
-    } catch (IOException e) {};
-    
-    try {
+    } catch (IOException e) {}
+
+      try {
       receiver.join();
     } catch (InterruptedException e) {
       logger.error("Unexpected interruption " + e.getMessage());

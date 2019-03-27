@@ -2,166 +2,168 @@ package bham.bioshock.client.screens;
 
 import bham.bioshock.Config;
 import bham.bioshock.client.FontGenerator;
+import bham.bioshock.client.Route;
 import bham.bioshock.client.Router;
 import bham.bioshock.client.assets.AssetContainer;
-import bham.bioshock.common.Position;
+import bham.bioshock.client.assets.Assets;
+import bham.bioshock.client.controllers.SoundController;
 import bham.bioshock.common.models.Player;
 import bham.bioshock.common.models.store.Store;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.graphics.g2d.ParticleEffect;
+import com.badlogic.gdx.graphics.g2d.ParticleEmitter;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
-import com.badlogic.gdx.utils.viewport.FitViewport;
 import java.util.ArrayList;
-import java.util.Comparator;
 
 public class EndScreen extends ScreenMaster {
   private Store store;
-  private ArrayList<Player> winners;
-  private OrthographicCamera camera;
-  private ShapeRenderer renderer;
-  private SpriteBatch fontBatch;
   private FontGenerator fontGenerator;
+  private BitmapFont titleFont;
+  private ArrayList<BitmapFont> pointsFonts;
   private BitmapFont font;
-  private Position[] locations;
-  private ArrayList<Player> players;
-  private VerticalGroup hg;
-  private Table table;
-  private Label userLabel;
-  private int number =0;
-  private BitmapFont scores;
+  private ArrayList<Player> sortedPlayers;
+  private ParticleEffect rocketTrail;
+  HorizontalGroup playersContainer;
+  private ArrayList<Image> rockets;
+
+  private final String TITLE = "Final Results";
+  private final int PLAYER_WIDTH = 400;
+  private final int MAX_PLAYER_HEIGHT = 600;
+  private final int HORIZONTAL_PLAYERS_PADDING = (Config.GAME_WORLD_WIDTH - (PLAYER_WIDTH * 4)) / 2;
 
   public EndScreen(Router router, Store store, AssetContainer assets) {
     super(router, assets);
+
     this.store = store;
-
-    this.camera = new OrthographicCamera();
-    this.batch = new SpriteBatch();
-    this.fontBatch = new SpriteBatch();
     this.fontGenerator = new FontGenerator();
-    this.number = store.getPlayers().size();
-    this.players = store.getSortedPlayers();
 
-    this.table = new Table();
+    pointsFonts = new ArrayList<>();
+    pointsFonts.add(assets.getFont(40, new Color(0xFFD048FF)));
+    pointsFonts.add(assets.getFont(40, new Color(0xC2C2C2FF)));
+    pointsFonts.add(assets.getFont(40, new Color(0xD27114FF)));
+    pointsFonts.add(assets.getFont(40, new Color(0xCE2424FF)));
 
-    table.setX(screenWidth - screenWidth/3);
-    table.setY(screenHeight-screenHeight/4);
-
-    viewport = new FitViewport(Config.GAME_WORLD_WIDTH, Config.GAME_WORLD_HEIGHT, camera);
-    stage = new Stage(viewport, batch);
-
-    load();
+    rockets = new ArrayList<>();
+    for (int i = 1; i <= 4; i++) {
+      Texture texture = new Texture(Gdx.files.internal(Assets.playersSmallFolder + "/" + i + ".png"));
+      texture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+      rockets.add(new Image(texture));
+    }
   }
-
 
   @Override
   public void show() {
     super.show();
+
+    titleFont = assets.getFont(60);
+    font = assets.getFont(40);
+    sortedPlayers = store.getSortedPlayers();
+
+    rocketTrail = new ParticleEffect();
+    rocketTrail.load(
+        Gdx.files.internal(Assets.particleEffect),
+        Gdx.files.internal(Assets.particleEffectsFolder));
+    rocketTrail.start();
+
+    playersContainer = new HorizontalGroup();
+    playersContainer.setFillParent(true);
+    playersContainer.center();
+    stage.addActor(playersContainer);
+    
   }
 
   @Override
   public void render(float delta) {
     super.render(delta);
 
-    font();
-    stage.draw();
+    batch.begin();
+    renderTitle();
+    renderFinishButton();
+    renderResults();
+    batch.end();
   }
 
-  /**
-   * Displayes "Final Results"
-   */
-  private void font(){
-    fontBatch.begin();
+  private void renderTitle() {
+    int xOffset = (int) fontGenerator.getOffset(titleFont, TITLE);
+    titleFont.draw(batch, TITLE, Config.GAME_WORLD_WIDTH / 2 - xOffset, Config.GAME_WORLD_HEIGHT - 100);
+  }
+  
+  private void renderResults() {    
+    int i = 0;
+    
+    for (Player player : store.getPlayers()) {
+      int position = 0;
+      for (Player sortedPlayer: sortedPlayers) {
+        if (sortedPlayer.getId().equals(player.getId())) break;
+        position++;
+      }
 
-    int x = (int)screenWidth/2;
-    int y = (int)screenHeight - (int)screenHeight/6;
+      int height = 0;
 
-    font.draw(fontBatch, "Final Results", x, y);
-    fontBatch.end();
+      if (sortedPlayers.get(0).getPoints() != 0 && player.getPoints() != 0)
+        height = (int) (MAX_PLAYER_HEIGHT * ((float) player.getPoints() / (float) sortedPlayers.get(0).getPoints()));
+
+      // Player username label
+      String username = player.getUsername();
+      int xOffset = (int) fontGenerator.getOffset(font, username);
+      font.draw(batch, username, HORIZONTAL_PLAYERS_PADDING + (i*PLAYER_WIDTH) - xOffset + (PLAYER_WIDTH/2), height + 220);
+
+      // Player points label
+      String points = String.valueOf(player.getPoints());
+      xOffset = (int) fontGenerator.getOffset(pointsFonts.get(i), points);
+      pointsFonts.get(position).draw(batch, points, HORIZONTAL_PLAYERS_PADDING + (i*PLAYER_WIDTH) - xOffset + (PLAYER_WIDTH/2), height + 170);
+      
+      // Player rocket
+      Image rocket = rockets.get(i);
+      rocket.setPosition(HORIZONTAL_PLAYERS_PADDING + (i*PLAYER_WIDTH) + (PLAYER_WIDTH/2) - (rocket.getWidth()/2), height);
+      stage.addActor(rocket);
+
+      setRocketTrailAngle(0);
+      rocketTrail.setPosition(HORIZONTAL_PLAYERS_PADDING + (i*PLAYER_WIDTH) + (PLAYER_WIDTH/2) - 3, height);
+      rocketTrail.draw(batch, Gdx.graphics.getDeltaTime());
+      i++;
+    }
   }
 
-  /**
-   * Displays the players, the scores and the rockets
-   */
-  private void load(){
-    font = fontGenerator.generate(45, Color.WHITE);
+  private void setRocketTrailAngle(float angle) {
+    // Align particle effect angle with world
+    angle -= 90;
 
-    for(int i= 0 ;i<players.size(); i++) {
+    for (ParticleEmitter pe : rocketTrail.getEmitters()) {
+      ParticleEmitter.ScaledNumericValue val = pe.getAngle();
+      float amplitude = (val.getHighMax() - val.getHighMin()) / 2f;
+      float h1 = angle + amplitude;
+      float h2 = angle - amplitude;
 
-      // The score will have a different color depending on the place the player is on: gold, silver, bronze, nothing
-      switch (i) {
-        case 0:
-          scores = fontGenerator.generate(50, Color.GOLD);
-          break;
-        case 1:
-          scores = fontGenerator.generate(50, Color.GRAY);
-          break;
-        case 2:
-          scores = fontGenerator.generate(50, Color.BROWN);
-          break;
-
-        case 3:
-          scores = fontGenerator.generate(50, Color.WHITE);
-          break;
-      }
-
-
-      hg = new VerticalGroup();
-      hg.setFillParent(true);
-
-      Label.LabelStyle style = new Label.LabelStyle();
-      Label.LabelStyle scoreStyle = new Label.LabelStyle();
-      scoreStyle.font = scores;
-      style.font = font;
-
-      // username label
-      userLabel = new Label(players.get(i).getUsername(), style);
-      hg.addActor(userLabel);
-
-      // score label
-      userLabel = new Label(Integer.toString(players.get(i).getPoints()), scoreStyle);
-      hg.addActor(userLabel);
-
-      // get the player texture, create image and add itto the evrtical group
-      int textureId = players.get(i).getTextureID() + 1;
-      TextureRegion texture = new TextureRegion(new Texture(Gdx.files.internal("app/assets/entities/players/" + textureId + ".png")));
-      Image img = new Image(texture);
-
-      // use additional table TO RESIZE ROCKETS
-      Table helper = new Table();
-      helper.add(img).size(300);
-      hg.addActor((helper));
-
-    // if the player score is lower than the one before display the player lower// otherwise display on the same lever
-    if(i > 0 && (players.get(i).getPoints() != players.get(i-1).getPoints())){
-      int j = number - 1;
-      while (j < players.size()) {
-        userLabel = new Label(" ", style);
-        hg.addActor(userLabel);
-        j++;
-      }
-      number--;
+      val.setHigh(h1, h2);
+      val.setLow(angle);
     }
-        table.add(hg);
+  }
 
-      // add spaces between rockets
-      userLabel = new Label("  ", style);
-      table.add(userLabel);
-      table.add(userLabel);
-      table.add(userLabel);
-      table.add(userLabel);
-      table.add(userLabel);
+  private void renderFinishButton() {
+    Image finishButton = drawAsset(Assets.finishButton, Config.GAME_WORLD_WIDTH - 280, 0);
+      addListener(finishButton, new BaseClickListener(finishButton, Assets.finishButton, Assets.finishButtonHover) {
+        @Override
+        public void clicked(InputEvent event, float x, float y) {
+          SoundController.playSound("menuSelect");
+          router.call(Route.MAIN_MENU);
+        }
+      });
+      
+      stage.addActor(finishButton);
+  }
+
+  @Override
+  public void dispose() {
+    super.dispose();
+
+    for (int i = 0; i <= 3; i++) {
+      ((BaseClickListener) rockets.get(i).getListeners().get(0)).dispose();
     }
-
-    stage.addActor(table);
-    stage.act(Gdx.graphics.getDeltaTime());
   }
 }
-
-

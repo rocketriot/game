@@ -68,9 +68,8 @@ public class GameBoard implements Serializable {
     if (x > max && y < min) return true;
 
     // Check bottom right
-    if (x > max && y > max) return true;
+      return x > max && y > max;
 
-    return false;
   }
 
   public boolean isNextToThePlanet(Coordinates pos) {

@@ -5,5 +5,5 @@ public interface StoppableServer {
   /**
    * Stop the server
    */
-  public void stop();
+  void stop();
 }

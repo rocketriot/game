@@ -9,10 +9,10 @@ public interface MessageHandler {
    * 
    * @param action
    */
-  public void handle(Message action);
+  void handle(Message action);
   
   /**
    * Stops handling actions
    */
-  public void abort();
+  void abort();
 }
