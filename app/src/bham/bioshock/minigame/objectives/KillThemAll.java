@@ -61,6 +61,11 @@ public class KillThemAll extends Objective {
     return instructions;
   }
 
+  @Override
+  public String name() {
+    return "Kill Them All!";
+  }
+
   /**
    * Update killer stats
    */

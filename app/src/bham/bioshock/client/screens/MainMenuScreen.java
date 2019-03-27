@@ -137,6 +137,6 @@ public class MainMenuScreen extends ScreenMaster {
 
     dialog.show(stage);
 
+    stage.setKeyboardFocus(textField);
   }
-
 }

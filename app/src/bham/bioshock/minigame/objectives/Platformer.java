@@ -135,6 +135,10 @@ public class Platformer extends Objective {
             "the first player that reaches it wins!";
   }
 
+  @Override
+  public String name() {
+    return "Find the Goal!";
+  }
 
   public Platform getGoalPlatform() {
     return goalPlatform;
