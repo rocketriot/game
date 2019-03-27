@@ -22,17 +22,21 @@ import java.util.Random;
 abstract public class World implements Serializable {
 
   private static final long serialVersionUID = 4046769956963960819L;
-  protected static int textureOffset = 530;
+  private static float textureOffset = 0.265f;
   protected int textureId;
   static Texture texture;
   static Texture frontTexture;
+  
+  double planetRadius = 1000;
+  double gravity = 1500;
 
   /**
    * Draws planet texture on the screen
    */
   public void draw(SpriteBatch batch) {
     if(texture == null) return;
-    float radius = (float) getPlanetRadius()+textureOffset;
+    float offset = (float) (textureOffset * getPlanetRadius());
+    float radius = (float) getPlanetRadius() + offset;
     batch.draw(texture, -radius, -radius, radius*2, radius*2);
   }
   
@@ -45,7 +49,8 @@ abstract public class World implements Serializable {
     if(textureId == 4) {   
       if(frontTexture == null) return;
       batch.begin();
-      float radius = (float) getPlanetRadius()+textureOffset;
+      float offset = (float) (textureOffset * getPlanetRadius());
+      float radius = (float) getPlanetRadius()+offset;
       batch.draw(frontTexture, -radius, -radius, radius*2, radius*2);
       batch.end();      
     }
@@ -90,6 +95,8 @@ abstract public class World implements Serializable {
     return getDistanceTo(x, y) - getPlanetRadius();
   }
 
+  public abstract void init();
+  
   /**
    * Convert position to planet position.
    *
@@ -239,11 +246,19 @@ abstract public class World implements Serializable {
   public static void createTextures(AssetContainer manager, int id) {
     texture = manager.get(Assets.planetBase + id + ".png", Texture.class);
     if(id == 4) {
-      textureOffset = 770;
+      textureOffset = 0.385f;
       frontTexture = manager.get(Assets.planetBase + "4_front.png", Texture.class);
-    }  else {
-      textureOffset = 530;
+    } else {
+      textureOffset = 0.265f;
     }
+  }
+
+  public void setPlanetRadius(int minigameRadius) {
+    this.planetRadius = minigameRadius;
+  }
+
+  public void setPlanetTexture(int minigameTextureId) {
+    textureId = minigameTextureId;
   }
 
 }

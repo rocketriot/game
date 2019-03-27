@@ -16,8 +16,6 @@ public class RandomWorld extends World {
   private static final long serialVersionUID = -5432716795106522826L;
 
   Position GRAVITY_POS = new Position(0f, 0f);
-  double PLANET_RADIUS = 2000;
-  double GRAVITY = 1500;
   Position[] playerPositions = new Position[4];
   ArrayList<Rocket> rockets = new ArrayList<>();
   transient WeaponSeeder wSeeder;
@@ -27,10 +25,17 @@ public class RandomWorld extends World {
   Position gravityCenter = new Position(0, 0);
   
   public RandomWorld() {
-    playerPositions[0] = new Position(-2300, 0);
-    playerPositions[1] = new Position(0, -2000);
-    playerPositions[2] = new Position(2000, 0);
-    playerPositions[3] = new Position(0, 2000);
+    Random r = new Random();
+    textureId = (r.nextInt(100) % 4)+1;
+  }
+
+  @Override
+  public void init() {
+    int radius = (int) getPlanetRadius();
+    playerPositions[0] = new Position(-300-radius, 0);
+    playerPositions[1] = new Position(0, -radius-300);
+    playerPositions[2] = new Position(radius+300, 0);
+    playerPositions[3] = new Position(0, radius+300);
 
     pSeeder = new PlatformSeeder(this);
     wSeeder = new WeaponSeeder(this);
@@ -39,19 +44,16 @@ public class RandomWorld extends World {
 
     platforms = pSeeder.getPlatforms();
     guns = wSeeder.getGuns();
-
-    Random r = new Random();
-    textureId = (r.nextInt(100) % 4)+1;
   }
-
+  
   @Override
   public double getPlanetRadius() {
-    return PLANET_RADIUS;
+    return planetRadius;
   }
 
   @Override
   public double getGravity() {
-    return GRAVITY;
+    return gravity;
   }
 
   @Override

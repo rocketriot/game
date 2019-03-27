@@ -2,6 +2,8 @@ package bham.bioshock.server.handlers;
 
 import bham.bioshock.Config;
 import bham.bioshock.common.Position;
+import bham.bioshock.common.models.GameBoard;
+import bham.bioshock.common.models.Planet;
 import bham.bioshock.common.models.store.MinigameStore;
 import bham.bioshock.common.models.store.Store;
 import bham.bioshock.common.utils.Clock;
@@ -64,6 +66,17 @@ public class MinigameHandler {
   public void startMinigame(UUID playerId, UUID planetId, GameBoardHandler gbHandler, Integer objectiveId) {
     // Create a world for the minigame
     World w = new RandomWorld();
+    
+    GameBoard board = store.getGameBoard();
+    if(board != null) {
+      Planet planet = board.getPlanet(planetId);
+      if(planet != null) {
+        w.setPlanetRadius(planet.getMinigameRadius());
+        w.setPlanetTexture(planet.getMinigameTextureId());
+      }
+    }
+    w.init();
+    
     if (planetId == null) {
       logger.error("Starting minigame without a planet ID (That's OK. for tests)!");
     } else {

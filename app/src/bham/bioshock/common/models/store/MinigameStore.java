@@ -61,6 +61,7 @@ public class MinigameStore {
   public void seed(Store store, World world, Objective o, UUID planetId) {
     this.planetID = planetId;
     this.currentWorld = world;
+    
     mainPlayerId = store.getMainPlayerId();
     Position[] playerPos = world.getPlayerPositions();
 
