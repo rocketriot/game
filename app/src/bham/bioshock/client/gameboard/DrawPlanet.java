@@ -20,7 +20,7 @@ public class DrawPlanet extends DrawEntity {
       planetSprites.add(generateSprite(Assets.planetsFolder + "/" + i + ".png"));     
     }
     for(int i=1; i<=4; i++) {
-      planetSprites.add(generateSprite(Assets.flagsFolder + "/" + i + ".png"));     
+      flagSprites.add(generateSprite(Assets.flagsFolder + "/" + i + ".png"));     
     }
   }
 
