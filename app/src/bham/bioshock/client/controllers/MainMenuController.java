@@ -54,8 +54,8 @@ public class MainMenuController extends Controller {
     setScreen(new MainMenuScreen(router, assets));
   }
 
-  public void saveTurns(String number){
-    this.store.setMaxRounds(Integer.parseInt(number));
+  public void saveTurns(int number){
+    store.setMaxRounds(number);
   }
 
   public void alert(String message) {

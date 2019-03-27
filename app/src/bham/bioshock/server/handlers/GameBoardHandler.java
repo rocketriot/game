@@ -103,7 +103,6 @@ public class GameBoardHandler {
       handler.sendToAll(new MovePlayerOnBoardMessage(goalCoords, playerID));
     }
 
-
     if ((store.getRound() > store.getMaxRounds())) {
       handler.sendToAll(new EndGameMessage());
     }
@@ -113,10 +112,8 @@ public class GameBoardHandler {
     handler.sendToAll(new UpdateTurnMessage());
 
    if ((store.getRound() > store.getMaxRounds())) {
-
-    handler.sendToAll(new EndGameMessage());
-  }
-
+      handler.sendToAll(new EndGameMessage());
+    }
   }
 
     public void addBlackHole (Coordinates coordinates){
