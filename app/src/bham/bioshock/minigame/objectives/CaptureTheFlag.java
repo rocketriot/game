@@ -36,7 +36,7 @@ public class CaptureTheFlag extends Objective {
 //      }
 //    }
 
-    for (int i = 0; i < (int) Math.ceil(allPlatforms.size() / 2); i++){
+    for (int i = 0; i < (int) Math.ceil(allPlatforms.size() / 4); i++){
       platforms.add(allPlatforms.get(i));
     }
 
