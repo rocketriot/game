@@ -122,7 +122,7 @@ public class MinigameHandler {
   private void setupMinigameEnd(GameBoardHandler gameBoardHandler) {
 
     clock.reset();
-    clock.at(60f, new Clock.TimeListener() {
+    clock.at(62f, new Clock.TimeListener() {
       @Override
       public void handle(Clock.TimeUpdateEvent event) {
         logger.info("Ending minigame");
