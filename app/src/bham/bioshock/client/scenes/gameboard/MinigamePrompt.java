@@ -130,12 +130,6 @@ public class MinigamePrompt implements InputProcessor {
   }
   
   private void renderName() {
-    // String name = store.getMinigameStore().getObjective().name();
-    // float xOffset = new FontGenerator().getOffset(font, name);
-    // float x = (Config.GAME_WORLD_WIDTH / 2) - (WIDTH / 2) + xOffset - 35;
-    // float y = (Config.GAME_WORLD_HEIGHT / 2) + 120;
-    // font.draw(batch, name, x, y);
-
     String name = "Minigame";
     float xOffset = new FontGenerator().getOffset(font, name);
     float x = (Config.GAME_WORLD_WIDTH / 2) - (WIDTH / 2) + xOffset + 30;
@@ -204,6 +198,7 @@ public class MinigamePrompt implements InputProcessor {
 
   public void show(UUID planetID) {
     this.planetID = planetID;
+    renderButtons();
     isVisible = true;
   }
 
