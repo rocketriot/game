@@ -9,6 +9,7 @@ import bham.bioshock.client.assets.Assets.GamePart;
 import bham.bioshock.client.controllers.SoundController;
 import bham.bioshock.client.gameboard.*;
 import bham.bioshock.client.scenes.gameboard.GameBoardHud;
+import bham.bioshock.client.scenes.gameboard.MinigamePrompt;
 import bham.bioshock.common.Direction;
 import bham.bioshock.common.consts.GridPoint;
 import bham.bioshock.common.models.*;
@@ -26,7 +27,9 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import java.util.ArrayList;
 import java.util.UUID;
@@ -92,6 +95,9 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
   
   /** Loading screen */
   private LoadingScreen loadingScreen;
+  
+  /** Loading screen */
+  private MinigamePrompt minigamePrompt;
 
   public GameBoardScreen(Router router, Store store, AssetContainer assets) {
     super(router, assets);
@@ -108,6 +114,8 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
 
     // Center the camera on the middle of the grid
     camera.position.set(Config.GAME_WORLD_WIDTH / 4, Config.GAME_WORLD_HEIGHT / 2.25f, 0);
+
+    this.minigamePrompt = new MinigamePrompt(batch, store, router, skin);
   }
   
   private void loadAssets() {
@@ -151,6 +159,7 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
     // Setup the input processing
     this.inputMultiplexer = new InputMultiplexer();
     this.inputMultiplexer.addProcessor(hud.getStage());
+    this.inputMultiplexer.addProcessor(minigamePrompt.getStage());
     this.inputMultiplexer.addProcessor(this);
     Gdx.input.setInputProcessor(inputMultiplexer);
     
@@ -425,6 +434,11 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
     hud.getStage().act(Gdx.graphics.getDeltaTime());
     hud.draw();
     hud.update();
+    
+    batch.setProjectionMatrix(minigamePrompt.getStage().getCamera().combined);
+    minigamePrompt.getStage().act(Gdx.graphics.getDeltaTime());
+    minigamePrompt.draw();
+    minigamePrompt.render();
   }
 
   protected void drawBackground() {
@@ -715,30 +729,14 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
 
   /** Method to ask the user whether they want to start the minigame or not */
   private void showMinigamePrompt(UUID planetId) {
-    Dialog dialog = new Dialog("", skin) {
+    Dialog dialog = new Dialog("", skin);
 
-      protected void result(Object object) {
-
-        if (object.equals(true)) {
-          SoundController.playSound("menuSelect");
-          router.call(Route.SEND_MINIGAME_START, planetId);
-        } else {
-          SoundController.playSound("menuSelect");
-          // Ends the turn
-          router.call(Route.END_TURN);
-        }
-      }
-    };
-
-    dialog.text(new Label("Do you want to attempt to capture this planet? \n                    This action costs 30 fuel", skin, "window"));
     if (store.getMainPlayer().getFuel() >= (3 * store.getMainPlayer().getFuelGridCost())) {
-      dialog.button("Yes", true);
-      dialog.button("No", false);
+      minigamePrompt.show(planetId);
     } else {
-      dialog.button("Insufficient Fuel", false);
+      dialog.text(new Label("You need 30 fuel to capture this planet.", skin, "window"));
+      dialog.button("Okay", true);
+      dialog.show(hud.getStage());
     }
-
-    dialog.show(hud.getStage());
   }
-
 }
