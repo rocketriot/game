@@ -1,17 +1,20 @@
 package bham.bioshock.minigame.objectives;
 
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.UUID;
 import bham.bioshock.client.Router;
 import bham.bioshock.common.models.store.MinigameStore;
 import bham.bioshock.common.models.store.Store;
 import bham.bioshock.communication.messages.objectives.KillAndRespawnMessage;
 import bham.bioshock.minigame.models.Astronaut;
 import bham.bioshock.minigame.worlds.World;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.UUID;
 
 
+/**
+ * The Kill Them All objective.
+ */
 public class KillThemAll extends Objective {
 
   private static final long serialVersionUID = 5035692465754355325L;
@@ -21,6 +24,12 @@ public class KillThemAll extends Objective {
    */
   private HashMap<UUID, Integer> kills = new HashMap<>();
 
+  /**
+   * Gets player score.
+   *
+   * @param playerID the player id
+   * @return the player score
+   */
   public int getPlayerScore(UUID playerID) {
     return kills.get(playerID);
   }

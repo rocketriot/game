@@ -17,6 +17,9 @@ import bham.bioshock.minigame.models.Flag;
 import bham.bioshock.minigame.models.Entity.State;
 import bham.bioshock.minigame.worlds.World;
 
+/**
+ * The Capture the Flag objective.
+ */
 public class CaptureTheFlag extends Objective {
 
   private static final long serialVersionUID = 1940697858386232981L;
@@ -25,19 +28,25 @@ public class CaptureTheFlag extends Objective {
   private transient UUID flagOwner;
   private Position flagPosition;
 
+  /**
+   * Instantiates a new Capture The Flag objective.
+   *
+   * @param world the world
+   */
   public CaptureTheFlag(World world) {
     Random r = new Random();
     ArrayList<Platform> allPlatforms = world.getPlatforms();
     ArrayList<Platform> platforms = new ArrayList<>();
 
-    for (int i = 0; i < (int) Math.ceil(allPlatforms.size() / 4); i++){
+    for (int i = 0; i < (int) Math.ceil(allPlatforms.size() / 4); i++) {
       platforms.add(allPlatforms.get(i));
     }
 
     PlanetPosition pPos;
-    if (platforms.size() == 0){
+    if (platforms.size() == 0) {
       float angle = (float) (0 + Math.random() * 359);
-      int distance = (int) (Math.random() * (world.getPlanetRadius() + 200) + (world.getPlanetRadius() + 50));
+      int distance = (int) (Math.random() * (world.getPlanetRadius() + 200) + (
+          world.getPlanetRadius() + 50));
       pPos = new PlanetPosition(angle, distance);
     } else {
       pPos = platforms.get(r.nextInt(platforms.size())).getPlanetPos();
@@ -71,15 +80,18 @@ public class CaptureTheFlag extends Objective {
 
   @Override
   public void captured(Astronaut a) {
-    if(a.is(State.REMOVING)) return;
-    if(!store.isHost()) return;
+    if (a.is(State.REMOVING)) {
+      return;
+    }
+    if (!store.isHost()) {
+      return;
+    }
 
     router.call(Route.SEND_OBJECTIVE_UPDATE, new FlagOwnerUpdateMessage(a.getId()));
   }
 
   /**
    * Handle flag owner update
-   * @param m
    */
   @Override
   public void handle(FlagOwnerUpdateMessage m) {
@@ -90,11 +102,9 @@ public class CaptureTheFlag extends Objective {
 
   /**
    * Drop the flag
-   *
-   * @param m
    */
   public void handle(KillAndRespawnMessage m) {
-    if(!m.playerId.equals(flagOwner)) {
+    if (!m.playerId.equals(flagOwner)) {
       super.handle(m);
       return;
     }
@@ -136,7 +146,7 @@ public class CaptureTheFlag extends Objective {
   /**
    * Get current flag position
    *
-   * @return Position
+   * @return Position of the flag position
    */
   public Position getFlagPosition() {
     return flag.getPos();

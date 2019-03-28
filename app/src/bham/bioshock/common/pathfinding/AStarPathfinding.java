@@ -9,11 +9,13 @@ import java.util.Collections;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-/** The A-Star pathfinding algorithm. */
+/**
+ * The A-Star pathfinding algorithm.
+ */
 public class AStarPathfinding {
 
   private static final Logger logger = LogManager.getLogger(AStarPathfinding.class);
-  
+
   /**
    * The cost to go from one point to another
    */
@@ -80,8 +82,6 @@ public class AStarPathfinding {
     setGoalPosition(goalPosition);
     aStarGrid = setAStarGrid(); // set the A* Grid to be the current grid
     aStarGrid[startPosition.getX()][startPosition.getY()].setTotalCost(0);
-
-    checkGoal(goalPosition);
 
     ArrayList<Coordinates> openList = new ArrayList<>();// list of all generated points
     ArrayList<Coordinates> closedList = new ArrayList<>(); // list of all expanded points
@@ -151,11 +151,11 @@ public class AStarPathfinding {
     // get the position of each player and add them into the grid
     for (Player player : players) {
       Coordinates playerCoords = player.getCoordinates();
-      if(playerCoords == null) {
+      if (playerCoords == null) {
         logger.fatal("Player " + player.getUsername() + " coordinates are null!");
         continue;
       }
-      gameGrid[playerCoords.getX()][playerCoords.getY()] = new GridPoint(GridPoint.Type.PLAYER, 0);        
+      gameGrid[playerCoords.getX()][playerCoords.getY()] = new GridPoint(GridPoint.Type.PLAYER, 0);
     }
   }
 
@@ -178,50 +178,6 @@ public class AStarPathfinding {
       }
     }
     return tempGrid;
-  }
-
-  /**
-   * Method to check whether the goal position is a planet, if so, make that planet passable for
-   * this pathfind.
-   *
-   * @param goalPosition The position to check
-   */
-  private void checkGoal(Coordinates goalPosition) {
-    if (gameGrid[goalPosition.getX()][goalPosition.getY()].isType(GridPoint.Type.PLANET)) {
-      int currentX = goalPosition.getX();
-      int currentY = goalPosition.getY();
-
-      // go to the centre of the planet
-      if (isValid(new Coordinates(currentX, currentY + 1)) &&
-          !gameGrid[currentX][currentY + 1].isType(GridPoint.Type.PLANET)) { // check if in top row
-        currentY -= 1;
-      } else if (isValid(new Coordinates(currentX, currentY - 1)) &&
-          !gameGrid[currentX][currentY - 1]
-              .isType(GridPoint.Type.PLANET)) { // check if in bottom row
-        currentY += 1;
-      }
-      if (isValid(new Coordinates(currentX + 1, currentY)) &&
-          !gameGrid[currentX + 1][currentY]
-              .isType(GridPoint.Type.PLANET)) { // check if in right column
-        currentX -= 1;
-      } else if (isValid(new Coordinates(currentX - 1, currentY)) &&
-          !gameGrid[currentX - 1][currentY]
-              .isType(GridPoint.Type.PLANET)) { // check if in left column
-        currentX += 1;
-      }
-
-      // now make all of the points of the planet passable - go to top left of the planet
-      currentX -= 1;
-      currentY += 1;
-      for (int x = currentX; x < currentX + 3; x++) {
-        for (int y = currentY; y > currentY - 3; y--) {
-          if (isValid(new Coordinates(x, y))) {
-            aStarGrid[x][y].setPassable(true);
-          }
-
-        }
-      }
-    }
   }
 
   /**
@@ -327,7 +283,7 @@ public class AStarPathfinding {
   private Boolean isValid(Coordinates point) {
     int x = point.getX();
     int y = point.getY();
-      return x < maxX && x >= 0 && y < maxX && y >= 0 && aStarGrid[x][y].isPassable();
+    return x < maxX && x >= 0 && y < maxX && y >= 0 && aStarGrid[x][y].isPassable();
   }
 
   /**
