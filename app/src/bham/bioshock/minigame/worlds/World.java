@@ -262,7 +262,6 @@ abstract public class World implements Serializable {
   }
   
   public void setGravity(int gravity) {
-    System.out.println(gravity);
     this.gravity = gravity;
   }
 
