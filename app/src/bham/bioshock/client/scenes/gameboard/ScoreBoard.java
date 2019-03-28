@@ -6,31 +6,47 @@ import bham.bioshock.client.assets.Assets;
 import bham.bioshock.client.scenes.HudElement;
 import bham.bioshock.common.models.Player;
 import bham.bioshock.common.models.store.Store;
-
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup;
 import com.badlogic.gdx.utils.Align;
 
 import java.util.ArrayList;
 
+/** Displays the scores of all the players and the round count */
 public class ScoreBoard extends HudElement {
+  /** Shows the player scores */
   private Table scoreBoard;
+
+  /** Shows the current round number */
   private Label roundLabel;
+
+  /** Shows who's turn it currently is */
   private Image turnPointer;
 
+  /** Style for the player scores */
   private LabelStyle scoreBoardStyle;
+
+  /** Style for the player CPU label */
   private LabelStyle scoreBoardCpuStyle;
+
+  /** Different colored styles for player scores (based on score position) */
   private ArrayList<LabelStyle> scoreBoardPointsStyle;
 
-  public ScoreBoard(Stage stage, SpriteBatch batch, AssetContainer assets, Store store, Router router) {
+  public ScoreBoard(
+      Stage stage, SpriteBatch batch, AssetContainer assets, Store store, Router router) {
     super(stage, batch, assets, store, router);
   }
 
+  /** Setup the scoreboard */
   protected void setup() {
+    // Stores the scores
     VerticalGroup stats = new VerticalGroup();
     stats.setFillParent(true);
     stats.top();
@@ -56,22 +72,26 @@ public class ScoreBoard extends HudElement {
     scoreBoardCpuStyle = new LabelStyle();
     scoreBoardCpuStyle.font = assets.getFont(16);
 
+    // Different colors for player order
     scoreBoardPointsStyle = new ArrayList<>();
-    scoreBoardPointsStyle.add(new LabelStyle(assets.getFont(25, new Color(0xFFD048FF)), new Color(0xFFD048FF)));
-    scoreBoardPointsStyle.add(new LabelStyle(assets.getFont(25, new Color(0xC2C2C2FF)), new Color(0xC2C2C2FF)));
-    scoreBoardPointsStyle.add(new LabelStyle(assets.getFont(25, new Color(0xD27114FF)), new Color(0xD27114FF)));
-    scoreBoardPointsStyle.add(new LabelStyle(assets.getFont(25, new Color(0xCE2424FF)), new Color(0xCE2424FF)));
+    scoreBoardPointsStyle.add(
+        new LabelStyle(assets.getFont(25, new Color(0xFFD048FF)), new Color(0xFFD048FF)));
+    scoreBoardPointsStyle.add(
+        new LabelStyle(assets.getFont(25, new Color(0xC2C2C2FF)), new Color(0xC2C2C2FF)));
+    scoreBoardPointsStyle.add(
+        new LabelStyle(assets.getFont(25, new Color(0xD27114FF)), new Color(0xD27114FF)));
+    scoreBoardPointsStyle.add(
+        new LabelStyle(assets.getFont(25, new Color(0xCE2424FF)), new Color(0xCE2424FF)));
   }
 
+  /** Renders the scoreboard */
   public void render(int round, ArrayList<Player> players, Player movingPlayer) {
     batch.begin();
 
+    // Set round number
     roundLabel.setText("Round " + round + " / " + store.getMaxRounds());
 
     scoreBoard.clearChildren();
-
-    // Get players in order of score
-    // ArrayList<Player> sortedPlayers = store.getSortedPlayers();
 
     // Add players to scoreboard
     for (Player player : players) {
@@ -100,16 +120,17 @@ public class ScoreBoard extends HudElement {
     batch.end();
   }
 
+  /** Figure out how to style the player's score */
   private LabelStyle generatePointsStyle(Player player) {
     // The players position on the scoreboard in terms of points
     int position = 0;
-      
+
     // Figure out the player's position
     for (Player sortedPlayer : store.getSortedPlayers()) {
       if (player.getId().equals(sortedPlayer.getId())) break;
       position++;
     }
-  
+
     return scoreBoardPointsStyle.get(position);
-  } 
+  }
 }

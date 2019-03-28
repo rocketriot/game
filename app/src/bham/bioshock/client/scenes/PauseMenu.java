@@ -6,7 +6,6 @@ import bham.bioshock.client.Router;
 import bham.bioshock.client.assets.AssetContainer;
 import bham.bioshock.client.assets.Assets;
 import bham.bioshock.common.models.store.Store;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL30;
@@ -23,13 +22,21 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 
+/** Displays a pause menu on the HUD */
 public class PauseMenu extends HudElement {
+  /** Used to draw a dark overlay on the game */
   private ShapeRenderer sr;
 
+  /** Specifies if the current game is paused */
   private boolean isPaused;
 
+  /** Pause button that when clicked shows the pause menu */
   private Sprite pauseButton;
+
+  /** Lists all the options in the pause menu */
   private VerticalGroup menuOptions;
+
+  /** Button to quit the game */
   private TextButton quitLabel;
 
   PauseMenu(Stage stage, SpriteBatch batch, AssetContainer assets, Store store, Router router) {
@@ -37,19 +44,23 @@ public class PauseMenu extends HudElement {
     sr = new ShapeRenderer();
   }
 
+  /** Setup the pause menu */
   protected void setup() {
     Texture texture = assets.get(Assets.pauseIcon, Texture.class);
     texture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 
+    // Setup the pause button
     pauseButton = new Sprite(texture);
     pauseButton.setPosition(16, 16);
     pauseButton.setSize(50, 50);
 
+    // Setup the pause menu options
     menuOptions = new VerticalGroup();
     menuOptions.setFillParent(true);
     menuOptions.center();
     stage.addActor(menuOptions);
-    
+
+    // Add the quit button the the menu
     quitLabel = new TextButton("Quit Game", skin);
     quitLabel.addListener(
         new ChangeListener() {
@@ -61,7 +72,9 @@ public class PauseMenu extends HudElement {
     menuOptions.addActor(quitLabel);
   }
 
+  /** Render the pause menu */
   protected void render() {
+    // Only show the overlay if paused
     if (isPaused) {
       Gdx.gl.glEnable(GL30.GL_BLEND);
       Gdx.gl.glBlendFunc(GL30.GL_SRC_ALPHA, GL30.GL_ONE_MINUS_SRC_ALPHA);
@@ -76,15 +89,16 @@ public class PauseMenu extends HudElement {
       Gdx.gl.glDisable(GL30.GL_BLEND);
     }
 
+    // Only show the menu if paused
     menuOptions.setVisible(isPaused);
 
     batch.begin();
     pauseButton.draw(batch);
-    if (isPaused)
-      menuOptions.draw(batch, 1);
+    if (isPaused) menuOptions.draw(batch, 1);
     batch.end();
   }
 
+  /** Checks if the pause button has been clicked */
   void touchDown(Vector3 mouse) {
     // If pause button clicked, toggle pause menu
     if (pauseButton.getX() <= mouse.x
@@ -95,6 +109,7 @@ public class PauseMenu extends HudElement {
     }
   }
 
+  /** Returns if the pause menu is open or not */
   boolean isPaused() {
     return isPaused;
   }

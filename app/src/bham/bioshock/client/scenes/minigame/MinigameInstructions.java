@@ -8,11 +8,8 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
-/**
- * Renders minigame instructions defined by the objective
- */
+/** Renders minigame instructions defined by the objective */
 public class MinigameInstructions {
-
   private SpriteBatch batch;
   private Store store;
   private BitmapFont font;
@@ -25,7 +22,7 @@ public class MinigameInstructions {
 
   /**
    * Create minigame instructions container
-   * 
+   *
    * @param batch
    * @param store
    */
@@ -49,20 +46,18 @@ public class MinigameInstructions {
 
     duration -= Gdx.graphics.getDeltaTime();
 
-    if (duration <= 0)
-      showPrompt = false;
-  
+    if (duration <= 0) showPrompt = false;
+
     String instructions = store.getMinigameStore().getObjective().instructions();
-    
+
     int xOffset = (int) fontGenerator.getOffset(font, instructions);
     int x = Config.GAME_WORLD_WIDTH / 2 - xOffset;
     int y = Config.GAME_WORLD_HEIGHT / 2;
-  
+
     batch.begin();
     font.draw(batch, instructions, x, y);
     batch.end();
   }
-
 
   /**
    * Checks if the minigame had started If yes sets the showpromt to true so the instructions will
@@ -76,5 +71,3 @@ public class MinigameInstructions {
     }
   }
 }
-
-

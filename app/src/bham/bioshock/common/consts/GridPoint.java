@@ -50,6 +50,7 @@ public class GridPoint implements Serializable {
     BLACKHOLE,
     EMPTY;
 
+    /** Returns if the player can travel over the grid point */
     public boolean isValidForPlayer() {
       return this.equals(EMPTY) || this.equals(FUEL) || this.equals(UPGRADE) || this.equals(BLACKHOLE);
     }

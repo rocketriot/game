@@ -8,21 +8,19 @@ import bham.bioshock.common.models.store.Store;
 import bham.bioshock.server.Server;
 import com.google.inject.Inject;
 
+/** Controller for the end game screen */
 public class EndGameController extends Controller {
-  
-  private Server server;
+  /** Stores assets of the game */
   private AssetContainer assets;
   
   @Inject
   public EndGameController(Store store, Router router, BoardGame game,Server server, AssetContainer assets) {
     super(store, router, game);
-    this.server = server;
     this.assets = assets;
   }
 
+  /** Shows the end game screen */
   public void show() {
-    //server.stop();
-   // store.reconnecting(false);
     setScreen(new EndScreen(router,store, assets));
   }
 }

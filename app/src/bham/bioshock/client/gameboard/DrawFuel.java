@@ -6,6 +6,7 @@ import bham.bioshock.common.models.Fuel;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 
+/** Draws a fuel box on the game board */
 public class DrawFuel extends DrawEntity {
   private Sprite sprite;
 
@@ -21,10 +22,15 @@ public class DrawFuel extends DrawEntity {
     sprite.draw(batch);
   }
 
+  /** 
+   * Resizes the sprites when zooming
+   * @param PPS the size to draw the fuel
+   */
   public void resize(int PPS) {
     sprite.setSize(PPS, PPS);
   }
 
+  /** Dispose of the sprite when not needed */
   public void dispose() {
     sprite.getTexture().dispose();
   }

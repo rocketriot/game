@@ -13,6 +13,7 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 
 import java.util.ArrayList;
 
+/** Draws a player on the game board */
 public class DrawPlayer extends DrawEntity {
   Sprite movingSprite;
   float movingSpriteX = -1;
@@ -38,6 +39,7 @@ public class DrawPlayer extends DrawEntity {
     font = fontGenerator.generate(25);
   }
 
+  /** Setup the rocket trail effects */
   private void generateEffects() {
     rocketTrail = new ParticleEffect();
     rocketTrail.load(
@@ -46,6 +48,11 @@ public class DrawPlayer extends DrawEntity {
     rocketTrail.start();
   }
 
+  /**
+   * Draws a player on the game board
+   * @param player the player to draw
+   * @param PPS the size to draw the asteroid
+   */
   public void draw(Player player, int PPS, boolean selected) {
     Sprite sprite = sprites.get(player.getTextureID());
 
@@ -59,6 +66,14 @@ public class DrawPlayer extends DrawEntity {
     drawNameLabel(player, sprite, x, y, PPS);
   }
 
+  /**
+   * Draws the player's name underneath the player's rocket
+   * @param player the player who's label should be drawn
+   * @param rocket the rocket of the player
+   * @param rocketX the x position of the rocket
+   * @param rocketY the y position of the rocket
+   * @param PPS the size to draw the label
+   */
   private void drawNameLabel(Player player, Sprite rocket, int rocketX, int rocketY, int PPS) {
     // Figure out x position of label
     float xOffset = fontGenerator.getOffset(font, player.getUsername());
@@ -71,6 +86,10 @@ public class DrawPlayer extends DrawEntity {
     font.draw(batch, player.getUsername(), x, y);
   };
 
+  /**
+   * Sets up a board move to draw
+   * @param player the player to draw movement for
+   */
   public void setupMove(Player player) {
     ArrayList<Player.Move> boardMove = player.getBoardMove();
     Player.Move nextMove = boardMove.get(0);
@@ -81,6 +100,11 @@ public class DrawPlayer extends DrawEntity {
     rocketTrail.reset();
   }
 
+  /**
+   * Draws a player's move on the game board
+   * @param player the player to draw
+   * @param PPS the size to draw the asteroid
+   */
   public boolean drawMove(Player player, int PPS) {
     ArrayList<Player.Move> boardMove = player.getBoardMove();
 
@@ -176,7 +200,10 @@ public class DrawPlayer extends DrawEntity {
     return positionUpdated;
   }
 
-
+  /**
+   * Sets the angle to draw the rocket trail
+   * @param angle the angle to set
+   */
   private void setRocketTrailAngle(float angle) {
     // Align particle effect angle with world
     angle -= 90;
@@ -192,6 +219,10 @@ public class DrawPlayer extends DrawEntity {
     }
   }
 
+  /** 
+   * Resizes the sprites when zooming
+   * @param PPS the size to draw the player
+   */
   public void resize(int PPS) {
     sprites.forEach(sprite -> sprite.setSize(PPS, PPS));
     outlinedSprites.forEach(sprite -> sprite.setSize(PPS, PPS));
@@ -203,6 +234,7 @@ public class DrawPlayer extends DrawEntity {
     }
   }
 
+  /** Dispose of the sprite when not needed */
   public void dispose() {
     sprites.forEach(sprite -> sprite.getTexture().dispose());
     outlinedSprites.forEach(sprite -> sprite.getTexture().dispose());

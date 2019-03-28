@@ -5,20 +5,24 @@ import bham.bioshock.client.Router;
 import bham.bioshock.client.assets.AssetContainer;
 import bham.bioshock.client.scenes.HudElement;
 import bham.bioshock.common.models.store.Store;
-
-import java.text.SimpleDateFormat;
-import java.util.GregorianCalendar;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 
+import java.text.SimpleDateFormat;
+import java.util.GregorianCalendar;
+
+/** Displays the minigame time left at the top of the minigame screen */
 public class HudClock extends HudElement {
-  
+  /** Clock font */
   private BitmapFont font;
+
+  /** Red clock font for when the time is almost up */
   private BitmapFont fontRed;
+
+  /** Format for displaying the time */
   private SimpleDateFormat timeFormat;
 
   /** The length of the minigame */
@@ -28,6 +32,7 @@ public class HudClock extends HudElement {
     super(stage, batch, assets, store, router);
   }
 
+  /** Setup the clock */
   protected void setup() {
     font = assets.getFont(72);
     fontRed = assets.getFont(72, new Color(0xFF3C48FF));
@@ -35,6 +40,7 @@ public class HudClock extends HudElement {
     timeFormat = new SimpleDateFormat("mm:ss");
   }
 
+  /** Rendering the clock */
   public void render() {
     seconds -= Gdx.graphics.getDeltaTime();
 

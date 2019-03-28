@@ -19,9 +19,7 @@ import com.google.inject.Inject;
 import java.util.ArrayList;
 import java.util.UUID;
 
-/**
- * Game board controller
- */
+/** Game board controller */
 public class GameBoardController extends Controller {
   private MessageService clientService;
   private CommunicationClient commClient;
@@ -53,21 +51,26 @@ public class GameBoardController extends Controller {
     store.setGameBoard(gameBoard);
   }
 
+  /** 
+   * Saves the players to the store 
+   * @param players the players to save to the store
+   */
   public void savePlayers(ArrayList<Player> players) {
     store.savePlayers(players);
   }
   
+  /** Sets the max rounds of the game board */
   public void gameInit(GameBoardMessage data) {
     store.setMaxRounds(data.maxRounds);
   }
-
+  
   public void setOwner(UUID[] planetOwner) {
     UUID playerId = planetOwner[0];
     UUID planetId = planetOwner[1];
-
+    
     store.setPlanetOwner(playerId, planetId);
   }
-
+  
   public void updateCoordinates(Coordinates[] coordinates) {
     ArrayList<Player> players = store.getPlayers();
 
@@ -77,6 +80,10 @@ public class GameBoardController extends Controller {
     }
   }
 
+  /** 
+   * Handles when a player attempts to make a movement on the game board
+   * @param destination the coordinates for where the player would like to travel towards
+   */
   public void move(Coordinates destination) {
     GameBoard gameBoard = store.getGameBoard();
     GridPoint[][] grid = gameBoard.getGrid();
@@ -120,13 +127,20 @@ public class GameBoardController extends Controller {
     store.getGameBoard().addBlackHole(new BlackHole(coordinates));
   }
 
+  /**
+   * Handles when a player travels over a black hole
+   * @param player the player who travels to a black hole
+   */
   public void movePlayerToBlackHole(Player player) {
     player.clearBoardMove();
     SoundController.playSound("blackHole");
     movePlayerToRandomPoint(player);
   }
 
-  /** Player move received from the server */
+  /**
+   * Player move received from the server 
+   * @param data the data of the player movement
+   */
   public void moveReceived(MovePlayerOnBoardMessage data) {
     GameBoard gameBoard = store.getGameBoard();
     GridPoint[][] grid = gameBoard.getGrid();
@@ -145,6 +159,10 @@ public class GameBoardController extends Controller {
     movingPlayer.setTeleportCoords(data.randomCoords);
   }
 
+  /** 
+   * Moves the player to a random position on the grid
+   * @param player the player to randomly relocate
+   */
   public void movePlayerToRandomPoint(Player player) {
     player.setCoordinates(player.getRandomCoords());
     router.call(Route.STOP_SOUND, "rocket");
@@ -153,6 +171,7 @@ public class GameBoardController extends Controller {
     }
   }
 
+  /** Specifies if the grid has been received from the server */
   public boolean hasReceivedGrid() {
     return store.getGameBoard().getGrid() != null;
   }

@@ -6,19 +6,18 @@ import bham.bioshock.client.scenes.Hud;
 import bham.bioshock.common.models.store.Store;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
-/**
- * Minigame HUD
- */
+/** Minigame HUD */
 public class MinigameHud extends Hud {
   /** Instructions to be displayed */
   private MinigameScoreBoard minigameScoreBoard;
+
   private MinigameInstructions minigameInstructions;
   private WeaponContainer weaponContainer;
   private HudClock clock;
 
   /**
    * Create minigame HUD
-   * 
+   *
    * @param batch
    * @param skin
    * @param store

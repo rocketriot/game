@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
+/** Stores assets used in the game */
 public class Assets {
   // General
   public static final String skin = "app/assets/skin/skin.json";
@@ -72,11 +73,12 @@ public class Assets {
   public static final String planetBase = "app/assets/minigame/planets/";
   public static final String platformsBase = "app/assets/minigame/platforms/";
   
-  /* Music */
+  // Music
   public static final String mainMenuMusic = "app/assets/music/MainMenuMusic.mp3";
   public static final String gameBoardMusic = "app/assets/music/GameBoardMusic.mp3";
   public static final String miniGameMusic = "app/assets/music/MinigameMusic.mp3";
   
+  // Sound effects
   public static final String menuSelectSound = "app/assets/music/MenuSelect.wav";
   public static final String rocketSound = "app/assets/music/RocketSound.wav";
   public static final String jumpSound = "app/assets/music/JumpSound.wav";

@@ -27,14 +27,14 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
-import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import java.util.ArrayList;
 import java.util.UUID;
 
+/** Screen for the main game board */
 public class GameBoardScreen extends ScreenMaster implements InputProcessor {
+  /** Handles input from the mouse and keyboard */
   private InputMultiplexer inputMultiplexer;
 
   /** The speed at which to move the board with the WASD keys */
@@ -90,18 +90,23 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
   /** Current coordinates of the mouse on the game board */
   private Coordinates mouseCoordinates = null;
   
+  /** Specifies if the gameboard is loading */
   private boolean loading = true;
-  private boolean loaded = false;
   
+  /** Specifies if the gameboard has loaded */
+  private boolean loaded = false;
+
   /** Loading screen */
   private LoadingScreen loadingScreen;
   
-  /** Loading screen */
+  /** The popup to show when a player travels to a planet */
   private MinigamePrompt minigamePrompt;
 
   public GameBoardScreen(Router router, Store store, AssetContainer assets) {
     super(router, assets);
     this.store = store;
+
+    // set the size of the grid
     this.gridSize = store.getGameBoard().GRID_SIZE;
 
     this.camera = new OrthographicCamera();
@@ -118,6 +123,7 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
     this.minigamePrompt = new MinigamePrompt(batch, store, router, skin);
   }
   
+  /** Loads all the assets needed for the game board */
   private void loadAssets() {
     assets.load(Assets.pauseIcon, Texture.class, GamePart.BOARDGAME);
     assets.load(Assets.upgrade, Texture.class, GamePart.BOARDGAME);
@@ -140,6 +146,7 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
     }
   }
   
+  /** Sets up the game board once the assets have been loaded */
   private void assetsLoaded() {
     if(loaded) return;
     loaded = true;
@@ -166,6 +173,11 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
     this.resize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
   }
 
+  /** 
+   * Checks if a player is near a planet 
+   * @param player player to check if they're near a planet
+   * @return true if near a planet, false otherwise
+   */
   private boolean checkIfNearPlanet(Player player) {
     GameBoard gameBoard = store.getGameBoard();
     Planet p = gameBoard.getAdjacentPlanet(player.getCoordinates(), player);
@@ -177,7 +189,10 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
     }
   }
 
-  /** Draws the player move */
+  /**
+   * Draws the player move
+   * @param player the player's who move needs to be drawn
+   */
   private void drawPlayerMove(Player player) {
     router.call(Route.LOOP_SOUND, "rocket");
     GameBoard gameBoard = store.getGameBoard();
@@ -265,7 +280,9 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
     }
   }
 
+  /** Draws the game board from the store on the screen */
   public void drawBoardObjects() {
+    // Get the game board grid
     GridPoint[][] grid = store.getGameBoard().getGrid();
 
     // Draw Grid items
@@ -319,6 +336,7 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
     }
   }
 
+  /** Draws players on the grid */
   private void drawPlayers() {
     for (Player player : store.getPlayers()) {
       // Handle if player is moving
@@ -332,6 +350,7 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
     }
   }
 
+  /** Draws the actual grid for the game board */
   private void drawGrid() {
     sr.setProjectionMatrix(camera.combined);
     sr.begin(ShapeRenderer.ShapeType.Filled);
@@ -374,6 +393,7 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
   }
 
   private void resizeSprites() {
+    // Resize all the board entities
     drawPlayer.resize(PPS);
     drawPlanet.resize(PPS);
     drawFuel.resize(PPS);
@@ -381,6 +401,7 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
     drawAsteroid.resize(PPS);
     drawBlackHole.resize(PPS);
 
+    // Resize the background
     background.setSize(PPS * 38.4f, PPS * 21.6f);
   }
 
@@ -441,6 +462,7 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
     minigamePrompt.render();
   }
 
+  /** Draws the background of the game board */
   protected void drawBackground() {
     int offset = 1;
     for (int i = -1; i <= 1; i++) {
@@ -467,6 +489,12 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
     background.getTexture().dispose();
   }
 
+  /** 
+   * Gets the coordinates of where the mouse is located on the screen
+   * @param screenX the x position of the mouse on the screen
+   * @param screenY the y position of the mouse on the screen
+   * @return a vector of the mouse coordinates
+   */
   private Vector3 getMouseCoordinates(int screenX, int screenY) {
     Vector3 vector = new Vector3(screenX, screenY, 0);
     Vector3 coordinates = viewport.unproject(vector);
@@ -474,6 +502,7 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
     return coordinates;
   }
 
+  /** Handles all key presses */
   private void handleKeyPress() {
     // Unselect player on ESC
     if (Gdx.input.isKeyPressed(Input.Keys.ESCAPE)) {
@@ -516,12 +545,14 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
     } else return !(cameraX + x > PPS / 0.03f) && !(cameraY + y > (PPS - 10) / 0.025f);
   }
 
+  /** Handles mouse clicks */
   @Override
   public boolean touchDown(int screenX, int screenY, int pointer, int button) {
     // Used for mouse panning
     mouseDownX = screenX;
     mouseDownY = screenY;
 
+    // Adds a black hole on the screen if the player is adding one
     if (store.getMainPlayer().isAddingBlackHole() && canAddBlackHole()) {
       router.call(Route.ADD_BLACK_HOLE, mouseCoordinates);
 
@@ -542,6 +573,10 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
     return false;
   }
 
+  /** 
+   * Handles when a player clicks their rocket on the board to start pathfinding
+   * @param mouse the coordinates of the mouse click
+   * */
   private boolean startMove(Vector3 mouse) {
     // Check a left click was performed
     if (!Gdx.input.isButtonPressed(Input.Buttons.LEFT))
@@ -562,6 +597,10 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
     return true;
   }
 
+  /** 
+   * Handles when a player clicks to where they want to pathfind
+   * @param mouse the coordinates of the mouse click
+   * */
   private boolean endMove(Vector3 mouse) {
     // Check a left click was performed
     if (!Gdx.input.isButtonPressed(Input.Buttons.LEFT))
@@ -649,6 +688,7 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
     return false;
   }
 
+  /** Moves the game board when dragging on the screen */
   @Override
   public boolean touchDragged(int screenX, int screenY, int pointer) {
     if (hud.isPaused())
@@ -700,6 +740,7 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
     return false;
   }
 
+  /** Zoom in and out the game board */
   @Override
   public boolean scrolled(int amount) {
     if (hud.isPaused())
@@ -727,7 +768,10 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
     return false;
   }
 
-  /** Method to ask the user whether they want to start the minigame or not */
+  /** 
+   * Method to ask the user whether they want to start the minigame or not
+   * @param planetId the planet who is potentially about to be captured
+   */
   private void showMinigamePrompt(UUID planetId) {
     Dialog dialog = new Dialog("", skin);
 

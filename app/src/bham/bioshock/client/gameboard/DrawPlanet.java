@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 
 import java.util.ArrayList;
 
+/** Draws a planet on the game board */
 public class DrawPlanet extends DrawEntity {
   private ArrayList<Sprite> planetSprites = new ArrayList<>();
   private ArrayList<Sprite> flagSprites = new ArrayList<>();
@@ -24,6 +25,11 @@ public class DrawPlanet extends DrawEntity {
     }
   }
 
+  /**
+   * Draws a planet on the game board
+   * @param upgrade the planet to draw
+   * @param PPS the size to draw the planet
+   */
   public void draw(Planet planet, int PPS) {
     Sprite planetSprite = planetSprites.get(planet.getTextureID());
 
@@ -43,11 +49,16 @@ public class DrawPlanet extends DrawEntity {
     }
   }
 
+  /** 
+   * Resizes the sprites when zooming
+   * @param PPS the size to draw the planet
+   */
   public void resize(int PPS) {
     planetSprites.forEach(sprite -> sprite.setSize(PPS * Planet.WIDTH, PPS * Planet.HEIGHT));
     flagSprites.forEach(sprite -> sprite.setSize(PPS * Planet.WIDTH, PPS * Planet.HEIGHT));
   }
 
+  /** Dispose of the sprite when not needed */
   public void dispose() {
     planetSprites.forEach(sprite -> sprite.getTexture().dispose());
     flagSprites.forEach(sprite -> sprite.getTexture().dispose());

@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import bham.bioshock.client.assets.AssetContainer;
 
+/** Base draw class to draw entities on the game board */
 public class DrawEntity {
   protected Batch batch;
   protected AssetContainer assets;

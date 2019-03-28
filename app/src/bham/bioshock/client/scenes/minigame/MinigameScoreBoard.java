@@ -19,6 +19,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup;
 import com.badlogic.gdx.utils.Align;
+
 import java.util.ArrayList;
 
 public class MinigameScoreBoard extends HudElement {
@@ -30,7 +31,8 @@ public class MinigameScoreBoard extends HudElement {
   private LabelStyle scoreBoardCpuStyle;
   private ArrayList<LabelStyle> scoreBoardPointsStyle;
 
-  public MinigameScoreBoard(Stage stage, SpriteBatch batch, Store store, Router router, AssetContainer assets) {
+  public MinigameScoreBoard(
+      Stage stage, SpriteBatch batch, Store store, Router router, AssetContainer assets) {
     super(stage, batch, assets, store, router);
   }
 
@@ -61,10 +63,14 @@ public class MinigameScoreBoard extends HudElement {
     scoreBoardCpuStyle.font = assets.getFont(16);
 
     scoreBoardPointsStyle = new ArrayList<>();
-    scoreBoardPointsStyle.add(new LabelStyle(assets.getFont(25, new Color(0xFFD048FF)), new Color(0xFFD048FF)));
-    scoreBoardPointsStyle.add(new LabelStyle(assets.getFont(25, new Color(0xC2C2C2FF)), new Color(0xC2C2C2FF)));
-    scoreBoardPointsStyle.add(new LabelStyle(assets.getFont(25, new Color(0xD27114FF)), new Color(0xD27114FF)));
-    scoreBoardPointsStyle.add(new LabelStyle(assets.getFont(25, new Color(0xCE2424FF)), new Color(0xCE2424FF)));
+    scoreBoardPointsStyle.add(
+        new LabelStyle(assets.getFont(25, new Color(0xFFD048FF)), new Color(0xFFD048FF)));
+    scoreBoardPointsStyle.add(
+        new LabelStyle(assets.getFont(25, new Color(0xC2C2C2FF)), new Color(0xC2C2C2FF)));
+    scoreBoardPointsStyle.add(
+        new LabelStyle(assets.getFont(25, new Color(0xD27114FF)), new Color(0xD27114FF)));
+    scoreBoardPointsStyle.add(
+        new LabelStyle(assets.getFont(25, new Color(0xCE2424FF)), new Color(0xCE2424FF)));
   }
 
   public void render() {
@@ -86,8 +92,7 @@ public class MinigameScoreBoard extends HudElement {
         boolean isWinning = minigameObjective.getWinner() == player.getId();
 
         // Add the turn pointer to the player whos turn it is
-        scoreBoard.add(isWinning ? turnPointer : null).width(40).height(40).padTop(8)
-            .padRight(8);
+        scoreBoard.add(isWinning ? turnPointer : null).width(40).height(40).padTop(8).padRight(8);
 
         // Add name of the user
         Label usernameLabel = new Label(player.getUsername(), scoreBoardStyle);
@@ -100,7 +105,9 @@ public class MinigameScoreBoard extends HudElement {
         LabelStyle pointsStyle = generatePointsStyle(player);
 
         // Add the player's points
-        Label pointsLabel = new Label(((KillThemAll) minigameObjective).getPlayerScore(player.getId()) + "", pointsStyle);
+        Label pointsLabel =
+            new Label(
+                ((KillThemAll) minigameObjective).getPlayerScore(player.getId()) + "", pointsStyle);
         scoreBoard.add(pointsLabel).padTop(8).padLeft(64).fillX().align(Align.left);
 
         scoreBoard.row();
@@ -122,13 +129,12 @@ public class MinigameScoreBoard extends HudElement {
         Label cpuLabel = new Label("CPU", scoreBoardCpuStyle);
         scoreBoard.add(player.isCpu() ? cpuLabel : null).padLeft(8).bottom();
 
-      LabelStyle pointsStyle = generatePointsStyle(player);
+        LabelStyle pointsStyle = generatePointsStyle(player);
 
-      // Add the player's points
-      Label pointsLabel = new Label("Carrying Flag" + "", pointsStyle);
-      scoreBoard.add(pointsLabel).padTop(8).padLeft(64).fillX().align(Align.left);
+        // Add the player's points
+        Label pointsLabel = new Label("Carrying Flag" + "", pointsStyle);
+        scoreBoard.add(pointsLabel).padTop(8).padLeft(64).fillX().align(Align.left);
       }
-
 
       scoreBoard.row();
     } else {
@@ -141,13 +147,13 @@ public class MinigameScoreBoard extends HudElement {
   private LabelStyle generatePointsStyle(Player player) {
     // The players position on the scoreboard in terms of points
     int position = 0;
-      
+
     // Figure out the player's position
     for (Player sortedPlayer : store.getSortedPlayers()) {
       if (player.getId().equals(sortedPlayer.getId())) break;
       position++;
     }
-  
+
     return scoreBoardPointsStyle.get(position);
-  } 
+  }
 }

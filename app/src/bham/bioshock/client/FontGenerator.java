@@ -32,11 +32,21 @@ public class FontGenerator {
     return font;
   }
 
+  /** 
+   * Generates a font with a default white color 
+   * @param fontSize the size of the font to be generated
+   * @return a white bitmap font
+   */
   public BitmapFont generate(int fontSize) {
     return generate(fontSize, Color.WHITE);
   }
 
-  /** Figures out the offset to align a string center */
+  /**
+   * Figures out the offset to align a string center
+   * @param font the font to generate offset of
+   * @param value the string to gennerate the offset of
+   * @return offset to use to center the string on the screen
+   */
   public float getOffset(BitmapFont font, String value) {
     GlyphLayout glyphLayout = new GlyphLayout();
     glyphLayout.setText(font, value);
