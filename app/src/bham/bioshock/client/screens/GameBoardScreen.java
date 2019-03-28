@@ -690,7 +690,7 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
   public boolean scrolled(int amount) {
     if (hud.isPaused())
       return false;
-
+    int startPPS = PPS;
     // Zoom code
     if ((PPS -= amount) <= ((Config.GAME_WORLD_HEIGHT / gridSize) - 4)) {
       PPS = (Config.GAME_WORLD_HEIGHT / gridSize) - 3;
@@ -707,7 +707,9 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
         PPS -= amount * 3;
       }
     }
-    resizeSprites();
+    float cameraTranslate = (PPS - startPPS) * gridSize/2;
+    camera.translate(cameraTranslate, cameraTranslate);
+    resize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
     return false;
   }
 
