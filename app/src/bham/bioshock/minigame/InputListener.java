@@ -23,7 +23,7 @@ public class InputListener extends InputAdapter {
   private Router router;
   private CollisionHandler collisionHandler;
   private MinigameHud hud;
-  private final int SHOOT_DELAY = 150;
+  private final int SHOOT_DELAY = 200;
 
   public InputListener(MinigameStore minigameStore, Router router,
       CollisionHandler collisionHandler, MinigameHud hud) {
