@@ -35,10 +35,6 @@ public class JoinScreenHandler {
    */
   public void registerPlayer(Message message, ServerService service) {
     if(message instanceof RegisterMessage) {
-      if (store.getPlayers().size() >= 4) {
-        service.send(new ServerFullMessage());
-        return;
-      }
       RegisterMessage data = (RegisterMessage) message;
       Player player = data.player;
       handler.register(player.getId(), player.getUsername(), service);

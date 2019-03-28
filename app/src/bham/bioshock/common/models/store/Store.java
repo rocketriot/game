@@ -234,7 +234,6 @@ public class Store {
     if(minigameStore != null) {
       minigameStore.dispose();      
     }
-
     minigameStore = null;
   }
 
@@ -303,5 +302,12 @@ public class Store {
     sorted.sort(Comparator.comparingInt(Player::getPoints).reversed());
 
     return sorted;
+  }
+
+  public void reset() {
+    this.players.clear();
+    this.gameBoard = null;
+    this.round = 1;
+    this.turn = 0;
   }
 }

@@ -151,6 +151,7 @@ public class EndScreen extends ScreenMaster {
         @Override
         public void clicked(InputEvent event, float x, float y) {
           SoundController.playSound("menuSelect");
+          router.call(Route.FADE_OUT, "boardGame");
           router.call(Route.MAIN_MENU);
         }
       });

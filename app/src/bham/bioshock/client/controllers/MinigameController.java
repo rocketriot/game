@@ -156,10 +156,12 @@ public class MinigameController extends Controller {
   public void spawnEntity(Entity entity) {
     entity.load();
     MinigameStore localStore = store.getMinigameStore();
-    entity.setCollisionHandler(localStore.getCollisionHandler());
-    localStore.addEntity(entity);
+    if (localStore.getCollisionHandler() != null) {
+      entity.setCollisionHandler(localStore.getCollisionHandler());
+      localStore.addEntity(entity);
+    }
   }
-  
+
   /**
    * Start minigame with provided world and objective Seed the minigameStore and initialise
    * objective
@@ -206,8 +208,8 @@ public class MinigameController extends Controller {
     } else {
         store.setMinigameWinner("No one");
       }
+    store.resetMinigameStore();
     router.call(Route.FADE_OUT, "minigame");
     router.call(Route.GAME_BOARD_SHOW);
-    store.resetMinigameStore();
   }
 }

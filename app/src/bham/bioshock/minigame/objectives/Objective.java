@@ -109,7 +109,7 @@ public abstract class Objective implements Serializable {
     if(entity == null) 
       return;
     if(entity.isRemoved()) return;
-    entity.remove();
+
     router.call(Route.SEND_OBJECTIVE_UPDATE, new IncreaseHealthMessage(player.getId(), heartID));
   }
 

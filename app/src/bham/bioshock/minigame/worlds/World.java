@@ -260,5 +260,9 @@ abstract public class World implements Serializable {
   public void setPlanetTexture(int minigameTextureId) {
     textureId = minigameTextureId;
   }
+  
+  public void setGravity(int gravity) {
+    this.gravity = gravity;
+  }
 
 }
