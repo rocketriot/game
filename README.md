@@ -31,7 +31,7 @@
  git push
 ```
 
-- if the feature is ready, make a `Merge Request` to the master
+- if the feature is ready, make a `Pull Request` to the master
 
 ### 2. To contribute to the feature that is currently being developed:
 
@@ -43,5 +43,5 @@
 ```
 
 - make changes & commit them
-- Make a `Merge Request` **To the main branch for that feature**
-- If the feature is ready, make a `Merge Request` to the master
+- Make a `Pull Request` **To the main branch for that feature**
+- If the feature is ready, make a `Pull Request` to the master
