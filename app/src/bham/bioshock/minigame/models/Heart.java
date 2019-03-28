@@ -19,7 +19,7 @@ public class Heart extends Entity {
 
   /**
    * Creates heart object at specified initial position
-   * 
+   *
    * @param w world
    * @param x position
    * @param y position
@@ -43,8 +43,6 @@ public class Heart extends Entity {
 
   /**
    * Creates texture for rendering
-   * 
-   * @param manager
    */
   public static void createTextures(AssetContainer manager) {
     Texture wholeImage = manager.get(Assets.hearts, Texture.class);
@@ -53,8 +51,6 @@ public class Heart extends Entity {
 
   /**
    * Queue textures for loading
-   * 
-   * @param manager
    */
   public static void loadTextures(AssetContainer manager) {
     manager.load(Assets.hearts, Texture.class, GamePart.MINIGAME);

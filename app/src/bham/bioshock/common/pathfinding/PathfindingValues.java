@@ -129,12 +129,4 @@ public class PathfindingValues {
     this.parent = parent;
   }
 
-  /**
-   * Sets whether the point is passable.
-   *
-   * @param passable whether the point is passable
-   */
-  public void setPassable(Boolean passable) {
-    this.passable = passable;
-  }
 }

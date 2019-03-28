@@ -1,12 +1,7 @@
 package bham.bioshock.client;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-
+import java.io.File;
+import java.util.HashMap;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.OutputKeys;
@@ -14,8 +9,12 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import java.io.File;
-import java.util.HashMap;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 
 /**
@@ -24,10 +23,10 @@ import java.util.HashMap;
 public class XMLInteraction {
 
   private static final Logger logger = LogManager.getLogger(XMLInteraction.class);
-  
+
   private static final String PREFERENCES_PATH = "app/assets/Preferences/Preferences.XML";
   private static final String GAME_DESC_PATH = "app/assets/XML/game_desc.XML";
-  
+
   /**
    * Method to read the preferences from an XML file and return them as an AppPreferences object
    *
@@ -194,25 +193,24 @@ public class XMLInteraction {
               .getTextContent();
           readText.put("gameDescription", gameDescription);
 
-          for(int j=1;j<4;j++) {
-            String howToMove = element.getElementsByTagName("how_to_move_"+j).item(0)
-                    .getTextContent();
-            readText.put("howToMove_"+j, howToMove);
+          for (int j = 1; j < 4; j++) {
+            String howToMove = element.getElementsByTagName("how_to_move_" + j).item(0)
+                .getTextContent();
+            readText.put("howToMove_" + j, howToMove);
           }
 
-          for(int j=1;j<3;j++) {
-            String howToCapture = element.getElementsByTagName("how_to_capture_"+j).item(0)
-                    .getTextContent();
-            readText.put("howToCapture_"+j, howToCapture);
+          for (int j = 1; j < 3; j++) {
+            String howToCapture = element.getElementsByTagName("how_to_capture_" + j).item(0)
+                .getTextContent();
+            readText.put("howToCapture_" + j, howToCapture);
           }
-
 
           String fuel = element.getElementsByTagName("fuel").item(0)
-                  .getTextContent();
+              .getTextContent();
           readText.put("fuel", fuel);
 
           String upgrade = element.getElementsByTagName("upgrade").item(0)
-                  .getTextContent();
+              .getTextContent();
           readText.put("upgrade", upgrade);
         }
       }

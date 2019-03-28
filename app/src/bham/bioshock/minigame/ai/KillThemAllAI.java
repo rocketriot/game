@@ -1,16 +1,16 @@
 package bham.bioshock.minigame.ai;
 
+import bham.bioshock.common.models.store.Store;
+import bham.bioshock.minigame.PlanetPosition;
+import bham.bioshock.minigame.models.Astronaut;
 import bham.bioshock.minigame.models.Gun;
 import bham.bioshock.minigame.worlds.World;
+import bham.bioshock.server.interfaces.MultipleConnectionsHandler;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.UUID;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import bham.bioshock.common.models.store.Store;
-import bham.bioshock.minigame.PlanetPosition;
-import bham.bioshock.minigame.models.Astronaut;
-import bham.bioshock.server.interfaces.MultipleConnectionsHandler;
 
 /**
  * The KillThemAllAI.

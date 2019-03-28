@@ -1,14 +1,14 @@
 package bham.bioshock.client.controllers;
 
 import bham.bioshock.client.AppPreferences;
-import bham.bioshock.client.screens.PreferencesScreen;
-import com.google.inject.Inject;
 import bham.bioshock.client.BoardGame;
 import bham.bioshock.client.Route;
 import bham.bioshock.client.Router;
 import bham.bioshock.client.XMLInteraction;
 import bham.bioshock.client.assets.AssetContainer;
+import bham.bioshock.client.screens.PreferencesScreen;
 import bham.bioshock.common.models.store.Store;
+import com.google.inject.Inject;
 
 /**
  * The Preferences controller.
@@ -34,7 +34,7 @@ public class PreferencesController extends Controller {
    * Keep track of the users current preferences
    */
   private AppPreferences preferences;
-  
+
   private AssetContainer assets;
 
   /**
