@@ -101,7 +101,7 @@ public class Planet implements Serializable {
   public void randomMinigameProps() {
     Random r = new Random();
     this.minigamePlanetRadius = r.nextInt(1500) + 1000;
-    this.minigamePlanetGravity = r.nextInt(1000) + 1000;
+    this.minigamePlanetGravity = r.nextInt(2000) + 500;
     
   }
 }
