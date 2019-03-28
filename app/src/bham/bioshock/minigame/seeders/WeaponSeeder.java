@@ -7,13 +7,19 @@ import bham.bioshock.minigame.worlds.World;
 import java.util.ArrayList;
 import java.util.Random;
 
-/** The Weapon seeder. */
+/**
+ * The Weapon seeder.
+ */
 public class WeaponSeeder {
 
-  /** The world */
+  /**
+   * The world
+   */
   private World world;
 
-  /** List of all the guns in the world */
+  /**
+   * List of all the guns in the world
+   */
   private ArrayList<Gun> guns = new ArrayList<>();
 
   /**
@@ -37,13 +43,14 @@ public class WeaponSeeder {
     // spawn gun in bottom left quarter
     generateWeapon(90, 180);
     // spawn gun in top right quarter
-    generateWeapon(180,270);
+    generateWeapon(180, 270);
     // spawn gun in bottom right quarter
     generateWeapon(270, 360);
   }
 
   /**
    * Method to generate a weapon between two points in the world
+   *
    * @param minAngle the minimum angle that the weapon can be generated between
    * @param maxAngle the maximum angle that the weapon can be generated between
    */

@@ -4,17 +4,22 @@ import bham.bioshock.common.Position;
 import bham.bioshock.minigame.PlanetPosition;
 import bham.bioshock.minigame.models.Platform;
 import bham.bioshock.minigame.worlds.World;
-
 import java.util.ArrayList;
 import java.util.Random;
 
-/** The Map Seeder. */
+/**
+ * The Map Seeder.
+ */
 public class PlatformSeeder {
 
-  /** The world */
+  /**
+   * The world
+   */
   private World world;
 
-  /** List of all the platforms in the world */
+  /**
+   * List of all the platforms in the world
+   */
   private ArrayList<Platform> platforms = new ArrayList<>();
 
   private int WIDTH_LOWERBOUND = 150;
@@ -111,7 +116,7 @@ public class PlatformSeeder {
     ArrayList<Platform> lvl3Platforms = new ArrayList<>();
     int lvl4Count = totalPlatforms - lvl1Count - lvl2Count - lvl3Count;
     ArrayList<Platform> lvl4Platforms = new ArrayList<>();
-    
+
     int radius = (int) world.getPlanetRadius();
 
     // generate the lvl1 platforms

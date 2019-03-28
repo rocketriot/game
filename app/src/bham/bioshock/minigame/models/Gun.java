@@ -1,15 +1,15 @@
 package bham.bioshock.minigame.models;
 
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import bham.bioshock.client.assets.AssetContainer;
 import bham.bioshock.client.assets.Assets;
 import bham.bioshock.client.assets.Assets.GamePart;
 import bham.bioshock.minigame.worlds.World;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 /**
- * Gun object can be captured by the player and held in the equipment.
- * Player carrying a gun can shoot to other players
+ * Gun object can be captured by the player and held in the equipment. Player carrying a gun can
+ * shoot to other players
  */
 public class Gun extends Entity {
 
@@ -19,7 +19,7 @@ public class Gun extends Entity {
 
   /**
    * Creates gun object at specified initial position
-   * 
+   *
    * @param w world
    * @param x position
    * @param y position
@@ -37,8 +37,6 @@ public class Gun extends Entity {
 
   /**
    * Create textures for rendering
-   * 
-   * @param manager
    */
   public static void createTextures(AssetContainer manager) {
     texture = new TextureRegion(manager.get(Assets.gun, Texture.class));
@@ -50,7 +48,6 @@ public class Gun extends Entity {
   public static void loadTextures(AssetContainer manager) {
     manager.load(Assets.gun, Texture.class, GamePart.MINIGAME);
   }
-  
-  
+
 
 }

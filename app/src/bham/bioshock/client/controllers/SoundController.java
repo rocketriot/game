@@ -23,7 +23,6 @@ public class SoundController extends Controller {
    * Sound variables that contain the music used in the game
    */
   private Sound mainMenuMusic;
-
   private Sound boardGameMusic;
   private Sound minigameMusic;
 
@@ -44,7 +43,6 @@ public class SoundController extends Controller {
    * Variables controlling volumes and enabling sounds
    */
   private float musicVolume;
-
   private boolean musicEnabled;
   private static float soundsVolume;
   private static boolean soundsEnabled;
@@ -53,7 +51,6 @@ public class SoundController extends Controller {
    * Variables to do with interacting with the preferences file
    */
   private AppPreferences preferences;
-
   private XMLInteraction xmlInteraction = new XMLInteraction();
 
   /**
@@ -66,12 +63,11 @@ public class SoundController extends Controller {
    * if they are playing
    */
   private HashMap<String, Sound> music = new HashMap<>();
-
   private HashMap<String, Long> musicIds = new HashMap<>();
   private HashMap<String, Boolean> musicPlaying = new HashMap<>();
   private static HashMap<String, Sound> sounds = new HashMap<>();
-  private HashMap<String, Boolean> soundsPlaying = new HashMap<>();
   private HashMap<String, Long> soundsIds = new HashMap<>();
+  private HashMap<String, Boolean> soundsPlaying = new HashMap<>();
 
   /**
    * Instantiates a new Sound controller.
@@ -79,6 +75,7 @@ public class SoundController extends Controller {
    * @param store the store
    * @param router the router
    * @param game the current BoardGame
+   * @param assets the assets
    */
   @Inject
   public SoundController(Store store, Router router, BoardGame game, AssetContainer assets) {
@@ -87,7 +84,7 @@ public class SoundController extends Controller {
     mainMenuMusic = assets.get(Assets.mainMenuMusic, Sound.class);
     boardGameMusic = assets.get(Assets.gameBoardMusic, Sound.class);
     minigameMusic = assets.get(Assets.miniGameMusic, Sound.class);
-    
+
     menuSelectSound = assets.get(Assets.menuSelectSound, Sound.class);
     rocketSound = assets.get(Assets.rocketSound, Sound.class);
     jumpSound = assets.get(Assets.jumpSound, Sound.class);
@@ -126,7 +123,6 @@ public class SoundController extends Controller {
           musicPlaying.put(music, true);
         }
       };
-
 
       if (fade == null || fade.isDone()) {
         start.run();
