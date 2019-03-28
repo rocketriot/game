@@ -34,6 +34,7 @@ public class EndScreen extends ScreenMaster {
   private final int HORIZONTAL_PLAYERS_PADDING = (Config.GAME_WORLD_WIDTH - (PLAYER_WIDTH * 4)) / 2;
   /** Stores all the players */
   HorizontalGroup playersContainer;
+
   private Store store;
   /** Used to generate fonts */
   private FontGenerator fontGenerator;

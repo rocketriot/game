@@ -1,10 +1,11 @@
 package bham.bioshock.minigame.physics;
 
-import java.io.Serializable;
+import bham.bioshock.common.Position;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
-import bham.bioshock.common.Position;
+
+import java.io.Serializable;
 
 public class SpeedVector implements Serializable {
 

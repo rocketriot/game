@@ -5,11 +5,7 @@ import bham.bioshock.client.assets.AssetContainer;
 import bham.bioshock.client.assets.Assets;
 import bham.bioshock.common.models.Player;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.ParticleEffect;
-import com.badlogic.gdx.graphics.g2d.ParticleEmitter;
-import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.*;
 
 import java.util.ArrayList;
 
@@ -30,8 +26,8 @@ public class DrawPlayer extends DrawEntity {
   public DrawPlayer(Batch batch, AssetContainer assets) {
     super(batch, assets);
 
-    for(int i=1; i<=4; i++) {
-      sprites.add(generateSprite(Assets.playersFolder + "/" + i + ".png"));     
+    for (int i = 1; i <= 4; i++) {
+      sprites.add(generateSprite(Assets.playersFolder + "/" + i + ".png"));
     }
     generateEffects();
 
@@ -50,6 +46,7 @@ public class DrawPlayer extends DrawEntity {
 
   /**
    * Draws a player on the game board
+   *
    * @param player the player to draw
    * @param PPS the size to draw the asteroid
    */
@@ -68,6 +65,7 @@ public class DrawPlayer extends DrawEntity {
 
   /**
    * Draws the player's name underneath the player's rocket
+   *
    * @param player the player who's label should be drawn
    * @param rocket the rocket of the player
    * @param rocketX the x position of the rocket
@@ -78,7 +76,7 @@ public class DrawPlayer extends DrawEntity {
     // Figure out x position of label
     float xOffset = fontGenerator.getOffset(font, player.getUsername());
     int x = rocketX + (int) (rocket.getWidth() / 2 - xOffset);
-    
+
     // Figure out y position of label
     int y = rocketY - 10;
 
@@ -88,6 +86,7 @@ public class DrawPlayer extends DrawEntity {
 
   /**
    * Sets up a board move to draw
+   *
    * @param player the player to draw movement for
    */
   public void setupMove(Player player) {
@@ -102,6 +101,7 @@ public class DrawPlayer extends DrawEntity {
 
   /**
    * Draws a player's move on the game board
+   *
    * @param player the player to draw
    * @param PPS the size to draw the asteroid
    */
@@ -123,7 +123,7 @@ public class DrawPlayer extends DrawEntity {
 
     // Specifies if the player has moved a full grid space
     boolean positionUpdated = false;
-    
+
     switch (nextMove.getDirection()) {
       case UP:
         movingSprite.setRotation(0);
@@ -188,7 +188,7 @@ public class DrawPlayer extends DrawEntity {
 
     rocketTrail.setPosition(rocketTrailX * PPS, rocketTrailY * PPS);
     rocketTrail.draw(batch, Gdx.graphics.getDeltaTime());
-    
+
     if (positionUpdated) {
       movingSprite.setPosition(nextMoveX * PPS, nextMoveY * PPS);
     } else {
@@ -202,6 +202,7 @@ public class DrawPlayer extends DrawEntity {
 
   /**
    * Sets the angle to draw the rocket trail
+   *
    * @param angle the angle to set
    */
   private void setRocketTrailAngle(float angle) {
@@ -219,8 +220,9 @@ public class DrawPlayer extends DrawEntity {
     }
   }
 
-  /** 
+  /**
    * Resizes the sprites when zooming
+   *
    * @param PPS the size to draw the player
    */
   public void resize(int PPS) {
@@ -229,7 +231,7 @@ public class DrawPlayer extends DrawEntity {
 
     font.getData().setScale(PPS * 0.03f, PPS * 0.03f);
 
-    if(movingSprite != null) {
+    if (movingSprite != null) {
       movingSprite.setSize(PPS, PPS);
     }
   }

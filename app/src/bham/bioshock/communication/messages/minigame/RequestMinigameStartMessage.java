@@ -1,8 +1,9 @@
 package bham.bioshock.communication.messages.minigame;
 
-import java.util.UUID;
 import bham.bioshock.communication.Command;
 import bham.bioshock.communication.messages.Message;
+
+import java.util.UUID;
 
 public class RequestMinigameStartMessage extends Message {
 
@@ -22,11 +23,10 @@ public class RequestMinigameStartMessage extends Message {
     this.planetId = planetId;
     this.objectiveId = null;
   }
-  
+
   public RequestMinigameStartMessage() {
     super(Command.MINIGAME_DIRECT_START);
     this.planetId = null;
     this.objectiveId = null;
   }
-
 }

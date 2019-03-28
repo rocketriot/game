@@ -4,13 +4,14 @@ import bham.bioshock.communication.common.Service;
 import bham.bioshock.communication.interfaces.MessageHandler;
 import bham.bioshock.communication.interfaces.MessageService;
 import bham.bioshock.communication.messages.Message;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
 import java.net.Socket;
 import java.util.concurrent.TimeUnit;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 /** Interprets commands received from server */
 public class ClientService extends Service implements MessageService, MessageHandler {
@@ -41,9 +42,7 @@ public class ClientService extends Service implements MessageService, MessageHan
     return connectionCreated;
   }
 
-  /**
-   * Starts the sender and receiver threads
-   */
+  /** Starts the sender and receiver threads */
   @Override
   public void run() {
     super.run();
@@ -53,8 +52,8 @@ public class ClientService extends Service implements MessageService, MessageHan
         // Execute action from a blocking queue
         if (handler != null) {
           Message m = queue.poll(1000, TimeUnit.MILLISECONDS);
-          if(m != null) {
-            handler.handle(m);            
+          if (m != null) {
+            handler.handle(m);
           }
         } else {
           sleep(200);
@@ -68,23 +67,21 @@ public class ClientService extends Service implements MessageService, MessageHan
       close();
       try {
         socket.close();
-      } catch (IOException e) {}       
+      } catch (IOException e) {
+      }
     }
-
   }
-  
+
   /**
    * Register message handler
-   * 
+   *
    * @param handler
    */
   public void registerHandler(MessageHandler handler) {
     this.handler = handler;
   }
 
-  /**
-   * Queue message to be sent
-   */
+  /** Queue message to be sent */
   public void handle(Message action) {
     queue.add(action);
   }
@@ -101,6 +98,4 @@ public class ClientService extends Service implements MessageService, MessageHan
     }
     sender.send(message);
   }
-  
-
 }

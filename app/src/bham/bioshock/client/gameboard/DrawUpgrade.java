@@ -18,6 +18,7 @@ public class DrawUpgrade extends DrawEntity {
 
   /**
    * Draws a upgrade on the game board
+   *
    * @param upgrade the upgrade to draw
    * @param PPS the size to draw the upgrade
    */
@@ -27,8 +28,9 @@ public class DrawUpgrade extends DrawEntity {
     sprite.draw(batch);
   }
 
-  /** 
+  /**
    * Resizes the sprites when zooming
+   *
    * @param PPS the size to draw the upgrade
    */
   public void resize(int PPS) {

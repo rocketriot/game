@@ -9,5 +9,4 @@ public class ServerFullMessage extends Message {
   public ServerFullMessage() {
     super(Command.SERVER_FULL);
   }
-  
 }

@@ -6,7 +6,7 @@ public interface MessageService {
 
   /**
    * Send a message
-   * 
+   *
    * @param message
    */
   void send(Message message);

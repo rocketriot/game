@@ -37,6 +37,7 @@ public class Renderer {
   private Astronaut mainPlayer;
   /** Rendering components */
   private ShapeRenderer shapeRenderer;
+
   private Sprite background;
   private Stage stage;
   private SpriteBatch batch;
@@ -45,6 +46,7 @@ public class Renderer {
   private Viewport viewport;
   /** Camera properties */
   private OrthographicCamera cam;
+
   private Vector3 lerpTarget = new Vector3();
   private double camRotation;
   /** Stores and router */

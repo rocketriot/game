@@ -1,38 +1,24 @@
 package bham.bioshock.client.controllers;
 
-import bham.bioshock.client.AppPreferences;
-import bham.bioshock.client.BoardGame;
-import bham.bioshock.client.Route;
-import bham.bioshock.client.Router;
-import bham.bioshock.client.XMLInteraction;
+import bham.bioshock.client.*;
 import bham.bioshock.client.assets.AssetContainer;
 import bham.bioshock.client.screens.PreferencesScreen;
 import bham.bioshock.common.models.store.Store;
 import com.google.inject.Inject;
 
-/**
- * The Preferences controller.
- */
+/** The Preferences controller. */
 public class PreferencesController extends Controller {
 
-  /**
-   * Store the current BoardGame
-   */
+  /** Store the current BoardGame */
   BoardGame game;
 
-  /**
-   * Store the router
-   */
+  /** Store the router */
   Router router;
 
-  /**
-   * Instance of the xmlInteraction class that allows reading from the Preferences XML file
-   */
+  /** Instance of the xmlInteraction class that allows reading from the Preferences XML file */
   private XMLInteraction xmlInteraction;
 
-  /**
-   * Keep track of the users current preferences
-   */
+  /** Keep track of the users current preferences */
   private AppPreferences preferences;
 
   private AssetContainer assets;

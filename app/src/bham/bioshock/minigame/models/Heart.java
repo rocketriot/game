@@ -8,9 +8,7 @@ import bham.bioshock.minigame.worlds.World;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
-/**
- * Heart entity can be captured by the player to increase health
- */
+/** Heart entity can be captured by the player to increase health */
 public class Heart extends Entity {
 
   private static final long serialVersionUID = -7192308795772982285L;
@@ -33,25 +31,13 @@ public class Heart extends Entity {
     height = 30;
   }
 
-  /**
-   * Returns texture for rendering
-   */
-  @Override
-  public TextureRegion getTexture() {
-    return texture;
-  }
-
-  /**
-   * Creates texture for rendering
-   */
+  /** Creates texture for rendering */
   public static void createTextures(AssetContainer manager) {
     Texture wholeImage = manager.get(Assets.hearts, Texture.class);
     texture = new TextureRegion(wholeImage, 0, 50, 50, 50);
   }
 
-  /**
-   * Queue textures for loading
-   */
+  /** Queue textures for loading */
   public static void loadTextures(AssetContainer manager) {
     manager.load(Assets.hearts, Texture.class, GamePart.MINIGAME);
   }
@@ -61,4 +47,9 @@ public class Heart extends Entity {
     return new Heart(world, p.x, p.y);
   }
 
+  /** Returns texture for rendering */
+  @Override
+  public TextureRegion getTexture() {
+    return texture;
+  }
 }

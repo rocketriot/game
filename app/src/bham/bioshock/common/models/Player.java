@@ -18,6 +18,7 @@ public class Player implements Serializable {
   public static final int POINTS_PER_PLANET = 100;
   /** Fuel gained per round */
   public static final float FUEL_PER_ROUND = 50f;
+
   private static final long serialVersionUID = 5775730008817100527L;
   /** ID of the player */
   private UUID id;
@@ -45,6 +46,7 @@ public class Player implements Serializable {
   private String lastUpgradeText = null;
   /** The coordinates the player will teleport to if they go through a black hole */
   private Coordinates randomCoords;
+
   private boolean isAddingBlackHole = false;
 
   private ArrayList<Upgrade.Type> upgrades = new ArrayList<>();

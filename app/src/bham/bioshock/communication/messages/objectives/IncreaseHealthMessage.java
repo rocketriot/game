@@ -2,29 +2,22 @@ package bham.bioshock.communication.messages.objectives;
 
 import bham.bioshock.communication.Command;
 import bham.bioshock.communication.messages.Message;
+
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.UUID;
 
-/**
- * The Increase health message.
- */
+/** The Increase health message. */
 public class IncreaseHealthMessage extends Message {
 
   private static final long serialVersionUID = 6806469893148362075L;
 
-  /**
-   * The Player id.
-   */
+  /** The Player id. */
   public final UUID playerID;
-  /**
-   * The Heart id.
-   */
+  /** The Heart id. */
   public final UUID heartID;
 
-  /**
-   * The time created.
-   */
+  /** The time created. */
   public final long created;
 
   /**
@@ -39,5 +32,4 @@ public class IncreaseHealthMessage extends Message {
     this.heartID = heartID;
     this.created = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC);
   }
-
 }

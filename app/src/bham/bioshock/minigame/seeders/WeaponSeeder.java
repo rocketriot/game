@@ -4,22 +4,17 @@ import bham.bioshock.common.Position;
 import bham.bioshock.minigame.PlanetPosition;
 import bham.bioshock.minigame.models.Gun;
 import bham.bioshock.minigame.worlds.World;
+
 import java.util.ArrayList;
 import java.util.Random;
 
-/**
- * The Weapon seeder.
- */
+/** The Weapon seeder. */
 public class WeaponSeeder {
 
-  /**
-   * The world
-   */
+  /** The world */
   private World world;
 
-  /**
-   * List of all the guns in the world
-   */
+  /** List of all the guns in the world */
   private ArrayList<Gun> guns = new ArrayList<>();
 
   /**

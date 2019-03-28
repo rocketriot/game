@@ -1,8 +1,5 @@
 package bham.bioshock.communication.messages.minigame;
 
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
-import java.util.UUID;
 import bham.bioshock.common.Position;
 import bham.bioshock.communication.Command;
 import bham.bioshock.communication.messages.Message;
@@ -10,6 +7,10 @@ import bham.bioshock.minigame.ai.CpuAstronaut;
 import bham.bioshock.minigame.models.Astronaut;
 import bham.bioshock.minigame.models.astronaut.Equipment;
 import bham.bioshock.minigame.physics.SpeedVector;
+
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.util.UUID;
 
 public class MinigamePlayerStepMessage extends Message {
 
@@ -20,7 +21,6 @@ public class MinigamePlayerStepMessage extends Message {
   public final Position position;
   public final Equipment equipment;
   public final long created;
-
 
   public MinigamePlayerStepMessage(Astronaut astronaut) {
     super(Command.MINIGAME_PLAYER_STEP);

@@ -3,6 +3,7 @@ package bham.bioshock.common.models.store;
 import bham.bioshock.client.screens.JoinScreen;
 import bham.bioshock.client.screens.JoinScreen.RocketAnimation;
 import bham.bioshock.common.Position;
+
 import java.util.Collection;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -19,7 +20,6 @@ public class JoinScreenStore {
   }
 
   /**
-   *
    * @param pos position of a player
    * @param playerID the id of a player that will be moved
    */
@@ -38,5 +38,4 @@ public class JoinScreenStore {
   public Collection<RocketAnimation> getRockets() {
     return rocketMap.values();
   }
-
 }

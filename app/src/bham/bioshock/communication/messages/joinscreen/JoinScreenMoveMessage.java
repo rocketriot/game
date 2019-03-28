@@ -1,11 +1,12 @@
 package bham.bioshock.communication.messages.joinscreen;
 
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
-import java.util.UUID;
 import bham.bioshock.common.Position;
 import bham.bioshock.communication.Command;
 import bham.bioshock.communication.messages.Message;
+
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.util.UUID;
 
 public class JoinScreenMoveMessage extends Message {
 
@@ -23,5 +24,4 @@ public class JoinScreenMoveMessage extends Message {
     this.rotation = (float) rotation;
     this.created = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC);
   }
-
 }

@@ -34,6 +34,7 @@ public abstract class Entity implements Serializable {
   protected UUID id;
   /** Default size */
   protected int width = 50;
+
   protected int height = 50;
   /** Current position */
   protected Position pos;
@@ -61,6 +62,7 @@ public abstract class Entity implements Serializable {
   protected transient CollisionHandler collisionHandler;
   /** Collision boundary size */
   protected float collisionWidth = 50;
+
   protected float collisionHeight = 50;
   /** Steps generator generating future positions */
   protected transient StepsGenerator stepsGenerator;

@@ -14,15 +14,16 @@ public class DrawAsteroid extends DrawEntity {
 
   public DrawAsteroid(Batch batch, AssetContainer assets) {
     super(batch, assets);
-    
+
     // Add the asteroid sprites
-    for(int i=1; i<=5; i++) {
-      sprites.add(generateSprite(Assets.asteroidsFolder + "/" + i + ".png"));     
+    for (int i = 1; i <= 5; i++) {
+      sprites.add(generateSprite(Assets.asteroidsFolder + "/" + i + ".png"));
     }
   }
 
   /**
    * Draws an asteroid on the game board
+   *
    * @param asteroid the asteroid to draw
    * @param PPS the size to draw the asteroid
    */
@@ -34,8 +35,9 @@ public class DrawAsteroid extends DrawEntity {
     sprite.draw(batch);
   }
 
-  /** 
+  /**
    * Resizes the sprites when zooming
+   *
    * @param PPS the size to draw the asteroid
    */
   public void resize(int PPS) {

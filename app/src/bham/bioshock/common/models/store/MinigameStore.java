@@ -28,7 +28,7 @@ public class MinigameStore {
   private HashMap<UUID, Long> lastMessage = new HashMap<>();
   private ArrayList<Entity> entities = new ArrayList<>();
   private ArrayList<Entity> staticEntities = new ArrayList<>();
-  
+
   private Skin skin;
   private CollisionHandler collisionHandler;
   private Objective objective;
@@ -39,15 +39,16 @@ public class MinigameStore {
     players = new HashMap<>();
   }
 
-  public void updatePlayerStep(long time, UUID playerId, SpeedVector speed, Position pos, Equipment eq) {
+  public void updatePlayerStep(
+      long time, UUID playerId, SpeedVector speed, Position pos, Equipment eq) {
     Long previous = lastMessage.get(playerId);
-    if(previous == null || previous < time) {
+    if (previous == null || previous < time) {
       lastMessage.put(playerId, time);
       Astronaut p = getPlayer(playerId);
-      p.updateFromServer(speed, pos, eq);      
+      p.updateFromServer(speed, pos, eq);
     }
   }
-  
+
   public void updatePlayerMove(UUID playerId, AstronautMove move) {
     Astronaut p = getPlayer(playerId);
     p.updateMove(move);
@@ -56,12 +57,12 @@ public class MinigameStore {
   public HashMap<UUID, Long> getLastMessages() {
     return lastMessage;
   }
-  
+
   // Create world from the seeder
   public void seed(Store store, World world, Objective o, UUID planetId) {
     this.planetID = planetId;
     this.currentWorld = world;
-    
+
     mainPlayerId = store.getMainPlayerId();
     Position[] playerPos = world.getPlayerPositions();
 
@@ -69,13 +70,13 @@ public class MinigameStore {
     for (Player player : store.getPlayers()) {
       Astronaut p = new Astronaut(world, playerPos[i], player.getId(), i);
       p.setName(player.getUsername());
-      
-     if( player.hasUpgrade(Upgrade.Type.MINIGAME_SHIELD) ) {
+
+      if (player.hasUpgrade(Upgrade.Type.MINIGAME_SHIELD)) {
         p.getEquipment().haveShield = true;
       }
-      
+
       addUpgrades(store, player, p, planetId);
-      
+
       players.put(player.getId(), p);
       i++;
     }
@@ -87,14 +88,13 @@ public class MinigameStore {
 
     objective = o;
   }
-  
+
   public void addUpgrades(Store store, Player player, Astronaut astronaut, UUID planetId) {
     UUID ownerId = store.getPlanetOwner(planetId);
-    if(player.getId().equals(ownerId)) {
+    if (player.getId().equals(ownerId)) {
       astronaut.getEquipment().haveShield = true;
     }
   }
-
 
   public World getWorld() {
     return currentWorld;
@@ -110,14 +110,14 @@ public class MinigameStore {
 
   public Collection<Gun> getGuns() {
     ArrayList<Gun> guns = new ArrayList<>();
-    for(Entity e : entities) {
-      if(e.type == EntityType.GUN) {
-        guns.add((Gun) e);        
+    for (Entity e : entities) {
+      if (e.type == EntityType.GUN) {
+        guns.add((Gun) e);
       }
     }
     return guns;
   }
-  
+
   public Collection<Entity> getEntities() {
     return entities;
   }
@@ -142,48 +142,49 @@ public class MinigameStore {
     return this.objective;
   }
 
-  public void setSkin(Skin skin) {
-    this.skin = skin;
-  }
-
   public Skin getSkin() {
     return skin;
+  }
+
+  public void setSkin(Skin skin) {
+    this.skin = skin;
   }
 
   public void addEntity(Entity e) {
     entities.add(e);
   }
 
-  public void started(){
+  public void started() {
     this.started = true;
   }
 
-  public boolean isStarted(){
+  public boolean isStarted() {
     return this.started;
   }
-  
+
   public void dispose() {
     players.values().forEach(p -> p.remove());
     entities.forEach(e -> e.remove());
   }
 
-  public void setCollisionHandler(CollisionHandler collisionHandler) {
-    this.collisionHandler = collisionHandler;
-  }
-  
   public CollisionHandler getCollisionHandler() {
     return collisionHandler;
   }
 
-    public UUID getPlanetID() { return planetID;
-    }
+  public void setCollisionHandler(CollisionHandler collisionHandler) {
+    this.collisionHandler = collisionHandler;
+  }
 
-    public Entity getEntity(UUID entityId) {
-      for(Entity e : entities) {
-        if(e.getId().equals(entityId)) {
-          return e;
-        }
+  public UUID getPlanetID() {
+    return planetID;
+  }
+
+  public Entity getEntity(UUID entityId) {
+    for (Entity e : entities) {
+      if (e.getId().equals(entityId)) {
+        return e;
       }
-      return null;
     }
+    return null;
+  }
 }

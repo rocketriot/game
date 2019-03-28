@@ -1,11 +1,12 @@
 package bham.bioshock.communication.messages.objectives;
 
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
-import java.util.UUID;
 import bham.bioshock.common.Position;
 import bham.bioshock.communication.Command;
 import bham.bioshock.communication.messages.Message;
+
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.util.UUID;
 
 public class KillAndRespawnMessage extends Message {
 
@@ -15,7 +16,7 @@ public class KillAndRespawnMessage extends Message {
   public final UUID playerId;
   public final UUID shooterId;
   public final Position position;
-  
+
   public KillAndRespawnMessage(UUID playerId, UUID shooterId, Position position) {
     super(Command.MINIGAME_OBJECTIVE);
     this.playerId = playerId;
@@ -23,5 +24,4 @@ public class KillAndRespawnMessage extends Message {
     this.position = position.copy();
     this.created = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC);
   }
-
 }

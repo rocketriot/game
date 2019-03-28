@@ -23,6 +23,7 @@ public class Bullet extends Entity {
 
   /** Initial launch speed */
   public static final int launchSpeed = 1100;
+
   private static final long serialVersionUID = -7192308795772982285L;
   /** Texture for rendering */
   private static TextureRegion texture;
@@ -32,6 +33,7 @@ public class Bullet extends Entity {
   private static int FRAMES = 5;
   /** shooter id */
   private final UUID shooter;
+
   private boolean detected = false;
   /** Current animation time */
   private float animationTime = 0;

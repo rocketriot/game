@@ -1,9 +1,5 @@
 package bham.bioshock.minigame.objectives;
 
-import bham.bioshock.minigame.models.Platform;
-import java.util.ArrayList;
-import java.util.Random;
-import java.util.UUID;
 import bham.bioshock.client.Route;
 import bham.bioshock.client.Router;
 import bham.bioshock.common.Position;
@@ -13,13 +9,16 @@ import bham.bioshock.communication.messages.objectives.FlagOwnerUpdateMessage;
 import bham.bioshock.communication.messages.objectives.KillAndRespawnMessage;
 import bham.bioshock.minigame.PlanetPosition;
 import bham.bioshock.minigame.models.Astronaut;
-import bham.bioshock.minigame.models.Flag;
 import bham.bioshock.minigame.models.Entity.State;
+import bham.bioshock.minigame.models.Flag;
+import bham.bioshock.minigame.models.Platform;
 import bham.bioshock.minigame.worlds.World;
 
-/**
- * The Capture the Flag objective.
- */
+import java.util.ArrayList;
+import java.util.Random;
+import java.util.UUID;
+
+/** The Capture the Flag objective. */
 public class CaptureTheFlag extends Objective {
 
   private static final long serialVersionUID = 1940697858386232981L;
@@ -45,8 +44,8 @@ public class CaptureTheFlag extends Objective {
     PlanetPosition pPos;
     if (platforms.size() == 0) {
       float angle = (float) (0 + Math.random() * 359);
-      int distance = (int) (Math.random() * (world.getPlanetRadius() + 200) + (
-          world.getPlanetRadius() + 50));
+      int distance =
+          (int) (Math.random() * (world.getPlanetRadius() + 200) + (world.getPlanetRadius() + 50));
       pPos = new PlanetPosition(angle, distance);
     } else {
       pPos = platforms.get(r.nextInt(platforms.size())).getPlanetPos();
@@ -90,9 +89,7 @@ public class CaptureTheFlag extends Objective {
     router.call(Route.SEND_OBJECTIVE_UPDATE, new FlagOwnerUpdateMessage(a.getId()));
   }
 
-  /**
-   * Handle flag owner update
-   */
+  /** Handle flag owner update */
   @Override
   public void handle(FlagOwnerUpdateMessage m) {
     this.flagOwner = m.flagOwner;
@@ -100,9 +97,7 @@ public class CaptureTheFlag extends Objective {
     flag.setOwner(owner);
   }
 
-  /**
-   * Drop the flag
-   */
+  /** Drop the flag */
   public void handle(KillAndRespawnMessage m) {
     if (!m.playerId.equals(flagOwner)) {
       super.handle(m);
@@ -122,8 +117,8 @@ public class CaptureTheFlag extends Objective {
 
   @Override
   public String instructions() {
-    String instructions = "You have 1 minute to capture the flag,\n"
-        + "steal the flag by shooting other players!";
+    String instructions =
+        "You have 1 minute to capture the flag,\n" + "steal the flag by shooting other players!";
 
     return instructions;
   }
@@ -132,7 +127,6 @@ public class CaptureTheFlag extends Objective {
   public String name() {
     return "Capture the Flag!";
   }
-
 
   /**
    * Get current flag owner

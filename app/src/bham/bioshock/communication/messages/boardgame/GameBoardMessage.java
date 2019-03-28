@@ -1,11 +1,12 @@
 package bham.bioshock.communication.messages.boardgame;
 
-import java.util.ArrayList;
 import bham.bioshock.common.models.Coordinates;
 import bham.bioshock.common.models.GameBoard;
 import bham.bioshock.common.models.Player;
 import bham.bioshock.communication.Command;
 import bham.bioshock.communication.messages.Message;
+
+import java.util.ArrayList;
 
 public class GameBoardMessage extends Message {
 
@@ -17,8 +18,12 @@ public class GameBoardMessage extends Message {
   public final boolean startGame;
   public final int maxRounds;
 
-  public GameBoardMessage(GameBoard gameBoard, ArrayList<Player> players,
-      ArrayList<Player> cpuPlayers, boolean startGame, int maxRounds) {
+  public GameBoardMessage(
+      GameBoard gameBoard,
+      ArrayList<Player> players,
+      ArrayList<Player> cpuPlayers,
+      boolean startGame,
+      int maxRounds) {
     super(Command.GET_GAME_BOARD);
     coordinates = new Coordinates[4];
     for (int i = 0; i < players.size(); i++) {

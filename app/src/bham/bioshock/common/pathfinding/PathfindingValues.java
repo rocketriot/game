@@ -2,34 +2,22 @@ package bham.bioshock.common.pathfinding;
 
 import bham.bioshock.common.models.Coordinates;
 
-/**
- * The type PathfindingValues.
- */
+/** The type PathfindingValues. */
 public class PathfindingValues {
 
-  /**
-   * The actual value to take the path up to this point
-   */
+  /** The actual value to take the path up to this point */
   private int pathCost;
 
-  /**
-   * The heuristic estimate of the cost to get to the goal point
-   */
+  /** The heuristic estimate of the cost to get to the goal point */
   private double heuristicCost;
 
-  /**
-   * The total cost (pathCost + heuristicCost) to go from this node to the goal node
-   */
+  /** The total cost (pathCost + heuristicCost) to go from this node to the goal node */
   private double totalCost;
 
-  /**
-   * The parent point to this point - the point that came before
-   */
+  /** The parent point to this point - the point that came before */
   private Coordinates parent;
 
-  /**
-   * Whether the point cam be moved through
-   */
+  /** Whether the point cam be moved through */
   private boolean passable;
 
   /**
@@ -51,48 +39,21 @@ public class PathfindingValues {
   }
 
   /**
-   * Gets heuristic cost.
-   *
-   * @return the heuristic cost
-   */
-  public double getHeuristicCost() {
-    return heuristicCost;
-  }
-
-  /**
-   * Gets total cost.
-   *
-   * @return the total cost
-   */
-  public double getTotalCost() {
-    return totalCost;
-  }
-
-  /**
-   * Gets the parent point.
-   *
-   * @return the parent point
-   */
-  public Coordinates getParent() {
-    return parent;
-  }
-
-  /**
-   * Returns whether a point is passable or not
-   *
-   * @return whether the point is passable as a boolean
-   */
-  public boolean isPassable() {
-    return passable;
-  }
-
-  /**
    * Sets path cost.
    *
    * @param pathCost the path cost
    */
   public void setPathCost(int pathCost) {
     this.pathCost = pathCost;
+  }
+
+  /**
+   * Gets heuristic cost.
+   *
+   * @return the heuristic cost
+   */
+  public double getHeuristicCost() {
+    return heuristicCost;
   }
 
   /**
@@ -105,6 +66,15 @@ public class PathfindingValues {
   }
 
   /**
+   * Gets total cost.
+   *
+   * @return the total cost
+   */
+  public double getTotalCost() {
+    return totalCost;
+  }
+
+  /**
    * Sets total cost.
    *
    * @param totalCost the total cost
@@ -114,10 +84,12 @@ public class PathfindingValues {
   }
 
   /**
-   * Updates total cost with the current path and heuristic costs.
+   * Gets the parent point.
+   *
+   * @return the parent point
    */
-  public void updateTotalCost() {
-    setTotalCost(pathCost + heuristicCost);
+  public Coordinates getParent() {
+    return parent;
   }
 
   /**
@@ -129,4 +101,17 @@ public class PathfindingValues {
     this.parent = parent;
   }
 
+  /**
+   * Returns whether a point is passable or not
+   *
+   * @return whether the point is passable as a boolean
+   */
+  public boolean isPassable() {
+    return passable;
+  }
+
+  /** Updates total cost with the current path and heuristic costs. */
+  public void updateTotalCost() {
+    setTotalCost(pathCost + heuristicCost);
+  }
 }

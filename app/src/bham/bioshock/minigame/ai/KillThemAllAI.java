@@ -6,22 +6,19 @@ import bham.bioshock.minigame.models.Astronaut;
 import bham.bioshock.minigame.models.Gun;
 import bham.bioshock.minigame.worlds.World;
 import bham.bioshock.server.interfaces.MultipleConnectionsHandler;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.UUID;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-/**
- * The KillThemAllAI.
- */
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.UUID;
+
+/** The KillThemAllAI. */
 public class KillThemAllAI extends MinigameAI {
 
   private static final Logger logger = LogManager.getLogger(KillThemAllAI.class);
 
-  /**
-   * The world
-   */
+  /** The world */
   private World world;
 
   /**
@@ -58,8 +55,7 @@ public class KillThemAllAI extends MinigameAI {
       astronaut.moveRight();
     }
 
-    if (astronaut.astronaut.getEquipment().haveGun
-        && goalPos.fromCenter > astroPos.fromCenter) {
+    if (astronaut.astronaut.getEquipment().haveGun && goalPos.fromCenter > astroPos.fromCenter) {
       astronaut.jump();
     }
 

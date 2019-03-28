@@ -9,7 +9,5 @@ public class MinigameEndMessage extends Message {
 
   public MinigameEndMessage() {
     super(Command.MINIGAME_END);
-
   }
-
 }

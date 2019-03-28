@@ -17,16 +17,17 @@ public class DrawPlanet extends DrawEntity {
   public DrawPlanet(Batch batch, AssetContainer assets) {
     super(batch, assets);
 
-    for(int i=1; i<=4; i++) {
-      planetSprites.add(generateSprite(Assets.planetsFolder + "/" + i + ".png"));     
+    for (int i = 1; i <= 4; i++) {
+      planetSprites.add(generateSprite(Assets.planetsFolder + "/" + i + ".png"));
     }
-    for(int i=1; i<=4; i++) {
-      flagSprites.add(generateSprite(Assets.flagsFolder + "/" + i + ".png"));     
+    for (int i = 1; i <= 4; i++) {
+      flagSprites.add(generateSprite(Assets.flagsFolder + "/" + i + ".png"));
     }
   }
 
   /**
    * Draws a planet on the game board
+   *
    * @param upgrade the planet to draw
    * @param PPS the size to draw the planet
    */
@@ -49,8 +50,9 @@ public class DrawPlanet extends DrawEntity {
     }
   }
 
-  /** 
+  /**
    * Resizes the sprites when zooming
+   *
    * @param PPS the size to draw the planet
    */
   public void resize(int PPS) {

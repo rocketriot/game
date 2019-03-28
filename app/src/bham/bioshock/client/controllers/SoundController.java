@@ -8,28 +8,15 @@ import bham.bioshock.client.assets.AssetContainer;
 import bham.bioshock.client.assets.Assets;
 import bham.bioshock.common.models.store.Store;
 import com.badlogic.gdx.audio.Sound;
-import java.util.HashMap;
-import java.util.concurrent.CompletableFuture;
+
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import java.util.HashMap;
+import java.util.concurrent.CompletableFuture;
 
-/**
- * The Sound controller.
- */
+/** The Sound controller. */
 @Singleton
 public class SoundController extends Controller {
-
-  /**
-   * Sound variables that contain the music used in the game
-   */
-  private Sound mainMenuMusic;
-  private Sound boardGameMusic;
-  private Sound minigameMusic;
-
-  /**
-   * Sound variables that contain the sound effects used in the game
-   */
-  private Sound rocketSound;
 
   private static Sound menuSelectSound;
   private static Sound jumpSound;
@@ -38,26 +25,23 @@ public class SoundController extends Controller {
   private static Sound blackHoleSound;
   private static Sound fuelSound;
   private static Sound upgradeSound;
-
-  /**
-   * Variables controlling volumes and enabling sounds
-   */
-  private float musicVolume;
-  private boolean musicEnabled;
   private static float soundsVolume;
   private static boolean soundsEnabled;
-
-  /**
-   * Variables to do with interacting with the preferences file
-   */
+  private static HashMap<String, Sound> sounds = new HashMap<>();
+  /** Sound variables that contain the music used in the game */
+  private Sound mainMenuMusic;
+  private Sound boardGameMusic;
+  private Sound minigameMusic;
+  /** Sound variables that contain the sound effects used in the game */
+  private Sound rocketSound;
+  /** Variables controlling volumes and enabling sounds */
+  private float musicVolume;
+  private boolean musicEnabled;
+  /** Variables to do with interacting with the preferences file */
   private AppPreferences preferences;
   private XMLInteraction xmlInteraction = new XMLInteraction();
-
-  /**
-   * Future use for music fade-out concurrency
-   */
+  /** Future use for music fade-out concurrency */
   private CompletableFuture<Void> fade;
-
   /**
    * Hashmaps that store the sound variables with their names, whether they are playing and the id
    * if they are playing
@@ -65,7 +49,6 @@ public class SoundController extends Controller {
   private HashMap<String, Sound> music = new HashMap<>();
   private HashMap<String, Long> musicIds = new HashMap<>();
   private HashMap<String, Boolean> musicPlaying = new HashMap<>();
-  private static HashMap<String, Sound> sounds = new HashMap<>();
   private HashMap<String, Long> soundsIds = new HashMap<>();
   private HashMap<String, Boolean> soundsPlaying = new HashMap<>();
 
@@ -106,6 +89,17 @@ public class SoundController extends Controller {
   }
 
   /**
+   * Method to play a sound that does not need to loop
+   *
+   * @param sound The name of the sound
+   */
+  public static void playSound(String sound) {
+    if (soundsEnabled) {
+      sounds.get(sound).play(soundsVolume);
+    }
+  }
+
+  /**
    * Method to start a specified music
    *
    * @param music The name of the music that you want to start
@@ -113,23 +107,25 @@ public class SoundController extends Controller {
   public void startMusic(String music) {
     if (!musicPlaying.get(music) && musicEnabled) {
 
-      Runnable start = () -> {
-        long id = this.music.get(music).loop(musicVolume);
-        musicIds.put(music, id);
+      Runnable start =
+          () -> {
+            long id = this.music.get(music).loop(musicVolume);
+            musicIds.put(music, id);
 
-        if (musicPlaying.keySet().contains(music)) {
-          musicPlaying.replace(music, true);
-        } else {
-          musicPlaying.put(music, true);
-        }
-      };
+            if (musicPlaying.keySet().contains(music)) {
+              musicPlaying.replace(music, true);
+            } else {
+              musicPlaying.put(music, true);
+            }
+          };
 
       if (fade == null || fade.isDone()) {
         start.run();
       } else {
-        fade.thenRun(() -> {
-          start.run();
-        });
+        fade.thenRun(
+            () -> {
+              start.run();
+            });
       }
     }
   }
@@ -199,32 +195,23 @@ public class SoundController extends Controller {
   public void fadeOut(String music) {
     if (musicPlaying.get(music)) {
 
-      fade = CompletableFuture.runAsync(() -> {
-        try {
-          int fadeTime = 10;
-          float currentVolume = musicVolume;
-          float step = currentVolume / fadeTime;
+      fade =
+          CompletableFuture.runAsync(
+              () -> {
+                try {
+                  int fadeTime = 10;
+                  float currentVolume = musicVolume;
+                  float step = currentVolume / fadeTime;
 
-          for (int i = 0; i < fadeTime; i++) {
-            currentVolume -= step;
-            adjustCurrentVolume(music, musicIds.get(music), currentVolume);
-            Thread.sleep(100);
-          }
-        } catch (InterruptedException e) {
-        }
-        stopMusic(music);
-      });
-    }
-  }
-
-  /**
-   * Method to play a sound that does not need to loop
-   *
-   * @param sound The name of the sound
-   */
-  public static void playSound(String sound) {
-    if (soundsEnabled) {
-      sounds.get(sound).play(soundsVolume);
+                  for (int i = 0; i < fadeTime; i++) {
+                    currentVolume -= step;
+                    adjustCurrentVolume(music, musicIds.get(music), currentVolume);
+                    Thread.sleep(100);
+                  }
+                } catch (InterruptedException e) {
+                }
+                stopMusic(music);
+              });
     }
   }
 

@@ -3,22 +3,16 @@ package bham.bioshock.communication.client;
 import bham.bioshock.Config;
 import bham.bioshock.client.Router;
 import bham.bioshock.common.models.store.CommunicationStore;
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.PrintStream;
+import com.google.inject.Singleton;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import java.io.*;
 import java.net.ConnectException;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.Optional;
 import java.util.UUID;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import com.google.inject.Singleton;
 
 @Singleton
 public class CommunicationClient {
@@ -30,15 +24,14 @@ public class CommunicationClient {
   private ReconnectionThread reconnect = null;
   private ClientConnectThread discoverThread = null;
   private ServerStatus currentServer;
-  
-  
+
   /**
    * Get current connection to the server
-   * 
-   * @return Optional with connection 
+   *
+   * @return Optional with connection
    */
   public Optional<ClientService> getConnection() {
-    if(service == null) {
+    if (service == null) {
       return Optional.empty();
     }
     return Optional.of(service);
@@ -46,19 +39,19 @@ public class CommunicationClient {
 
   /**
    * Starts reconnection thread if one is not already running
-   * 
+   *
    * @param router
    */
   public void startReconnectionThread(Router router) {
-    if(reconnect == null || !reconnect.isAlive()) {
+    if (reconnect == null || !reconnect.isAlive()) {
       reconnect = new ReconnectionThread(this, router);
-      reconnect.start();      
+      reconnect.start();
     }
   }
-  
+
   /**
    * Creates new connection with the server
-   * 
+   *
    * @return
    * @throws ConnectException
    */
@@ -87,59 +80,61 @@ public class CommunicationClient {
     logger.debug("Client connected!");
     return service;
   }
-  
+
   public void saveToFile(String name, UUID playerId) {
-    if(currentServer == null) return;
+    if (currentServer == null) return;
     try (PrintStream out = new PrintStream(new FileOutputStream("app/hostInfo.txt"))) {
       out.print(playerId.toString() + "\n" + currentServer.getId());
       out.flush();
-    } catch(FileNotFoundException e) {}
+    } catch (FileNotFoundException e) {
+    }
   }
-  
+
   public ServerStatus fromFile() {
     BufferedReader reader = null;
     try {
-      
+
       reader = new BufferedReader(new FileReader("app/hostInfo.txt"));
       String playerId = reader.readLine();
       String serverId = reader.readLine();
-      
+
       ServerStatus server = new ServerStatus("?", "?", serverId);
       server.setPlayerId(UUID.fromString(playerId));
       return server;
-      
+
     } catch (Exception e) {
     } finally {
-      if(reader != null) {
+      if (reader != null) {
         try {
           reader.close();
-        } catch (IOException e) {}        
+        } catch (IOException e) {
+        }
       }
     }
     return null;
   }
-  
+
   public void discover(CommunicationStore store, Router router) {
     ServerStatus server = fromFile();
-    if(server != null) {
+    if (server != null) {
       store.setRecoveredServer(server);
     }
     discoverThread = new ClientConnectThread(store);
     discoverThread.start();
   }
-  
+
   public void stopDiscovery() {
-    if(discoverThread != null) {
-      discoverThread.interrupt();      
+    if (discoverThread != null) {
+      discoverThread.interrupt();
     }
   }
-  
+
   public boolean reconnect(String ip) {
-    if(currentServer == null && ip == null) {
+    if (currentServer == null && ip == null) {
       logger.fatal("Connection has been lost");
       return false;
     }
-    
+
     String address = ip != null ? ip : currentServer.getIP();
     logger.info("Reconnecting to " + address);
     try {
@@ -163,25 +158,25 @@ public class CommunicationClient {
 
   public void disconnect() {
     this.currentServer = null;
-    if(discoverThread != null) {
+    if (discoverThread != null) {
       discoverThread.interrupt();
     }
-    if(reconnect != null) {
+    if (reconnect != null) {
       reconnect.interrupt();
       reconnect = null;
     }
-    if(service != null) {
+    if (service != null) {
       service.abort();
     }
-    
-    try {
-      if(discoverThread != null) {
-        discoverThread.join();        
-      }
-      if(reconnect != null) {
-        reconnect.join();        
-      }
-    } catch(InterruptedException e) {}
-  }
 
+    try {
+      if (discoverThread != null) {
+        discoverThread.join();
+      }
+      if (reconnect != null) {
+        reconnect.join();
+      }
+    } catch (InterruptedException e) {
+    }
+  }
 }

@@ -2,28 +2,30 @@ package bham.bioshock.communication.server;
 
 import bham.bioshock.Config;
 import bham.bioshock.communication.Command;
-import java.io.IOException;
-import java.net.*;
-import java.util.UUID;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.IOException;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
+import java.net.SocketTimeoutException;
+import java.util.UUID;
+
 public class DiscoveryThread extends Thread {
-  
+
   private static final Logger logger = LogManager.getLogger(DiscoveryThread.class);
-  
+
   UUID serverId;
   String name = "Server";
-  
+
   public DiscoveryThread(String hostName, UUID serverId) {
     super("ServerDiscoveryThread");
     this.name = hostName;
     this.serverId = serverId;
   }
-  
-  /**
-   * Wait for a request packet from the client and respond
-   */
+
+  /** Wait for a request packet from the client and respond */
   @Override
   public void run() {
     DatagramSocket socket = null;
@@ -44,8 +46,9 @@ public class DiscoveryThread extends Thread {
             String response = Command.COMM_DISCOVER_RES.toString() + name + ";" + serverId;
             byte[] sendData = response.getBytes();
             // Send a response
-            DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length,
-                packet.getAddress(), packet.getPort());
+            DatagramPacket sendPacket =
+                new DatagramPacket(
+                    sendData, sendData.length, packet.getAddress(), packet.getPort());
             socket.send(sendPacket);
           }
         } catch (SocketTimeoutException e) {
@@ -57,11 +60,10 @@ public class DiscoveryThread extends Thread {
     } catch (InterruptedException e) {
 
     } finally {
-      if(socket != null) {
+      if (socket != null) {
         socket.close();
       }
       logger.debug("Discovery socket closed");
     }
   }
-
 }

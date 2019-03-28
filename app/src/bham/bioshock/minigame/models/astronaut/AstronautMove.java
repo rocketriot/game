@@ -8,7 +8,7 @@ public class AstronautMove implements Serializable {
   public boolean jumping = false;
   public boolean movingLeft = false;
   public boolean movingRight = false;
-  
+
   public AstronautMove copy() {
     AstronautMove m = new AstronautMove();
     m.jumping = jumping;
@@ -16,8 +16,8 @@ public class AstronautMove implements Serializable {
     m.movingRight = movingRight;
     return m;
   }
-  
+
   public String toString() {
-    return "j: " + jumping + ", l: " + movingLeft + ", r: "+ movingRight;
+    return "j: " + jumping + ", l: " + movingLeft + ", r: " + movingRight;
   }
 }

@@ -30,24 +30,18 @@ public class Gun extends Entity {
     fromGround = -5;
   }
 
-  @Override
-  public TextureRegion getTexture() {
-    return texture;
-  }
-
-  /**
-   * Create textures for rendering
-   */
+  /** Create textures for rendering */
   public static void createTextures(AssetContainer manager) {
     texture = new TextureRegion(manager.get(Assets.gun, Texture.class));
   }
 
-  /**
-   * Queue textures for loading
-   */
+  /** Queue textures for loading */
   public static void loadTextures(AssetContainer manager) {
     manager.load(Assets.gun, Texture.class, GamePart.MINIGAME);
   }
 
-
+  @Override
+  public TextureRegion getTexture() {
+    return texture;
+  }
 }

@@ -22,8 +22,9 @@ public class DrawFuel extends DrawEntity {
     sprite.draw(batch);
   }
 
-  /** 
+  /**
    * Resizes the sprites when zooming
+   *
    * @param PPS the size to draw the fuel
    */
   public void resize(int PPS) {

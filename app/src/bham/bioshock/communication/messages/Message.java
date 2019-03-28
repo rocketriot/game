@@ -1,7 +1,8 @@
 package bham.bioshock.communication.messages;
 
-import java.io.Serializable;
 import bham.bioshock.communication.Command;
+
+import java.io.Serializable;
 
 public abstract class Message implements Serializable {
 

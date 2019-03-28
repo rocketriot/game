@@ -2,6 +2,7 @@ package bham.bioshock.communication.messages.minigame;
 
 import bham.bioshock.communication.Command;
 import bham.bioshock.communication.messages.Message;
+
 import java.util.UUID;
 
 public class EndMinigameMessage extends Message {
@@ -19,7 +20,7 @@ public class EndMinigameMessage extends Message {
     this.planetID = planetID;
     this.points = points;
     this.playerID = playerID;
-    
+
     if (winnerID != null && winnerID.equals(playerID)) {
       initiatorWon = true;
     } else {

@@ -10,5 +10,4 @@ public class UpdateTurnMessage extends Message {
   public UpdateTurnMessage() {
     super(Command.UPDATE_TURN);
   }
-
 }

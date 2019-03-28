@@ -3,52 +3,37 @@ package bham.bioshock.common.pathfinding;
 import bham.bioshock.common.consts.GridPoint;
 import bham.bioshock.common.models.Coordinates;
 import bham.bioshock.common.models.Player;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-/**
- * The A-Star pathfinding algorithm.
- */
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+
+/** The A-Star pathfinding algorithm. */
 public class AStarPathfinding {
 
   private static final Logger logger = LogManager.getLogger(AStarPathfinding.class);
 
-  /**
-   * The cost to go from one point to another
-   */
+  /** The cost to go from one point to another */
   private final int TRANSITION_COST = 1;
 
-  /**
-   * Start position of the path
-   */
+  /** Start position of the path */
   private Coordinates startPosition;
 
-  /**
-   * Goal position of the path
-   */
+  /** Goal position of the path */
   private Coordinates goalPosition;
 
-  /**
-   * The game grid at the time of the pathfinding search
-   */
+  /** The game grid at the time of the pathfinding search */
   private GridPoint[][] gameGrid;
 
-  /**
-   * The grid that will contain the pathfinding values for each point
-   */
+  /** The grid that will contain the pathfinding values for each point */
   private PathfindingValues[][] aStarGrid;
 
-  /**
-   * The maximum x value of the map
-   */
+  /** The maximum x value of the map */
   private int maxX;
 
-  /**
-   * The maximum y value of the map
-   */
+  /** The maximum y value of the map */
   private int maxY;
 
   /**
@@ -83,14 +68,14 @@ public class AStarPathfinding {
     aStarGrid = setAStarGrid(); // set the A* Grid to be the current grid
     aStarGrid[startPosition.getX()][startPosition.getY()].setTotalCost(0);
 
-    ArrayList<Coordinates> openList = new ArrayList<>();// list of all generated points
+    ArrayList<Coordinates> openList = new ArrayList<>(); // list of all generated points
     ArrayList<Coordinates> closedList = new ArrayList<>(); // list of all expanded points
-    insertIntoList(openList, startPosition);// add the start position to the open list
+    insertIntoList(openList, startPosition); // add the start position to the open list
 
     // while there are points to check
     while (!openList.isEmpty()) {
-      Coordinates currentPosition = findMinPoint(
-          openList); // get coordinates of point with smallest cost
+      Coordinates currentPosition =
+          findMinPoint(openList); // get coordinates of point with smallest cost
       openList.remove(currentPosition);
       closedList.add(currentPosition);
       ArrayList<Coordinates> successors = generateSuccessors(currentPosition, closedList);
@@ -108,27 +93,27 @@ public class AStarPathfinding {
           double successorHeuristicCost = findHeuristic(currentSuccessor);
           double totalCost = successorPathCost + successorHeuristicCost;
 
-          if (checkList(currentSuccessor,
-              openList)) { // check if the successor is already in the open list
+          if (checkList(
+              currentSuccessor, openList)) { // check if the successor is already in the open list
             double openCost = aStarGrid[x][y].getTotalCost();
             // check if the total cost calculated is less than the one stored for the point
             if (openCost > totalCost) { // if so, update the values
-              updateValues(currentSuccessor, successorPathCost, successorHeuristicCost,
-                  currentPosition);
+              updateValues(
+                  currentSuccessor, successorPathCost, successorHeuristicCost, currentPosition);
             }
-          } else if (checkList(currentSuccessor,
-              closedList)) { // else check if it is already in the closed list
+          } else if (checkList(
+              currentSuccessor, closedList)) { // else check if it is already in the closed list
             double closedCost = aStarGrid[x][y].getTotalCost();
             // check if the total cost calculated is less than the one stored for the point
             if (closedCost > totalCost) { // if so, update the values and move point to open list
-              updateValues(currentSuccessor, successorPathCost, successorHeuristicCost,
-                  currentPosition);
+              updateValues(
+                  currentSuccessor, successorPathCost, successorHeuristicCost, currentPosition);
               closedList.remove(currentSuccessor);
               openList.add(currentSuccessor);
             }
-          } else {// otherwise, update the values and add to the open list
-            updateValues(currentSuccessor, successorPathCost, successorHeuristicCost,
-                currentPosition);
+          } else { // otherwise, update the values and add to the open list
+            updateValues(
+                currentSuccessor, successorPathCost, successorHeuristicCost, currentPosition);
             openList.add(currentSuccessor);
           }
         }
@@ -239,11 +224,11 @@ public class AStarPathfinding {
    *
    * @param currentPoint The coordinates of the current point to generate the successors for
    * @param closedList The closed list, containing all the already closed nodes that you do not want
-   * to become successors to another node
+   *     to become successors to another node
    * @return A list of the valid successors found
    */
-  private ArrayList<Coordinates> generateSuccessors(Coordinates currentPoint,
-      ArrayList<Coordinates> closedList) {
+  private ArrayList<Coordinates> generateSuccessors(
+      Coordinates currentPoint, ArrayList<Coordinates> closedList) {
     ArrayList<Coordinates> successors = new ArrayList<>();
 
     // check point directly above current point
@@ -310,8 +295,8 @@ public class AStarPathfinding {
    * @param heuristicCost The new heuristic cost of the point to update
    * @param parent The new parent of the point to update
    */
-  private void updateValues(Coordinates point, int pathCost, double heuristicCost,
-      Coordinates parent) {
+  private void updateValues(
+      Coordinates point, int pathCost, double heuristicCost, Coordinates parent) {
     aStarGrid[point.getX()][point.getY()].setPathCost(pathCost);
     aStarGrid[point.getX()][point.getY()].setHeuristicCost(heuristicCost);
     aStarGrid[point.getX()][point.getY()].updateTotalCost();

@@ -10,6 +10,4 @@ public class EndGameMessage extends Message {
   public EndGameMessage() {
     super(Command.DIRECT_END);
   }
-
 }
-

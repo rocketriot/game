@@ -22,9 +22,7 @@ import java.util.HashMap;
 import java.util.Random;
 import java.util.UUID;
 
-/**
- * Objective abstract class.
- */
+/** Objective abstract class. */
 public abstract class Objective implements Serializable {
 
   private static final Logger logger = LogManager.getLogger(Objective.class);
@@ -35,23 +33,17 @@ public abstract class Objective implements Serializable {
   protected transient World world;
   protected transient Router router;
   protected transient MinigameStore localStore;
-  private transient Position[] respawnPositions;
-
   protected transient HashMap<UUID, Long> lastRespawn;
   protected HashMap<UUID, Integer> health = new HashMap<>();
+  private transient Position[] respawnPositions;
 
   public abstract UUID getWinner();
-  public abstract MinigameType getMinigameType();
 
-  public static enum MinigameType {
-    CAPTURE_THE_FLAG,
-    KILL_THEM_ALL,
-    PLATFORMER
-  }
+  public abstract MinigameType getMinigameType();
 
   /**
    * Init the objective
-   * 
+   *
    * @param world
    * @param router
    * @param store
@@ -64,9 +56,12 @@ public abstract class Objective implements Serializable {
     this.respawnPositions = world.getPlayerPositions();
     this.lastRespawn = new HashMap<>();
 
-    store.getPlayers().forEach(player -> {
-      health.put(player.getId(), INITIAL_HEALTH);
-    });
+    store
+        .getPlayers()
+        .forEach(
+            player -> {
+              health.put(player.getId(), INITIAL_HEALTH);
+            });
   }
 
   /**
@@ -86,46 +81,46 @@ public abstract class Objective implements Serializable {
    * @param killer: the player who shot
    */
   public void gotShot(Astronaut player, UUID killer) {
-    if(player.is(State.REMOVING)) return;
-    if(!store.isHost()) return;
+    if (player.is(State.REMOVING)) return;
+    if (!store.isHost()) return;
 
     Integer h;
-    synchronized(health) {
+    synchronized (health) {
       h = health.get(player.getId());
     }
-    if(h == null || h > 1) {
+    if (h == null || h > 1) {
       // Decrease health request
       router.call(Route.SEND_OBJECTIVE_UPDATE, new UpdateHealthMessage(player.getId(), killer));
-    } else {      
+    } else {
       // Send kill and update request
-      router.call(Route.SEND_OBJECTIVE_UPDATE, new KillAndRespawnMessage(player.getId(), killer, getRandomRespawn()));
+      router.call(
+          Route.SEND_OBJECTIVE_UPDATE,
+          new KillAndRespawnMessage(player.getId(), killer, getRandomRespawn()));
     }
   }
 
-  public final void pickupHeart(Astronaut player, UUID heartID){
-    if(player.is(State.REMOVING)) return;
-    if(!store.isHost()) return;
+  public final void pickupHeart(Astronaut player, UUID heartID) {
+    if (player.is(State.REMOVING)) return;
+    if (!store.isHost()) return;
     Entity entity = store.getMinigameStore().getEntity(heartID);
-    if(entity == null) 
-      return;
-    if(entity.isRemoved()) return;
+    if (entity == null) return;
+    if (entity.isRemoved()) return;
 
     router.call(Route.SEND_OBJECTIVE_UPDATE, new IncreaseHealthMessage(player.getId(), heartID));
   }
 
-
   /**
-   * Default handler for UpdateHealthMessage - just decrease health
-   * check with last respawn time to avoid decreasing health after respawn
+   * Default handler for UpdateHealthMessage - just decrease health check with last respawn time to
+   * avoid decreasing health after respawn
    *
    * @param m the message
    */
   public void handle(UpdateHealthMessage m) {
-    if(lastRespawn.get(m.playerId) == null || lastRespawn.get(m.playerId) < m.created) {
+    if (lastRespawn.get(m.playerId) == null || lastRespawn.get(m.playerId) < m.created) {
       Astronaut astro = localStore.getPlayer(m.playerId);
-      
+
       Equipment equipment = astro.getEquipment();
-      if(equipment.haveShield) {
+      if (equipment.haveShield) {
         equipment.removeShieldHealth();
       } else {
         health.computeIfPresent(m.playerId, (k, v) -> v - 1);
@@ -139,18 +134,18 @@ public abstract class Objective implements Serializable {
    * @param m the message
    */
   public void handle(IncreaseHealthMessage m) {
-    synchronized(health) {
+    synchronized (health) {
       Integer hp = health.get(m.playerID);
-      if(hp != null && hp < INITIAL_HEALTH) {
+      if (hp != null && hp < INITIAL_HEALTH) {
         health.computeIfPresent(m.playerID, (k, v) -> v + 1);
 
-        if (m.playerID == store.getMainPlayerId()){
+        if (m.playerID == store.getMainPlayerId()) {
           SoundController.playSound("health");
         }
 
         Collection<Entity> entities = localStore.getEntities();
-        for (Entity entity : entities){
-          if (entity.getId().equals(m.heartID)){
+        for (Entity entity : entities) {
+          if (entity.getId().equals(m.heartID)) {
             entity.remove();
           }
         }
@@ -158,11 +153,9 @@ public abstract class Objective implements Serializable {
     }
   }
 
-
-
   /**
-   * Default handler for KillAndRespawnMessage - kill player and respawn in the new position
-   * save respawn position to ignore all bullets created before that moment
+   * Default handler for KillAndRespawnMessage - kill player and respawn in the new position save
+   * respawn position to ignore all bullets created before that moment
    *
    * @param m
    */
@@ -178,7 +171,7 @@ public abstract class Objective implements Serializable {
    */
   protected Position getRandomRespawn() {
     Random r = new Random();
-    int i = Math.abs(r.nextInt()%4);
+    int i = Math.abs(r.nextInt() % 4);
     return respawnPositions[i];
   }
 
@@ -191,7 +184,7 @@ public abstract class Objective implements Serializable {
   protected void killAndRespawnPlayer(UUID playerId, Position randomRespawn) {
     Astronaut player = localStore.getPlayer(playerId);
     player.killAndRespawn(randomRespawn);
-    synchronized(health) {
+    synchronized (health) {
       health.put(player.getId(), INITIAL_HEALTH);
     }
   }
@@ -202,13 +195,13 @@ public abstract class Objective implements Serializable {
    * @param m
    */
   public void handleMessage(Message m) {
-    if(m instanceof UpdateHealthMessage) {
+    if (m instanceof UpdateHealthMessage) {
       this.handle((UpdateHealthMessage) m);
     } else if (m instanceof KillAndRespawnMessage) {
       this.handle((KillAndRespawnMessage) m);
-    } else if(m instanceof FlagOwnerUpdateMessage) {
+    } else if (m instanceof FlagOwnerUpdateMessage) {
       this.handle((FlagOwnerUpdateMessage) m);
-    } else if(m instanceof IncreaseHealthMessage) {
+    } else if (m instanceof IncreaseHealthMessage) {
       this.handle((IncreaseHealthMessage) m);
     } else if (m instanceof UpdateFrozenMessage) {
       this.handle((UpdateFrozenMessage) m);
@@ -223,6 +216,7 @@ public abstract class Objective implements Serializable {
   public void handle(Message m) {
     logger.debug("Ignored message: " + m.getClass().getSimpleName());
   }
+
   public void handle(FlagOwnerUpdateMessage m) {
     logger.debug("Ignored message: " + m.getClass().getSimpleName());
   }
@@ -230,6 +224,7 @@ public abstract class Objective implements Serializable {
   public void handle(UpdateFrozenMessage m) {
     logger.debug("unhandled update frozen message");
   }
+
   /**
    * Seeds the minigame store with the additional entities required to each objective
    *
@@ -257,4 +252,10 @@ public abstract class Objective implements Serializable {
    * @return the name String
    */
   public abstract String name();
+
+  public static enum MinigameType {
+    CAPTURE_THE_FLAG,
+    KILL_THEM_ALL,
+    PLATFORMER
+  }
 }

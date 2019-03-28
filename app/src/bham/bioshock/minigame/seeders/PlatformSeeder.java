@@ -4,22 +4,17 @@ import bham.bioshock.common.Position;
 import bham.bioshock.minigame.PlanetPosition;
 import bham.bioshock.minigame.models.Platform;
 import bham.bioshock.minigame.worlds.World;
+
 import java.util.ArrayList;
 import java.util.Random;
 
-/**
- * The Map Seeder.
- */
+/** The Map Seeder. */
 public class PlatformSeeder {
 
-  /**
-   * The world
-   */
+  /** The world */
   private World world;
 
-  /**
-   * List of all the platforms in the world
-   */
+  /** List of all the platforms in the world */
   private ArrayList<Platform> platforms = new ArrayList<>();
 
   private int WIDTH_LOWERBOUND = 150;

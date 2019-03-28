@@ -17,6 +17,7 @@ public class DrawBlackHole extends DrawEntity {
 
   /**
    * Draws a black hole on the game board, by default is able to draw a black hole
+   *
    * @param blackHole the black hole to draw
    * @param PPS the size to draw the black hole
    */
@@ -26,6 +27,7 @@ public class DrawBlackHole extends DrawEntity {
 
   /**
    * Draws a black hole on the game board
+   *
    * @param blackHole the black hole to draw
    * @param PPS the size to draw the black hole
    * @param canDrawBlackHole specifies if the player has space to add the black hole to the board
@@ -39,8 +41,9 @@ public class DrawBlackHole extends DrawEntity {
     sprite.draw(batch);
   }
 
-  /** 
+  /**
    * Resizes the sprites when zooming
+   *
    * @param PPS the size to draw the black hole
    */
   public void resize(int PPS) {

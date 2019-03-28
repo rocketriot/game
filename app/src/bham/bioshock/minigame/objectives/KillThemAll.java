@@ -6,22 +6,18 @@ import bham.bioshock.common.models.store.Store;
 import bham.bioshock.communication.messages.objectives.KillAndRespawnMessage;
 import bham.bioshock.minigame.models.Astronaut;
 import bham.bioshock.minigame.worlds.World;
+
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.UUID;
 
-
-/**
- * The Kill Them All objective.
- */
+/** The Kill Them All objective. */
 public class KillThemAll extends Objective {
 
   private static final long serialVersionUID = 5035692465754355325L;
 
-  /**
-   * Maps players to the number of kills they have
-   */
+  /** Maps players to the number of kills they have */
   private HashMap<UUID, Integer> kills = new HashMap<>();
 
   /**
@@ -36,8 +32,9 @@ public class KillThemAll extends Objective {
 
   @Override
   public UUID getWinner() {
-    UUID id = Collections.max(kills.entrySet(), Comparator.comparingInt(HashMap.Entry::getValue))
-        .getKey();
+    UUID id =
+        Collections.max(kills.entrySet(), Comparator.comparingInt(HashMap.Entry::getValue))
+            .getKey();
     return id;
   }
 
@@ -49,9 +46,12 @@ public class KillThemAll extends Objective {
   @Override
   public void init(World world, Router router, Store store) {
     super.init(world, router, store);
-    store.getPlayers().forEach(player -> {
-      kills.put(player.getId(), 0);
-    });
+    store
+        .getPlayers()
+        .forEach(
+            player -> {
+              kills.put(player.getId(), 0);
+            });
   }
 
   public void handle(KillAndRespawnMessage m) {
@@ -60,7 +60,6 @@ public class KillThemAll extends Objective {
       addKill(m.shooterId);
     }
   }
-
 
   @Override
   public void seed(MinigameStore store) {
@@ -74,8 +73,9 @@ public class KillThemAll extends Objective {
 
   @Override
   public String instructions() {
-    String instructions = "You have 1 minute to kill as many players as possible,\n"
-        + "kill an astronaut by shooting them!";
+    String instructions =
+        "You have 1 minute to kill as many players as possible,\n"
+            + "kill an astronaut by shooting them!";
     return instructions;
   }
 
@@ -84,9 +84,7 @@ public class KillThemAll extends Objective {
     return "Kill Them All!";
   }
 
-  /**
-   * Update killer stats
-   */
+  /** Update killer stats */
   private void addKill(UUID astronautId) {
     kills.computeIfPresent(astronautId, (k, v) -> (v + 1));
   }

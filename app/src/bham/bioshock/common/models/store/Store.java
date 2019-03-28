@@ -1,24 +1,30 @@
 package bham.bioshock.common.models.store;
 
-import java.util.*;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import com.badlogic.gdx.Screen;
-import com.google.inject.Singleton;
 import bham.bioshock.client.AppPreferences;
 import bham.bioshock.common.models.GameBoard;
 import bham.bioshock.common.models.Planet;
 import bham.bioshock.common.models.Player;
+import com.badlogic.gdx.Screen;
+import com.google.inject.Singleton;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.UUID;
 
 /** Stores all of the models */
 @Singleton
 public class Store {
 
   private static final Logger logger = LogManager.getLogger(Store.class);
-      
+
   /** Max number of players in a game */
   // FOR TESTING
   public final int MAX_PLAYERS = 4;
+  /** the maximum number of rounds */
+  public int maxRounds = 1;
 
   private AppPreferences preferences;
   private Screen currentScreen;
@@ -26,13 +32,10 @@ public class Store {
   private GameBoard gameBoard = null;
   /** A list of players */
   private ArrayList<Player> players = new ArrayList<>(MAX_PLAYERS);
-
   /** The ID of the player that the client is controlling, only used client-side */
   private UUID mainPlayerId;
   /** The game's round */
   private int round = 1;
-  /** the maximum number of rounds */
-  public int maxRounds = 1;
   /** The next player's turn */
   private int turn = 0;
   /** If the game is reconnecting with the server */
@@ -58,8 +61,16 @@ public class Store {
     return gameBoard;
   }
 
+  public void setGameBoard(GameBoard gameBoard) {
+    this.gameBoard = gameBoard;
+  }
+
   public Screen getScreen() {
     return currentScreen;
+  }
+
+  public void setScreen(Screen screen) {
+    currentScreen = screen;
   }
 
   public boolean isMainPlayer(UUID id) {
@@ -67,14 +78,6 @@ public class Store {
       return false;
     }
     return mainPlayerId.equals(id);
-  }
-
-  public void setGameBoard(GameBoard gameBoard) {
-    this.gameBoard = gameBoard;
-  }
-
-  public void setScreen(Screen screen) {
-    currentScreen = screen;
   }
 
   public ArrayList<Player> getPlayers() {
@@ -116,16 +119,20 @@ public class Store {
     return getPlayer(mainPlayerId);
   }
 
-  public UUID getMainPlayerId() {
-    return mainPlayerId;
-  }
-
   public void setMainPlayer(UUID playerId) {
     this.mainPlayerId = playerId;
   }
 
+  public UUID getMainPlayerId() {
+    return mainPlayerId;
+  }
+
   public int getRound() {
     return round;
+  }
+
+  public void setRound(int round) {
+    this.round = round;
   }
 
   public int getTurn() {
@@ -136,10 +143,6 @@ public class Store {
     this.turn = turn;
   }
 
-  public void setRound(int round) {
-    this.round = round;
-  }
-
   /** Get's the player who's turn it is */
   public Player getMovingPlayer() {
     return players.get(turn % players.size());
@@ -148,11 +151,11 @@ public class Store {
   public void setPlanetOwner(UUID playerId, UUID planetId) {
     Planet planet = gameBoard.getPlanet(planetId);
     Player p = getPlayer(playerId);
-    if(planet == null) {
+    if (planet == null) {
       logger.fatal("Unknown planet " + planetId);
       return;
     }
-    if(p == null) {
+    if (p == null) {
       logger.fatal("Unknown player " + playerId);
       return;
     }
@@ -160,8 +163,7 @@ public class Store {
   }
 
   public UUID getPlanetOwner(UUID planetId) {
-    if (planetId == null)
-      return null;
+    if (planetId == null) return null;
     Planet planet = gameBoard.getPlanet(planetId);
     Player p = planet.getPlayerCaptured();
     return p == null ? null : p.getId();
@@ -169,7 +171,7 @@ public class Store {
 
   /**
    * Returns whether it's the main player's turn
-   * 
+   *
    * @return Whether it's the mainPlayer's turn
    */
   public boolean isMainPlayersTurn() {
@@ -178,7 +180,7 @@ public class Store {
 
   /**
    * Returns whether it's the passed in player's turn
-   * 
+   *
    * @param player the player being checked
    * @return Whether it's the passed in player's turns
    */
@@ -200,24 +202,23 @@ public class Store {
     }
   }
 
-
   public ArrayList<Player> getWinner() {
     int maxScore = 0;
     ArrayList<Player> winners = new ArrayList<Player>();
 
     for (Player player : players) {
-      if (player.getPoints() > maxScore)
-        maxScore = player.getPoints();
+      if (player.getPoints() > maxScore) maxScore = player.getPoints();
     }
 
-    for (Player player : players)
-      if (player.getPoints() == maxScore)
-        winners.add(player);
+    for (Player player : players) if (player.getPoints() == maxScore) winners.add(player);
 
     // will return the winner or the winners if its a tie;
     return winners;
   }
 
+  public MinigameStore getMinigameStore() {
+    return this.minigameStore;
+  }
 
   /*
    * MINIGAME
@@ -226,13 +227,9 @@ public class Store {
     this.minigameStore = store;
   }
 
-  public MinigameStore getMinigameStore() {
-    return this.minigameStore;
-  }
-
   public void resetMinigameStore() {
-    if(minigameStore != null) {
-      minigameStore.dispose();      
+    if (minigameStore != null) {
+      minigameStore.dispose();
     }
     minigameStore = null;
   }
@@ -263,12 +260,12 @@ public class Store {
     return reconnecting;
   }
 
-  public void setHost(boolean value) {
-    communicationStore.setHost(value);
-  }
-
   public boolean isHost() {
     return communicationStore.isHost();
+  }
+
+  public void setHost(boolean value) {
+    communicationStore.setHost(value);
   }
 
   public String getMinigameWinner() {
@@ -283,21 +280,20 @@ public class Store {
     return communicationStore;
   }
 
-  public void setMaxRounds(int n) {
-    this.maxRounds = n;
-  }
-
   public int getMaxRounds() {
     return this.maxRounds;
   }
 
+  public void setMaxRounds(int n) {
+    this.maxRounds = n;
+  }
+
   /**
    * Sorts the arraylist descending on the players scores
-   * 
+   *
    * @return arraylist of the players sorted descending on their score
    */
-
-  public ArrayList<Player> getSortedPlayers(){
+  public ArrayList<Player> getSortedPlayers() {
     ArrayList<Player> sorted = new ArrayList<>(players);
     sorted.sort(Comparator.comparingInt(Player::getPoints).reversed());
 
