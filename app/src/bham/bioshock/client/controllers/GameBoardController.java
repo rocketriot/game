@@ -147,6 +147,9 @@ public class GameBoardController extends Controller {
 
   public void movePlayerToRandomPoint(Player player) {
     player.setCoordinates(player.getRandomCoords());
+    if (store.isMainPlayersTurn()) {
+      endTurn();
+    }
   }
 
   public boolean hasReceivedGrid() {
