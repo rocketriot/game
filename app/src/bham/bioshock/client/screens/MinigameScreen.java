@@ -97,7 +97,7 @@ public class MinigameScreen implements Screen {
     // Dispose minigame assets
     assets.dispose(GamePart.MINIGAME);
     renderer.dispose();
-    router.call(Route.FADE_OUT, "minigameMusic");
+    router.call(Route.FADE_OUT, "minigame");
   }
 
   @Override
