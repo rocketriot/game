@@ -1,16 +1,17 @@
 package bham.bioshock.server;
 
-import java.io.IOException;
-import java.net.ServerSocket;
-import java.util.UUID;
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
 import bham.bioshock.Config;
 import bham.bioshock.common.models.store.Store;
 import bham.bioshock.common.utils.Clock;
 import bham.bioshock.communication.server.CommunicationMaker;
 import bham.bioshock.communication.server.StreamFactory;
 import bham.bioshock.server.interfaces.StoppableServer;
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+
+import java.io.IOException;
+import java.net.ServerSocket;
+import java.util.UUID;
 
 @Singleton
 public class Server implements StoppableServer {
@@ -40,17 +41,17 @@ public class Server implements StoppableServer {
 
     return true;
   }
-  
+
   public UUID getId() {
     return serverId;
   }
 
   public void stop() {
-    if(connMaker != null) {
-      connMaker.disconnect();      
+    if (connMaker != null) {
+      connMaker.disconnect();
     }
-    if(handler != null) {
-      handler.abort();      
+    if (handler != null) {
+      handler.abort();
     }
     if (serverSocket != null) {
       try {

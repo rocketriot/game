@@ -12,6 +12,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Intersector.MinimumTranslationVector;
+
 import java.io.Serializable;
 import java.util.Optional;
 import java.util.UUID;
@@ -25,18 +26,15 @@ import java.util.stream.Stream;
 public abstract class Entity implements Serializable {
 
   private static final long serialVersionUID = -8104423419633831645L;
-
-  /** ID of the entity */
-  protected UUID id;
-
-  /** Default size */
-  protected int width = 50;
-  protected int height = 50;
-
   /** Type of the entity */
   public final EntityType type;
   /** If is static */
   protected final Boolean isStatic;
+  /** ID of the entity */
+  protected UUID id;
+  /** Default size */
+  protected int width = 50;
+  protected int height = 50;
   /** Current position */
   protected Position pos;
   /** If has been loaded and is ready to draw */
@@ -57,28 +55,23 @@ public abstract class Entity implements Serializable {
 
   /** Current world specification */
   protected World world;
-
-  /** State of the entity */
-  private State state = State.CREATED;
-
   /** Collision boundary for the entity. Used to detect collisions */
   protected transient CollisionBoundary collisionBoundary;
   /** Collision handler for detecting collisions with other entities */
   protected transient CollisionHandler collisionHandler;
-
   /** Collision boundary size */
   protected float collisionWidth = 50;
   protected float collisionHeight = 50;
-
   /** Steps generator generating future positions */
   protected transient StepsGenerator stepsGenerator;
-
   /** Minigame objective, used to notify for events related to objective */
   protected transient Optional<Objective> objective = Optional.empty();
+  /** State of the entity */
+  private State state = State.CREATED;
 
   /**
    * Creates entity with random id, default position and zero speed vector
-   * 
+   *
    * @param w
    * @param x
    * @param y
@@ -100,9 +93,8 @@ public abstract class Entity implements Serializable {
 
   /**
    * Creates dynamic entity
-   * 
+   *
    * @see #Entity(World, float, float, boolean, EntityType)
-   * 
    * @param w
    * @param x
    * @param y
@@ -114,7 +106,7 @@ public abstract class Entity implements Serializable {
 
   /**
    * Get entity Id
-   * 
+   *
    * @return id
    */
   public UUID getId() {
@@ -123,7 +115,7 @@ public abstract class Entity implements Serializable {
 
   /**
    * Save collision handler
-   * 
+   *
    * @param collisionHandler
    */
   public void setCollisionHandler(CollisionHandler collisionHandler) {
@@ -135,7 +127,7 @@ public abstract class Entity implements Serializable {
 
   /**
    * Get width
-   * 
+   *
    * @return width
    */
   public int getWidth() {
@@ -144,26 +136,24 @@ public abstract class Entity implements Serializable {
 
   /**
    * Get height
-   * 
+   *
    * @return height
    */
   public int getHeight() {
     return height;
   }
 
-  /**
-   * Mark entity as removed
-   */
+  /** Mark entity as removed */
   public void remove() {
     state = State.REMOVED;
-    if(stepsGenerator != null) {
-      stepsGenerator.stop();      
+    if (stepsGenerator != null) {
+      stepsGenerator.stop();
     }
   }
 
   /**
    * Update entity state
-   * 
+   *
    * @param s
    */
   protected void setState(State s) {
@@ -174,16 +164,14 @@ public abstract class Entity implements Serializable {
     }
   }
 
-  /**
-   * Check if entity is marked as removed
-   */
+  /** Check if entity is marked as removed */
   public boolean isRemoved() {
     return state.equals(State.REMOVED);
   }
 
   /**
    * Get current position
-   * 
+   *
    * @return position
    */
   public Position getPos() {
@@ -192,16 +180,16 @@ public abstract class Entity implements Serializable {
 
   /**
    * Get current position relative to the planet center
-   * 
+   *
    * @return position in polar space
    */
   public PlanetPosition getPlanetPos() {
     return world.convert(getPos());
   }
-  
+
   /**
    * Get current x coordinate
-   * 
+   *
    * @return
    */
   public float getX() {
@@ -210,7 +198,7 @@ public abstract class Entity implements Serializable {
 
   /**
    * Get current y coordinate
-   * 
+   *
    * @return
    */
   public float getY() {
@@ -219,7 +207,7 @@ public abstract class Entity implements Serializable {
 
   /**
    * Get current step including current position and current speed vector
-   * 
+   *
    * @return
    */
   public Step currentStep() {
@@ -228,7 +216,7 @@ public abstract class Entity implements Serializable {
 
   /**
    * Check if the entity will be flying in the x, y position
-   * 
+   *
    * @param x
    * @param y
    * @return
@@ -239,7 +227,7 @@ public abstract class Entity implements Serializable {
 
   /**
    * Check if entity is an instance of a class
-   * 
+   *
    * @param c
    * @return
    */
@@ -248,15 +236,8 @@ public abstract class Entity implements Serializable {
   }
 
   /**
-   * Update rotation relative to the ground
-   */
-  public void setRotation(float rotation) {
-    this.rotation = rotation;
-  }
-
-  /**
    * Get current distance from the ground
-   * 
+   *
    * @return distance
    */
   public double distanceFromGround() {
@@ -265,7 +246,7 @@ public abstract class Entity implements Serializable {
 
   /**
    * Get distance form the ground in the position x, y
-   * 
+   *
    * @param x
    * @param y
    * @return distance
@@ -276,7 +257,7 @@ public abstract class Entity implements Serializable {
 
   /**
    * Get angle to center of a gravity
-   * 
+   *
    * @return angle in degrees
    */
   public double angleToCenterOfGravity() {
@@ -285,16 +266,21 @@ public abstract class Entity implements Serializable {
 
   /**
    * Get current entity rotation relative to the planet center
-   * 
+   *
    * @return angle in degrees
    */
   public double getRotation() {
     return getRotation(getX(), getY());
   }
 
+  /** Update rotation relative to the ground */
+  public void setRotation(float rotation) {
+    this.rotation = rotation;
+  }
+
   /**
    * Get entity rotation in position x,y relative to the planet center
-   * 
+   *
    * @return angle in degrees
    */
   public double getRotation(float x, float y) {
@@ -303,7 +289,7 @@ public abstract class Entity implements Serializable {
 
   /**
    * Get angle from the center of a gravity
-   * 
+   *
    * @return angle in degrees
    */
   public double angleFromCenter() {
@@ -312,7 +298,7 @@ public abstract class Entity implements Serializable {
 
   /**
    * Save objective
-   * 
+   *
    * @param o current objective
    */
   public void setObjective(Objective o) {
@@ -321,14 +307,12 @@ public abstract class Entity implements Serializable {
 
   /**
    * Get texture for rendering
-   * 
+   *
    * @return texture region
    */
   public abstract TextureRegion getTexture();
 
-  /**
-   * Load entity, create a sprite, collision boundary and step generator if entity is not static
-   */
+  /** Load entity, create a sprite, collision boundary and step generator if entity is not static */
   public void load() {
     this.loaded = true;
     setState(State.LOADED);
@@ -349,7 +333,7 @@ public abstract class Entity implements Serializable {
 
   /**
    * Get sprite
-   * 
+   *
    * @return sprite
    */
   public Sprite getSprite() {
@@ -358,7 +342,7 @@ public abstract class Entity implements Serializable {
 
   /**
    * Set entity speed
-   * 
+   *
    * @param angle
    * @param force
    */
@@ -368,7 +352,7 @@ public abstract class Entity implements Serializable {
 
   /**
    * Set current step
-   * 
+   *
    * @param step
    */
   public void setStep(Step step) {
@@ -377,17 +361,8 @@ public abstract class Entity implements Serializable {
   }
 
   /**
-   * Update current speed vector
-   * 
-   * @param s
-   */
-  public void setSpeedVector(SpeedVector s) {
-    speed = s;
-  }
-
-  /**
    * Get current speed vector
-   * 
+   *
    * @return speed vector
    */
   public SpeedVector getSpeedVector() {
@@ -395,8 +370,17 @@ public abstract class Entity implements Serializable {
   }
 
   /**
+   * Update current speed vector
+   *
+   * @param s
+   */
+  public void setSpeedVector(SpeedVector s) {
+    speed = s;
+  }
+
+  /**
    * Get future step if one is generated
-   * 
+   *
    * @param n
    * @return optional step
    */
@@ -405,9 +389,9 @@ public abstract class Entity implements Serializable {
   }
 
   /**
-   * Update entity position by requesting new step from the step generator
-   * and then chaning position and speed vector accordingly
-   * 
+   * Update entity position by requesting new step from the step generator and then chaning position
+   * and speed vector accordingly
+   *
    * @param delta
    */
   public void update(float delta) {
@@ -428,26 +412,24 @@ public abstract class Entity implements Serializable {
     collisionBoundary.update(pos, getRotation());
   }
 
-
   /**
-   * Default behaviour for the collision while predicting steps.
-   * Should be overridden by the subclass
+   * Default behaviour for the collision while predicting steps. Should be overridden by the
+   * subclass
    */
   public boolean handleCollisionMove(Step step, MinimumTranslationVector v, Entity e) {
     return false;
   }
-  
+
   /**
-   * Handle collision with the entity while touching it
-   * Should be overriden by the subclass
+   * Handle collision with the entity while touching it Should be overriden by the subclass
+   *
    * @param e
    */
   public void handleCollision(Entity e) {}
 
   /**
-   * Check if entity can collide with other entity
-   * Used to speed up collision check
-   * 
+   * Check if entity can collide with other entity Used to speed up collision check
+   *
    * @param e
    * @return
    */
@@ -457,68 +439,67 @@ public abstract class Entity implements Serializable {
 
   /**
    * Get entity collision boundary
-   * 
+   *
    * @return
    */
   public CollisionBoundary collisionBoundary() {
     return collisionBoundary;
   }
-  
+
   /**
    * Draw debug lines and step prediction
-   * 
+   *
    * @param shapeRenderer
    */
   public void drawDebug(ShapeRenderer shapeRenderer) {
     collisionBoundary().draw(shapeRenderer, Color.WHITE);
-    if (isStatic || !loaded)
-      return;
+    if (isStatic || !loaded) return;
     speed.draw(shapeRenderer, pos);
     Stream<Step> futureSteps = stepsGenerator.getFutureSteps();
 
     shapeRenderer.begin(ShapeType.Filled);
-    futureSteps.forEach(step -> {
-      shapeRenderer.circle(step.position.x, step.position.y, 5);
-    });
+    futureSteps.forEach(
+        step -> {
+          shapeRenderer.circle(step.position.x, step.position.y, 5);
+        });
     shapeRenderer.end();
   }
-  
+
   /**
    * Check the state of the entity
-   * 
+   *
    * @param s
    * @return
    */
   public boolean is(State s) {
     return state.equals(s);
   }
-  
+
   /**
    * Draw the entity
-   * 
+   *
    * @param batch
    */
   public void draw(SpriteBatch batch) {
     TextureRegion texture = getTexture();
-    if (texture == null)
-      return;
+    if (texture == null) return;
     Sprite sprite = getSprite();
     sprite.setRegion(texture);
     sprite.setPosition(getX() - (sprite.getWidth() / 2), getY());
     sprite.setRotation((float) getRotation());
     sprite.draw(batch);
   }
-  
+
   /**
    * After drawing, used to render add additional stuff on the top of the entity
-   * 
+   *
    * @param batch
    */
   public void afterDraw(SpriteBatch batch) {};
 
-
   /**
    * Returns step generator
+   *
    * @return step generator
    */
   public StepsGenerator getStepsGenerator() {
@@ -527,15 +508,18 @@ public abstract class Entity implements Serializable {
 
   /**
    * Checks if the entity is loaded
+   *
    * @return
    */
   public boolean loaded() {
     return loaded;
   }
-  
+
   /** Possible entity states */
   public enum State {
-    CREATED, LOADED, REMOVED, REMOVING,
+    CREATED,
+    LOADED,
+    REMOVED,
+    REMOVING,
   }
 }
-

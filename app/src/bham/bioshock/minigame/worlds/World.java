@@ -16,43 +16,67 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Random;
 
-/**
- * The type World.
- */
-abstract public class World implements Serializable {
+/** The type World. */
+public abstract class World implements Serializable {
 
   private static final long serialVersionUID = 4046769956963960819L;
-  private static float textureOffset = 0.265f;
-  protected int textureId;
   static Texture texture;
   static Texture frontTexture;
-  
+  private static float textureOffset = 0.265f;
+  protected int textureId;
   double planetRadius = 1000;
   double gravity = 1500;
 
   /**
-   * Draws planet texture on the screen
+   * Load textures from the asset manager
+   *
+   * @param manager
+   * @param id
    */
+  public static void loadTextures(AssetContainer manager, int id) {
+    manager.load(Assets.planetBase + id + ".png", Texture.class, GamePart.MINIGAME);
+    if (id == 4) {
+      manager.load(Assets.planetBase + "4_front.png", Texture.class, GamePart.MINIGAME);
+    }
+  }
+
+  /**
+   * Create textures using asset manager
+   *
+   * @param manager
+   * @param id
+   */
+  public static void createTextures(AssetContainer manager, int id) {
+    texture = manager.get(Assets.planetBase + id + ".png", Texture.class);
+    if (id == 4) {
+      textureOffset = 0.385f;
+      frontTexture = manager.get(Assets.planetBase + "4_front.png", Texture.class);
+    } else {
+      textureOffset = 0.265f;
+    }
+  }
+
+  /** Draws planet texture on the screen */
   public void draw(SpriteBatch batch) {
-    if(texture == null) return;
+    if (texture == null) return;
     float offset = (float) (textureOffset * getPlanetRadius());
     float radius = (float) getPlanetRadius() + offset;
-    batch.draw(texture, -radius, -radius, radius*2, radius*2);
+    batch.draw(texture, -radius, -radius, radius * 2, radius * 2);
   }
-  
+
   /**
    * Called after main drawing, used to draw something on top of other objects
-   * 
+   *
    * @param batch
    */
   public void afterDraw(SpriteBatch batch) {
-    if(textureId == 4) {   
-      if(frontTexture == null) return;
+    if (textureId == 4) {
+      if (frontTexture == null) return;
       batch.begin();
       float offset = (float) (textureOffset * getPlanetRadius());
-      float radius = (float) getPlanetRadius()+offset;
-      batch.draw(frontTexture, -radius, -radius, radius*2, radius*2);
-      batch.end();      
+      float radius = (float) getPlanetRadius() + offset;
+      batch.draw(frontTexture, -radius, -radius, radius * 2, radius * 2);
+      batch.end();
     }
   }
 
@@ -96,7 +120,7 @@ abstract public class World implements Serializable {
   }
 
   public abstract void init();
-  
+
   /**
    * Convert position to planet position.
    *
@@ -138,59 +162,63 @@ abstract public class World implements Serializable {
    *
    * @return the planet radius
    */
-  abstract public double getPlanetRadius();
+  public abstract double getPlanetRadius();
+
+  public void setPlanetRadius(int minigameRadius) {
+    this.planetRadius = minigameRadius;
+  }
 
   /**
    * Gets gravity.
    *
    * @return the gravity
    */
-  abstract public double getGravity();
+  public abstract double getGravity();
+
+  public void setGravity(int gravity) {
+    this.gravity = gravity;
+  }
 
   /**
    * Get player positions.
    *
    * @return the positions
    */
-  abstract public Position[] getPlayerPositions();
+  public abstract Position[] getPlayerPositions();
 
   /**
    * Gravity center position.
    *
    * @return the position
    */
-  abstract public Position gravityCenter();
+  public abstract Position gravityCenter();
 
   /**
    * Gets rockets.
    *
    * @return the rockets
    */
-  abstract public ArrayList<Rocket> getRockets();
+  public abstract ArrayList<Rocket> getRockets();
 
-  /**
-   * Spawns guns.
-   */
-  abstract public void spawnGuns();
+  /** Spawns guns. */
+  public abstract void spawnGuns();
 
   /**
    * Gets guns.
    *
    * @return the guns
    */
-  abstract public ArrayList<Gun> getGuns();
+  public abstract ArrayList<Gun> getGuns();
 
-  /**
-   * Spawns platforms
-   */
-  abstract public void spawnPlatforms();
+  /** Spawns platforms */
+  public abstract void spawnPlatforms();
 
   /**
    * Gets platforms.
    *
    * @return the platforms
    */
-  abstract public ArrayList<Platform> getPlatforms();
+  public abstract ArrayList<Platform> getPlatforms();
 
   /**
    * Method to get the platform path to a platform inclusive
@@ -198,71 +226,32 @@ abstract public class World implements Serializable {
    * @param platform the platform you want a path to
    * @return the path
    */
-  abstract public ArrayList<Platform> getPlatformPath(Platform platform);
+  public abstract ArrayList<Platform> getPlatformPath(Platform platform);
 
   /**
    * Get texture Id
-   * 
+   *
    * @return
    */
   public int getTextureId() {
     return textureId;
   }
-  
+
   /**
    * Get random position near the planet
-   * 
+   *
    * @return position
    */
   public Position getRandomPosition() {
     Random r = new Random();
     int angle = r.nextInt(360);
     float distance = (float) (getPlanetRadius() + 2000);
-    
+
     PlanetPosition pp = new PlanetPosition(angle, distance);
     return convert(pp);
-  }
-
-
-  /**
-   * Load textures from the asset manager
-   * 
-   * @param manager
-   * @param id
-   */
-  public static void loadTextures(AssetContainer manager, int id) {
-    manager.load(Assets.planetBase + id + ".png", Texture.class, GamePart.MINIGAME);
-    if(id == 4) {
-      manager.load(Assets.planetBase + "4_front.png", Texture.class, GamePart.MINIGAME);
-    }
-  }
-  
-  /**
-   * Create textures using asset manager
-   * 
-   * @param manager
-   * @param id
-   */
-  public static void createTextures(AssetContainer manager, int id) {
-    texture = manager.get(Assets.planetBase + id + ".png", Texture.class);
-    if(id == 4) {
-      textureOffset = 0.385f;
-      frontTexture = manager.get(Assets.planetBase + "4_front.png", Texture.class);
-    } else {
-      textureOffset = 0.265f;
-    }
-  }
-
-  public void setPlanetRadius(int minigameRadius) {
-    this.planetRadius = minigameRadius;
   }
 
   public void setPlanetTexture(int minigameTextureId) {
     textureId = minigameTextureId;
   }
-  
-  public void setGravity(int gravity) {
-    this.gravity = gravity;
-  }
-
 }

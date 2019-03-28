@@ -2,6 +2,7 @@ package bham.bioshock.common.models;
 
 import bham.bioshock.common.Direction;
 import bham.bioshock.common.models.Upgrade.Type;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.UUID;
@@ -9,59 +10,41 @@ import java.util.UUID;
 /** Stores the data of a player on the game board */
 public class Player implements Serializable {
 
-  private static final long serialVersionUID = 5775730008817100527L;
-
-  /** ID of the player */
-  private UUID id;
-
-  /** Username of the player */
-  private String username;
-
-  /** Location of the player */
-  private Coordinates coordinates;
-
-  /** The amount of fuel the player has left */
-  private float fuel = 100.0f;
-
-  /** The number of planets the player has captured */
-  private int planetsCaptured = 0;
-
-  /** Specifies if the player is controlled by AI */
-  private boolean isCpu = false;
-
-  /** Player's textureID */
-  private int textureID;
-
-  /** The number of points the player has */
-  private int points = 0;
-
-  /** Which way the player is facing */
-  private int rotate = -1;
-
-  /** Object containing infomation about a players move */
-  private ArrayList<Move> boardMove;
-
-  /** The coordinates at which the player first spawns on the gameboard */
-  private Coordinates spawnPoint;
-
-  /** The textual description of the last upgrade to be picked up by the player */
-  private String lastUpgradeText = null;
-
-  /** The coordinates the player will teleport to if they go through a black hole */
-  private Coordinates randomCoords;
-
   /** The maximum amount of fuel a player hold at one time */
   public static final float BASE_MAX_FUEL = 100f;
-
   /** The fuel cost for moving one grid space */
   public static final float FUEL_GRID_COST = 10f;
-
   /** Points gained per round for each planet owned */
   public static final int POINTS_PER_PLANET = 100;
-
   /** Fuel gained per round */
   public static final float FUEL_PER_ROUND = 50f;
-
+  private static final long serialVersionUID = 5775730008817100527L;
+  /** ID of the player */
+  private UUID id;
+  /** Username of the player */
+  private String username;
+  /** Location of the player */
+  private Coordinates coordinates;
+  /** The amount of fuel the player has left */
+  private float fuel = 100.0f;
+  /** The number of planets the player has captured */
+  private int planetsCaptured = 0;
+  /** Specifies if the player is controlled by AI */
+  private boolean isCpu = false;
+  /** Player's textureID */
+  private int textureID;
+  /** The number of points the player has */
+  private int points = 0;
+  /** Which way the player is facing */
+  private int rotate = -1;
+  /** Object containing infomation about a players move */
+  private ArrayList<Move> boardMove;
+  /** The coordinates at which the player first spawns on the gameboard */
+  private Coordinates spawnPoint;
+  /** The textual description of the last upgrade to be picked up by the player */
+  private String lastUpgradeText = null;
+  /** The coordinates the player will teleport to if they go through a black hole */
+  private Coordinates randomCoords;
   private boolean isAddingBlackHole = false;
 
   private ArrayList<Upgrade.Type> upgrades = new ArrayList<>();
@@ -72,15 +55,19 @@ public class Player implements Serializable {
     this.isCpu = isCpu;
     this.textureID = 0;
   }
-  
+
   public Player(String username, boolean isCpu) {
     this(UUID.randomUUID(), username, isCpu);
   }
 
+  public Player(String username) {
+    this(username, false);
+  }
+
   /** Sets the players coordinates to their original spawn coordinates */
   public void moveToSpawn() {
-    if(spawnPoint != null) {
-      setCoordinates(spawnPoint);      
+    if (spawnPoint != null) {
+      setCoordinates(spawnPoint);
     }
   }
 
@@ -90,10 +77,6 @@ public class Player implements Serializable {
       modifier -= 0.2;
     }
     return FUEL_GRID_COST * modifier;
-  }
-  
-  public Player(String username) {
-    this(username, false);
   }
 
   public UUID getId() {
@@ -128,6 +111,10 @@ public class Player implements Serializable {
     return fuel;
   }
 
+  public void setFuel(float fuel) {
+    this.fuel = fuel;
+  }
+
   /** Returns the maximum fuel a player has after modifiers e.g. upgrades or planets owned */
   public float getMaxFuel() {
     float modifier = 0;
@@ -136,10 +123,6 @@ public class Player implements Serializable {
     }
     modifier += planetsCaptured * 20;
     return BASE_MAX_FUEL + modifier;
-  }
-
-  public void setFuel(float fuel) {
-    this.fuel = fuel;
   }
 
   public void increaseFuel(float fuel) {
@@ -159,15 +142,14 @@ public class Player implements Serializable {
       lastUpgradeText = upgrade.getDisplayName();
     }
   }
-  
+
   public ArrayList<Upgrade.Type> getUpgrades() {
     return upgrades;
   }
-  
+
   public boolean hasUpgrade(Upgrade.Type type) {
     return upgrades.contains(type);
   }
-
 
   public int getPlanetsCaptured() {
     return planetsCaptured;
@@ -181,12 +163,12 @@ public class Player implements Serializable {
     return points;
   }
 
-  public void addPoints(int points){
-    this.points += points;
-  }
-  
   public void setPoints(int points) {
     this.points = points;
+  }
+
+  public void addPoints(int points) {
+    this.points += points;
   }
 
   public ArrayList<Move> getBoardMove() {
@@ -212,27 +194,29 @@ public class Player implements Serializable {
 
       // Handle when X is unchanged
       if (difference.getX() == 0) {
-        boardMove.add(new Move(difference.getY() < 0 ? Direction.DOWN : Direction.UP, nextCoordinates));
+        boardMove.add(
+            new Move(difference.getY() < 0 ? Direction.DOWN : Direction.UP, nextCoordinates));
       }
-      
+
       // Handle when Y is unchanged
       if (difference.getY() == 0) {
-        boardMove.add(new Move(difference.getX() < 0 ? Direction.LEFT : Direction.RIGHT, nextCoordinates));
+        boardMove.add(
+            new Move(difference.getX() < 0 ? Direction.LEFT : Direction.RIGHT, nextCoordinates));
       }
     }
   }
-  
+
   @Override
-  public boolean equals(Object o) { 
-      // If the object is compared with itself then return true   
-      if (o == this) { 
-          return true; 
-      }
-      if (!(o instanceof Player)) { 
-          return false; 
-      } 
-      Player p = (Player) o; 
-      return this.id.equals(p.getId());
+  public boolean equals(Object o) {
+    // If the object is compared with itself then return true
+    if (o == this) {
+      return true;
+    }
+    if (!(o instanceof Player)) {
+      return false;
+    }
+    Player p = (Player) o;
+    return this.id.equals(p.getId());
   }
 
   public Coordinates getSpawnPoint() {
@@ -242,7 +226,7 @@ public class Player implements Serializable {
   public void setSpawnPoint(Coordinates spawnPoint) {
     this.spawnPoint = spawnPoint;
   }
-    
+
   /** Handles changes to player when a new round begins */
   public void newRound() {
     addPoints(planetsCaptured * POINTS_PER_PLANET);
@@ -268,26 +252,6 @@ public class Player implements Serializable {
     return randomCoords;
   }
 
-  public class Move implements Serializable {
-    private Direction direction;
-    private Coordinates coordinates;
-
-    private static final long serialVersionUID = 5775730008817100526L;
-
-    public Move(Direction direction, Coordinates coordinates) {
-      this.direction = direction;
-      this.coordinates = coordinates;
-    }
-
-    public Direction getDirection() {
-      return direction;
-    }
-
-    public Coordinates getCoordinates() {
-      return coordinates;
-    }
-  }
-
   public int getTextureID() {
     return textureID;
   }
@@ -307,5 +271,24 @@ public class Player implements Serializable {
   public void addedBlackHole() {
     isAddingBlackHole = false;
     upgrades.remove(Upgrade.Type.BLACK_HOLE);
+  }
+
+  public class Move implements Serializable {
+    private static final long serialVersionUID = 5775730008817100526L;
+    private Direction direction;
+    private Coordinates coordinates;
+
+    public Move(Direction direction, Coordinates coordinates) {
+      this.direction = direction;
+      this.coordinates = coordinates;
+    }
+
+    public Direction getDirection() {
+      return direction;
+    }
+
+    public Coordinates getCoordinates() {
+      return coordinates;
+    }
   }
 }

@@ -1,35 +1,26 @@
 package bham.bioshock.minigame.ai;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import bham.bioshock.minigame.models.Astronaut;
 import bham.bioshock.minigame.models.Bullet;
 import bham.bioshock.minigame.models.astronaut.AstronautMove;
 import bham.bioshock.minigame.worlds.World;
 
-/**
- * The CPU Astronaut.
- */
+import java.util.ArrayList;
+import java.util.Collection;
+
+/** The CPU Astronaut. */
 public class CpuAstronaut {
 
-  /**
-   * The Astronaut.
-   */
+  /** The Astronaut. */
   Astronaut astronaut;
 
-  /**
-   * The current move.
-   */
+  /** The current move. */
   AstronautMove move;
 
-  /**
-   * The World.
-   */
+  /** The World. */
   World world;
 
-  /**
-   * The Bullets.
-   */
+  /** The Bullets. */
   ArrayList<Bullet> bullets = new ArrayList<>();
 
   /**
@@ -44,25 +35,19 @@ public class CpuAstronaut {
     move = new AstronautMove();
   }
 
-  /**
-   * Move left.
-   */
+  /** Move left. */
   public void moveLeft() {
     move.movingLeft = true;
     move.movingRight = false;
   }
 
-  /**
-   * Move right.
-   */
+  /** Move right. */
   public void moveRight() {
     move.movingLeft = false;
     move.movingRight = true;
   }
 
-  /**
-   * Jump.
-   */
+  /** Jump. */
   public void jump() {
     move.jumping = true;
   }
@@ -76,16 +61,12 @@ public class CpuAstronaut {
     return bullets;
   }
 
-  /**
-   * Clear bullets list.
-   */
+  /** Clear bullets list. */
   public void clearBullets() {
     bullets.clear();
   }
 
-  /**
-   * Shoot.
-   */
+  /** Shoot. */
   public void shoot() {
     Bullet b = Bullet.createForPlayer(world, astronaut);
     bullets.add(b);
@@ -110,5 +91,4 @@ public class CpuAstronaut {
     move = new AstronautMove();
     return oldMove;
   }
-
 }

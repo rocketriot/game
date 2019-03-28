@@ -5,6 +5,7 @@ import bham.bioshock.client.Route;
 import bham.bioshock.client.Router;
 import bham.bioshock.client.assets.AssetContainer;
 import bham.bioshock.client.assets.Assets;
+import bham.bioshock.client.scenes.minigame.MinigameHud;
 import bham.bioshock.common.models.store.MinigameStore;
 import bham.bioshock.common.models.store.Store;
 import bham.bioshock.minigame.models.*;
@@ -23,22 +24,18 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
-import bham.bioshock.client.scenes.minigame.MinigameHud;
 
 import java.util.ArrayList;
 import java.util.Collection;
 
-/**
- * Main minigame renderer
- */
+/** Main minigame renderer */
 public class Renderer {
-  
+
+  private final int GAME_WORLD_WIDTH = Config.GAME_WORLD_WIDTH;
+  private final int GAME_WORLD_HEIGHT = Config.GAME_WORLD_HEIGHT;
   /** Main player */
   private Astronaut mainPlayer;
-
-  /**
-   * Rendering components
-   */
+  /** Rendering components */
   private ShapeRenderer shapeRenderer;
   private Sprite background;
   private Stage stage;
@@ -46,21 +43,13 @@ public class Renderer {
   private SpriteBatch backgroundBatch;
   private SpriteBatch textBatch;
   private Viewport viewport;
-
-  /**
-   * Camera properties
-   */
+  /** Camera properties */
   private OrthographicCamera cam;
   private Vector3 lerpTarget = new Vector3();
   private double camRotation;
-  
-  private final int GAME_WORLD_WIDTH = Config.GAME_WORLD_WIDTH;
-  private final int GAME_WORLD_HEIGHT = Config.GAME_WORLD_HEIGHT;
-  
-  /**
-   * Stores and router
-   */
+  /** Stores and router */
   private Store store;
+
   private Router router;
   private MinigameStore minigameStore;
 
@@ -68,10 +57,10 @@ public class Renderer {
   private World world;
   private AssetContainer assets;
   private float time;
-  
+
   /**
    * Create a renderer, store minigame store
-   * 
+   *
    * @param store
    * @param router
    * @param manager
@@ -82,10 +71,8 @@ public class Renderer {
     this.router = router;
     this.assets = assets;
   }
-  
-  /**
-   * Initialise rendering components 
-   */
+
+  /** Initialise rendering components */
   public void show() {
     mainPlayer = minigameStore.getMainPlayer();
     shapeRenderer = new ShapeRenderer();
@@ -100,7 +87,7 @@ public class Renderer {
 
     CollisionHandler collisionHandler = new CollisionHandler(minigameStore);
     minigameStore.setCollisionHandler(collisionHandler);
-    
+
     hud = new MinigameHud(batch, assets, store, router);
 
     loadSprites();
@@ -108,7 +95,8 @@ public class Renderer {
     // Setup the input processing
     InputMultiplexer multiplexer = new InputMultiplexer();
     multiplexer.addProcessor(stage);
-    multiplexer.addProcessor(new InputListener(minigameStore, router, minigameStore.getCollisionHandler(), hud));
+    multiplexer.addProcessor(
+        new InputListener(minigameStore, router, minigameStore.getCollisionHandler(), hud));
     Gdx.input.setInputProcessor(multiplexer);
   }
 
@@ -116,7 +104,7 @@ public class Renderer {
     CollisionHandler collisionHandler = minigameStore.getCollisionHandler();
     viewport = new FitViewport(GAME_WORLD_WIDTH, GAME_WORLD_HEIGHT, cam);
     stage = new Stage(viewport);
-    
+
     Astronaut.createTextures(assets);
     Rocket.createTextures(assets);
     Gun.createTextures(assets);
@@ -130,19 +118,19 @@ public class Renderer {
     background = new Sprite(assets.get(Assets.gameBackground, Texture.class));
 
     Objective objective = minigameStore.getObjective();
-    
+
     for (Entity e : getEntities()) {
       e.load();
       e.setCollisionHandler(collisionHandler);
-      if(objective != null) {
-        e.setObjective(minigameStore.getObjective());        
+      if (objective != null) {
+        e.setObjective(minigameStore.getObjective());
       }
     }
   }
 
   /**
    * Get all entities, both dynamic and static
-   * 
+   *
    * @return list of all entities to render
    */
   public Collection<Entity> getEntities() {
@@ -154,16 +142,16 @@ public class Renderer {
 
   /**
    * Main render function
-   * 
+   *
    * @param delta
    */
   public void render(float delta) {
     // If client disconnected show reconnecting screen
-    if(store.isReconnecting()) {
+    if (store.isReconnecting()) {
       router.call(Route.LOADING, "Reconnecting...");
       return;
     }
-    
+
     time += delta;
     batch.setProjectionMatrix(cam.combined);
     textBatch.setProjectionMatrix(cam.combined);
@@ -181,7 +169,7 @@ public class Renderer {
 
     // Get all entities
     Collection<Entity> entities = getEntities();
-    
+
     // Draw background
     drawBackground();
 
@@ -196,7 +184,7 @@ public class Renderer {
     entities.forEach(e -> e.afterDraw(textBatch));
     entities.forEach(e -> e.update(delta));
     world.afterDraw(batch);
-    
+
     // Draw the ui
     batch.setProjectionMatrix(hud.getStage().getCamera().combined);
     hud.getStage().act(delta);
@@ -204,17 +192,15 @@ public class Renderer {
     hud.getStage().draw();
     minigameStore.getEntities().removeIf(e -> e.isRemoved());
     minigameStore.getStaticEntities().removeIf(e -> e.isRemoved());
-    
+
     // Send to server updated player position every second
-    if(time > 1f) {
+    if (time > 1f) {
       time -= 1f;
       router.call(Route.MINIGAME_STEP);
     }
   }
 
-  /**
-   * Draw background
-   */
+  /** Draw background */
   public void drawBackground() {
     backgroundBatch.begin();
     backgroundBatch.disableBlending();
@@ -224,25 +210,23 @@ public class Renderer {
 
   /**
    * Resize the viewport
-   * 
+   *
    * @param width
    * @param height
    */
   public void resize(int width, int height) {
-    if(stage != null) {
-      stage.getViewport().update(width, height, true);      
+    if (stage != null) {
+      stage.getViewport().update(width, height, true);
     }
   }
 
-  /**
-   * Dispose all rendering components
-   */
+  /** Dispose all rendering components */
   public void dispose() {
-    if(batch != null) {
-      batch.dispose();      
+    if (batch != null) {
+      batch.dispose();
     }
-    if(backgroundBatch != null) {
-      backgroundBatch.dispose();      
+    if (backgroundBatch != null) {
+      backgroundBatch.dispose();
     }
     textBatch.dispose();
     hud.dispose();

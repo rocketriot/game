@@ -13,7 +13,7 @@ public abstract class StaticEntity extends Entity {
 
   /**
    * Constructs new static entity
-   * 
+   *
    * @param w
    * @param x
    * @param y
@@ -23,14 +23,12 @@ public abstract class StaticEntity extends Entity {
     super(w, x, y, true, type);
   }
 
-  /**
-   * Get texture for rendering
-   */
+  /** Get texture for rendering */
   public abstract TextureRegion getTexture();
 
   /**
    * Set new position and update collision boundary
-   * 
+   *
    * @param x
    * @param y
    */
@@ -39,5 +37,4 @@ public abstract class StaticEntity extends Entity {
     this.pos.y = y;
     this.collisionBoundary.update(this.pos, getRotation());
   }
-
 }

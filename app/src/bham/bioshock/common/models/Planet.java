@@ -25,7 +25,7 @@ public class Planet implements Serializable {
   private boolean drawn = false;
   /** The texture ID for the object */
   private int textureID;
-  
+
   private int minigamePlanetRadius;
   private int minigamePlanetGravity;
 
@@ -85,23 +85,22 @@ public class Planet implements Serializable {
   public void setTextureID(int textureID) {
     this.textureID = textureID;
   }
-  
+
   public int getMinigameTextureId() {
-    return textureID+1;
+    return textureID + 1;
   }
-  
+
   public int getMinigameRadius() {
     return this.minigamePlanetRadius;
   }
-  
+
   public int getMinigameGravity() {
     return this.minigamePlanetGravity;
   }
-  
+
   public void randomMinigameProps() {
     Random r = new Random();
     this.minigamePlanetRadius = r.nextInt(1500) + 1000;
     this.minigamePlanetGravity = r.nextInt(2000) + 500;
-    
   }
 }

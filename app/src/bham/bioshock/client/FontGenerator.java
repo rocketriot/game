@@ -1,5 +1,6 @@
 package bham.bioshock.client;
 
+import bham.bioshock.client.assets.Assets;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
@@ -8,11 +9,11 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
-import bham.bioshock.client.assets.Assets;
 
 public class FontGenerator {
   /**
    * Generates a bitmap font (currently SpaceMono)
+   *
    * @param fontSize the size of the font to be generated
    * @param color the color of the font to be generated
    * @return a bitmap font
@@ -32,8 +33,9 @@ public class FontGenerator {
     return font;
   }
 
-  /** 
-   * Generates a font with a default white color 
+  /**
+   * Generates a font with a default white color
+   *
    * @param fontSize the size of the font to be generated
    * @return a white bitmap font
    */
@@ -43,6 +45,7 @@ public class FontGenerator {
 
   /**
    * Figures out the offset to align a string center
+   *
    * @param font the font to generate offset of
    * @param value the string to gennerate the offset of
    * @return offset to use to center the string on the screen
@@ -52,5 +55,5 @@ public class FontGenerator {
     glyphLayout.setText(font, value);
 
     return glyphLayout.width / 2;
-}
+  }
 }

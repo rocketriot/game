@@ -1,33 +1,26 @@
 package bham.bioshock.minigame.models;
 
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import bham.bioshock.client.assets.AssetContainer;
 import bham.bioshock.client.assets.Assets;
 import bham.bioshock.client.assets.Assets.GamePart;
 import bham.bioshock.minigame.worlds.World;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+
 import java.util.HashMap;
 
-/**
- * The type Rocket.
- */
+/** The type Rocket. */
 public class Rocket extends Entity {
 
   private static final long serialVersionUID = 471939014038953098L;
 
-  /**
-   * List of textures.
-   */
+  /** List of textures. */
   private static HashMap<Integer, Texture> textures = new HashMap<>();
 
-  /**
-   * Which colour the rocket will be.
-   */
+  /** Which colour the rocket will be. */
   private Integer color;
 
-  /**
-   * The rocket texture
-   */
+  /** The rocket texture */
   private TextureRegion texture;
 
   /**
@@ -79,13 +72,10 @@ public class Rocket extends Entity {
     return texture;
   }
 
-  /**
-   * Load the rocket.
-   */
+  /** Load the rocket. */
   public void load() {
     texture = new TextureRegion(textures.get(color));
     super.load();
     sprite.setOrigin(sprite.getWidth() / 2, 0);
   }
-
 }

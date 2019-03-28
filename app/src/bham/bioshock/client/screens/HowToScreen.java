@@ -15,9 +15,7 @@ import com.badlogic.gdx.utils.Scaling;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-/**
- * The How To Screen.
- */
+/** The How To Screen. */
 public class HowToScreen extends ScreenMaster {
 
   private Table textTable;
@@ -47,7 +45,6 @@ public class HowToScreen extends ScreenMaster {
   private Container planetContainer;
   private ArrayList<Label> upgradeDescs;
 
-
   /**
    * Instantiates a new How to screen.
    *
@@ -57,17 +54,16 @@ public class HowToScreen extends ScreenMaster {
     super(router, assets);
     descriptionFromFile = xmlInteraction.xmlToDescription();
     loadImages();
-
   }
 
-  private void loadImages(){
+  private void loadImages() {
     title = new Image(new Texture(Assets.howToPlayButton));
     title.setWidth(100);
     title.setScaling(Scaling.fillX);
     cursor = new Image(new Texture(Assets.cursor));
     cursor.setWidth(50);
     cursor.setScaling(Scaling.fillX);
-    planet = new Image(new Texture(Assets.planetsFolder+"/1.png"));
+    planet = new Image(new Texture(Assets.planetsFolder + "/1.png"));
     planet.setWidth(100);
     planet.setScaling(Scaling.fillX);
     (planetContainer = new Container()).setActor(planet);
@@ -80,23 +76,24 @@ public class HowToScreen extends ScreenMaster {
     upgrade.setScaling(Scaling.fillX);
 
     // game description text is read from the XML file
-    description = new Label(descriptionFromFile.get("gameDescription"),skin);
-    //description.setWrap(true);
-    howToMoveA = new Label(descriptionFromFile.get("howToMove_1"),skin);
-    howToMoveB = new Label(descriptionFromFile.get("howToMove_2"),skin);
-    howToMoveC = new Label(descriptionFromFile.get("howToMove_3"),skin);
+    description = new Label(descriptionFromFile.get("gameDescription"), skin);
+    // description.setWrap(true);
+    howToMoveA = new Label(descriptionFromFile.get("howToMove_1"), skin);
+    howToMoveB = new Label(descriptionFromFile.get("howToMove_2"), skin);
+    howToMoveC = new Label(descriptionFromFile.get("howToMove_3"), skin);
     howToMoveA.setAlignment(Align.left);
     howToMoveB.setAlignment(Align.left);
     howToMoveC.setAlignment(Align.left);
-    howToCaptureA = new Label(descriptionFromFile.get("howToCapture_1"),skin);
-    howToCaptureB = new Label(descriptionFromFile.get("howToCapture_2"),skin);
+    howToCaptureA = new Label(descriptionFromFile.get("howToCapture_1"), skin);
+    howToCaptureB = new Label(descriptionFromFile.get("howToCapture_2"), skin);
     howToCaptureA.setAlignment(Align.left);
     howToCaptureB.setAlignment(Align.left);
-    fuelDescription = new Label(descriptionFromFile.get("fuel"),skin);
-    upgradeDescription = new Label(descriptionFromFile.get("upgrade"),skin);
+    fuelDescription = new Label(descriptionFromFile.get("fuel"), skin);
+    upgradeDescription = new Label(descriptionFromFile.get("upgrade"), skin);
     upgradeDescs = new ArrayList<>();
     for (Type t : Type.values()) {
-      upgradeDescs.add(new Label("- " + Upgrade.getTypeDisplayName(t) + ": " + Upgrade.getTypeDesc(t), skin));
+      upgradeDescs.add(
+          new Label("- " + Upgrade.getTypeDisplayName(t) + ": " + Upgrade.getTypeDesc(t), skin));
     }
     fuelDescription.setWrap(true);
 
@@ -104,14 +101,13 @@ public class HowToScreen extends ScreenMaster {
     float containerWidth = screenWidth * 0.8f;
     float containerHeight = screenHeight * 0.7f;
     tableContainer.setSize(containerWidth, containerHeight);
-    tableContainer.setPosition((screenWidth - containerWidth) / 2.0f,
-            (screenHeight - containerHeight) / 2.0f);
+    tableContainer.setPosition(
+        (screenWidth - containerWidth) / 2.0f, (screenHeight - containerHeight) / 2.0f);
 
     textTable = new Table(skin);
     textTable.setFillParent(true);
     textTable.top();
     textTable.setHeight(containerHeight);
-
   }
 
   private void assemble() {
@@ -161,10 +157,10 @@ public class HowToScreen extends ScreenMaster {
   @Override
   public void show() {
     super.show();
-    
+
     drawBackButton();
     assemble();
-    
+
     Gdx.input.setInputProcessor(stage);
   }
 
@@ -174,16 +170,11 @@ public class HowToScreen extends ScreenMaster {
   }
 
   @Override
-  public void pause() {
-  }
+  public void pause() {}
 
   @Override
-  public void resume() {
-  }
+  public void resume() {}
 
   @Override
-  public void hide() {
-  }
-
-
+  public void hide() {}
 }

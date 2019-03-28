@@ -22,12 +22,11 @@ public class Upgrade implements Serializable {
   /** Stores the display name of the upgrade */
   private String displayName;
 
-  public enum Type {
-    FUEL_TANK_SIZE,
-    ENGINE_EFFICIENCY,
-    FUEL_PER_ROUND,
-    BLACK_HOLE,
-    MINIGAME_SHIELD
+  public Upgrade(Coordinates coordinates) {
+    this.id = UUID.randomUUID();
+    this.coordinates = coordinates;
+
+    generateUpgradeType();
   }
 
   public static String getTypeDesc(Type type) {
@@ -36,11 +35,11 @@ public class Upgrade implements Serializable {
       desc = "Fuel capacity increased by 50";
     } else if (type.equals(Type.ENGINE_EFFICIENCY)) {
       desc = "Fuel costs reduced by 20%";
-    } else if(type.equals(Type.FUEL_PER_ROUND)) {
+    } else if (type.equals(Type.FUEL_PER_ROUND)) {
       desc = "Receive 10 extra fuel per round";
-    } else if(type.equals(Type.BLACK_HOLE)) {
+    } else if (type.equals(Type.BLACK_HOLE)) {
       desc = "Placeable black hole which teleports players to a random board location";
-    } else if(type.equals(Type.MINIGAME_SHIELD)) {
+    } else if (type.equals(Type.MINIGAME_SHIELD)) {
       desc = "Gain shield at the start of each minigame which blocks 4 hearts of damage";
     }
     return desc;
@@ -52,21 +51,14 @@ public class Upgrade implements Serializable {
       name = "Fuel tank upgrade";
     } else if (type.equals(Type.ENGINE_EFFICIENCY)) {
       name = "Engine efficiency upgrade";
-    } else if(type.equals(Type.FUEL_PER_ROUND)) {
+    } else if (type.equals(Type.FUEL_PER_ROUND)) {
       name = "Fuel gain upgrade";
-    } else if(type.equals(Type.BLACK_HOLE)) {
+    } else if (type.equals(Type.BLACK_HOLE)) {
       name = "Black hole";
-    } else if(type.equals(Type.MINIGAME_SHIELD)) {
+    } else if (type.equals(Type.MINIGAME_SHIELD)) {
       name = "Minigame shield";
     }
     return name;
-  }
-
-  public Upgrade(Coordinates coordinates) {
-    this.id = UUID.randomUUID();
-    this.coordinates = coordinates;
-
-    generateUpgradeType();
   }
 
   /** Returns a random upgrade option */
@@ -95,5 +87,13 @@ public class Upgrade implements Serializable {
 
   public String getDisplayName() {
     return displayName;
+  }
+
+  public enum Type {
+    FUEL_TANK_SIZE,
+    ENGINE_EFFICIENCY,
+    FUEL_PER_ROUND,
+    BLACK_HOLE,
+    MINIGAME_SHIELD
   }
 }

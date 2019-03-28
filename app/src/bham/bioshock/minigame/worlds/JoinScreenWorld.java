@@ -4,15 +4,15 @@ import bham.bioshock.common.Position;
 import bham.bioshock.minigame.models.Gun;
 import bham.bioshock.minigame.models.Platform;
 import bham.bioshock.minigame.models.Rocket;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 import java.util.ArrayList;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 public class JoinScreenWorld extends World {
   private static final long serialVersionUID = 1L;
+  Position gravityCenter = new Position(0, 0);
   private double radius;
   private double gravity;
-  Position gravityCenter = new Position(0, 0);
 
   public JoinScreenWorld() {
     radius = 5000;
@@ -45,9 +45,7 @@ public class JoinScreenWorld extends World {
   }
 
   @Override
-  public void spawnGuns() {
-    
-  }
+  public void spawnGuns() {}
 
   @Override
   public ArrayList<Gun> getGuns() {
@@ -55,9 +53,7 @@ public class JoinScreenWorld extends World {
   }
 
   @Override
-  public void spawnPlatforms() {
-
-  }
+  public void spawnPlatforms() {}
 
   @Override
   public ArrayList<Platform> getPlatforms() {
@@ -68,11 +64,10 @@ public class JoinScreenWorld extends World {
   public ArrayList<Platform> getPlatformPath(Platform platform) {
     return null;
   }
-  
+
   @Override
   public void afterDraw(SpriteBatch batch) {}
 
   @Override
-  public void init() {
-  }
+  public void init() {}
 }

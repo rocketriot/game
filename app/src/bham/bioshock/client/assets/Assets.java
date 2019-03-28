@@ -15,7 +15,7 @@ public class Assets {
   public static final String loading = "app/assets/animations/loading2.png";
   public static final String gameBackground = "app/assets/backgrounds/game.png";
   public static final String menuBackground = "app/assets/backgrounds/menu.png";
-  
+
   // Menu assets
   public static final String logo = "app/assets/ui/main-menu/logo.png";
   public static final String hostButton = "app/assets/ui/main-menu/host-game.png";
@@ -23,7 +23,8 @@ public class Assets {
   public static final String joinButton = "app/assets/ui/main-menu/join-game.png";
   public static final String joinButtonHover = "app/assets/ui/main-menu/join-game-hover.png";
   public static final String preferencesButton = "app/assets/ui/main-menu/preferences.png";
-  public static final String preferencesButtonHover = "app/assets/ui/main-menu/preferences-hover.png";
+  public static final String preferencesButtonHover =
+      "app/assets/ui/main-menu/preferences-hover.png";
   public static final String howToPlayButton = "app/assets/ui/main-menu/how-to-play.png";
   public static final String howToPlayButtonHover = "app/assets/ui/main-menu/how-to-play-hover.png";
   public static final String exitButton = "app/assets/ui/main-menu/exit.png";
@@ -44,10 +45,10 @@ public class Assets {
   public static final String upgrade = "app/assets/entities/upgrade.png";
   public static final String particleEffectsFolder = "app/assets/particle-effects";
   public static final String particleEffect = "app/assets/particle-effects/rocket-trail.p";
-  
+
   // General HUD assets
-  public static final String pauseIcon = "app/assets/ui/pause.png";  
-  
+  public static final String pauseIcon = "app/assets/ui/pause.png";
+
   // Gameboard HUD assets
   public static final String turnPointer = "app/assets/ui/turn-pointer.png";
 
@@ -58,7 +59,7 @@ public class Assets {
   public static final String bullet = "app/assets/minigame/bullet.png";
   public static final String bulletAnim = "app/assets/minigame/bullet_animation.png";
   public static final String blackHoleAnimationSheet = "app/assets/animations/blackHoleSheet.png";
-  
+
   // Minigame Astronauts
   public static final String hearts = "app/assets/minigame/hearts.png";
   public static final String astroBase = "app/assets/minigame/astronauts/";
@@ -68,16 +69,16 @@ public class Assets {
   public static final String astroFFall = "/ffall.png";
   public static final String astroShield = "/shield.png";
   public static final String astroShieldGun = "/shield_gun.png";
-  
+
   // Minigame world
   public static final String planetBase = "app/assets/minigame/planets/";
   public static final String platformsBase = "app/assets/minigame/platforms/";
-  
+
   // Music
   public static final String mainMenuMusic = "app/assets/music/MainMenuMusic.mp3";
   public static final String gameBoardMusic = "app/assets/music/GameBoardMusic.mp3";
   public static final String miniGameMusic = "app/assets/music/MinigameMusic.mp3";
-  
+
   // Sound effects
   public static final String menuSelectSound = "app/assets/music/MenuSelect.wav";
   public static final String rocketSound = "app/assets/music/RocketSound.wav";
@@ -91,10 +92,10 @@ public class Assets {
   // Join Screen
   public static final String loadingBase = "app/assets/animations/loading";
   public static final String connectedBase = "app/assets/animations/connectedAnimSheet";
-  
+
   /**
    * Split texture to regions
-   * 
+   *
    * @param manager
    * @param path
    * @param fnum
@@ -107,22 +108,25 @@ public class Assets {
 
   /**
    * Convert texture to animation
-   * 
+   *
    * @param list
    * @param fnum
    * @param skip
    * @param duration
    * @return
    */
-  public static Animation<TextureRegion> textureToAnimation(TextureRegion[][] list, int fnum, int skip, float duration) {
+  public static Animation<TextureRegion> textureToAnimation(
+      TextureRegion[][] list, int fnum, int skip, float duration) {
     TextureRegion[] frames = new TextureRegion[fnum - skip];
     for (int i = skip; i < fnum; i++) {
       frames[i - skip] = list[0][i];
     }
     return new Animation<TextureRegion>(duration, frames);
   }
-  
+
   public enum GamePart {
-    MENU, MINIGAME, BOARDGAME
+    MENU,
+    MINIGAME,
+    BOARDGAME
   }
 }

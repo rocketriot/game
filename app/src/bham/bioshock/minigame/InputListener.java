@@ -16,6 +16,7 @@ import com.badlogic.gdx.InputAdapter;
 
 public class InputListener extends InputAdapter {
 
+  private final int SHOOT_DELAY = 200;
   private long lastShot;
   private Astronaut mainPlayer;
   private MinigameStore localStore;
@@ -23,10 +24,12 @@ public class InputListener extends InputAdapter {
   private Router router;
   private CollisionHandler collisionHandler;
   private MinigameHud hud;
-  private final int SHOOT_DELAY = 200;
 
-  public InputListener(MinigameStore minigameStore, Router router,
-      CollisionHandler collisionHandler, MinigameHud hud) {
+  public InputListener(
+      MinigameStore minigameStore,
+      Router router,
+      CollisionHandler collisionHandler,
+      MinigameHud hud) {
     this.world = minigameStore.getWorld();
     this.mainPlayer = minigameStore.getMainPlayer();
     this.localStore = minigameStore;
@@ -41,19 +44,20 @@ public class InputListener extends InputAdapter {
 
     if (localStore.getObjective() instanceof Platformer) {
       Platformer o = (Platformer) localStore.getObjective();
-      if(o.checkIfFrozen(mainPlayer.getId()) ) {
+      if (o.checkIfFrozen(mainPlayer.getId())) {
         canAct = false;
       } else {
         canAct = true;
       }
     }
 
-    if (Input.Keys.SPACE == keyCode && (System.currentTimeMillis() - lastShot >= SHOOT_DELAY)
+    if (Input.Keys.SPACE == keyCode
+        && (System.currentTimeMillis() - lastShot >= SHOOT_DELAY)
         && mainPlayer.getEquipment().haveGun) {
-      if(canAct) {
+      if (canAct) {
         createBullet();
         SoundController.playSound("laser");
-        lastShot = System.currentTimeMillis();        
+        lastShot = System.currentTimeMillis();
       }
     }
     if (keyCode == Input.Keys.LEFT || keyCode == Input.Keys.A) {
@@ -66,13 +70,13 @@ public class InputListener extends InputAdapter {
       mainPlayer.jump(true);
     }
 
-    if(canAct) {
+    if (canAct) {
       mainPlayer.moveChange();
       router.call(Route.MINIGAME_MOVE);
     } else {
       mainPlayer.updateMove(new AstronautMove());
     }
-    
+
     return false;
   }
 
@@ -108,5 +112,4 @@ public class InputListener extends InputAdapter {
     router.call(Route.MINIGAME_BULLET_SEND, b);
     localStore.addEntity(b);
   }
-
 }

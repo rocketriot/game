@@ -10,12 +10,10 @@ import java.util.ArrayList;
 public class MinigameAILoop extends Thread {
 
   private static final Logger logger = LogManager.getLogger(MinigameAILoop.class);
-
-  /** The list of AI Handlers */
-  private ArrayList<MinigameAI> aiHandlers = new ArrayList<>();
-
   /** The loop time */
   private final int LOOP_TIME = 500;
+  /** The list of AI Handlers */
+  private ArrayList<MinigameAI> aiHandlers = new ArrayList<>();
 
   public MinigameAILoop() {
     super("MinigameAILoop");
@@ -29,7 +27,7 @@ public class MinigameAILoop extends Thread {
         long timeDelta = System.currentTimeMillis() - currentTime;
         currentTime = System.currentTimeMillis();
 
-        synchronized(aiHandlers) {
+        synchronized (aiHandlers) {
           // If the handler is defined, call it
           for (MinigameAI handler : aiHandlers) {
             handler.run((float) (timeDelta / 1000));
@@ -54,16 +52,15 @@ public class MinigameAILoop extends Thread {
   public void reset() {
     aiHandlers.clear();
   }
-  
+
   /**
    * Register the handler.
    *
    * @param ais all of the ai to register
    */
   public void registerHandler(MinigameAI ais) {
-    synchronized(aiHandlers) {
+    synchronized (aiHandlers) {
       aiHandlers.add(ais);
     }
   }
-
 }

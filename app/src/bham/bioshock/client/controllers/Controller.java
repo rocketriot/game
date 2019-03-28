@@ -2,12 +2,10 @@ package bham.bioshock.client.controllers;
 
 import bham.bioshock.client.BoardGame;
 import bham.bioshock.client.Router;
-import com.badlogic.gdx.Screen;
 import bham.bioshock.common.models.store.Store;
+import com.badlogic.gdx.Screen;
 
-/**
- *  Root controller used by all other controllers
- */
+/** Root controller used by all other controllers */
 public abstract class Controller {
 
   protected Store store;
@@ -16,7 +14,7 @@ public abstract class Controller {
 
   /**
    * Store main store, router and game object
-   * 
+   *
    * @param store
    * @param router
    * @param game
@@ -26,9 +24,10 @@ public abstract class Controller {
     this.router = router;
     this.game = game;
   }
-  
+
   /**
    * Change the screen and save it in the store
+   *
    * @param screen
    */
   public void setScreen(Screen screen) {

@@ -17,7 +17,7 @@ public class GameBoard implements Serializable {
   private static final long serialVersionUID = 5775730008817100527L;
 
   public final int GRID_SIZE = 36;
-  
+
   private ArrayList<Planet> planets = new ArrayList<>();
 
   /** A grid containing the locations of all the planets, players, fuel boxes etc */
@@ -37,7 +37,7 @@ public class GameBoard implements Serializable {
 
     return grid;
   }
-  
+
   public GridPoint[][] generateEmptyGrid() {
     // initialize grid
     grid = new GridPoint[GRID_SIZE][GRID_SIZE];
@@ -68,8 +68,7 @@ public class GameBoard implements Serializable {
     if (x > max && y < min) return true;
 
     // Check bottom right
-      return x > max && y > max;
-
+    return x > max && y > max;
   }
 
   public boolean isNextToThePlanet(Coordinates pos) {
@@ -80,7 +79,10 @@ public class GameBoard implements Serializable {
 
     // Next to the planet
     for (Coordinates p : pos.getNearby()) {
-      if (pos.getX() > 0 && pos.getX() < GRID_SIZE - 1 && pos.getY() > 0 && pos.getY() < GRID_SIZE - 1) {
+      if (pos.getX() > 0
+          && pos.getX() < GRID_SIZE - 1
+          && pos.getY() > 0
+          && pos.getY() < GRID_SIZE - 1) {
         if (getGridPoint(p).isType(GridPoint.Type.PLANET)) {
           return true;
         }
@@ -92,6 +94,7 @@ public class GameBoard implements Serializable {
 
   /**
    * returns the planet object if there is a capturable planet adjacent to the passed in coordinates
+   *
    * @param pos the coordinates of the grid point to be checked
    * @param player the player of which to check planet ownership against
    * @return the planet object which is adjacent to that position or null if one does not exist
@@ -99,7 +102,10 @@ public class GameBoard implements Serializable {
   public Planet getAdjacentPlanet(Coordinates pos, Player player) {
     // Next to the planet
     for (Coordinates p : pos.getNearby()) {
-      if (p.getX() >= 0 && p.getX() <= GRID_SIZE - 1 && p.getY() >= 0 && p.getY() <= GRID_SIZE - 1) {
+      if (p.getX() >= 0
+          && p.getX() <= GRID_SIZE - 1
+          && p.getY() >= 0
+          && p.getY() <= GRID_SIZE - 1) {
         if (getGridPoint(p).isType(GridPoint.Type.PLANET)) {
           Planet planet = (Planet) getGridPoint(p).getValue();
           if (planet.getPlayerCaptured() == null || !planet.getPlayerCaptured().equals(player)) {
@@ -191,7 +197,7 @@ public class GameBoard implements Serializable {
   public void removeGridPoint(Coordinates coordinates) {
     int x = coordinates.getX();
     int y = coordinates.getY();
-    
+
     grid[x][y] = new GridPoint(GridPoint.Type.EMPTY);
   }
 
@@ -212,10 +218,10 @@ public class GameBoard implements Serializable {
     logger.error("No coordinates " + coordinates + " in the grid!");
     return null;
   }
-  
+
   public Planet getPlanet(UUID id) {
-    for(Planet p : planets) {
-      if(p.getId().equals(id)) {
+    for (Planet p : planets) {
+      if (p.getId().equals(id)) {
         return p;
       }
     }
@@ -224,9 +230,10 @@ public class GameBoard implements Serializable {
 
   public void addBlackHole(BlackHole blackHole) {
     Coordinates coordinates = blackHole.getCoordinates();
-    
+
     for (int i = 0; i < BlackHole.WIDTH; i++)
       for (int j = 0; j < BlackHole.HEIGHT; j++)
-        grid[coordinates.getX() + i][coordinates.getY() + j] = new GridPoint(GridPoint.Type.BLACKHOLE, blackHole);
+        grid[coordinates.getX() + i][coordinates.getY() + j] =
+            new GridPoint(GridPoint.Type.BLACKHOLE, blackHole);
   }
 }

@@ -5,7 +5,6 @@ import bham.bioshock.common.models.store.Store;
 import bham.bioshock.communication.messages.minigame.BulletShotMessage;
 import bham.bioshock.communication.messages.minigame.MinigamePlayerMoveMessage;
 import bham.bioshock.communication.messages.minigame.MinigamePlayerStepMessage;
-import bham.bioshock.server.interfaces.MultipleConnectionsHandler;
 import bham.bioshock.minigame.models.Bullet;
 import bham.bioshock.minigame.models.astronaut.AstronautMove;
 import bham.bioshock.minigame.objectives.Platformer;
@@ -16,20 +15,16 @@ import java.util.UUID;
 /** The type Minigame ai. */
 public abstract class MinigameAI {
 
-  /** The Server Handler. */
-  private MultipleConnectionsHandler handler;
-
   /** The Store. */
   protected Store store;
-
   /** The Id. */
   protected UUID id;
-
   /** The Astronaut. */
   protected CpuAstronaut astronaut;
-
   /** The Local store. */
   protected MinigameStore localStore;
+  /** The Server Handler. */
+  private MultipleConnectionsHandler handler;
 
   /**
    * Instantiates a new Minigame ai.
@@ -50,13 +45,13 @@ public abstract class MinigameAI {
    * @param delta the time between iterations
    */
   public final void run(float delta) {
-    if(localStore == null) {
+    if (localStore == null) {
       localStore = store.getMinigameStore();
-      if(localStore == null) return;
+      if (localStore == null) return;
     }
-    if(astronaut == null) {
+    if (astronaut == null) {
       astronaut = new CpuAstronaut(localStore.getPlayer(id), localStore.getWorld());
-      if(astronaut == null) return;
+      if (astronaut == null) return;
     }
 
     update(delta);
@@ -79,16 +74,16 @@ public abstract class MinigameAI {
         return;
       }
     }
-    
+
     AstronautMove move = astronaut.endMove();
 
     // Send to all new move, position and speed vector
-    if(move != null) {
+    if (move != null) {
       handler.sendToAll(new MinigamePlayerMoveMessage(astronaut, move));
     }
     handler.sendToAll(new MinigamePlayerStepMessage(astronaut.get()));
 
-    for(Bullet b : astronaut.getBullets()) {
+    for (Bullet b : astronaut.getBullets()) {
       handler.sendToAll(new BulletShotMessage(b));
     }
     astronaut.clearBullets();

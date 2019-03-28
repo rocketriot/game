@@ -2,28 +2,22 @@ package bham.bioshock.server.handlers;
 
 import bham.bioshock.common.consts.GridPoint;
 import bham.bioshock.common.consts.GridPoint.Type;
-import bham.bioshock.common.pathfinding.AStarPathfinding;
-import java.util.ArrayList;
-
 import bham.bioshock.common.models.BlackHole;
 import bham.bioshock.common.models.Coordinates;
 import bham.bioshock.common.models.GameBoard;
 import bham.bioshock.common.models.Player;
 import bham.bioshock.common.models.store.Store;
+import bham.bioshock.common.pathfinding.AStarPathfinding;
 import bham.bioshock.communication.messages.Message;
 import bham.bioshock.communication.messages.boardgame.*;
-import bham.bioshock.communication.messages.boardgame.AddBlackHoleMessage;
-import bham.bioshock.communication.messages.boardgame.GameBoardMessage;
-import bham.bioshock.communication.messages.boardgame.MovePlayerOnBoardMessage;
-import bham.bioshock.communication.messages.boardgame.UpdateTurnMessage;
 import bham.bioshock.server.ai.BoardAi;
 import bham.bioshock.server.interfaces.MultipleConnectionsHandler;
-
-import java.util.Random;
-import java.util.UUID;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.ArrayList;
+import java.util.Random;
+import java.util.UUID;
 
 public class GameBoardHandler {
 
@@ -34,8 +28,8 @@ public class GameBoardHandler {
   MinigameHandler minigameHandler;
   BoardAi boardAi;
 
-  public GameBoardHandler(Store store, MultipleConnectionsHandler handler,
-                          MinigameHandler minigameHandler) {
+  public GameBoardHandler(
+      Store store, MultipleConnectionsHandler handler, MinigameHandler minigameHandler) {
     this.store = store;
     this.handler = handler;
     this.minigameHandler = minigameHandler;
@@ -61,9 +55,7 @@ public class GameBoardHandler {
     boardAi.start();
   }
 
-  /**
-   * Adds a player to the server and sends the player to all the clients
-   */
+  /** Adds a player to the server and sends the player to all the clients */
   public void getGameBoard(ArrayList<Player> additionalPlayers, boolean startGame) {
     ArrayList<Player> players = store.getPlayers();
     if (additionalPlayers != null) {
@@ -74,12 +66,12 @@ public class GameBoardHandler {
     GameBoard gameBoard = new GameBoard();
     generateGrid(gameBoard, players);
 
-    handler.sendToAll(new GameBoardMessage(gameBoard, players, additionalPlayers, startGame, store.getMaxRounds()));
+    handler.sendToAll(
+        new GameBoardMessage(
+            gameBoard, players, additionalPlayers, startGame, store.getMaxRounds()));
   }
 
-  /**
-   * Handles a player moving on their turn
-   */
+  /** Handles a player moving on their turn */
   public void movePlayer(Message message, UUID playerID) {
     // Get the goal coordinates of the move
     MovePlayerOnBoardMessage data = (MovePlayerOnBoardMessage) message;
@@ -93,8 +85,7 @@ public class GameBoardHandler {
     GridPoint[][] grid = gameBoard.getGrid();
     int gridSize = store.getGameBoard().GRID_SIZE;
     AStarPathfinding pathFinder =
-            new AStarPathfinding(
-                    grid, startCoords, gridSize, gridSize, store.getPlayers());
+        new AStarPathfinding(grid, startCoords, gridSize, gridSize, store.getPlayers());
 
     ArrayList<Coordinates> path = pathFinder.pathfind(goalCoords);
     Coordinates randomCoords = null;
@@ -125,18 +116,15 @@ public class GameBoardHandler {
     logger.debug("Turn ended");
     handler.sendToAll(new UpdateTurnMessage());
 
-   if ((store.getTurn() + 1) == 4 && store.getRound() == store.getMaxRounds()) {
+    if ((store.getTurn() + 1) == 4 && store.getRound() == store.getMaxRounds()) {
       handler.sendToAll(new EndGameMessage());
     }
   }
 
-  public void addBlackHole (Coordinates coordinates){
+  public void addBlackHole(Coordinates coordinates) {
     GameBoard gameBoard = store.getGameBoard();
     gameBoard.addBlackHole(new BlackHole(coordinates));
 
     handler.sendToAll(new AddBlackHoleMessage(coordinates));
   }
 }
-
-
-

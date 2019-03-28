@@ -1,16 +1,16 @@
 package bham.bioshock.client.controllers;
 
-import bham.bioshock.client.screens.ScreenMaster;
-import bham.bioshock.common.models.store.Store;
-import bham.bioshock.communication.client.CommunicationClient;
-import bham.bioshock.communication.client.ServerStatus;
-import com.google.inject.Inject;
 import bham.bioshock.client.BoardGame;
 import bham.bioshock.client.Route;
 import bham.bioshock.client.Router;
 import bham.bioshock.client.assets.AssetContainer;
 import bham.bioshock.client.screens.MainMenuScreen;
+import bham.bioshock.client.screens.ScreenMaster;
+import bham.bioshock.common.models.store.Store;
+import bham.bioshock.communication.client.CommunicationClient;
+import bham.bioshock.communication.client.ServerStatus;
 import bham.bioshock.server.Server;
+import com.google.inject.Inject;
 
 public class MainMenuController extends Controller {
 
@@ -20,7 +20,13 @@ public class MainMenuController extends Controller {
   AssetContainer assets;
 
   @Inject
-  public MainMenuController(Store store, Router router, BoardGame game, Server server, CommunicationClient commClient, AssetContainer assets) {
+  public MainMenuController(
+      Store store,
+      Router router,
+      BoardGame game,
+      Server server,
+      CommunicationClient commClient,
+      AssetContainer assets) {
     super(store, router, game);
     this.server = server;
     this.assets = assets;
@@ -30,7 +36,7 @@ public class MainMenuController extends Controller {
 
   /**
    * Starts a server and opens the join screen
-   * 
+   *
    * @param hostName
    */
   public void hostGame(String hostName) {
@@ -53,11 +59,11 @@ public class MainMenuController extends Controller {
     commClient.stopDiscovery();
     commClient.disconnect();
     store.reset();
-    
+
     setScreen(new MainMenuScreen(router, assets));
   }
 
-  public void saveTurns(int number){
+  public void saveTurns(int number) {
     store.setMaxRounds(number);
   }
 

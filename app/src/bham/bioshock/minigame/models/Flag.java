@@ -1,8 +1,8 @@
 package bham.bioshock.minigame.models;
 
-import bham.bioshock.client.assets.Assets.GamePart;
 import bham.bioshock.client.assets.AssetContainer;
 import bham.bioshock.client.assets.Assets;
+import bham.bioshock.client.assets.Assets.GamePart;
 import bham.bioshock.common.Position;
 import bham.bioshock.minigame.PlanetPosition;
 import bham.bioshock.minigame.worlds.World;
@@ -10,21 +10,17 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 /**
- * The flag is a target for players while capture the flag objective.
- * It can be carried by the player and is dropped when the player is killed
+ * The flag is a target for players while capture the flag objective. It can be carried by the
+ * player and is dropped when the player is killed
  */
 public class Flag extends StaticEntity {
 
   private static final long serialVersionUID = -374379982329919955L;
 
-  /**
-   * The texture.
-   */
+  /** The texture. */
   public static TextureRegion texture;
 
-  /**
-   * The owner of the flag.
-   */
+  /** The owner of the flag. */
   private Entity owner = null;
 
   /**
@@ -38,15 +34,30 @@ public class Flag extends StaticEntity {
     super(w, x, y, EntityType.FLAG);
   }
 
+  /**
+   * Queue textures for loading
+   *
+   * @param manager the asset manager
+   */
+  public static void loadTextures(AssetContainer manager) {
+    manager.load(Assets.flag, Texture.class, GamePart.MINIGAME);
+  }
+
+  /**
+   * Create textures for rendering
+   *
+   * @param manager the asset manager
+   */
+  public static void createTextures(AssetContainer manager) {
+    texture = new TextureRegion(manager.get(Assets.flag, Texture.class));
+  }
+
   @Override
   public TextureRegion getTexture() {
     return texture;
   }
 
-  /**
-   * Update the position of the flag.
-   * If it has an owner, adjust to owner position
-   */
+  /** Update the position of the flag. If it has an owner, adjust to owner position */
   @Override
   public void update(float delta) {
     if (owner != null) {
@@ -68,9 +79,7 @@ public class Flag extends StaticEntity {
     this.owner = astronaut;
   }
 
-  /**
-   * Remove owner.
-   */
+  /** Remove owner. */
   public void removeOwner() {
     this.owner = null;
   }
@@ -82,23 +91,5 @@ public class Flag extends StaticEntity {
    */
   public boolean haveOwner() {
     return owner != null;
-  }
-
-  /**
-   * Queue textures for loading
-   *
-   * @param manager the asset manager
-   */
-  public static void loadTextures(AssetContainer manager) {
-    manager.load(Assets.flag, Texture.class, GamePart.MINIGAME);
-  }
-
-  /**
-   * Create textures for rendering
-   *
-   * @param manager the asset manager
-   */
-  public static void createTextures(AssetContainer manager) {
-    texture = new TextureRegion(manager.get(Assets.flag, Texture.class));
   }
 }

@@ -10,21 +10,20 @@ import com.google.inject.Inject;
 public class LoadingController extends Controller {
 
   private AssetContainer assets;
-  
+
   @Inject
   public LoadingController(Store store, Router router, BoardGame game, AssetContainer assets) {
     super(store, router, game);
     this.assets = assets;
   }
-  
+
   public void show(String text) {
     LoadingScreen screen = new LoadingScreen(router, assets);
     screen.setText(text);
     setScreen(screen);
   }
-  
+
   public void reconnect(Boolean v) {
     store.reconnecting(v);
   }
-  
 }

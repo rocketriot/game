@@ -10,9 +10,7 @@ import bham.bioshock.minigame.models.*;
 import bham.bioshock.minigame.worlds.World;
 import com.badlogic.gdx.Screen;
 
-/**
- * Minigame screen loading the assets and running the minigame renderer
- */
+/** Minigame screen loading the assets and running the minigame renderer */
 public class MinigameScreen implements Screen {
 
   private final Router router;
@@ -26,10 +24,10 @@ public class MinigameScreen implements Screen {
   private World world;
   /** Loading screen */
   private LoadingScreen loadingScreen;
-  
+
   /**
    * Create minigame screen
-   * 
+   *
    * @param store
    * @param router
    * @param assets
@@ -42,14 +40,11 @@ public class MinigameScreen implements Screen {
     this.router = router;
   }
 
-
-  /**
-   * Load all needed assets
-   */
+  /** Load all needed assets */
   @Override
   public void show() {
     loadingScreen.show();
-    
+
     Astronaut.loadTextures(assets);
     Rocket.loadTextures(assets);
     Gun.loadTextures(assets);
@@ -62,28 +57,28 @@ public class MinigameScreen implements Screen {
 
   @Override
   public void render(float delta) {
-    if(loading && assets.update()) {
+    if (loading && assets.update()) {
       // Loading done
       loading = false;
       loadingScreen.hide();
       renderer.show();
     }
-    
-    if(loading) {
+
+    if (loading) {
       // Update loading progress
       float progress = assets.getProgress();
-      loadingScreen.setText( ((int) Math.floor(progress * 100))+"%" );
+      loadingScreen.setText(((int) Math.floor(progress * 100)) + "%");
       loadingScreen.render(delta);
     } else {
       // Render game
-      renderer.render(delta);      
+      renderer.render(delta);
     }
   }
 
   @Override
   public void resize(int width, int height) {
     loadingScreen.resize(width, height);
-    renderer.resize(width, height);      
+    renderer.resize(width, height);
   }
 
   @Override

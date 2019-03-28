@@ -1,17 +1,5 @@
 package bham.bioshock.minigame.models;
 
-import static java.util.stream.Collectors.toList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Animation;
-import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.math.Intersector.MinimumTranslationVector;
 import bham.bioshock.client.assets.AssetContainer;
 import bham.bioshock.client.assets.Assets;
 import bham.bioshock.client.assets.Assets.GamePart;
@@ -29,32 +17,46 @@ import bham.bioshock.minigame.physics.SpeedVector;
 import bham.bioshock.minigame.physics.Step;
 import bham.bioshock.minigame.utils.RotatableText;
 import bham.bioshock.minigame.worlds.World;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Intersector.MinimumTranslationVector;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+
+import static java.util.stream.Collectors.toList;
 
 /**
- * Astronaut is the player in the minigame controllable by the user or the AI
- * it can shoot and collide with objective entities
+ * Astronaut is the player in the minigame controllable by the user or the AI it can shoot and
+ * collide with objective entities
  */
 public class Astronaut extends Entity {
 
   private static final long serialVersionUID = 3467047831018591965L;
-  
+
   /** All textures for astronauts, with different colours */
   private static AstronautTextures[] textures;
+
   private static TextureRegion[][] hearts = new TextureRegion[2][5];
   private static int HEALTH_WIDTH = 70;
   private static Texture snowflake;
-  
-  /** Texture for this astronaut */
-  private AstronautTextures texture; 
-  /** Health sprite */
-  private Sprite health;
   /** Current animation time */
   float animationTime;
+  /** Texture for this astronaut */
+  private AstronautTextures texture;
+  /** Health sprite */
+  private Sprite health;
   /** Direction the player is facing */
   private PlayerTexture dir = PlayerTexture.FRONT;
   /** Player equipment */
   private Equipment equipment = new Equipment();
-  
+
   /** Legs collision boundary */
   private CollisionBoundary legs;
   /** Current player movement - jump / left / right */
@@ -63,7 +65,7 @@ public class Astronaut extends Entity {
   private Position respawn;
   /** Player name */
   private RotatableText name;
-  
+
   /** Direction of dying */
   private boolean dieFront = true;
 
@@ -77,9 +79,9 @@ public class Astronaut extends Entity {
   private transient Optional<Entity> currentPlatform = Optional.empty();
 
   /**
-   * Creates a new astronaut with default position, defined id and colour.
-   * Created astronaut have zero speed vector
-   * 
+   * Creates a new astronaut with default position, defined id and colour. Created astronaut have
+   * zero speed vector
+   *
    * @param w
    * @param x
    * @param y
@@ -111,8 +113,80 @@ public class Astronaut extends Entity {
   }
 
   /**
+   * Queue textures for loading
+   *
+   * @param manager
+   */
+  public static void loadTextures(AssetContainer manager) {
+    String[] colours = new String[] {"orange", "red", "green", "blue"};
+
+    for (int i = 0; i < colours.length; i++) {
+      // Should be already loaded by the join screen
+      //      manager.load(Assets.astroBase + colours[i] + Assets.astroShield, Texture.class,
+      // GamePart.MINIGAME);
+      manager.load(
+          Assets.astroBase + colours[i] + Assets.astroWalk, Texture.class, GamePart.MINIGAME);
+      manager.load(
+          Assets.astroBase + colours[i] + Assets.astroGun, Texture.class, GamePart.MINIGAME);
+      manager.load(
+          Assets.astroBase + colours[i] + Assets.astroShieldGun, Texture.class, GamePart.MINIGAME);
+      manager.load(
+          Assets.astroBase + colours[i] + Assets.astroFFall, Texture.class, GamePart.MINIGAME);
+      manager.load(
+          Assets.astroBase + colours[i] + Assets.astroFall, Texture.class, GamePart.MINIGAME);
+    }
+    manager.load(Assets.hearts, Texture.class, GamePart.MINIGAME);
+    manager.load(Assets.snowflake, Texture.class, GamePart.MINIGAME);
+  }
+
+  /**
+   * Load textures for rendering
+   *
+   * @param manager
+   */
+  public static void createTextures(AssetContainer manager) {
+    String[] colours = new String[] {"orange", "red", "green", "blue"};
+    textures = new AstronautTextures[colours.length];
+
+    for (int i = 0; i < colours.length; i++) {
+      AstronautTextures t = new AstronautTextures();
+      TextureRegion[][] walkSheet =
+          Assets.splittedTexture(manager, Assets.astroBase + colours[i] + Assets.astroWalk, 11);
+      TextureRegion[][] walkGunSheet =
+          Assets.splittedTexture(manager, Assets.astroBase + colours[i] + Assets.astroGun, 11);
+      TextureRegion[][] walkShieldSheet =
+          Assets.splittedTexture(manager, Assets.astroBase + colours[i] + Assets.astroShield, 11);
+      TextureRegion[][] walkShieldGunSheet =
+          Assets.splittedTexture(
+              manager, Assets.astroBase + colours[i] + Assets.astroShieldGun, 11);
+      TextureRegion[][] dieFront =
+          Assets.splittedTexture(manager, Assets.astroBase + colours[i] + Assets.astroFFall, 10);
+      TextureRegion[][] dieBack =
+          Assets.splittedTexture(manager, Assets.astroBase + colours[i] + Assets.astroFall, 12);
+
+      snowflake = manager.get(Assets.snowflake, Texture.class);
+
+      t.frontTexture = walkSheet[0][0];
+      t.frontGunTexture = walkGunSheet[0][0];
+      t.frontShieldTexture = walkShieldSheet[0][0];
+      t.frontShieldGunTexture = walkShieldGunSheet[0][0];
+
+      t.walkAnimation = Assets.textureToAnimation(walkSheet, 11, 1, 0.1f);
+      t.walkGunAnimation = Assets.textureToAnimation(walkGunSheet, 11, 1, 0.1f);
+      t.walkShieldAnimation = Assets.textureToAnimation(walkShieldSheet, 11, 1, 0.1f);
+      t.walkShieldGunAnimation = Assets.textureToAnimation(walkShieldGunSheet, 11, 1, 0.1f);
+      t.dyingFront = Assets.textureToAnimation(dieFront, 10, 0, 0.05f);
+      t.dyingBack = Assets.textureToAnimation(dieBack, 12, 0, 0.05f);
+      textures[i] = t;
+    }
+
+    Texture t = manager.get(Assets.hearts, Texture.class);
+    hearts = TextureRegion.split(t, t.getWidth() / 7, t.getHeight() / 2);
+  }
+
+  /**
    * Saves player name
-   * 
+   *
    * @param name
    */
   public void setName(String name) {
@@ -121,25 +195,25 @@ public class Astronaut extends Entity {
 
   /**
    * Updates current movement
-   * 
+   *
    * @param value
    */
   public void moveLeft(boolean value) {
     move.movingLeft = value;
   }
-  
+
   /**
    * Updates current movement
-   * 
+   *
    * @param value
    */
   public void moveRight(boolean value) {
     move.movingRight = value;
   }
-  
+
   /**
    * Updates current movement
-   * 
+   *
    * @param value
    */
   public void jump(boolean value) {
@@ -151,21 +225,18 @@ public class Astronaut extends Entity {
 
   /**
    * Get list of generated future steps
-   * 
+   *
    * @param value
    */
   public List<Step> getFutureSteps() {
     return stepsGenerator.getFutureSteps().collect(toList());
   }
-  
-  /**
-   * Inform the generator that the move has changed
-   * and save the direction player is facing
-   */
+
+  /** Inform the generator that the move has changed and save the direction player is facing */
   public void moveChange() {
-    if(is(State.REMOVING)) return;
+    if (is(State.REMOVING)) return;
     if (move.movingLeft) {
-      dir = PlayerTexture.LEFT; 
+      dir = PlayerTexture.LEFT;
       stepsGenerator.moveLeft();
     } else if (move.movingRight) {
       dir = PlayerTexture.RIGHT;
@@ -177,26 +248,23 @@ public class Astronaut extends Entity {
     stepsGenerator.jump(move.jumping);
   }
 
-  /**
-   * Reset direction the player is facing
-   */
+  /** Reset direction the player is facing */
   public void resetDirection() {
     dir = PlayerTexture.FRONT;
   }
 
   @Override
   public void update(float delta) {
-    if (!loaded)
-      return;
+    if (!loaded) return;
     super.update(delta);
-    
+
     // Rotate collision boundary if the player is dying
     if (is(State.REMOVING)) {
       collisionBoundary.update(respawn, delta);
-      collisionBoundary.update(pos, getRotation() - (dieTime / 0.71f)*90);
+      collisionBoundary.update(pos, getRotation() - (dieTime / 0.71f) * 90);
       dieTime += delta;
     }
-    
+
     // Adjust legs position
     legs.update(pos, getRotation());
     animationTime += delta;
@@ -204,18 +272,16 @@ public class Astronaut extends Entity {
     checkIfOnGround();
   }
 
-  /**
-   * Check and save if is touching the ground, and reset the platform
-   */
+  /** Check and save if is touching the ground, and reset the platform */
   private void checkIfOnGround() {
-    if((world.fromGroundTo(legs.getX(),legs.getY())) <= 15) {
+    if ((world.fromGroundTo(legs.getX(), legs.getY())) <= 15) {
       removePlatform();
     }
   }
 
   /**
    * Get current astronaut movement
-   * 
+   *
    * @return move
    */
   public AstronautMove getMove() {
@@ -233,22 +299,22 @@ public class Astronaut extends Entity {
     if (is(State.REMOVING)) {
       if ((dieFront && texture.dyingFront.isAnimationFinished(dieTime))
           || texture.dyingBack.isAnimationFinished(dieTime)) {
-        
+
         stepsGenerator.updateFromServer(new SpeedVector(), respawn);
         setPosition(respawn);
-        setState(State.LOADED); 
+        setState(State.LOADED);
       }
     } else {
       drawHealth(batch);
     }
     super.draw(batch);
-    
-    if(objective.isPresent() && (objective.get() instanceof Platformer)) {
+
+    if (objective.isPresent() && (objective.get() instanceof Platformer)) {
       Platformer platformer = (Platformer) objective.get();
       Position p = getPos().move(world).up(height).pos();
-      
-      if(platformer.checkIfFrozen(this.getId())) {
-        batch.draw(snowflake, p.x, p.y);        
+
+      if (platformer.checkIfFrozen(this.getId())) {
+        batch.draw(snowflake, p.x, p.y);
       }
     }
   }
@@ -257,35 +323,37 @@ public class Astronaut extends Entity {
   public void afterDraw(SpriteBatch batch) {
     drawName(batch);
   }
-  
+
   /**
    * Draw player health
+   *
    * @param batch
    */
   private void drawHealth(SpriteBatch batch) {
-    if(!objective.isPresent()) return;
+    if (!objective.isPresent()) return;
     // Don't display health if the objective is a platformer
-    if(objective.get() instanceof Platformer) return;
-    
+    if (objective.get() instanceof Platformer) return;
+
     Objective o = objective.get();
     int value = o.getHealth(getId());
-    
+
     PlanetPosition pp = world.convert(pos);
     pp.fromCenter += height;
     Position lifePos = world.convert(pp);
-    if(this.getEquipment().haveShield) {
-      health.setRegion(hearts[0][Math.min(6, Math.max(0, 6-getEquipment().shieldHealth))]);      
+    if (this.getEquipment().haveShield) {
+      health.setRegion(hearts[0][Math.min(6, Math.max(0, 6 - getEquipment().shieldHealth))]);
     } else {
-      health.setRegion(hearts[1][Math.min(6, Math.max(0, 6-value))]);  
+      health.setRegion(hearts[1][Math.min(6, Math.max(0, 6 - value))]);
     }
-    
+
     health.setPosition(lifePos.x - (health.getWidth() / 2), lifePos.y);
     health.setRotation((float) getRotation());
     health.draw(batch);
   }
-  
+
   /**
    * Draw player name
+   *
    * @param batch
    */
   private void drawName(SpriteBatch batch) {
@@ -298,6 +366,7 @@ public class Astronaut extends Entity {
 
   /**
    * Update player position with the collision boundary
+   *
    * @param p
    */
   public void setPosition(Position p) {
@@ -310,36 +379,31 @@ public class Astronaut extends Entity {
     }
   }
 
-  /**
-   * Create supporting sprites
-   */
+  /** Create supporting sprites */
   @Override
   public void load() {
     texture = textures[colour];
-    super.load();    
+    super.load();
     legs = new CollisionBoundary(collisionWidth + 10, collisionHeight / 10);
     legs.update(pos, getRotation());
-    
+
     health = new Sprite(hearts[0][1]);
     float healthWidth = HEALTH_WIDTH;
-    health.setSize(healthWidth, (health.getHeight()/health.getWidth()) * healthWidth);
-    health.setOrigin(health.getWidth()/2, 0);
+    health.setSize(healthWidth, (health.getHeight() / health.getWidth()) * healthWidth);
+    health.setOrigin(health.getWidth() / 2, 0);
   }
 
-  /**
-   * Player textures
-   **/
+  /** Player textures */
   public TextureRegion getTexture() {
     // If removing show dying animation
     if (is(State.REMOVING)) {
-      if(dieFront) {
-        return texture.dyingFront.getKeyFrame(dieTime, false);        
+      if (dieFront) {
+        return texture.dyingFront.getKeyFrame(dieTime, false);
       }
-      return texture.dyingBack.getKeyFrame(dieTime, false);  
+      return texture.dyingBack.getKeyFrame(dieTime, false);
     }
     TextureRegion region = getWalkTexture();
-    if (region == null)
-      return null;
+    if (region == null) return null;
     if (region.isFlipX()) {
       region.flip(true, false);
     }
@@ -351,11 +415,11 @@ public class Astronaut extends Entity {
 
   /**
    * Get walking texture
-   * 
+   *
    * @return texture
    */
   private TextureRegion getWalkTexture() {
-    if(dir.equals(PlayerTexture.FRONT)) {
+    if (dir.equals(PlayerTexture.FRONT)) {
       if (equipment.haveShield && equipment.haveGun) {
         return texture.frontShieldGunTexture;
       } else if (equipment.haveShield) {
@@ -365,9 +429,9 @@ public class Astronaut extends Entity {
       } else {
         return texture.frontTexture;
       }
-    } else if(equipment.haveShield && equipment.haveGun) {
+    } else if (equipment.haveShield && equipment.haveGun) {
       return texture.walkShieldGunAnimation.getKeyFrame(animationTime, true);
-    } else if(equipment.haveShield) {
+    } else if (equipment.haveShield) {
       return texture.walkShieldAnimation.getKeyFrame(animationTime, true);
     } else if (equipment.haveGun) {
       return texture.walkGunAnimation.getKeyFrame(animationTime, true);
@@ -393,36 +457,34 @@ public class Astronaut extends Entity {
     }
   }
 
-  /**
-   * Astronaut collision handler
-   */
+  /** Astronaut collision handler */
   @Override
   public void handleCollision(Entity e) {
-    if(e.is(State.REMOVING) || is(State.REMOVING) || !e.loaded) return;
+    if (e.is(State.REMOVING) || is(State.REMOVING) || !e.loaded) return;
     switch (e.type) {
       case GUN:
-        if(!equipment.haveGun) {
+        if (!equipment.haveGun) {
           equipment.haveGun = true;
-          e.remove();          
+          e.remove();
         }
         break;
       case BULLET:
-        if(objective.isPresent()) {
+        if (objective.isPresent()) {
           Bullet bullet = ((Bullet) e);
-          if(bullet.notDetected()) {
-            objective.get().gotShot(this,bullet.getShooter());            
+          if (bullet.notDetected()) {
+            objective.get().gotShot(this, bullet.getShooter());
           }
         }
         e.setState(State.REMOVING);
         break;
       case FLAG:
         Flag flag = (Flag) e;
-        if(objective.isPresent() && !flag.haveOwner()) {
+        if (objective.isPresent() && !flag.haveOwner()) {
           objective.get().captured(this);
         }
         break;
       case GOAL:
-        if(objective.isPresent()) {
+        if (objective.isPresent()) {
           objective.get().captured(this);
         }
         break;
@@ -476,8 +538,8 @@ public class Astronaut extends Entity {
   }
 
   /**
-   * Update player speed, position and equipement 
-   * 
+   * Update player speed, position and equipement
+   *
    * @param speed
    * @param pos
    * @param equipment
@@ -486,10 +548,10 @@ public class Astronaut extends Entity {
     this.equipment.haveGun = equipment.haveGun;
     stepsGenerator.updateFromServer(speed, pos);
   }
-  
+
   /**
    * Overwrite player move
-   * 
+   *
    * @param move
    */
   public void updateMove(AstronautMove move) {
@@ -499,124 +561,64 @@ public class Astronaut extends Entity {
 
   /**
    * Get player equipment
-   * 
+   *
    * @return
    */
   public Equipment getEquipment() {
     return equipment;
   }
-  
+
   /**
    * Start dying animation and set state to REMOVING
-   * 
+   *
    * @param pos new respawn position
    */
   public void killAndRespawn(Position pos) {
-    if(is(State.REMOVING)) return;
+    if (is(State.REMOVING)) return;
     setState(State.REMOVING);
     stepsGenerator.moveStop();
     dieTime = 0;
     dieFront = true;
-    
+
     // Get direction of the shot
-    if(shotDirection != null && shotDirection == Direction.LEFT) {
-      if(dir == PlayerTexture.LEFT) {
+    if (shotDirection != null && shotDirection == Direction.LEFT) {
+      if (dir == PlayerTexture.LEFT) {
         dieFront = false;
       }
     } else {
-      if(dir == PlayerTexture.RIGHT) {
+      if (dir == PlayerTexture.RIGHT) {
         dieFront = false;
       }
     }
-    
+
     equipment = new Equipment();
     this.respawn = pos;
   }
-  
-  /**
-   * Queue textures for loading
-   * 
-   * @param manager
-   */
-  public static void loadTextures(AssetContainer manager) {
-    String[] colours = new String[] { "orange", "red", "green", "blue" };
 
-    for(int i=0; i<colours.length; i++) {
-      // Should be already loaded by the join screen
-//      manager.load(Assets.astroBase + colours[i] + Assets.astroShield, Texture.class, GamePart.MINIGAME);
-      manager.load(Assets.astroBase + colours[i] + Assets.astroWalk, Texture.class, GamePart.MINIGAME);
-      manager.load(Assets.astroBase + colours[i] + Assets.astroGun, Texture.class, GamePart.MINIGAME);
-      manager.load(Assets.astroBase + colours[i] + Assets.astroShieldGun, Texture.class, GamePart.MINIGAME);
-      manager.load(Assets.astroBase + colours[i] + Assets.astroFFall, Texture.class, GamePart.MINIGAME);
-      manager.load(Assets.astroBase + colours[i] + Assets.astroFall, Texture.class, GamePart.MINIGAME);
-    }
-    manager.load(Assets.hearts, Texture.class, GamePart.MINIGAME);
-    manager.load(Assets.snowflake, Texture.class, GamePart.MINIGAME);
-  }
-  
-  /**
-   * Load textures for rendering
-   * 
-   * @param manager
-   */
-  public static void createTextures(AssetContainer manager) {
-    String[] colours = new String[] { "orange", "red", "green", "blue" };
-    textures = new AstronautTextures[colours.length];
-    
-    for(int i=0; i<colours.length; i++) {
-      AstronautTextures t = new AstronautTextures();
-      TextureRegion[][] walkSheet = Assets.splittedTexture(manager, Assets.astroBase + colours[i] + Assets.astroWalk, 11);
-      TextureRegion[][] walkGunSheet = Assets.splittedTexture(manager, Assets.astroBase + colours[i] + Assets.astroGun, 11);
-      TextureRegion[][] walkShieldSheet = Assets.splittedTexture(manager, Assets.astroBase + colours[i] + Assets.astroShield, 11);
-      TextureRegion[][] walkShieldGunSheet = Assets.splittedTexture(manager, Assets.astroBase + colours[i] + Assets.astroShieldGun, 11);
-      TextureRegion[][] dieFront = Assets.splittedTexture(manager, Assets.astroBase + colours[i] + Assets.astroFFall, 10);
-      TextureRegion[][] dieBack = Assets.splittedTexture(manager, Assets.astroBase + colours[i] + Assets.astroFall, 12);
-      
-      snowflake = manager.get(Assets.snowflake, Texture.class);
-      
-      t.frontTexture = walkSheet[0][0];
-      t.frontGunTexture = walkGunSheet[0][0];
-      t.frontShieldTexture = walkShieldSheet[0][0];
-      t.frontShieldGunTexture = walkShieldGunSheet[0][0];
-      
-      t.walkAnimation = Assets.textureToAnimation(walkSheet, 11, 1, 0.1f);
-      t.walkGunAnimation = Assets.textureToAnimation(walkGunSheet, 11, 1, 0.1f);
-      t.walkShieldAnimation = Assets.textureToAnimation(walkShieldSheet, 11, 1, 0.1f);
-      t.walkShieldGunAnimation = Assets.textureToAnimation(walkShieldGunSheet, 11, 1, 0.1f);
-      t.dyingFront = Assets.textureToAnimation(dieFront, 10, 0, 0.05f);
-      t.dyingBack = Assets.textureToAnimation(dieBack, 12, 0, 0.05f);
-      textures[i] = t;
-    }
-    
-    Texture t = manager.get(Assets.hearts, Texture.class);
-    hearts = TextureRegion.split(t, t.getWidth() / 7, t.getHeight() / 2);
-  }
-  
-  /**
-   * Set the platform the player is on
-   * 
-   * @param platform
-   */
-  private void setOnPlatform(Platform platform) {
-    currentPlatform = Optional.of(platform);
-  }
-  /**
-   * Reset the platform the player is on
-   */
+  /** Reset the platform the player is on */
   private void removePlatform() {
     currentPlatform = Optional.empty();
   }
+
   /**
    * Get the platform
+   *
    * @return
    */
   public Optional<Entity> getOnPlatform() {
     return currentPlatform;
   }
-  
+
   /**
-   * Set of astronaut textures for all possible colours 
+   * Set the platform the player is on
+   *
+   * @param platform
    */
+  private void setOnPlatform(Platform platform) {
+    currentPlatform = Optional.of(platform);
+  }
+
+  /** Set of astronaut textures for all possible colours */
   private static class AstronautTextures {
     Animation<TextureRegion> walkAnimation;
     Animation<TextureRegion> walkGunAnimation;
@@ -629,5 +631,4 @@ public class Astronaut extends Entity {
     TextureRegion frontShieldTexture;
     TextureRegion frontShieldGunTexture;
   }
-
 }

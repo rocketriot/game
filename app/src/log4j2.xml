@@ -9,7 +9,7 @@
         </File>
         <File name="ServerFileLog" fileName="logs/server.log" immediateFlush="true" append="true">
             <PatternLayout pattern="%d{mm:ss.SSS} %logger{36} - %msg%n"/>
-        </File >
+        </File>
     </Appenders>
     <Loggers>
         <Root level="DEBUG">
@@ -17,7 +17,7 @@
             <AppenderRef ref="MainLog"/>
         </Root>
         <Logger name="ServerLog" level="debug" additivity="true">
-            <AppenderRef ref="ServerFileLog" level="debug" />
+            <AppenderRef ref="ServerFileLog" level="debug"/>
         </Logger>
     </Loggers>
 </Configuration>

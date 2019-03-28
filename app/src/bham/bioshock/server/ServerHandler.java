@@ -32,28 +32,29 @@ public class ServerHandler implements MultipleConnectionsHandler {
   private GameBoardHandler gameBoardHandler;
   private MinigameHandler minigameHandler;
   private DevServer devServer;
-  
+
   public ServerHandler(Store store, boolean runDebugServer, Clock clock) {
     joinHandler = new JoinScreenHandler(store, this);
     minigameHandler = new MinigameHandler(store, this, clock);
     gameBoardHandler = new GameBoardHandler(store, this, minigameHandler);
-    
-    if(runDebugServer) {
+
+    if (runDebugServer) {
       startDebugServer(store);
     }
   }
-  
+
   // Start debug server
   private void startDebugServer(Store store) {
     try {
       devServer = new DevServer();
       devServer.addServices(store, connecting, connected);
-    } catch(IOException e) {}
+    } catch (IOException e) {
+    }
   }
-  
+
   /**
    * Used by ConnectionMaker to register new service
-   * 
+   *
    * @param service
    */
   public void add(ServerService service) {
@@ -62,7 +63,7 @@ public class ServerHandler implements MultipleConnectionsHandler {
 
   /**
    * Registers new client as connected with provided ID
-   * 
+   *
    * @param id
    * @param service
    */
@@ -74,7 +75,7 @@ public class ServerHandler implements MultipleConnectionsHandler {
 
   /**
    * Sends the message to all clients
-   * 
+   *
    * @param clientId
    * @param action
    */
@@ -86,7 +87,7 @@ public class ServerHandler implements MultipleConnectionsHandler {
 
   /**
    * Sends the message to all clients except the one specified
-   * 
+   *
    * @param clientId
    * @param action
    */
@@ -100,62 +101,62 @@ public class ServerHandler implements MultipleConnectionsHandler {
 
   /**
    * Sends the message to the specific client
-   * 
+   *
    * @param clientId
    * @param action
    */
   public void sendTo(UUID clientId, Message message) {
     ServerService service = connected.get(clientId);
-    if(service != null) {
-      connected.get(clientId).send(message);      
+    if (service != null) {
+      connected.get(clientId).send(message);
     }
   }
 
   /**
    * Register new player
-   * 
+   *
    * @param action
    * @param service
-   * @throws InvalidMessageSequence 
+   * @throws InvalidMessageSequence
    */
-  private void registerPlayer(Message message, ServerService service) throws InvalidMessageSequence {
+  private void registerPlayer(Message message, ServerService service)
+      throws InvalidMessageSequence {
     boolean knownService = connecting.contains(service);
     Command c = message.command;
-    
-    if(!knownService) {
+
+    if (!knownService) {
       throw new InvalidMessageSequence("Unknown service, not in the list!");
     }
-    
+
     if (c.equals(Command.REGISTER) || c.equals(Command.RECONNECT_PLAYER)) {
       // Register new connected player
       joinHandler.registerPlayer(message, service);
     } else {
       throw new InvalidMessageSequence("Player must be registered first!");
     }
-    
+
     // If successfully registered
-    if(c.equals(Command.RECONNECT_PLAYER) && service.Id().isPresent()) {
+    if (c.equals(Command.RECONNECT_PLAYER) && service.Id().isPresent()) {
       handleRequest(message, service);
     }
   }
 
   /**
    * Unregister player, remove the connection and send information to all clients
+   *
    * @param serverService
    */
   public void unregister(ServerService serverService) {
     Optional<UUID> clientId = serverService.Id();
-    if(clientId.isPresent()) {
+    if (clientId.isPresent()) {
       connected.remove(clientId.get());
-      joinHandler.disconnectPlayer(clientId.get());      
+      joinHandler.disconnectPlayer(clientId.get());
     } else {
-      connecting.remove(serverService);      
+      connecting.remove(serverService);
     }
   }
-  
-  /**
-   * Stop all running sub-services
-   */
+
+  /** Stop all running sub-services */
   public void abort() {
     for (ServerService s : connected.values()) {
       s.abort();
@@ -164,22 +165,22 @@ public class ServerHandler implements MultipleConnectionsHandler {
       s.abort();
     }
   }
-  
+
   /**
    * Handle received message from one of the clients
    *
    * @param service
-   * @throws InvalidMessageSequence 
+   * @throws InvalidMessageSequence
    */
   public void handleRequest(Message message, ServerService service) throws InvalidMessageSequence {
     logger.trace("Server received: " + message);
 
     // If the service doesn't have assigned Id register it
     if (!service.Id().isPresent()) {
-      registerPlayer(message, service);        
+      registerPlayer(message, service);
       return;
     }
-    if(connected.get(service.Id().get()) == null) {
+    if (connected.get(service.Id().get()) == null) {
       throw new InvalidMessageSequence("Unknown service, not in the list!");
     }
 
@@ -204,7 +205,8 @@ public class ServerHandler implements MultipleConnectionsHandler {
         break;
       case MINIGAME_START:
         RequestMinigameStartMessage request = (RequestMinigameStartMessage) message;
-        minigameHandler.startMinigame(clientId, request.planetId, gameBoardHandler, request.objectiveId);
+        minigameHandler.startMinigame(
+            clientId, request.planetId, gameBoardHandler, request.objectiveId);
         break;
       case MINIGAME_PLAYER_MOVE:
         minigameHandler.playerMove(message, clientId);
@@ -229,5 +231,4 @@ public class ServerHandler implements MultipleConnectionsHandler {
         break;
     }
   }
-
 }

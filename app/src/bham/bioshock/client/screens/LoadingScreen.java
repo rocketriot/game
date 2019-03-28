@@ -1,11 +1,11 @@
 package bham.bioshock.client.screens;
 
+import bham.bioshock.client.Router;
+import bham.bioshock.client.assets.AssetContainer;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
-import bham.bioshock.client.Router;
-import bham.bioshock.client.assets.AssetContainer;
 
 /** The Loading screen. */
 public class LoadingScreen extends ScreenMaster {
@@ -61,7 +61,7 @@ public class LoadingScreen extends ScreenMaster {
     font.draw(batch, text, fontX, fontY);
     batch.end();
   }
-  
+
   @Override
   public void hide() {
     stage.dispose();

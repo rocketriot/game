@@ -1,15 +1,15 @@
 package bham.bioshock.minigame.worlds;
 
-
-import bham.bioshock.minigame.seeders.PlatformSeeder;
-import bham.bioshock.minigame.seeders.WeaponSeeder;
-import java.util.ArrayList;
-import java.util.Random;
 import bham.bioshock.common.Position;
 import bham.bioshock.minigame.models.Gun;
 import bham.bioshock.minigame.models.Platform;
 import bham.bioshock.minigame.models.Rocket;
+import bham.bioshock.minigame.seeders.PlatformSeeder;
+import bham.bioshock.minigame.seeders.WeaponSeeder;
+
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Random;
 
 public class RandomWorld extends World {
 
@@ -23,19 +23,19 @@ public class RandomWorld extends World {
   transient PlatformSeeder pSeeder;
   ArrayList<Platform> platforms;
   Position gravityCenter = new Position(0, 0);
-  
+
   public RandomWorld() {
     Random r = new Random();
-    textureId = (r.nextInt(100) % 4)+1;
+    textureId = (r.nextInt(100) % 4) + 1;
   }
 
   @Override
   public void init() {
     int radius = (int) getPlanetRadius();
-    playerPositions[0] = new Position(-300-radius, 0);
-    playerPositions[1] = new Position(0, -radius-300);
-    playerPositions[2] = new Position(radius+300, 0);
-    playerPositions[3] = new Position(0, radius+300);
+    playerPositions[0] = new Position(-300 - radius, 0);
+    playerPositions[1] = new Position(0, -radius - 300);
+    playerPositions[2] = new Position(radius + 300, 0);
+    playerPositions[3] = new Position(0, radius + 300);
 
     pSeeder = new PlatformSeeder(this);
     wSeeder = new WeaponSeeder(this);
@@ -45,7 +45,7 @@ public class RandomWorld extends World {
     platforms = pSeeder.getPlatforms();
     guns = wSeeder.getGuns();
   }
-  
+
   @Override
   public double getPlanetRadius() {
     return planetRadius;
@@ -72,7 +72,7 @@ public class RandomWorld extends World {
   }
 
   @Override
-  public void spawnGuns(){
+  public void spawnGuns() {
     wSeeder.seed();
   }
 
@@ -90,7 +90,6 @@ public class RandomWorld extends World {
     return platforms;
   }
 
-
   @Override
   public ArrayList<Platform> getPlatformPath(Platform platform) {
     ArrayList<Platform> path = new ArrayList<>();
@@ -102,5 +101,4 @@ public class RandomWorld extends World {
     Collections.reverse(path);
     return path;
   }
-
 }

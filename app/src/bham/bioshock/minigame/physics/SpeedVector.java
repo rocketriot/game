@@ -7,9 +7,9 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import bham.bioshock.common.Position;
 
 public class SpeedVector implements Serializable {
-  
+
   private static final long serialVersionUID = -149485768919020676L;
-  
+
   private double mass = 1;
   private double dx = 0;
   private double dy = 0;
@@ -45,13 +45,13 @@ public class SpeedVector implements Serializable {
 
   public double getValue() {
     double value = dx * dx + dy * dy;
-    if(value == 0) return 0.0001;
+    if (value == 0) return 0.0001;
     return Math.sqrt(value);
   }
 
   public double getSpeedAngle() {
     double length = getValue();
-    if(length == 0) {
+    if (length == 0) {
       return 0;
     }
     double speedAngle = Math.asin(dx / length);
@@ -72,7 +72,7 @@ public class SpeedVector implements Serializable {
     dx -= v.dx * u;
     dy -= v.dy * u;
   }
-  
+
   public double getValueFor(double angle) {
     Vector v = stopVector(angle);
     return Math.sqrt(v.dx * v.dx + v.dy * v.dy);
@@ -84,11 +84,11 @@ public class SpeedVector implements Serializable {
     double speedAngle = (getSpeedAngle() + 360) % 360;
     double normalizedDegrees = (angleDegrees + 360) % 360;
     if (length == 0) return new Vector(0, 0);
-    
-    double angleDiff = 180 - Math.abs(Math.abs(normalizedDegrees - speedAngle) - 180); 
+
+    double angleDiff = 180 - Math.abs(Math.abs(normalizedDegrees - speedAngle) - 180);
     // Case for opposite direction
-    if(angleDiff >= 90) {
-      return new Vector(0,0);
+    if (angleDiff >= 90) {
+      return new Vector(0, 0);
     }
     double da = Math.toRadians(speedAngle - angleDegrees);
 
@@ -106,16 +106,15 @@ public class SpeedVector implements Serializable {
   public Double dY() {
     return dy;
   }
-  
+
   public void draw(ShapeRenderer shapeRenderer, Position pos) {
     shapeRenderer.begin(ShapeType.Line);
     shapeRenderer.setColor(Color.RED);
-    shapeRenderer.line(pos.x, pos.y, (float) (pos.x+dx), (float) (pos.y+dy));
+    shapeRenderer.line(pos.x, pos.y, (float) (pos.x + dx), (float) (pos.y + dy));
     shapeRenderer.end();
   }
 
   public SpeedVector copy() {
     return new SpeedVector(dx, dy);
   }
-
 }

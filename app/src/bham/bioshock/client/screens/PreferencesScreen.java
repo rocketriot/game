@@ -16,32 +16,26 @@ import com.badlogic.gdx.scenes.scene2d.ui.Slider;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 
-/**
- * The Preferences Screen.
- */
+/** The Preferences Screen. */
 public class PreferencesScreen extends ScreenMaster {
 
   private AppPreferences preferences;
   private XMLInteraction xmlInteraction = new XMLInteraction();
 
-  /**
-   * Labels
-   */
+  /** Labels */
   private Label soundVolLabel;
+
   private Label musicVolLabel;
   private Label soundEnabledLabel;
   private Label musicEnabledLabel;
   private Label titleLabel;
 
-  /**
-   * The table that the screen elements are added to
-   */
+  /** The table that the screen elements are added to */
   private Table table;
 
-  /**
-   * Variables to keep track of current preferences
-   */
+  /** Variables to keep track of current preferences */
   private boolean musicEnabled;
+
   private float musicVolume;
   private boolean soundsEnabled;
   private float soundsVolume;
@@ -64,12 +58,11 @@ public class PreferencesScreen extends ScreenMaster {
     soundsVolume = preferences.getSoundsVolume();
   }
 
-  public PreferencesScreen(Router router, AppPreferences preferences, Route backRoute, AssetContainer assets) {
+  public PreferencesScreen(
+      Router router, AppPreferences preferences, Route backRoute, AssetContainer assets) {
     this(router, preferences, assets);
     this.backRoute = backRoute;
   }
-
-
 
   @Override
   public void show() {
@@ -90,9 +83,7 @@ public class PreferencesScreen extends ScreenMaster {
     super.render(delta);
   }
 
-  /**
-   * Method to draw all the buttons and add the listeners to them
-   */
+  /** Method to draw all the buttons and add the listeners to them */
   private void drawButtons() {
     // sound on or off
     final CheckBox musicCheckBox = new CheckBox(null, skin);
@@ -177,16 +168,13 @@ public class PreferencesScreen extends ScreenMaster {
   }
 
   @Override
-  public void pause() {
-  }
+  public void pause() {}
 
   @Override
-  public void resume() {
-  }
+  public void resume() {}
 
   @Override
-  public void hide() {
-  }
+  public void hide() {}
 
   /**
    * Include writing the new preferences to the XML file into the setPrevious method - requires
@@ -194,18 +182,19 @@ public class PreferencesScreen extends ScreenMaster {
    */
   @Override
   protected void setPrevious() {
-    backButton.addListener(new ChangeListener() {
-      @Override
-      public void changed(ChangeEvent event, Actor actor) {
-        SoundController.playSound("menuSelect");
-        xmlInteraction.preferencesToXML(musicEnabled, musicVolume, soundsEnabled, soundsVolume);
+    backButton.addListener(
+        new ChangeListener() {
+          @Override
+          public void changed(ChangeEvent event, Actor actor) {
+            SoundController.playSound("menuSelect");
+            xmlInteraction.preferencesToXML(musicEnabled, musicVolume, soundsEnabled, soundsVolume);
 
-        if (backRoute != null) {
-          router.call(backRoute);
-        } else {
-          router.back();
-        }
-      }
-    });
+            if (backRoute != null) {
+              router.call(backRoute);
+            } else {
+              router.back();
+            }
+          }
+        });
   }
 }

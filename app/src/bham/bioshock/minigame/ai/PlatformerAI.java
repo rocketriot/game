@@ -6,16 +6,14 @@ import bham.bioshock.minigame.PlanetPosition;
 import bham.bioshock.minigame.models.Entity;
 import bham.bioshock.minigame.models.Platform;
 import bham.bioshock.minigame.objectives.Platformer;
-import bham.bioshock.minigame.physics.CollisionHandler;
-import bham.bioshock.minigame.physics.StepsGenerator;
 import bham.bioshock.server.interfaces.MultipleConnectionsHandler;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
 import java.util.ArrayList;
 import java.util.Optional;
 import java.util.Random;
 import java.util.UUID;
-
 
 /**
  * PlatformerAI uses a stack based Finite State Machine implementation Each state extends an
@@ -27,16 +25,12 @@ public class PlatformerAI extends MinigameAI {
 
   private static final Logger logger = LogManager.getLogger(PlatformerAI.class);
 
-
-  /**
-   * initialise a new stack
-   */
+  /** initialise a new stack */
   private ArrayList<CPUState> statesStack = new ArrayList<>();
 
-  /**
-   * The platform which contains the goal and the path from the ground to it.
-   */
+  /** The platform which contains the goal and the path from the ground to it. */
   private Platform goalPlatform;
+
   private ArrayList<Platform> pathToGoal;
 
   /*
@@ -52,19 +46,19 @@ public class PlatformerAI extends MinigameAI {
    * that the player is on the ground.
    */
   private int currentPlatformIndex = 0;
+
   private Platform nextPlatform;
 
   public PlatformerAI(UUID id, Store store, MultipleConnectionsHandler handler) {
     super(id, store, handler);
-
   }
 
   /**
    * Called everytime the game updates If the goalPlatform is null, this indicates the first update
    * of the minigame, the path to the goal is got from the world
    *
-   * Execute the next state by popping the stop element of the states stack
-   * 
+   * <p>Execute the next state by popping the stop element of the states stack
+   *
    * @param delta the time between iterations
    */
   @Override
@@ -88,9 +82,7 @@ public class PlatformerAI extends MinigameAI {
     statesStack.get(0).updateStack();
   }
 
-  /**
-   * State to determine the next goal platform
-   */
+  /** State to determine the next goal platform */
   private class FindNextPlatform extends CPUState {
     FindNextPlatform() {
       super("findNextPlatform");
@@ -140,29 +132,23 @@ public class PlatformerAI extends MinigameAI {
       }
     }
 
-        @Override
-        void updateStack() {
-            /*
-            Replace the current state with a new state to move the player to its next goal platform.
-             */
-            statesStack.remove(this);
-            statesStack.add(new MoveTowardsPlatform());
-
-
+    @Override
+    void updateStack() {
+      /*
+      Replace the current state with a new state to move the player to its next goal platform.
+       */
+      statesStack.remove(this);
+      statesStack.add(new MoveTowardsPlatform());
     }
-
   };
 
-  /**
-   * State to move the player towards its next goal platform
-   */
-    public class MoveTowardsPlatform extends CPUState {
-        /*
-        The direction that the player is currently travelling in
-        1 = left, 2 = right
-         */
-        private int direction;
-
+  /** State to move the player towards its next goal platform */
+  public class MoveTowardsPlatform extends CPUState {
+    /*
+    The direction that the player is currently travelling in
+    1 = left, 2 = right
+     */
+    private int direction;
 
     MoveTowardsPlatform() {
       super("moveTowardsPlatformm");
@@ -177,7 +163,6 @@ public class PlatformerAI extends MinigameAI {
        */
       PlanetPosition currentPos = astronaut.get().getPlanetPos();
       PlanetPosition platformPos = nextPlatform.getPlanetPos();
-
 
       double angleDelta = platformPos.angle - currentPos.angle;
       /*
@@ -203,14 +188,10 @@ public class PlatformerAI extends MinigameAI {
        * astronaut will need to continue moving towards the platform after it jumps.
        */
       statesStack.add(0, new DetermineJumpingPosition(direction));
-
     }
-
   };
 
-  /**
-   * State to determine when a how to jump
-   */
+  /** State to determine when a how to jump */
   private class DetermineJumpingPosition extends CPUState {
     /*
      * The direction the player is currently travelling
@@ -228,7 +209,6 @@ public class PlatformerAI extends MinigameAI {
        * Get how far the player is from the platform
        */
       double distance = astronaut.get().getPos().sqDistanceFrom(nextPlatform.getPos());
-
 
       if (distance > JUMP_MAX) {
         // The astronaut is too far from the platform to jump, do nothing
@@ -255,8 +235,6 @@ public class PlatformerAI extends MinigameAI {
           astronaut.moveLeft();
         }
       }
-
-
     }
 
     @Override
@@ -270,8 +248,12 @@ public class PlatformerAI extends MinigameAI {
        * The astronaut is on a platform
        */
       if (astronautOn.isPresent()) {
-        logger.trace(astronaut.get().toString() + " IS ON: " + astronautOn.get().toString()
-            + "NEXT: " + (currentPlatformIndex + 1));
+        logger.trace(
+            astronaut.get().toString()
+                + " IS ON: "
+                + astronautOn.get().toString()
+                + "NEXT: "
+                + (currentPlatformIndex + 1));
         /*
          * Is it the correct platform?
          */
@@ -301,11 +283,9 @@ public class PlatformerAI extends MinigameAI {
         statesStack.add(new FindNextPlatform());
       }
     }
-
   };
 
-
-  abstract public class CPUState {
+  public abstract class CPUState {
 
     private final String stateName;
 
@@ -320,6 +300,5 @@ public class PlatformerAI extends MinigameAI {
     public void broadcast() {
       logger.trace("State: " + stateName);
     }
-
   }
 }

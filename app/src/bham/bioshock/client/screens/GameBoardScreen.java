@@ -29,17 +29,16 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.utils.viewport.FitViewport;
+
 import java.util.ArrayList;
 import java.util.UUID;
 
 /** Screen for the main game board */
 public class GameBoardScreen extends ScreenMaster implements InputProcessor {
-  /** Handles input from the mouse and keyboard */
-  private InputMultiplexer inputMultiplexer;
-
   /** The speed at which to move the board with the WASD keys */
   private final float CAMERA_MOVE_SPEED = 5f;
-
+  /** Handles input from the mouse and keyboard */
+  private InputMultiplexer inputMultiplexer;
   /** Draws players on the board */
   private DrawPlayer drawPlayer;
 
@@ -89,16 +88,16 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
 
   /** Current coordinates of the mouse on the game board */
   private Coordinates mouseCoordinates = null;
-  
+
   /** Specifies if the gameboard is loading */
   private boolean loading = true;
-  
+
   /** Specifies if the gameboard has loaded */
   private boolean loaded = false;
 
   /** Loading screen */
   private LoadingScreen loadingScreen;
-  
+
   /** The popup to show when a player travels to a planet */
   private MinigamePrompt minigamePrompt;
 
@@ -122,33 +121,33 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
 
     this.minigamePrompt = new MinigamePrompt(batch, store, router, skin);
   }
-  
+
   /** Loads all the assets needed for the game board */
   private void loadAssets() {
     assets.load(Assets.pauseIcon, Texture.class, GamePart.BOARDGAME);
     assets.load(Assets.upgrade, Texture.class, GamePart.BOARDGAME);
     assets.load(Assets.fuel, Texture.class, GamePart.BOARDGAME);
     assets.load(Assets.blackhole, Texture.class, GamePart.BOARDGAME);
-    
-    for (int i=1; i<=5; i++) {
+
+    for (int i = 1; i <= 5; i++) {
       assets.load(Assets.asteroidsFolder + "/" + i + ".png", Texture.class, GamePart.BOARDGAME);
     }
-    
-    for(int i=1; i<=4; i++) {
+
+    for (int i = 1; i <= 4; i++) {
       assets.load(Assets.playersFolder + "/" + i + ".png", Texture.class, GamePart.BOARDGAME);
     }
-    
-    for(int i=1; i<=4; i++) {
-      assets.load(Assets.planetsFolder + "/" + i + ".png", Texture.class, GamePart.BOARDGAME);  
+
+    for (int i = 1; i <= 4; i++) {
+      assets.load(Assets.planetsFolder + "/" + i + ".png", Texture.class, GamePart.BOARDGAME);
     }
-    for(int i=1; i<=4; i++) {
-      assets.load(Assets.flagsFolder + "/" + i + ".png", Texture.class, GamePart.BOARDGAME);  
+    for (int i = 1; i <= 4; i++) {
+      assets.load(Assets.flagsFolder + "/" + i + ".png", Texture.class, GamePart.BOARDGAME);
     }
   }
-  
+
   /** Sets up the game board once the assets have been loaded */
   private void assetsLoaded() {
-    if(loaded) return;
+    if (loaded) return;
     loaded = true;
     background = new Sprite(assets.get(Assets.gameBackground, Texture.class));
     drawPlayer = new DrawPlayer(batch, assets);
@@ -157,32 +156,32 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
     drawUpgrade = new DrawUpgrade(batch, assets);
     drawAsteroid = new DrawAsteroid(batch, assets);
     drawBlackHole = new DrawBlackHole(batch, assets);
-    
+
     pathRenderer =
         new PathRenderer(camera, store.getGameBoard(), store.getMainPlayer(), store.getPlayers());
 
     hud = new GameBoardHud(batch, assets, store, router);
-    
+
     // Setup the input processing
     this.inputMultiplexer = new InputMultiplexer();
     this.inputMultiplexer.addProcessor(hud.getStage());
     this.inputMultiplexer.addProcessor(minigamePrompt.getStage());
     this.inputMultiplexer.addProcessor(this);
     Gdx.input.setInputProcessor(inputMultiplexer);
-    
+
     this.resize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
   }
 
-  /** 
-   * Checks if a player is near a planet 
+  /**
+   * Checks if a player is near a planet
+   *
    * @param player player to check if they're near a planet
    * @return true if near a planet, false otherwise
    */
   private boolean checkIfNearPlanet(Player player) {
     GameBoard gameBoard = store.getGameBoard();
     Planet p = gameBoard.getAdjacentPlanet(player.getCoordinates(), player);
-    if (p == null)
-      return false;
+    if (p == null) return false;
     else {
       showMinigamePrompt(p.getId());
       return true;
@@ -191,6 +190,7 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
 
   /**
    * Draws the player move
+   *
    * @param player the player's who move needs to be drawn
    */
   private void drawPlayerMove(Player player) {
@@ -380,14 +380,13 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
   }
 
   @Override
-  public void hide() {
-  }
+  public void hide() {}
 
   @Override
   public void resize(int width, int height) {
     viewport.update(width, height);
-    if(hud != null) {
-      hud.getViewport().update(width, height, true);      
+    if (hud != null) {
+      hud.getViewport().update(width, height, true);
       resizeSprites();
     }
   }
@@ -407,24 +406,24 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
 
   @Override
   public void render(float delta) {
-    if(loading && assets.update()) {
+    if (loading && assets.update()) {
       // assets loaded
       loading = false;
       loadingScreen.hide();
       assetsLoaded();
-    } else if(loading) {
+    } else if (loading) {
       // Update loading progress
       float progress = assets.getProgress();
-      loadingScreen.setText( ((int) Math.floor(progress * 100))+"%" );
+      loadingScreen.setText(((int) Math.floor(progress * 100)) + "%");
       loadingScreen.render(delta);
       return;
     }
-    
-    if(store.isReconnecting()) {
+
+    if (store.isReconnecting()) {
       router.call(Route.LOADING, "Reconnecting...");
       return;
     }
-    
+
     Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
 
     batch.setProjectionMatrix(camera.combined);
@@ -455,7 +454,7 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
     hud.getStage().act(Gdx.graphics.getDeltaTime());
     hud.draw();
     hud.update();
-    
+
     batch.setProjectionMatrix(minigamePrompt.getStage().getCamera().combined);
     minigamePrompt.getStage().act(Gdx.graphics.getDeltaTime());
     minigamePrompt.draw();
@@ -489,8 +488,9 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
     background.getTexture().dispose();
   }
 
-  /** 
+  /**
    * Gets the coordinates of where the mouse is located on the screen
+   *
    * @param screenX the x position of the mouse on the screen
    * @param screenY the y position of the mouse on the screen
    * @return a vector of the mouse coordinates
@@ -512,26 +512,22 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
 
     // Move camera with WASD
     if (Gdx.input.isKeyPressed(Input.Keys.W)) {
-      if (checkCameraMove(0f, CAMERA_MOVE_SPEED))
-        camera.translate(0f, CAMERA_MOVE_SPEED);
+      if (checkCameraMove(0f, CAMERA_MOVE_SPEED)) camera.translate(0f, CAMERA_MOVE_SPEED);
     }
     if (Gdx.input.isKeyPressed(Input.Keys.A)) {
-      if (checkCameraMove(-CAMERA_MOVE_SPEED, 0f))
-        camera.translate(-CAMERA_MOVE_SPEED, 0f);
+      if (checkCameraMove(-CAMERA_MOVE_SPEED, 0f)) camera.translate(-CAMERA_MOVE_SPEED, 0f);
     }
     if (Gdx.input.isKeyPressed(Input.Keys.S)) {
-      if (checkCameraMove(0f, -CAMERA_MOVE_SPEED))
-        camera.translate(0f, -CAMERA_MOVE_SPEED);
+      if (checkCameraMove(0f, -CAMERA_MOVE_SPEED)) camera.translate(0f, -CAMERA_MOVE_SPEED);
     }
     if (Gdx.input.isKeyPressed(Input.Keys.D)) {
-      if (checkCameraMove(0f, CAMERA_MOVE_SPEED))
-        camera.translate(CAMERA_MOVE_SPEED, 0f);
+      if (checkCameraMove(0f, CAMERA_MOVE_SPEED)) camera.translate(CAMERA_MOVE_SPEED, 0f);
     }
   }
 
   /**
    * Checks if the input x and y values would result in a valid camera movement
-   * 
+   *
    * @param x movement in x direction
    * @param y movement in y direction
    * @return whether it's a valid camera move
@@ -573,14 +569,14 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
     return false;
   }
 
-  /** 
+  /**
    * Handles when a player clicks their rocket on the board to start pathfinding
+   *
    * @param mouse the coordinates of the mouse click
-   * */
+   */
   private boolean startMove(Vector3 mouse) {
     // Check a left click was performed
-    if (!Gdx.input.isButtonPressed(Input.Buttons.LEFT))
-      return false;
+    if (!Gdx.input.isButtonPressed(Input.Buttons.LEFT)) return false;
 
     // Get player coordinates
     Player player = store.getMainPlayer();
@@ -588,7 +584,9 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
     int playerY = player.getCoordinates().getY();
 
     // Handle when mouse click is within player grid point
-    if (playerX * PPS <= mouse.x && mouse.x <= (playerX + 1) * PPS && playerY * PPS <= mouse.y
+    if (playerX * PPS <= mouse.x
+        && mouse.x <= (playerX + 1) * PPS
+        && playerY * PPS <= mouse.y
         && mouse.y <= (playerY + 1) * PPS) {
       playerSelected = true;
       pathRenderer.clearPath();
@@ -597,18 +595,17 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
     return true;
   }
 
-  /** 
+  /**
    * Handles when a player clicks to where they want to pathfind
+   *
    * @param mouse the coordinates of the mouse click
-   * */
+   */
   private boolean endMove(Vector3 mouse) {
     // Check a left click was performed
-    if (!Gdx.input.isButtonPressed(Input.Buttons.LEFT))
-      return false;
+    if (!Gdx.input.isButtonPressed(Input.Buttons.LEFT)) return false;
 
     // Check it's the client's turn to move
-    if (!store.isMainPlayersTurn())
-      return false;
+    if (!store.isMainPlayersTurn()) return false;
 
     // Check if click is on the grid
     if (0 <= mouse.x && mouse.x <= gridSize * PPS && 0 <= mouse.y && mouse.y <= gridSize * PPS) {
@@ -648,20 +645,18 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
     // Loop all spaces the black hole will take up
     for (int i = 0; i < BlackHole.WIDTH; i++) {
       for (int j = 0; j < BlackHole.HEIGHT; j++) {
-        if(mouseCoordinates == null) continue;
+        if (mouseCoordinates == null) continue;
         // Get the grid point
         GridPoint gridPoint = grid[mouseCoordinates.getX() + i][mouseCoordinates.getY() + j];
 
-        if(gridPoint == null) continue;
-        
+        if (gridPoint == null) continue;
+
         // Check the black hole will not be in the way of players
         for (Player player : store.getPlayers())
-        if (player.getCoordinates().isEqual(mouseCoordinates))
-        return false;
-        
+          if (player.getCoordinates().isEqual(mouseCoordinates)) return false;
+
         // Check the black hole will not be in the way of other board entities
-        if (!gridPoint.getType().equals(GridPoint.Type.EMPTY))
-          return false;
+        if (!gridPoint.getType().equals(GridPoint.Type.EMPTY)) return false;
       }
     }
 
@@ -691,8 +686,7 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
   /** Moves the game board when dragging on the screen */
   @Override
   public boolean touchDragged(int screenX, int screenY, int pointer) {
-    if (hud.isPaused())
-      return false;
+    if (hud.isPaused()) return false;
 
     // Mouse camera panning
     if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
@@ -714,10 +708,12 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
   public boolean mouseMoved(int screenX, int screenY) {
     // Get the board coordinates of where the mouse is positioned
     Vector3 mouse = getMouseCoordinates(screenX, screenY);
-    Coordinates coordinates = new Coordinates((int) mouse.x / PPS, (int) mouse.y / PPS);  
+    Coordinates coordinates = new Coordinates((int) mouse.x / PPS, (int) mouse.y / PPS);
 
     // Ensure the mouse is clicking on the board
-    if (coordinates.getX() >= gridSize || coordinates.getX() < 0 || coordinates.getY() >= gridSize
+    if (coordinates.getX() >= gridSize
+        || coordinates.getX() < 0
+        || coordinates.getY() >= gridSize
         || coordinates.getY() < 0) {
       mouseCoordinates = null;
       return false;
@@ -729,8 +725,7 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
     // Check if player is selected
     if (playerSelected) {
       // Do nothing if the mouse is in the same position as where the player currently is at
-      if (mouseCoordinates.isEqual(store.getMainPlayer().getCoordinates()))
-        return false;
+      if (mouseCoordinates.isEqual(store.getMainPlayer().getCoordinates())) return false;
 
       // Pathfind to where the mouse is located
       pathRenderer.generatePath(store.getMainPlayer().getCoordinates(), coordinates);
@@ -743,8 +738,7 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
   /** Zoom in and out the game board */
   @Override
   public boolean scrolled(int amount) {
-    if (hud.isPaused())
-      return false;
+    if (hud.isPaused()) return false;
     int startPPS = PPS;
     // Zoom code
     if ((PPS -= amount) <= ((Config.GAME_WORLD_HEIGHT / gridSize) - 4)) {
@@ -762,14 +756,15 @@ public class GameBoardScreen extends ScreenMaster implements InputProcessor {
         PPS -= amount * 3;
       }
     }
-    float cameraTranslate = (PPS - startPPS) * gridSize/2;
+    float cameraTranslate = (PPS - startPPS) * gridSize / 2;
     camera.translate(cameraTranslate, cameraTranslate);
     resize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
     return false;
   }
 
-  /** 
+  /**
    * Method to ask the user whether they want to start the minigame or not
+   *
    * @param planetId the planet who is potentially about to be captured
    */
   private void showMinigamePrompt(UUID planetId) {

@@ -8,18 +8,15 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
-/**
- * Goal object represents the final position for the platformer objective
- */
+/** Goal object represents the final position for the platformer objective */
 public class Goal extends Entity {
+  private static final long serialVersionUID = -8342563560891277870L;
   private static Animation<TextureRegion> blackHoleAnimation;
   private float animationTime;
 
-  private static final long serialVersionUID = -8342563560891277870L;
-
   /**
    * Creates a new goal at specified position
-   * 
+   *
    * @param w
    * @param x
    * @param y
@@ -34,11 +31,6 @@ public class Goal extends Entity {
     height = 180;
   }
 
-  @Override
-  public TextureRegion getTexture() {
-    return blackHoleAnimation.getKeyFrame(animationTime, true);
-  }
-
   public static void createTextures(AssetContainer manager) {
     TextureRegion[][] textureR = Assets.splittedTexture(manager, Assets.blackHoleAnimationSheet, 8);
     blackHoleAnimation = Assets.textureToAnimation(textureR, 8, 0, 0.1f);
@@ -46,6 +38,11 @@ public class Goal extends Entity {
 
   public static void loadTextures(AssetContainer manager) {
     manager.load(Assets.blackHoleAnimationSheet, Texture.class, GamePart.MINIGAME);
+  }
+
+  @Override
+  public TextureRegion getTexture() {
+    return blackHoleAnimation.getKeyFrame(animationTime, true);
   }
 
   @Override

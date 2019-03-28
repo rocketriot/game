@@ -51,7 +51,7 @@ public class JoinScreen extends ScreenMaster {
   private int rocketHeight = 110;
   private float rocketRotation = 0;
   private float time = 0;
-  
+
   private Player mainPlayer;
 
   private RocketAnimation mainPlayerAnimation;
@@ -64,25 +64,30 @@ public class JoinScreen extends ScreenMaster {
     this.mainPlayer = mainPlayer;
 
     loadTextures = new Texture[store.MAX_PLAYERS];
-    for(int i=0; i<4; i++) {
-      loadTextures[i] = assets.get(Assets.loadingBase + (i+1) + ".png", Texture.class);
+    for (int i = 0; i < 4; i++) {
+      loadTextures[i] = assets.get(Assets.loadingBase + (i + 1) + ".png", Texture.class);
     }
 
     connectedTextures = new Texture[store.MAX_PLAYERS];
-    for(int i=0; i<4; i++) {
-      connectedTextures[i] = assets.get(Assets.connectedBase + (i+1) + ".png", Texture.class);      
+    for (int i = 0; i < 4; i++) {
+      connectedTextures[i] = assets.get(Assets.connectedBase + (i + 1) + ".png", Texture.class);
     }
-    
-    String[] colours = new String[] { "orange", "red", "green", "blue" };
+
+    String[] colours = new String[] {"orange", "red", "green", "blue"};
     playerTextures = new Texture[store.MAX_PLAYERS];
-    for(int i=0; i<4; i++) {
-      playerTextures[i] = assets.get(Assets.astroBase + colours[i] + Assets.astroShield, Texture.class);
+    for (int i = 0; i < 4; i++) {
+      playerTextures[i] =
+          assets.get(Assets.astroBase + colours[i] + Assets.astroShield, Texture.class);
     }
 
     setUpHolder();
     setUpPlayerContainers();
     addStartGameButton();
     world = new JoinScreenWorld();
+  }
+
+  public static Vector2 getStageLocation(Actor actor) {
+    return actor.localToStageCoordinates(new Vector2(0, 0));
   }
 
   public RocketAnimation getMainPlayerAnimation() {
@@ -122,8 +127,8 @@ public class JoinScreen extends ScreenMaster {
 
   private void setUpPlayerContainers() {
     for (int i = 0; i < store.MAX_PLAYERS; i++) {
-      holder.addPlayerContainer(i,
-          new PlayerContainer("Player" + (i + 1), WaitText.WAITING, loadTextures[i]));
+      holder.addPlayerContainer(
+          i, new PlayerContainer("Player" + (i + 1), WaitText.WAITING, loadTextures[i]));
     }
   }
 
@@ -138,19 +143,19 @@ public class JoinScreen extends ScreenMaster {
   @Override
   public void render(float delta) {
     super.render(delta);
-    
-    if(store.isReconnecting()) {
+
+    if (store.isReconnecting()) {
       router.call(Route.DISCONNECT);
       return;
     }
-    
+
     stateTime += delta;
 
     // draw rockets
     drawRockets();
-    
-    if(mainPlayerAnimation != null) {
-      updateRocketPosition(delta);      
+
+    if (mainPlayerAnimation != null) {
+      updateRocketPosition(delta);
     }
   }
 
@@ -163,6 +168,102 @@ public class JoinScreen extends ScreenMaster {
     batch.end();
   }
 
+  public void addStartGameButton() {
+    if (store.isHost()) {
+      Image startButton = drawAsset(Assets.startButton, Config.GAME_WORLD_WIDTH - 320, 0);
+      addListener(
+          startButton,
+          new BaseClickListener(startButton, Assets.startButton, Assets.startButtonHover) {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+              SoundController.playSound("menuSelect");
+              router.call(Route.START_GAME);
+            }
+          });
+
+      stage.addActor(startButton);
+    }
+  }
+
+  @Override
+  protected void setPrevious() {
+    backButton.addListener(
+        new ChangeListener() {
+          @Override
+          public void changed(ChangeEvent event, Actor actor) {
+            router.call(Route.DISCONNECT);
+          }
+        });
+  }
+
+  private void drawRocket(RocketAnimation rocketAnimation) {
+    Sprite sprite = rocketAnimation.getSprite();
+    sprite.setRegion(rocketAnimation.getTexture());
+    sprite.setPosition(
+        rocketAnimation.getX() - (rocketAnimation.getWidth() / 2f), rocketAnimation.getY());
+    sprite.setRotation((float) rocketAnimation.getRotation());
+    sprite.draw(batch);
+  }
+
+  public void updateRocketPosition(float delta) {
+    boolean moveMade = false;
+
+    if (Gdx.input.isKeyPressed(Input.Keys.LEFT) || Gdx.input.isKeyPressed(Input.Keys.A)) {
+      moveMade = true;
+      mainPlayerAnimation.moveLeft();
+    }
+
+    if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) || Gdx.input.isKeyPressed(Input.Keys.D)) {
+      moveMade = true;
+      mainPlayerAnimation.moveRight();
+    }
+
+    if (Gdx.input.isKeyPressed(Input.Keys.UP) || Gdx.input.isKeyPressed(Input.Keys.W)) {
+      moveMade = true;
+      mainPlayerAnimation.moveUp();
+    }
+
+    if (Gdx.input.isKeyPressed(Input.Keys.DOWN) || Gdx.input.isKeyPressed(Input.Keys.S)) {
+      moveMade = true;
+      mainPlayerAnimation.moveDown();
+    }
+
+    mainPlayerAnimation.update();
+
+    time += delta;
+    if (time > 1f || moveMade) {
+      time = 0;
+      // Send a move to the controller
+      router.call(Route.JOIN_SCREEN_MOVE, mainPlayer.getId());
+    }
+  }
+
+  public Position checkBounds(Position pos) {
+    if (pos.x <= 0) {
+      pos.x = 0;
+    }
+    if (pos.x >= stage.getWidth()) {
+      pos.x = stage.getWidth();
+    }
+    if (pos.y <= 0) {
+      pos.y = 0;
+    }
+    if (pos.y >= stage.getHeight()) {
+      pos.y = stage.getHeight();
+    }
+    return pos;
+  }
+
+  @Override
+  public void dispose() {
+    batch.dispose();
+    for (int i = 0; i < loadTextures.length; i++) {
+      loadTextures[i].dispose();
+      connectedTextures[i].dispose();
+      playerTextures[i].dispose();
+    }
+  }
+
   public enum WaitText {
     WAITING,
     CONNECTED;
@@ -171,14 +272,13 @@ public class JoinScreen extends ScreenMaster {
       switch (waitText) {
         case WAITING:
           return "Waiting...";
-          case CONNECTED:
+        case CONNECTED:
           return "Connected!";
         default:
           return null;
       }
     }
   }
-
 
   public class Holder extends Table {
     private ArrayList<PlayerContainer> playerContainers;
@@ -198,20 +298,20 @@ public class JoinScreen extends ScreenMaster {
     public void resetPlayerContainer(UUID id) {
       PlayerContainer container = null;
       int index = 0;
-      for(PlayerContainer pc : playerContainers) {
-        if(pc.getPlayerId().isPresent() && pc.getPlayerId().get().equals(id)) {
+      for (PlayerContainer pc : playerContainers) {
+        if (pc.getPlayerId().isPresent() && pc.getPlayerId().get().equals(id)) {
           container = pc;
           break;
         }
         index++;
       }
-      if(container != null) {
+      if (container != null) {
         container.changeAnimation(loadTextures[index], 26, 1, 200, 200, 0.8f, -1);
         container.setWaitText(WaitText.WAITING);
         container.setName("Player" + (index + 1));
       }
     }
-    
+
     public PlayerContainer getPlayerContainer(int index) {
       try {
         return playerContainers.get(index);
@@ -247,7 +347,7 @@ public class JoinScreen extends ScreenMaster {
     public void setId(UUID id) {
       playerId = Optional.of(id);
     }
-    
+
     public Optional<UUID> getPlayerId() {
       return playerId;
     }
@@ -260,13 +360,18 @@ public class JoinScreen extends ScreenMaster {
       waitText.setText(WaitText.getString(text));
     }
 
-    public void changeAnimation(Texture sheet, int cols, int rows, int width, int height,
-        float frameDuration, int skipCol) {
+    public void changeAnimation(
+        Texture sheet,
+        int cols,
+        int rows,
+        int width,
+        int height,
+        float frameDuration,
+        int skipCol) {
       StaticAnimation newAnimation =
           new StaticAnimation(sheet, cols, rows, width, height, frameDuration, skipCol);
       this.animation = newAnimation;
     }
-
 
     public StaticAnimation getAnimation() {
       return animation;
@@ -285,14 +390,19 @@ public class JoinScreen extends ScreenMaster {
     }
   }
 
-
   public class StaticAnimation extends Image {
 
     private Animation<TextureRegion> animation;
     private TextureRegion[] textureRegion;
 
-    public StaticAnimation(Texture sheet, int cols, int rows, int width, int height,
-        float frameDuration, int skipCol) {
+    public StaticAnimation(
+        Texture sheet,
+        int cols,
+        int rows,
+        int width,
+        int height,
+        float frameDuration,
+        int skipCol) {
 
       if (skipCol == -1) {
         textureRegion = new TextureRegion[cols * rows];
@@ -319,7 +429,6 @@ public class JoinScreen extends ScreenMaster {
       setHeight(height);
     }
 
-
     public void act(float delta) {
       stateTime += delta;
       TextureRegion currentFrame = animation.getKeyFrame(stateTime += delta, true);
@@ -330,106 +439,6 @@ public class JoinScreen extends ScreenMaster {
 
     public Animation<TextureRegion> getAnimation() {
       return animation;
-    }
-
-  }
-
-  public void addStartGameButton() {
-    if(store.isHost()) {
-      Image startButton = drawAsset(Assets.startButton, Config.GAME_WORLD_WIDTH - 320, 0);
-      addListener(startButton, new BaseClickListener(startButton, Assets.startButton, Assets.startButtonHover) {
-        @Override
-        public void clicked(InputEvent event, float x, float y) {
-          SoundController.playSound("menuSelect");
-          router.call(Route.START_GAME);
-        }
-      });
-      
-      stage.addActor(startButton);
-    }
-  }
-
-  @Override
-  protected void setPrevious() {
-    backButton.addListener(new ChangeListener() {
-      @Override
-      public void changed(ChangeEvent event, Actor actor) {
-        router.call(Route.DISCONNECT);
-      }
-    });
-  }
-
-  public static Vector2 getStageLocation(Actor actor) {
-    return actor.localToStageCoordinates(new Vector2(0, 0));
-  }
-
-  private void drawRocket(RocketAnimation rocketAnimation) {
-    Sprite sprite = rocketAnimation.getSprite();
-    sprite.setRegion(rocketAnimation.getTexture());
-    sprite.setPosition(rocketAnimation.getX() - (rocketAnimation.getWidth() / 2f),
-        rocketAnimation.getY());
-    sprite.setRotation((float) rocketAnimation.getRotation());
-    sprite.draw(batch);
-  }
-
-  public void updateRocketPosition(float delta) {
-    boolean moveMade = false;
-
-    if (Gdx.input.isKeyPressed(Input.Keys.LEFT) || Gdx.input.isKeyPressed(Input.Keys.A)) {
-      moveMade = true;
-      mainPlayerAnimation.moveLeft();
-    }
-
-    if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) || Gdx.input.isKeyPressed(Input.Keys.D)) {
-      moveMade = true;
-      mainPlayerAnimation.moveRight();
-    }
-
-    if (Gdx.input.isKeyPressed(Input.Keys.UP) || Gdx.input.isKeyPressed(Input.Keys.W)) {
-      moveMade = true;
-      mainPlayerAnimation.moveUp();
-    }
-
-    if (Gdx.input.isKeyPressed(Input.Keys.DOWN) || Gdx.input.isKeyPressed(Input.Keys.S)) {
-      moveMade = true;
-      mainPlayerAnimation.moveDown();
-    }
-
-    mainPlayerAnimation.update();
-
-    
-    time += delta;
-    if(time > 1f || moveMade) {
-      time = 0;
-      // Send a move to the controller
-      router.call(Route.JOIN_SCREEN_MOVE, mainPlayer.getId());      
-    }
-
-  }
-
-  public Position checkBounds(Position pos) {
-    if (pos.x <= 0) {
-      pos.x = 0;
-    }
-    if (pos.x >= stage.getWidth()) {
-      pos.x = stage.getWidth();
-    }
-    if (pos.y <= 0) {
-      pos.y = 0;
-    }
-    if (pos.y >= stage.getHeight()) {
-      pos.y = stage.getHeight();
-    }
-    return pos;
-  }
-
-  @Override
-  public void dispose() {
-    batch.dispose();
-    for (int i = 0; i < loadTextures.length; i++) {
-      loadTextures[i].dispose();
-      connectedTextures[i].dispose();
-      playerTextures[i].dispose();
     }
   }
 
@@ -443,8 +452,16 @@ public class JoinScreen extends ScreenMaster {
       super(w, x, y, false, null);
       setRotation(rocketRotation);
 
-      mainPlayerAnimation = (new StaticAnimation(connectedTextures[mainPlayerIndex], 4, 1,
-          rocketWidth, rocketHeight, frameDuration, -1)).getAnimation();
+      mainPlayerAnimation =
+          (new StaticAnimation(
+                  connectedTextures[mainPlayerIndex],
+                  4,
+                  1,
+                  rocketWidth,
+                  rocketHeight,
+                  frameDuration,
+                  -1))
+              .getAnimation();
       load();
 
       sprite.setRegionWidth(rocketWidth);
@@ -499,40 +516,40 @@ public class JoinScreen extends ScreenMaster {
     public void moveDown() {
       speed.apply(180, 1);
     }
-    
+
     public void update() {
       speed.friction(0.1);
-      
+
       pos.x += speed.dX();
       pos.y += speed.dY();
 
       float collideForce = 100;
-      
-      if(pos.x > Config.GAME_WORLD_WIDTH ) {
+
+      if (pos.x > Config.GAME_WORLD_WIDTH) {
         speed.stop(90);
         speed.apply(-90, collideForce);
       }
-      
-      if(pos.x < 0) {
+
+      if (pos.x < 0) {
         speed.stop(-90);
         speed.apply(90, collideForce);
       }
-      
-      if(pos.y < -50) {
+
+      if (pos.y < -50) {
         speed.stop(180);
         speed.apply(0, collideForce);
       }
-      
-      if(pos.y > Config.GAME_WORLD_HEIGHT-50) {
+
+      if (pos.y > Config.GAME_WORLD_HEIGHT - 50) {
         speed.stop(0);
         speed.apply(-180, collideForce);
       }
-      
+
       Float angle = 360 - (float) speed.getSpeedAngle();
-      if(angle.isNaN()) {
+      if (angle.isNaN()) {
         setRotation(0);
       } else {
-        setRotation(angle);        
+        setRotation(angle);
       }
     }
 
@@ -541,5 +558,4 @@ public class JoinScreen extends ScreenMaster {
       return rotation;
     }
   }
-
 }

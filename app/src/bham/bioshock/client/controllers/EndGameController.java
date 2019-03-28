@@ -12,15 +12,16 @@ import com.google.inject.Inject;
 public class EndGameController extends Controller {
   /** Stores assets of the game */
   private AssetContainer assets;
-  
+
   @Inject
-  public EndGameController(Store store, Router router, BoardGame game,Server server, AssetContainer assets) {
+  public EndGameController(
+      Store store, Router router, BoardGame game, Server server, AssetContainer assets) {
     super(store, router, game);
     this.assets = assets;
   }
 
   /** Shows the end game screen */
   public void show() {
-    setScreen(new EndScreen(router,store, assets));
+    setScreen(new EndScreen(router, store, assets));
   }
 }

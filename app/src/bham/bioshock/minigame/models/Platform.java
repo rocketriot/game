@@ -1,6 +1,5 @@
 package bham.bioshock.minigame.models;
 
-
 import bham.bioshock.client.assets.AssetContainer;
 import bham.bioshock.client.assets.Assets;
 import bham.bioshock.client.assets.Assets.GamePart;
@@ -21,9 +20,7 @@ public class Platform extends StaticEntity {
 
   private static TextureRegion texture;
 
-  /**
-   * Platforms are connected
-   */
+  /** Platforms are connected */
   private Platform parent;
 
   /**
@@ -70,15 +67,8 @@ public class Platform extends StaticEntity {
   }
 
   /**
-   * Get texture for rendering
-   */
-  public TextureRegion getTexture() {
-    return texture;
-  }
-
-  /**
    * Load platform textures
-   * 
+   *
    * @param manager
    * @param id
    */
@@ -88,7 +78,7 @@ public class Platform extends StaticEntity {
 
   /**
    * Create platform texture for rendering
-   * 
+   *
    * @param manager
    * @param id
    */
@@ -96,13 +86,9 @@ public class Platform extends StaticEntity {
     texture = new TextureRegion(manager.get(Assets.platformsBase + id + ".png", Texture.class));
   }
 
-  /**
-   * Set parent platform.
-   *
-   * @param parent the parent platform
-   */
-  public void setParent(Platform parent) {
-    this.parent = parent;
+  /** Get texture for rendering */
+  public TextureRegion getTexture() {
+    return texture;
   }
 
   /**
@@ -115,8 +101,17 @@ public class Platform extends StaticEntity {
   }
 
   /**
+   * Set parent platform.
+   *
+   * @param parent the parent platform
+   */
+  public void setParent(Platform parent) {
+    this.parent = parent;
+  }
+
+  /**
    * Get the planet position of the left edge of the platform
-   * 
+   *
    * @return the planet position of the left edge of the platform
    */
   public PlanetPosition getLeftEdge() {
@@ -125,7 +120,7 @@ public class Platform extends StaticEntity {
 
   /**
    * Get the planet position of the right edge of the platform
-   * 
+   *
    * @return the planet position of the right edge of the platform
    */
   public PlanetPosition getRightEdge() {

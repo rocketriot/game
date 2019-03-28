@@ -2,21 +2,17 @@ package bham.bioshock.server.ai;
 
 import bham.bioshock.common.consts.GridPoint;
 import bham.bioshock.common.consts.GridPoint.Type;
-import bham.bioshock.common.models.Coordinates;
-import bham.bioshock.common.models.GameBoard;
-import bham.bioshock.common.models.Planet;
-import bham.bioshock.common.models.Player;
-import bham.bioshock.common.models.Upgrade;
-import bham.bioshock.common.models.store.MinigameStore;
+import bham.bioshock.common.models.*;
 import bham.bioshock.common.models.store.Store;
 import bham.bioshock.common.pathfinding.AStarPathfinding;
 import bham.bioshock.communication.messages.boardgame.MovePlayerOnBoardMessage;
 import bham.bioshock.server.handlers.GameBoardHandler;
 import bham.bioshock.server.handlers.MinigameHandler;
-import java.util.ArrayList;
-import java.util.UUID;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import java.util.ArrayList;
+import java.util.UUID;
 
 public class BoardAi extends Thread {
 
@@ -40,7 +36,7 @@ public class BoardAi extends Thread {
     UUID lastPlayer = null;
     int turnNum = 0;
     int currentNum = -1;
-    
+
     try {
       while (!isInterrupted()) {
         if (store.getPlayers().size() == 0) {
@@ -49,9 +45,11 @@ public class BoardAi extends Thread {
         }
 
         turnNum = store.getRound() * 4 + store.getTurn();
-        
+
         Player player = store.getMovingPlayer();
-        if (player.isCpu() && lastPlayer != null && lastPlayer.equals(player.getId())
+        if (player.isCpu()
+            && lastPlayer != null
+            && lastPlayer.equals(player.getId())
             && store.getMinigameStore() == null) {
           samePlayerNum++;
         } else {
@@ -64,7 +62,7 @@ public class BoardAi extends Thread {
           samePlayerNum = 0;
           continue;
         }
-        
+
         // Last moved
         if (player.isCpu() && currentNum < turnNum) {
           // Make a move
@@ -94,15 +92,13 @@ public class BoardAi extends Thread {
 
   private int calculateMoveTime(Player player, ArrayList<Coordinates> path) {
     // Players move 3 tiles per second + 500 to prevent race condition
-    if (path != null)
-      return (path.size() * 1000) / 3 + 500;
-    else
-      return 0;
+    if (path != null) return (path.size() * 1000) / 3 + 500;
+    else return 0;
   }
 
   /**
    * Handle movement if the next player is a CPU
-   * 
+   *
    * @return
    */
   private ArrayList<Coordinates> moveCpuPlayer() {
@@ -133,17 +129,20 @@ public class BoardAi extends Thread {
     return new ArrayList<Coordinates>();
   }
 
-  /**
-   * Generate all possible moves that a CPU could take
-   */
+  /** Generate all possible moves that a CPU could take */
   private ArrayList<MoveVal> generatePossibleMoves(Store store) {
     GameBoard gameBoard = store.getGameBoard();
     GridPoint[][] grid = gameBoard.getGrid();
     Player player = store.getMovingPlayer();
 
     // Setup pathfinding
-    AStarPathfinding pathFinder = new AStarPathfinding(grid, player.getCoordinates(),
-        gameBoard.GRID_SIZE, gameBoard.GRID_SIZE, store.getPlayers());
+    AStarPathfinding pathFinder =
+        new AStarPathfinding(
+            grid,
+            player.getCoordinates(),
+            gameBoard.GRID_SIZE,
+            gameBoard.GRID_SIZE,
+            store.getPlayers());
     ArrayList<MoveVal> possibleMoves = new ArrayList();
 
     // Loop through all points available on the grid
@@ -153,12 +152,14 @@ public class BoardAi extends Thread {
         GridPoint.Type type = gridPoint.getType();
 
         // Skip points that the CPU can't travel to i.e. Players and Asteroids
-        if (type == GridPoint.Type.PLAYER || type == GridPoint.Type.ASTEROID
+        if (type == GridPoint.Type.PLAYER
+            || type == GridPoint.Type.ASTEROID
             || type == Type.PLANET) {
           continue;
           // Skips points the CPU doesn't have fuel to move to
         } else if ((Math.abs(x - player.getCoordinates().getX())
-            + Math.abs(y - player.getCoordinates().getY())) >= (player.getFuel() / 10)) {
+                + Math.abs(y - player.getCoordinates().getY()))
+            >= (player.getFuel() / 10)) {
           continue;
         }
 
@@ -187,7 +188,7 @@ public class BoardAi extends Thread {
 
   /**
    * Calculates and sets the reward for a grid move for the ai
-   * 
+   *
    * @param moveVal
    * @param player
    * @param gameBoard
@@ -219,8 +220,7 @@ public class BoardAi extends Thread {
     if ((planet = gameBoard.getAdjacentPlanet(moveVal.getMoveCoords(), player)) != null) {
       reward += 100;
       moveVal.setCapturablePlanet(planet);
-      if ((player.getFuel() - moveVal.getPathCost()) > 3 * player.getFuelGridCost())
-        reward += 150;
+      if ((player.getFuel() - moveVal.getPathCost()) > 3 * player.getFuelGridCost()) reward += 150;
     }
 
     // Add 50 / distance to the planet for each capturable planet and upgrade
@@ -232,15 +232,13 @@ public class BoardAi extends Thread {
           planet = (Planet) gridPoint.getValue();
           if (planet.getPlayerCaptured() == null || !planet.getPlayerCaptured().equals(player)) {
             float value = 30 - moveVal.getMoveCoords().calcDistance(planet.getCoordinates());
-            if (value > 0)
-              reward += value;
+            if (value > 0) reward += value;
             planetChecklist.add(planet);
           }
         } else if (gridPoint.getType().equals(Type.UPGRADE)) {
           Upgrade upgrade = (Upgrade) gridPoint.getValue();
           float value = 30 - moveVal.getMoveCoords().calcDistance(upgrade.getCoordinates());
-          if (value > 0)
-            reward += value;
+          if (value > 0) reward += value;
         }
       }
     }

@@ -8,22 +8,19 @@ import bham.bioshock.minigame.models.Platform;
 import bham.bioshock.minigame.objectives.CaptureTheFlag;
 import bham.bioshock.minigame.worlds.World;
 import bham.bioshock.server.interfaces.MultipleConnectionsHandler;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.UUID;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-/**
- * The CaptureTheFlagAI.
- */
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.UUID;
+
+/** The CaptureTheFlagAI. */
 public class CaptureTheFlagAI extends MinigameAI {
 
   private static final Logger logger = LogManager.getLogger(CaptureTheFlagAI.class);
 
-  /**
-   * The world.
-   */
+  /** The world. */
   private World world;
 
   /**
@@ -71,8 +68,7 @@ public class CaptureTheFlagAI extends MinigameAI {
       return;
     }
 
-    if (astronaut.astronaut.getEquipment().haveGun
-        && goalPos.fromCenter > astroPos.fromCenter) {
+    if (astronaut.astronaut.getEquipment().haveGun && goalPos.fromCenter > astroPos.fromCenter) {
       astronaut.jump();
     }
 
@@ -86,7 +82,6 @@ public class CaptureTheFlagAI extends MinigameAI {
         && Math.abs(normaliseAngle(goalPos.angle) - normaliseAngle(astroPos.angle)) <= 20) {
       astronaut.shoot();
     }
-
   }
 
   /**

@@ -1,11 +1,11 @@
 package bham.bioshock.common.models;
 
-import java.util.ArrayList;
 import java.io.Serializable;
+import java.util.ArrayList;
 
 /** Stores x and y coordinates */
 public class Coordinates implements Serializable {
-  
+
   private static final long serialVersionUID = 5775730008817100527L;
 
   private int x;
@@ -51,6 +51,7 @@ public class Coordinates implements Serializable {
 
   /**
    * Calculates the distance between this coordinate and another
+   *
    * @param point the coordinate being compared to this object
    * @return the distance between the point and this object
    */

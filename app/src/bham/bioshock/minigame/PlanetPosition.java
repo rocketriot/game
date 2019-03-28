@@ -1,17 +1,11 @@
 package bham.bioshock.minigame;
 
-/**
- * The type Planet position.
- */
+/** The type Planet position. */
 public class PlanetPosition {
 
-  /**
-   * The Angle the position is at from.
-   */
+  /** The Angle the position is at from. */
   public float angle;
-  /**
-   * The distance from the center of the planet.
-   */
+  /** The distance from the center of the planet. */
   public float fromCenter;
 
   /**
@@ -28,6 +22,4 @@ public class PlanetPosition {
   public String toString() {
     return "distance from center: " + fromCenter + " angle: " + angle;
   }
-
-
 }

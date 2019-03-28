@@ -29,7 +29,6 @@ public enum Command {
 
   ADD_BLACK_HOLE,
 
-  
   // Minigame
   MINIGAME_START,
   MINIGAME_DIRECT_START, // FOR TESTS ONLY
@@ -41,7 +40,7 @@ public enum Command {
   MINIGAME_OBJECTIVE,
   MINIGAME_SPAWN,
 
-  //JoinScreen
+  // JoinScreen
   JOIN_SCREEN_MOVE;
 
   // @formatter:on

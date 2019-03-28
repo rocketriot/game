@@ -29,6 +29,7 @@ import bham.bioshock.server.ai.MinigameAILoop;
 import bham.bioshock.server.interfaces.MultipleConnectionsHandler;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
 import java.util.Random;
 import java.util.UUID;
 
@@ -52,15 +53,14 @@ public class MinigameHandler {
   /**
    * Creates and sends minigame start request to all clients Creates and seed the world Starts
    * minigame timer to ending the game
-   * 
    *
    * @param playerId
    * @param planetId
    * @param gbHandler
    * @param objectiveId
    */
-  public void startMinigame(UUID playerId, UUID planetId, GameBoardHandler gbHandler,
-      Integer objectiveId) {
+  public void startMinigame(
+      UUID playerId, UUID planetId, GameBoardHandler gbHandler, Integer objectiveId) {
     // Create a world for the minigame
     World w = new RandomWorld();
 
@@ -116,59 +116,61 @@ public class MinigameHandler {
     handler.sendToAll(new MinigameStartMessage(w, o, planetId));
   }
 
-  /**
-   * Starts a clock ending the minigame
-   */
+  /** Starts a clock ending the minigame */
   private void setupMinigameEnd(GameBoardHandler gameBoardHandler) {
 
     clock.reset();
-    clock.at(62f, new Clock.TimeListener() {
-      @Override
-      public void handle(Clock.TimeUpdateEvent event) {
-        logger.info("Ending minigame");
-        if (planetId == null)
-          return;
-        if (minigameTimer != null) {
-          minigameTimer.interrupt();
-        }
-        MinigameStore localStore = store.getMinigameStore();
-        UUID winner = null;
-        if (localStore != null && localStore.getObjective() != null) {
-          winner = localStore.getObjective().getWinner();
-        }
-        endMinigame(winner, gameBoardHandler);
-      }
-    });
+    clock.at(
+        62f,
+        new Clock.TimeListener() {
+          @Override
+          public void handle(Clock.TimeUpdateEvent event) {
+            logger.info("Ending minigame");
+            if (planetId == null) return;
+            if (minigameTimer != null) {
+              minigameTimer.interrupt();
+            }
+            MinigameStore localStore = store.getMinigameStore();
+            UUID winner = null;
+            if (localStore != null && localStore.getObjective() != null) {
+              winner = localStore.getObjective().getWinner();
+            }
+            endMinigame(winner, gameBoardHandler);
+          }
+        });
 
     // Spawn entities every 3 seconds
-    clock.every(8f, new Clock.TimeListener() {
-      @Override
-      public void handle(Clock.TimeUpdateEvent event) {
-        spawnEntities();
-      }
-    });
+    clock.every(
+        8f,
+        new Clock.TimeListener() {
+          @Override
+          public void handle(Clock.TimeUpdateEvent event) {
+            spawnEntities();
+          }
+        });
 
     if (minigameTimer != null && minigameTimer.isAlive()) {
       minigameTimer.interrupt();
     }
 
-    minigameTimer = new Thread("MinigameTimer") {
-      private long time;
+    minigameTimer =
+        new Thread("MinigameTimer") {
+          private long time;
 
-      public void run() {
-        time = System.currentTimeMillis();
-        try {
-          while (!isInterrupted()) {
-            long delta = (System.currentTimeMillis() - time);
+          public void run() {
             time = System.currentTimeMillis();
-            clock.update((int) delta);
-            Thread.sleep(1000);
+            try {
+              while (!isInterrupted()) {
+                long delta = (System.currentTimeMillis() - time);
+                time = System.currentTimeMillis();
+                clock.update((int) delta);
+                Thread.sleep(1000);
+              }
+            } catch (InterruptedException e) {
+              // Clock interrupted
+            }
           }
-        } catch (InterruptedException e) {
-          // Clock interrupted
-        }
-      }
-    };
+        };
     minigameTimer.start();
   }
 
@@ -189,9 +191,7 @@ public class MinigameHandler {
     }
   }
 
-  /**
-   * Sync player movement and position
-   */
+  /** Sync player movement and position */
   public void playerMove(Message message, UUID playerId) {
     handler.sendToAllExcept(message, playerId);
   }
@@ -200,9 +200,7 @@ public class MinigameHandler {
     handler.sendToAllExcept(message, playerId);
   }
 
-  /**
-   * Create new bullet
-   */
+  /** Create new bullet */
   public void bulletShot(Message message, UUID playerId) {
     handler.sendToAllExcept(message, playerId);
   }
@@ -210,7 +208,7 @@ public class MinigameHandler {
   /**
    * Method to end the minigame and send the players back to the main board called by the inner
    * timer
-   * 
+   *
    * @param gameBoardHandler
    */
   public void endMinigame(UUID winnerId, GameBoardHandler gameBoardHandler) {
@@ -230,7 +228,7 @@ public class MinigameHandler {
 
   /**
    * Send objective update to all clients
-   * 
+   *
    * @param message
    */
   public void updateObjective(Message message, GameBoardHandler gbHandler) {
@@ -248,5 +246,4 @@ public class MinigameHandler {
 
     handler.sendToAll(message);
   }
-
 }
