@@ -30,10 +30,14 @@ public class CaptureTheFlag extends Objective {
     ArrayList<Platform> allPlatforms = world.getPlatforms();
     ArrayList<Platform> platforms = new ArrayList<>();
 
-    for (Platform platform : allPlatforms){
-      if (platform.getPlanetPos().fromCenter < world.getPlanetRadius() + 200){
-        platforms.add(platform);
-      }
+//    for (Platform platform : allPlatforms){
+//      if (platform.getPlanetPos().fromCenter < world.getPlanetRadius() + 150){
+//        platforms.add(platform);
+//      }
+//    }
+
+    for (int i = 0; i < allPlatforms.size() / 2; i++){
+      platforms.add(allPlatforms.get(i));
     }
 
     PlanetPosition pPos;
