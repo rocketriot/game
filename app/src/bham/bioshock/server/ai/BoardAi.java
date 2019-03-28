@@ -7,6 +7,7 @@ import bham.bioshock.common.models.GameBoard;
 import bham.bioshock.common.models.Planet;
 import bham.bioshock.common.models.Player;
 import bham.bioshock.common.models.Upgrade;
+import bham.bioshock.common.models.store.MinigameStore;
 import bham.bioshock.common.models.store.Store;
 import bham.bioshock.common.pathfinding.AStarPathfinding;
 import bham.bioshock.communication.messages.boardgame.MovePlayerOnBoardMessage;
@@ -37,12 +38,18 @@ public class BoardAi extends Thread {
   public void run() {
     int samePlayerNum = 0;
     UUID lastPlayer = null;
+    int turnNum = 0;
+    int currentNum = -1;
+    
     try {
       while (!isInterrupted()) {
         if (store.getPlayers().size() == 0) {
           sleep(500);
           continue;
         }
+
+        turnNum = store.getRound() * 4 + store.getTurn();
+        
         Player player = store.getMovingPlayer();
         if (player.isCpu() && lastPlayer != null && lastPlayer.equals(player.getId())
             && store.getMinigameStore() == null) {
@@ -51,7 +58,6 @@ public class BoardAi extends Thread {
           samePlayerNum = 0;
         }
 
-
         if (samePlayerNum > 10) {
           logger.error("Forced player skip");
           gameBoardHandler.endTurn();
@@ -59,7 +65,8 @@ public class BoardAi extends Thread {
           continue;
         }
         
-        if (player.isCpu() && (lastMoved == null || !player.getId().equals(lastMoved))) {
+        // Last moved
+        if (player.isCpu() && currentNum < turnNum) {
           // Make a move
           ArrayList<Coordinates> path = moveCpuPlayer();
           int waitTime = calculateMoveTime(player, path);
@@ -68,7 +75,7 @@ public class BoardAi extends Thread {
           GameBoard gameBoard = store.getGameBoard();
           Planet planet = gameBoard.getAdjacentPlanet(player.getCoordinates(), player);
 
-          lastMoved = player.getId();
+          currentNum = turnNum;
           // Make a decision after a move
           if (planet != null && player.getFuel() >= (3 * player.getFuelGridCost())) {
             minigameHandler.startMinigame(player.getId(), planet.getId(), gameBoardHandler, null);

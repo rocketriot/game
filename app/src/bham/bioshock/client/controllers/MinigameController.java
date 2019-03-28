@@ -206,8 +206,8 @@ public class MinigameController extends Controller {
     } else {
         store.setMinigameWinner("No one");
       }
+    store.resetMinigameStore();
     router.call(Route.FADE_OUT, "minigame");
     router.call(Route.GAME_BOARD_SHOW);
-    store.resetMinigameStore();
   }
 }

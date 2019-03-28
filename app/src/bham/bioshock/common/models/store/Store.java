@@ -234,7 +234,6 @@ public class Store {
     if(minigameStore != null) {
       minigameStore.dispose();      
     }
-
     minigameStore = null;
   }
 
