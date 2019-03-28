@@ -31,7 +31,7 @@ public class CaptureTheFlag extends Objective {
     ArrayList<Platform> platforms = new ArrayList<>();
 
     for (Platform platform : allPlatforms){
-      if (platform.getPlanetPos().fromCenter < 2400){
+      if (platform.getPlanetPos().fromCenter < world.getPlanetRadius() + 200){
         platforms.add(platform);
       }
     }
@@ -39,7 +39,7 @@ public class CaptureTheFlag extends Objective {
     PlanetPosition pPos;
     if (platforms.size() == 0){
       float angle = (float) (0 + Math.random() * 359);
-      int distance = (int) Math.random() * 2300 + 2250;
+      int distance = (int) (Math.random() * (world.getPlanetRadius() + 200) + (world.getPlanetRadius() + 50));
       pPos = new PlanetPosition(angle, distance);
     } else {
       pPos = platforms.get(r.nextInt(platforms.size())).getPlanetPos();
@@ -75,7 +75,7 @@ public class CaptureTheFlag extends Objective {
   public void captured(Astronaut a) {
     if(a.is(State.REMOVING)) return;
     if(!store.isHost()) return;
-    
+
     router.call(Route.SEND_OBJECTIVE_UPDATE, new FlagOwnerUpdateMessage(a.getId()));
   }
 
@@ -89,10 +89,10 @@ public class CaptureTheFlag extends Objective {
     Astronaut owner = localStore.getPlayer(flagOwner);
     flag.setOwner(owner);
   }
-  
+
   /**
    * Drop the flag
-   * 
+   *
    * @param m
    */
   public void handle(KillAndRespawnMessage m) {
@@ -103,15 +103,15 @@ public class CaptureTheFlag extends Objective {
     // Get position before respawn
     Astronaut owner = localStore.getPlayer(flagOwner);
     flagPosition = owner.getPos();
-    
+
     // Kill and respawn player
     super.handle(m);
-    
+
     // Reset owner and update position
     flag.setOwner(null);
     flag.setPosition(flagPosition.x, flagPosition.y);
   }
-  
+
   @Override
   public String instructions() {
     String instructions = "You have 1 minute to capture the flag,\n"
@@ -119,25 +119,25 @@ public class CaptureTheFlag extends Objective {
 
     return instructions;
   }
-  
+
   @Override
   public String name() {
     return "Capture the Flag!";
   }
 
-  
+
   /**
    * Get current flag owner
-   * 
+   *
    * @return UUID of the owner
    */
   public UUID getFlagOwner() {
     return flagOwner;
   }
-  
+
   /**
    * Get current flag position
-   * 
+   *
    * @return Position
    */
   public Position getFlagPosition() {
