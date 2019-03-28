@@ -33,7 +33,7 @@ public class StepsGenerator {
   private AstronautMove currentMove = new AstronautMove();
 
   public StepsGenerator(World world, Entity entity) {
-    this.jumpForce = world.getGravity() * 0.73;
+    this.jumpForce = world.getGravity() * 0.5 + 400;
     this.entity = entity;
     this.world = world;
     this.generator = new Generator();

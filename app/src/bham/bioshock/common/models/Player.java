@@ -71,7 +71,6 @@ public class Player implements Serializable {
     this.username = username;
     this.isCpu = isCpu;
     this.textureID = 0;
-    upgrades.add(Upgrade.Type.BLACK_HOLE);
   }
   
   public Player(String username, boolean isCpu) {
