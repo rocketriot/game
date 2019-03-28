@@ -147,6 +147,7 @@ public class GameBoardController extends Controller {
 
   public void movePlayerToRandomPoint(Player player) {
     player.setCoordinates(player.getRandomCoords());
+    router.call(Route.STOP_SOUND, "rocket");
     if (store.isMainPlayersTurn()) {
       endTurn();
     }
