@@ -68,7 +68,7 @@ public class SoundController extends Controller {
   private static HashMap<String, Sound> sounds = new HashMap<>();
   private HashMap<String, Long> soundsIds = new HashMap<>();
   private HashMap<String, Boolean> soundsPlaying = new HashMap<>();
-  
+
   /**
    * Instantiates a new Sound controller.
    *
