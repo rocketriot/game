@@ -1,5 +1,6 @@
 package bham.bioshock.client.screens;
 
+import bham.bioshock.client.Route;
 import bham.bioshock.client.Router;
 import bham.bioshock.client.assets.AssetContainer;
 import bham.bioshock.client.assets.Assets.GamePart;
@@ -14,6 +15,7 @@ import com.badlogic.gdx.Screen;
  */
 public class MinigameScreen implements Screen {
 
+  private final Router router;
   /** Minigame renderer */
   private Renderer renderer;
   /** Is loading */
@@ -37,6 +39,7 @@ public class MinigameScreen implements Screen {
     this.assets = assets;
     world = store.getMinigameStore().getWorld();
     this.renderer = new Renderer(store, router, assets);
+    this.router = router;
   }
 
 
@@ -94,6 +97,7 @@ public class MinigameScreen implements Screen {
     // Dispose minigame assets
     assets.dispose(GamePart.MINIGAME);
     renderer.dispose();
+    router.call(Route.FADE_OUT, "minigameMusic");
   }
 
   @Override
