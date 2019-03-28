@@ -70,6 +70,7 @@ public class MinigameHandler {
       if (planet != null) {
         w.setPlanetRadius(planet.getMinigameRadius());
         w.setPlanetTexture(planet.getMinigameTextureId());
+        w.setGravity(planet.getMinigameGravity());
       }
     }
     w.init();

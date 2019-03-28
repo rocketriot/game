@@ -18,7 +18,7 @@ public class StepsGenerator {
 
   protected final double GROUND_FRICTION = 0.2;
   protected final double AIR_FRICTION = 0.15;
-  private final double JUMP_FORCE = 1100;
+  private double jumpForce;
   private final int MAX_STEPS = 70;
   private float MOVE_SPEED = 600f;
   
@@ -33,6 +33,7 @@ public class StepsGenerator {
   private AstronautMove currentMove = new AstronautMove();
 
   public StepsGenerator(World world, Entity entity) {
+    this.jumpForce = world.getGravity() * 0.73;
     this.entity = entity;
     this.world = world;
     this.generator = new Generator();
@@ -191,7 +192,7 @@ public class StepsGenerator {
       }
       if(currentMove.jumping) {
         double currentUp = speed.getValueFor(angle + 180);
-        speed.apply(angle + 180, Math.max(0, (JUMP_FORCE - currentUp)));        
+        speed.apply(angle + 180, Math.max(0, (jumpForce - currentUp)));        
       }
     }
     
