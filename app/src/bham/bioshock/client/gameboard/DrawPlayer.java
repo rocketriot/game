@@ -35,7 +35,7 @@ public class DrawPlayer extends DrawEntity {
     generateEffects();
 
     fontGenerator = new FontGenerator();
-    font = assets.getFont(25);
+    font = fontGenerator.generate(25);
   }
 
   private void generateEffects() {
