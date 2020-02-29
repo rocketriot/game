@@ -1,3 +1,5 @@
+## Rocketriot.zip contains the jar file which can be usd to just play the game
+
 ## Prerequisites
 
 - Java JDK (1.8.x)
