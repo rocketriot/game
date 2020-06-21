@@ -1,4 +1,4 @@
-## Rocketriot.zip contains the jar file which can be usd to just play the game
+## Rocketriot.zip contains the jar file which can be used to just play the game
 
 ## Prerequisites
 
